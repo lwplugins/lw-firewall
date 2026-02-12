@@ -1,33 +1,71 @@
 # LW Firewall
 
-WooCommerce filter rate limiter — blocks bots crawling filter combinations and rate-limits requests per IP.
+Lightweight WordPress firewall — rate-limits endpoints, blocks bots, bans repeat offenders, and adds security headers.
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![WordPress Version](https://img.shields.io/badge/WordPress-6.0%2B-blue.svg)](https://wordpress.org)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 
+![LW Firewall Settings](.github/screenshot.png)
+
 ## The Problem
 
-Bots systematically crawl every WooCommerce filter combination (`?pa_color=red&pa_size=xl&min_price=10&...`), generating thousands of uncacheable requests that overload your server.
+Bots crawl WooCommerce filter combinations, brute-force `wp-login.php`, flood `wp-cron.php` and `xmlrpc.php`, scan for vulnerabilities via 404s, and abuse the REST API — all generating thousands of uncacheable requests that overload your server.
 
 ## How It Works
 
-LW Firewall installs an MU-plugin worker that intercepts requests **before WordPress fully loads**, blocking malicious bots and rate-limiting IPs with minimal overhead.
+LW Firewall installs an MU-plugin worker that intercepts requests **before WordPress fully loads**. The processing order:
+
+1. **IP Whitelist** — whitelisted IPs skip all checks
+2. **IP Blacklist** — blacklisted IPs get 403 immediately
+3. **Auto-Ban** — previously banned IPs get 403
+4. **404 Flood** — IPs with excessive 404s get 429
+5. **Endpoint Detection** — filter params, cron, xmlrpc, login, REST API
+6. **Bot Blocking** — User-Agent matching (filter requests only)
+7. **Rate Limiting** — per-IP counters with auto-ban escalation
 
 ## Features
+
+### Endpoint Protection
+
+| Endpoint | Protection | Response |
+|----------|-----------|----------|
+| WooCommerce filters | Rate limit + bot blocking | 302 redirect or 429 |
+| `wp-login.php` | Brute-force rate limiting | 429 |
+| `wp-cron.php` | DDoS rate limiting | 429 |
+| `xmlrpc.php` | DDoS/brute-force rate limiting | 429 |
+| REST API (`/wp-json/`) | Rate limiting | 429 |
+| 404 flood | Vulnerability scanner blocking | 429 |
 
 ### Bot Blocking
 
 - Block requests by User-Agent substring matching (case-insensitive)
-- 20+ known bad bots blocked by default (AhrefsBot, SemrushBot, DotBot, etc.)
+- 20+ known bad bots blocked by default (AhrefsBot, SemrushBot, DotBot, GPTBot, etc.)
 - Add/remove bot patterns via admin UI or WP-CLI
 
-### Rate Limiting
+### IP Whitelist / Blacklist
 
-- Per-IP request counter for WooCommerce filter URLs
-- Configurable threshold (default: 30 requests) and time window (default: 60 seconds)
-- Configurable action: **429 Too Many Requests** or **302 redirect to homepage**
-- Only triggers on URLs with filter query parameters
+- Manual IP allow/block lists
+- Supports individual IPs and CIDR ranges (e.g. `192.168.1.0/24`)
+- Whitelisted IPs bypass all firewall checks
+- Blacklisted IPs are always blocked with 403
+
+### Auto-Ban
+
+- Automatically bans IPs that repeatedly exceed rate limits
+- Configurable threshold (default: 3 violations)
+- Configurable ban duration (default: 1 hour)
+- Escalating protection — casual users won't trigger it, persistent attackers get banned
+
+### Security Headers
+
+One-click addition of security HTTP headers:
+
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: SAMEORIGIN`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+- `X-XSS-Protection: 1; mode=block`
 
 ### Storage Backends
 
@@ -44,6 +82,7 @@ Auto-detection picks the best available backend.
 - Loads on `muplugins_loaded` (priority 1) — before themes and plugins
 - Own autoloader — zero dependency on WordPress plugin system
 - Automatic install on activation, removal on deactivation
+- **Auto-update** — worker file is automatically replaced when its version doesn't match the plugin version
 
 ### Cloudflare Support
 
@@ -52,7 +91,7 @@ Auto-detection picks the best available backend.
 
 ### Request Logging
 
-- Optional logging of blocked requests (time, IP, reason, User-Agent, URL)
+- Optional logging of all blocked requests (time, IP, reason, User-Agent, URL)
 - Admin log viewer with table display
 - One-click log clearing
 
@@ -77,8 +116,11 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | Tab | Description |
 |-----|-------------|
 | **General** | Enable/disable, storage backend, rate limit, time window, action, filter params |
+| **Protection** | Endpoint toggles (cron, xmlrpc, login, REST API, 404) and auto-ban settings |
 | **Bots** | Manage blocked bot User-Agent patterns |
-| **Status** | MU-plugin worker status, active storage backend, reinstall worker |
+| **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges) |
+| **Security** | HTTP security headers toggle |
+| **Status** | MU-plugin worker status, worker version, active storage backend, reinstall worker |
 | **Logs** | Enable logging, view blocked requests, clear log |
 
 ## WP-CLI Commands
@@ -91,12 +133,21 @@ wp lw-firewall status
 wp lw-firewall config list
 wp lw-firewall config set rate_limit 50
 wp lw-firewall config set storage redis
+wp lw-firewall config set protect_login true
+wp lw-firewall config set auto_ban_enabled true
 wp lw-firewall config reset --yes
 
 # Bot management
 wp lw-firewall bots list
 wp lw-firewall bots add "BadBot/1.0"
 wp lw-firewall bots remove "BadBot/1.0"
+
+# IP whitelist / blacklist
+wp lw-firewall ip list whitelist
+wp lw-firewall ip list blacklist
+wp lw-firewall ip add whitelist 192.168.1.100
+wp lw-firewall ip add blacklist 10.0.0.0/8
+wp lw-firewall ip remove whitelist 192.168.1.100
 
 # Log management
 wp lw-firewall logs list --limit=50
@@ -113,10 +164,19 @@ Override any setting via constants (takes precedence over admin UI):
 
 ```php
 define( 'LW_FIREWALL_ENABLED', true );
-define( 'LW_FIREWALL_STORAGE', 'apcu' );       // apcu, redis, file
+define( 'LW_FIREWALL_STORAGE', 'apcu' );            // apcu, redis, file
 define( 'LW_FIREWALL_RATE_LIMIT', 30 );
-define( 'LW_FIREWALL_RATE_WINDOW', 60 );        // seconds
-define( 'LW_FIREWALL_ACTION', '429' );           // 429 or redirect
+define( 'LW_FIREWALL_RATE_WINDOW', 60 );             // seconds
+define( 'LW_FIREWALL_ACTION', '429' );                // 429 or redirect
+define( 'LW_FIREWALL_PROTECT_CRON', true );
+define( 'LW_FIREWALL_PROTECT_XMLRPC', true );
+define( 'LW_FIREWALL_PROTECT_LOGIN', true );
+define( 'LW_FIREWALL_PROTECT_REST_API', false );
+define( 'LW_FIREWALL_PROTECT_404', false );
+define( 'LW_FIREWALL_AUTO_BAN_ENABLED', true );
+define( 'LW_FIREWALL_AUTO_BAN_THRESHOLD', 3 );
+define( 'LW_FIREWALL_AUTO_BAN_DURATION', 3600 );     // seconds
+define( 'LW_FIREWALL_SECURITY_HEADERS', true );
 define( 'LW_FIREWALL_LOG_ENABLED', false );
 ```
 
@@ -124,7 +184,7 @@ define( 'LW_FIREWALL_LOG_ENABLED', false );
 
 - PHP 8.1 or higher
 - WordPress 6.0 or higher
-- WooCommerce (recommended, but not required)
+- WooCommerce (recommended for filter protection, but not required)
 
 ## Part of LW Plugins
 
@@ -138,7 +198,7 @@ LW Firewall is part of the [LW Plugins](https://github.com/lwplugins) family —
 | [LW Memberships](https://github.com/lwplugins/lw-memberships) | Lightweight membership system |
 | [LW ZenAdmin](https://github.com/lwplugins/lw-zenadmin) | Clean up your admin — notices sidebar & widget manager |
 | [LW Cookie](https://github.com/lwplugins/lw-cookie) | GDPR-compliant cookie consent |
-| **LW Firewall** | WooCommerce filter rate limiter & bot blocker |
+| **LW Firewall** | Lightweight firewall — rate limiting, bot blocking, auto-ban |
 
 ## License
 

@@ -12,7 +12,10 @@ namespace LightweightPlugins\Firewall\Admin;
 use LightweightPlugins\Firewall\Admin\Settings\TabBots;
 use LightweightPlugins\Firewall\Admin\Settings\TabGeneral;
 use LightweightPlugins\Firewall\Admin\Settings\TabInterface;
+use LightweightPlugins\Firewall\Admin\Settings\TabIpRules;
 use LightweightPlugins\Firewall\Admin\Settings\TabLogs;
+use LightweightPlugins\Firewall\Admin\Settings\TabProtection;
+use LightweightPlugins\Firewall\Admin\Settings\TabSecurity;
 use LightweightPlugins\Firewall\Admin\Settings\TabStatus;
 
 /**
@@ -38,7 +41,10 @@ final class SettingsPage {
 	public function __construct() {
 		$this->tabs = [
 			new TabGeneral(),
+			new TabProtection(),
 			new TabBots(),
+			new TabIpRules(),
+			new TabSecurity(),
 			new TabStatus(),
 			new TabLogs(),
 		];

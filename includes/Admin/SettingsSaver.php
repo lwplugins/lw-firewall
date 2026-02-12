@@ -72,8 +72,15 @@ final class SettingsSaver {
 		$current = Options::get_all();
 		$values  = [];
 
-		$values['enabled']     = ! empty( $post_data['enabled'] );
-		$values['log_enabled'] = ! empty( $post_data['log_enabled'] );
+		$values['enabled']          = ! empty( $post_data['enabled'] );
+		$values['log_enabled']      = ! empty( $post_data['log_enabled'] );
+		$values['protect_cron']     = ! empty( $post_data['protect_cron'] );
+		$values['protect_xmlrpc']   = ! empty( $post_data['protect_xmlrpc'] );
+		$values['protect_login']    = ! empty( $post_data['protect_login'] );
+		$values['protect_rest_api'] = ! empty( $post_data['protect_rest_api'] );
+		$values['protect_404']      = ! empty( $post_data['protect_404'] );
+		$values['auto_ban_enabled'] = ! empty( $post_data['auto_ban_enabled'] );
+		$values['security_headers'] = ! empty( $post_data['security_headers'] );
 
 		$values['storage'] = isset( $post_data['storage'] )
 			? sanitize_key( $post_data['storage'] )
@@ -87,12 +94,22 @@ final class SettingsSaver {
 			? absint( $post_data['rate_window'] )
 			: $current['rate_window'];
 
+		$values['auto_ban_threshold'] = isset( $post_data['auto_ban_threshold'] )
+			? absint( $post_data['auto_ban_threshold'] )
+			: $current['auto_ban_threshold'];
+
+		$values['auto_ban_duration'] = isset( $post_data['auto_ban_duration'] )
+			? absint( $post_data['auto_ban_duration'] )
+			: $current['auto_ban_duration'];
+
 		$values['action'] = isset( $post_data['action'] )
 			? sanitize_key( $post_data['action'] )
 			: $current['action'];
 
 		$values['filter_params'] = self::parse_filter_params( $post_data );
 		$values['blocked_bots']  = self::parse_blocked_bots( $post_data );
+		$values['ip_whitelist']  = self::parse_lines( $post_data, 'ip_whitelist' );
+		$values['ip_blacklist']  = self::parse_lines( $post_data, 'ip_blacklist' );
 
 		Options::save( $values );
 	}
@@ -126,6 +143,24 @@ final class SettingsSaver {
 		}
 
 		$raw   = sanitize_textarea_field( (string) $post_data['blocked_bots'] );
+		$lines = array_filter( array_map( 'trim', explode( "\n", $raw ) ) );
+
+		return array_values( $lines );
+	}
+
+	/**
+	 * Parse a textarea into an array of non-empty lines.
+	 *
+	 * @param array<string, mixed> $post_data Form data.
+	 * @param string               $key       Field key.
+	 * @return array<int, string>
+	 */
+	private static function parse_lines( array $post_data, string $key ): array {
+		if ( empty( $post_data[ $key ] ) ) {
+			return [];
+		}
+
+		$raw   = sanitize_textarea_field( (string) $post_data[ $key ] );
 		$lines = array_filter( array_map( 'trim', explode( "\n", $raw ) ) );
 
 		return array_values( $lines );

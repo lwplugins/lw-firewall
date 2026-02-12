@@ -40,17 +40,23 @@ final class RateLimiter {
 	/**
 	 * Check if the IP is within the rate limit.
 	 *
-	 * Returns true if allowed, false if rate limit exceeded.
-	 *
 	 * @param string $ip Client IP address.
 	 * @return bool
 	 */
 	public function is_allowed( string $ip ): bool {
+		return $this->is_allowed_key( 'rl_' . $ip );
+	}
+
+	/**
+	 * Check if a given counter key is within the rate limit.
+	 *
+	 * @param string $key Counter key.
+	 * @return bool
+	 */
+	public function is_allowed_key( string $key ): bool {
 		$limit  = (int) Options::get( 'rate_limit', 30 );
 		$window = (int) Options::get( 'rate_window', 60 );
-
-		$key   = 'rl_' . $ip;
-		$count = $this->storage->increment( $key, $window );
+		$count  = $this->storage->increment( $key, $window );
 
 		return $count <= $limit;
 	}
@@ -82,6 +88,13 @@ final class RateLimiter {
 		}
 
 		exit;
+	}
+
+	/**
+	 * Send a 429 Too Many Requests response (public alias).
+	 */
+	public static function too_many(): void {
+		self::too_many_requests();
 	}
 
 	/**

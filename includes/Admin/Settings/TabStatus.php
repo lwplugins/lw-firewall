@@ -44,6 +44,9 @@ final class TabStatus implements TabInterface {
 	 */
 	public function render(): void {
 		$worker_installed = Activator::is_worker_installed();
+		$worker_version   = defined( 'LW_FIREWALL_WORKER_VERSION' ) ? LW_FIREWALL_WORKER_VERSION : '—';
+		$plugin_version   = LW_FIREWALL_VERSION;
+		$version_match    = $worker_version === $plugin_version;
 		$storage_pref     = (string) Options::get( 'storage', 'auto' );
 		$active_storage   = StorageDetector::detect( $storage_pref );
 
@@ -66,6 +69,26 @@ final class TabStatus implements TabInterface {
 					<p class="description">
 						<?php esc_html_e( 'The MU-plugin worker intercepts requests early, before themes and plugins load.', 'lw-firewall' ); ?>
 					</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Worker Version', 'lw-firewall' ); ?></th>
+				<td>
+					<strong><?php echo esc_html( $worker_version ); ?></strong>
+					<?php if ( $version_match ) : ?>
+						<span style="color: #00a32a;">&#10003;</span>
+					<?php else : ?>
+						<span style="color: #d63638; font-weight: 600;">
+							&#10007;
+							<?php
+							printf(
+								/* translators: %s: expected plugin version */
+								esc_html__( 'Mismatch — expected %s (will auto-update on next page load)', 'lw-firewall' ),
+								esc_html( $plugin_version )
+							);
+							?>
+						</span>
+					<?php endif; ?>
 				</td>
 			</tr>
 			<tr>

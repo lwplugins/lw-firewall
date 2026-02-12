@@ -83,6 +83,18 @@ final class Activator {
 	}
 
 	/**
+	 * Check if the installed worker is outdated.
+	 */
+	public static function is_worker_outdated(): bool {
+		if ( ! self::is_worker_installed() ) {
+			return true;
+		}
+
+		return ! defined( 'LW_FIREWALL_WORKER_VERSION' )
+			|| LW_FIREWALL_WORKER_VERSION !== LW_FIREWALL_VERSION;
+	}
+
+	/**
 	 * Get the target path for the MU-plugin worker.
 	 */
 	private static function get_worker_target_path(): string {

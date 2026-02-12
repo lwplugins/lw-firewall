@@ -27,12 +27,23 @@ final class Options {
 	 */
 	public static function get_defaults(): array {
 		return [
-			'enabled'       => true,
-			'storage'       => 'auto', // 'auto' | 'apcu' | 'redis' | 'file'.
-			'rate_limit'    => 30,
-			'rate_window'   => 60,
-			'action'        => 'redirect', // 'redirect' | '429'.
-			'blocked_bots'  => [
+			'enabled'            => true,
+			'storage'            => 'auto', // 'auto' | 'apcu' | 'redis' | 'file'.
+			'rate_limit'         => 30,
+			'rate_window'        => 60,
+			'action'             => 'redirect', // 'redirect' | '429'.
+			'protect_cron'       => false,
+			'protect_xmlrpc'     => false,
+			'protect_login'      => true,
+			'protect_rest_api'   => false,
+			'protect_404'        => false,
+			'ip_whitelist'       => [],
+			'ip_blacklist'       => [],
+			'auto_ban_enabled'   => false,
+			'auto_ban_threshold' => 3,
+			'auto_ban_duration'  => 3600,
+			'security_headers'   => false,
+			'blocked_bots'       => [
 				'meta-externalagent',
 				'meta-externalfetcher',
 				'gptbot',
@@ -54,8 +65,8 @@ final class Options {
 				'barkrowler',
 				'dataforseobot',
 			],
-			'log_enabled'   => false,
-			'filter_params' => [ 'filter_', 'query_type_' ],
+			'log_enabled'        => false,
+			'filter_params'      => [ 'filter_', 'query_type_' ],
 		];
 	}
 

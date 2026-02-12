@@ -62,12 +62,52 @@ final class FirewallCommand {
 				'value'   => $options['action'],
 			],
 			[
+				'setting' => 'Protect wp-cron.php',
+				'value'   => ! empty( $options['protect_cron'] ) ? 'On' : 'Off',
+			],
+			[
+				'setting' => 'Protect xmlrpc.php',
+				'value'   => ! empty( $options['protect_xmlrpc'] ) ? 'On' : 'Off',
+			],
+			[
+				'setting' => 'Protect wp-login.php',
+				'value'   => ! empty( $options['protect_login'] ) ? 'On' : 'Off',
+			],
+			[
+				'setting' => 'Protect REST API',
+				'value'   => ! empty( $options['protect_rest_api'] ) ? 'On' : 'Off',
+			],
+			[
+				'setting' => 'Protect 404 flood',
+				'value'   => ! empty( $options['protect_404'] ) ? 'On' : 'Off',
+			],
+			[
+				'setting' => 'Auto-ban',
+				'value'   => ! empty( $options['auto_ban_enabled'] ) ? 'On (' . $options['auto_ban_threshold'] . ' violations / ' . $options['auto_ban_duration'] . 's)' : 'Off',
+			],
+			[
+				'setting' => 'Security headers',
+				'value'   => ! empty( $options['security_headers'] ) ? 'On' : 'Off',
+			],
+			[
+				'setting' => 'IP whitelist',
+				'value'   => count( (array) ( $options['ip_whitelist'] ?? [] ) ) . ' entries',
+			],
+			[
+				'setting' => 'IP blacklist',
+				'value'   => count( (array) ( $options['ip_blacklist'] ?? [] ) ) . ' entries',
+			],
+			[
 				'setting' => 'Logging',
 				'value'   => ! empty( $options['log_enabled'] ) ? 'On' : 'Off',
 			],
 			[
 				'setting' => 'MU-Plugin worker',
 				'value'   => Activator::is_worker_installed() ? 'Installed' : 'Not installed',
+			],
+			[
+				'setting' => 'Worker version',
+				'value'   => defined( 'LW_FIREWALL_WORKER_VERSION' ) ? LW_FIREWALL_WORKER_VERSION : '—',
 			],
 			[
 				'setting' => 'Blocked bots',
