@@ -199,7 +199,6 @@ LW Firewall is part of the [LW Plugins](https://github.com/lwplugins) family —
 | [LW Cookie](https://github.com/lwplugins/lw-cookie) | GDPR-compliant cookie consent |
 | [LW LMS](https://github.com/lwplugins/lw-lms) | Lightweight LMS — courses, lessons, progress tracking |
 | [LW Translate](https://github.com/lwplugins/lw-translate) | Manage community translations from GitHub |
-| [LW Memberships](https://github.com/lwplugins/lw-memberships) | Lightweight membership system with WooCommerce |
 | [LW Site Manager](https://github.com/lwplugins/lw-site-manager) | Site maintenance via AI/REST using Abilities API |
 
 ## License
