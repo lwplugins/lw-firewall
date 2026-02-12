@@ -118,7 +118,7 @@ final class SettingsPage {
 		<div class="wrap">
 			<h1>
 				<img src="<?php echo esc_url( LW_FIREWALL_URL . 'assets/img/shield-star.svg' ); ?>" alt="" class="lw-firewall-title-icon" />
-				<?php echo esc_html( get_admin_page_title() ); ?>
+				<?php esc_html_e( 'Lightweight Firewall', 'lw-firewall' ); ?>
 			</h1>
 
 			<?php if ( isset( $_GET['updated'] ) && '1' === $_GET['updated'] ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
