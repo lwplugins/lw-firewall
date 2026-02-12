@@ -1,0 +1,31 @@
+{
+    "name": "lwplugins/lw-firewall",
+    "description": "WooCommerce filter rate limiter — blocks bots crawling filter combinations and rate-limits requests per IP.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "LightweightPlugins\\Firewall\\": "includes/"
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7",
+        "wp-coding-standards/wpcs": "^3.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "scripts": {
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
