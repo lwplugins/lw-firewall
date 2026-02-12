@@ -26,6 +26,19 @@
         <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
     </rule>
 
+    <!-- WP-CLI requires $args/$assoc_args in method signatures -->
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter">
+        <exclude-pattern>/includes/CLI/*</exclude-pattern>
+    </rule>
+
+    <!-- FileStorage needs direct filesystem ops and error silencing -->
+    <rule ref="WordPress.PHP.NoSilencedErrors">
+        <exclude-pattern>/includes/Storage/FileStorage.php</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.AlternativeFunctions.file_system_operations_is_writable">
+        <exclude-pattern>/includes/Storage/FileStorage.php</exclude-pattern>
+    </rule>
+
     <!-- PHP Compatibility -->
     <rule ref="PHPCompatibilityWP"/>
     <config name="testVersion" value="8.1-"/>

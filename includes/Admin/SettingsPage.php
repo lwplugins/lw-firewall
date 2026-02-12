@@ -98,7 +98,7 @@ final class SettingsPage {
 		wp_enqueue_script(
 			'lw-firewall-admin',
 			LW_FIREWALL_URL . 'assets/js/admin.js',
-			[ 'jquery' ],
+			[],
 			LW_FIREWALL_VERSION,
 			true
 		);
@@ -117,8 +117,9 @@ final class SettingsPage {
 		?>
 		<div class="wrap">
 			<h1>
-				<img src="<?php echo esc_url( LW_FIREWALL_URL . 'assets/img/shield-star.svg' ); ?>" alt="" class="lw-firewall-title-icon" />
+				<img src="<?php echo esc_url( LW_FIREWALL_URL . 'assets/img/title-icon.svg' ); ?>" alt="" class="lw-title-icon" />
 				<?php esc_html_e( 'Lightweight Firewall', 'lw-firewall' ); ?>
+				<span style="font-size: 13px; font-weight: 400; color: #888;">(<?php echo esc_html( LW_FIREWALL_VERSION ); ?>)</span>
 			</h1>
 
 			<?php if ( isset( $_GET['updated'] ) && '1' === $_GET['updated'] ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>

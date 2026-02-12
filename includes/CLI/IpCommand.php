@@ -104,16 +104,16 @@ final class IpCommand {
 	 */
 	public function add( array $args, array $assoc_args ): void {
 		[ $type, $ip ] = $args;
-		$key = 'ip_' . $type;
-		$ips = (array) Options::get( $key, [] );
+		$key           = 'ip_' . $type;
+		$ips           = (array) Options::get( $key, [] );
 
 		if ( in_array( $ip, $ips, true ) ) {
 			WP_CLI::error( "'{$ip}' is already in the {$type}." );
 		}
 
-		$ips[]              = $ip;
-		$current            = Options::get_all();
-		$current[ $key ]    = $ips;
+		$ips[]           = $ip;
+		$current         = Options::get_all();
+		$current[ $key ] = $ips;
 
 		if ( Options::save( $current ) ) {
 			WP_CLI::success( "Added '{$ip}' to {$type}." );
@@ -148,9 +148,9 @@ final class IpCommand {
 	 */
 	public function remove( array $args, array $assoc_args ): void {
 		[ $type, $ip ] = $args;
-		$key   = 'ip_' . $type;
-		$ips   = (array) Options::get( $key, [] );
-		$found = false;
+		$key           = 'ip_' . $type;
+		$ips           = (array) Options::get( $key, [] );
+		$found         = false;
 
 		$ips = array_values(
 			array_filter(
