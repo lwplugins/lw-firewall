@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * LW Firewall — WooCommerce filter rate limiter.
+ * LW Firewall — lightweight WordPress firewall.
  */
 final class FirewallCommand {
 

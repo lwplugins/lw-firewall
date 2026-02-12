@@ -44,7 +44,7 @@ final class TabGeneral implements TabInterface {
 		?>
 		<h2><?php esc_html_e( 'General Settings', 'lw-firewall' ); ?></h2>
 		<p class="lw-firewall-section-description">
-			<?php esc_html_e( 'Configure firewall protection for WooCommerce filter requests.', 'lw-firewall' ); ?>
+			<?php esc_html_e( 'Core firewall settings — enable/disable, storage backend, rate limits and filter parameters.', 'lw-firewall' ); ?>
 		</p>
 
 		<table class="form-table">

@@ -10,7 +10,7 @@ Lightweight WordPress firewall — rate-limits endpoints, blocks bots, bans repe
 
 ## The Problem
 
-Bots crawl WooCommerce filter combinations, brute-force `wp-login.php`, flood `wp-cron.php` and `xmlrpc.php`, scan for vulnerabilities via 404s, and abuse the REST API — all generating thousands of uncacheable requests that overload your server.
+Bots brute-force `wp-login.php`, flood `wp-cron.php` and `xmlrpc.php`, crawl WooCommerce filter combinations, scan for vulnerabilities via 404s, and abuse the REST API — all generating thousands of uncacheable requests that overload your server.
 
 ## How It Works
 
@@ -184,7 +184,6 @@ define( 'LW_FIREWALL_LOG_ENABLED', false );
 
 - PHP 8.1 or higher
 - WordPress 6.0 or higher
-- WooCommerce (recommended for filter protection, but not required)
 
 ## Part of LW Plugins
 

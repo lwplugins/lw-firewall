@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-02-12T16:05:34+00:00\n"
+"POT-Creation-Date: 2026-02-12T16:17:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,8 +93,12 @@ msgid "General Settings"
 msgstr "Általános beállítások"
 
 #: includes/Admin/Settings/TabGeneral.php:47
-msgid "Configure firewall protection for WooCommerce filter requests."
-msgstr "Állítsd be a firewall védelmet a WooCommerce filter kérésekhez."
+msgid ""
+"Core firewall settings — enable/disable, storage backend, rate limits and "
+"filter parameters."
+msgstr ""
+"Alapvető tűzfalbeállítások — engedélyezés/letiltás, tárolási backend, rate "
+"limit-ek és szűrőparaméterek."
 
 #: includes/Admin/Settings/TabGeneral.php:52
 msgid "Enable Firewall"
@@ -508,3 +512,6 @@ msgstr "Beállítások elmentve."
 #: includes/Admin/SettingsPage.php:139
 msgid "Save Changes"
 msgstr "Változtatások mentése"
+
+#~ msgid "Configure firewall protection for WooCommerce filter requests."
+#~ msgstr "Állítsd be a firewall védelmet a WooCommerce filter kérésekhez."

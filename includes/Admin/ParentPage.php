@@ -78,7 +78,7 @@ final class ParentPage {
 		return [
 			'lw-firewall' => [
 				'name'          => 'LW Firewall',
-				'description'   => 'WooCommerce filter rate limiter — blocks bots & rate-limits IPs.',
+				'description'   => 'Lightweight firewall — rate-limits endpoints, blocks bots, bans repeat offenders.',
 				'icon'          => 'dashicons-shield',
 				'icon_color'    => '#d63638',
 				'constant'      => 'LW_FIREWALL_VERSION',
