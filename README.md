@@ -192,12 +192,15 @@ LW Firewall is part of the [LW Plugins](https://github.com/lwplugins) family —
 | Plugin | Description |
 |--------|-------------|
 | [LW SEO](https://github.com/lwplugins/lw-seo) | Essential SEO features without the bloat |
-| [LW Disable](https://github.com/lwplugins/lw-disable) | Disable WordPress features like comments |
-| [LW Site Manager](https://github.com/lwplugins/lw-site-manager) | Site maintenance via AI/REST |
-| [LW Memberships](https://github.com/lwplugins/lw-memberships) | Lightweight membership system |
+| [LW Disable](https://github.com/lwplugins/lw-disable) | Disable WordPress features |
+| [LW Enable](https://github.com/lwplugins/lw-enable) | Enable WordPress features like SVG uploads |
 | [LW ZenAdmin](https://github.com/lwplugins/lw-zenadmin) | Clean up your admin — notices sidebar & widget manager |
-| [LW Cookie](https://github.com/lwplugins/lw-cookie) | GDPR-compliant cookie consent |
 | **LW Firewall** | Lightweight firewall — rate limiting, bot blocking, auto-ban |
+| [LW Cookie](https://github.com/lwplugins/lw-cookie) | GDPR-compliant cookie consent |
+| [LW LMS](https://github.com/lwplugins/lw-lms) | Lightweight LMS — courses, lessons, progress tracking |
+| [LW Translate](https://github.com/lwplugins/lw-translate) | Manage community translations from GitHub |
+| [LW Memberships](https://github.com/lwplugins/lw-memberships) | Lightweight membership system with WooCommerce |
+| [LW Site Manager](https://github.com/lwplugins/lw-site-manager) | Site maintenance via AI/REST using Abilities API |
 
 ## License
 
