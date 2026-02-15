@@ -50,11 +50,12 @@ final class RateLimiter {
 	/**
 	 * Check if a given counter key is within the rate limit.
 	 *
-	 * @param string $key Counter key.
+	 * @param string   $key   Counter key.
+	 * @param int|null $limit Optional custom rate limit (overrides global setting).
 	 * @return bool
 	 */
-	public function is_allowed_key( string $key ): bool {
-		$limit  = (int) Options::get( 'rate_limit', 30 );
+	public function is_allowed_key( string $key, ?int $limit = null ): bool {
+		$limit  = $limit ?? (int) Options::get( 'rate_limit', 30 );
 		$window = (int) Options::get( 'rate_window', 60 );
 		$count  = $this->storage->increment( $key, $window );
 

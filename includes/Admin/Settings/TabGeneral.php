@@ -136,7 +136,7 @@ final class TabGeneral implements TabInterface {
 						[
 							'name'        => 'filter_params',
 							'rows'        => 4,
-							'description' => __( 'URL parameter prefixes to monitor (one per line). Default: filter_, query_type_', 'lw-firewall' ),
+							'description' => __( 'URL parameter prefixes to monitor (one per line). Append |number for a custom rate limit (e.g. filter_|30). Default: filter_, query_type_', 'lw-firewall' ),
 						]
 					);
 					?>

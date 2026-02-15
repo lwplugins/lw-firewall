@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,8 +20,8 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 2. IP Blacklist — blacklisted IPs get 403 immediately
 3. Auto-Ban — previously banned IPs get 403
 4. 404 Flood — IPs with excessive 404s get 429
-5. Endpoint Detection — filter params, cron, xmlrpc, login, REST API
-6. Bot Blocking — User-Agent matching (filter requests only)
+5. Bot Blocking — User-Agent matching (all requests)
+6. Endpoint Detection — filter params, cron, xmlrpc, login, REST API
 7. Rate Limiting — per-IP counters with auto-ban escalation
 
 **Endpoint Protection:**
@@ -76,6 +76,12 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.1.6 =
+* Bot blocking now applies to all requests, not just filter URLs
+* Blocked bots (Baiduspider-render, meta-externalagent, etc.) no longer bypass protection on regular pages, admin-ajax, or REST API
+* Per-filter-param rate limit override (e.g. `filter_|30` limits filter requests to 30/window)
+* Custom limit uses the lowest value when multiple filter params match
 
 = 1.1.5 =
 * Minor fix

@@ -3,7 +3,7 @@
  * Plugin Name: LW Firewall
  * Plugin URI:  https://github.com/lwplugins/lw-firewall
  * Description: Lightweight firewall — rate-limits endpoints, blocks bots, bans repeat offenders, and adds security headers.
- * Version:     1.1.5
+ * Version:     1.1.6
  * Author:      LW Plugins
  * Author URI:  https://lwplugins.com
  * License:     GPL-2.0-or-later
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_VERSION', '1.1.5' );
+define( 'LW_FIREWALL_VERSION', '1.1.6' );
 define( 'LW_FIREWALL_FILE', __FILE__ );
 define( 'LW_FIREWALL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LW_FIREWALL_URL', plugin_dir_url( __FILE__ ) );
@@ -73,38 +73,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command( 'lw-firewall ip', LightweightPlugins\Firewall\CLI\IpCommand::class );
 }
 
+// Shared helpers (also used by MU-plugin worker).
+require_once LW_FIREWALL_PATH . 'includes/helpers.php';
+
 // Bootstrap on plugins_loaded.
 add_action( 'plugins_loaded', 'lw_firewall' );
-
-/**
- * Resolve the storage backend instance.
- *
- * Shared helper used by both the main plugin and the MU-plugin worker.
- *
- * @param string $preference Storage preference ('auto', 'apcu', 'redis', 'file').
- * @return LightweightPlugins\Firewall\Storage\StorageInterface
- */
-function lw_firewall_resolve_storage( string $preference ): LightweightPlugins\Firewall\Storage\StorageInterface {
-	if ( 'apcu' === $preference && LightweightPlugins\Firewall\Storage\ApcuStorage::is_available() ) {
-		return new LightweightPlugins\Firewall\Storage\ApcuStorage();
-	}
-
-	if ( 'redis' === $preference && LightweightPlugins\Firewall\Storage\RedisStorage::is_available() ) {
-		return new LightweightPlugins\Firewall\Storage\RedisStorage();
-	}
-
-	if ( 'file' === $preference ) {
-		return new LightweightPlugins\Firewall\Storage\FileStorage();
-	}
-
-	// Auto-detect: apcu > redis > file.
-	if ( LightweightPlugins\Firewall\Storage\ApcuStorage::is_available() ) {
-		return new LightweightPlugins\Firewall\Storage\ApcuStorage();
-	}
-
-	if ( LightweightPlugins\Firewall\Storage\RedisStorage::is_available() ) {
-		return new LightweightPlugins\Firewall\Storage\RedisStorage();
-	}
-
-	return new LightweightPlugins\Firewall\Storage\FileStorage();
-}

@@ -66,7 +66,7 @@ final class Options {
 				'dataforseobot',
 			],
 			'log_enabled'        => false,
-			'filter_params'      => [ 'filter_', 'query_type_' ],
+			'filter_params'      => [ 'filter_|30', 'query_type_|30' ],
 		];
 	}
 

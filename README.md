@@ -20,8 +20,8 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 2. **IP Blacklist** — blacklisted IPs get 403 immediately
 3. **Auto-Ban** — previously banned IPs get 403
 4. **404 Flood** — IPs with excessive 404s get 429
-5. **Endpoint Detection** — filter params, cron, xmlrpc, login, REST API
-6. **Bot Blocking** — User-Agent matching (filter requests only)
+5. **Bot Blocking** — User-Agent matching (all requests)
+6. **Endpoint Detection** — filter params, cron, xmlrpc, login, REST API
 7. **Rate Limiting** — per-IP counters with auto-ban escalation
 
 ## Features
