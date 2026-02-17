@@ -3,7 +3,7 @@
  * Plugin Name: LW Firewall
  * Plugin URI:  https://github.com/lwplugins/lw-firewall
  * Description: Lightweight firewall — rate-limits endpoints, blocks bots, bans repeat offenders, and adds security headers.
- * Version:     1.1.6
+ * Version:     1.1.7
  * Author:      LW Plugins
  * Author URI:  https://lwplugins.com
  * License:     GPL-2.0-or-later
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_VERSION', '1.1.6' );
+define( 'LW_FIREWALL_VERSION', '1.1.7' );
 define( 'LW_FIREWALL_FILE', __FILE__ );
 define( 'LW_FIREWALL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LW_FIREWALL_URL', plugin_dir_url( __FILE__ ) );

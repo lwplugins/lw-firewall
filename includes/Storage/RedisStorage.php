@@ -107,8 +107,15 @@ final class RedisStorage implements StorageInterface {
 		try {
 			$redis = new \Redis();
 			$ok    = $redis->connect( '127.0.0.1', 6379, 0.5 );
+
+			if ( ! $ok ) {
+				return false;
+			}
+
+			// Verify we can actually run commands (fails if auth is required).
+			$redis->ping();
 			$redis->close();
-			return (bool) $ok;
+			return true;
 		} catch ( \Throwable $e ) {
 			return false;
 		}
