@@ -13,8 +13,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-// Remove plugin options.
-delete_option( 'lw_firewall' );
+// Remove log data only — keep settings for reinstall.
 delete_option( 'lw_firewall_log' );
 
 // Remove MU-plugin worker.

@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,11 +18,12 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 
 1. IP Whitelist — whitelisted IPs skip all checks
 2. IP Blacklist — blacklisted IPs get 403 immediately
-3. Auto-Ban — previously banned IPs get 403
-4. 404 Flood — IPs with excessive 404s get 429
-5. Bot Blocking — User-Agent matching (all requests)
-6. Endpoint Detection — filter params, cron, xmlrpc, login, REST API
-7. Rate Limiting — per-IP counters with auto-ban escalation
+3. Geo Blocking — block entire countries (Cloudflare header or CIDR lookup)
+4. Auto-Ban — previously banned IPs get 403
+5. 404 Flood — IPs with excessive 404s get 429
+6. Bot Blocking — User-Agent matching (all requests)
+7. Endpoint Detection — filter params, cron, xmlrpc, login, REST API
+8. Rate Limiting — per-IP counters with auto-ban escalation
 
 **Endpoint Protection:**
 
@@ -35,6 +36,7 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 
 **Features:**
 
+* Geo Blocking — block visitors by country (Cloudflare or CIDR fallback)
 * Bot blocking by User-Agent (20+ bad bots blocked by default)
 * IP whitelist and blacklist with CIDR range support
 * Auto-ban — escalating protection for repeat offenders
@@ -76,6 +78,14 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.1.8 =
+* Add Geo Blocking — block visitors by country code
+* Cloudflare CF-IPCountry header support (instant, zero-cost)
+* CIDR-based fallback for non-Cloudflare setups (weekly auto-update from ipdeny.com)
+* New Geo Blocking tab in admin settings
+* Configurable block action (403 Forbidden or redirect to homepage)
+* Manual CIDR list update button
 
 = 1.1.7 =
 * Fix Redis storage: skip Redis backend when authentication is required (prevents NOAUTH fatal error)

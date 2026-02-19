@@ -11,6 +11,7 @@ namespace LightweightPlugins\Firewall\Admin;
 
 use LightweightPlugins\Firewall\Admin\Settings\TabBots;
 use LightweightPlugins\Firewall\Admin\Settings\TabGeneral;
+use LightweightPlugins\Firewall\Admin\Settings\TabGeo;
 use LightweightPlugins\Firewall\Admin\Settings\TabInterface;
 use LightweightPlugins\Firewall\Admin\Settings\TabIpRules;
 use LightweightPlugins\Firewall\Admin\Settings\TabLogs;
@@ -44,6 +45,7 @@ final class SettingsPage {
 			new TabProtection(),
 			new TabBots(),
 			new TabIpRules(),
+			new TabGeo(),
 			new TabSecurity(),
 			new TabStatus(),
 			new TabLogs(),

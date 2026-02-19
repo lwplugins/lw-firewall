@@ -67,6 +67,9 @@ final class Options {
 			],
 			'log_enabled'        => false,
 			'filter_params'      => [ 'filter_|30', 'query_type_|30' ],
+			'geo_enabled'        => false,
+			'geo_action'         => '403', // '403' | 'redirect'.
+			'blocked_countries'  => [],
 		];
 	}
 

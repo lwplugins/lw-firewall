@@ -18,6 +18,8 @@ use LightweightPlugins\Firewall\Options;
  */
 final class SettingsSaver {
 
+	use InputParserTrait;
+
 	/**
 	 * Handle form submission.
 	 *
@@ -81,6 +83,7 @@ final class SettingsSaver {
 		$values['protect_404']      = ! empty( $post_data['protect_404'] );
 		$values['auto_ban_enabled'] = ! empty( $post_data['auto_ban_enabled'] );
 		$values['security_headers'] = ! empty( $post_data['security_headers'] );
+		$values['geo_enabled']      = ! empty( $post_data['geo_enabled'] );
 
 		$values['storage'] = isset( $post_data['storage'] )
 			? sanitize_key( $post_data['storage'] )
@@ -106,68 +109,21 @@ final class SettingsSaver {
 			? sanitize_key( $post_data['action'] )
 			: $current['action'];
 
-		$values['filter_params'] = self::parse_filter_params( $post_data );
-		$values['blocked_bots']  = self::parse_blocked_bots( $post_data );
-		$values['ip_whitelist']  = self::parse_lines( $post_data, 'ip_whitelist' );
-		$values['ip_blacklist']  = self::parse_lines( $post_data, 'ip_blacklist' );
+		$values['geo_action'] = isset( $post_data['geo_action'] )
+			? sanitize_key( $post_data['geo_action'] )
+			: $current['geo_action'];
+
+		$values['filter_params']     = self::parse_filter_params( $post_data );
+		$values['blocked_bots']      = self::parse_blocked_bots( $post_data );
+		$values['ip_whitelist']      = self::parse_lines( $post_data, 'ip_whitelist' );
+		$values['ip_blacklist']      = self::parse_lines( $post_data, 'ip_blacklist' );
+		$values['blocked_countries'] = self::parse_country_codes( $post_data );
 
 		Options::save( $values );
 	}
 
 	/**
-	 * Parse filter params from textarea input.
-	 *
-	 * @param array<string, mixed> $post_data Form data.
-	 * @return array<int, string>
-	 */
-	private static function parse_filter_params( array $post_data ): array {
-		if ( empty( $post_data['filter_params'] ) ) {
-			return [ 'filter_', 'query_type_' ];
-		}
-
-		$raw   = sanitize_textarea_field( (string) $post_data['filter_params'] );
-		$lines = array_filter( array_map( 'trim', explode( "\n", $raw ) ) );
-
-		return array_values( $lines );
-	}
-
-	/**
-	 * Parse blocked bots from textarea input.
-	 *
-	 * @param array<string, mixed> $post_data Form data.
-	 * @return array<int, string>
-	 */
-	private static function parse_blocked_bots( array $post_data ): array {
-		if ( ! isset( $post_data['blocked_bots'] ) ) {
-			return Options::get( 'blocked_bots' );
-		}
-
-		$raw   = sanitize_textarea_field( (string) $post_data['blocked_bots'] );
-		$lines = array_filter( array_map( 'trim', explode( "\n", $raw ) ) );
-
-		return array_values( $lines );
-	}
-
-	/**
-	 * Parse a textarea into an array of non-empty lines.
-	 *
-	 * @param array<string, mixed> $post_data Form data.
-	 * @param string               $key       Field key.
-	 * @return array<int, string>
-	 */
-	private static function parse_lines( array $post_data, string $key ): array {
-		if ( empty( $post_data[ $key ] ) ) {
-			return [];
-		}
-
-		$raw   = sanitize_textarea_field( (string) $post_data[ $key ] );
-		$lines = array_filter( array_map( 'trim', explode( "\n", $raw ) ) );
-
-		return array_values( $lines );
-	}
-
-	/**
-	 * Handle special actions (worker reinstall, clear log).
+	 * Handle special actions (worker reinstall, clear log, geo update).
 	 *
 	 * @return void
 	 */
@@ -180,6 +136,16 @@ final class SettingsSaver {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
 		if ( ! empty( $_POST['lw_firewall_clear_log'] ) ) {
 			Logger::clear();
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
+		if ( ! empty( $_POST['lw_firewall_geo_update'] ) ) {
+			$options   = Options::get_all();
+			$countries = (array) ( $options['blocked_countries'] ?? [] );
+
+			if ( ! empty( $countries ) ) {
+				\LightweightPlugins\Firewall\Geo\CidrUpdater::update( $countries );
+			}
 		}
 	}
 }

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall;
 
 use LightweightPlugins\Firewall\Admin\SettingsPage;
+use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
 
@@ -51,6 +52,15 @@ final class Plugin {
 			if ( ! empty( $options['security_headers'] ) ) {
 				add_action( 'send_headers', [ SecurityHeaders::class, 'send' ] );
 			}
+
+			// Geo blocking CIDR updater cron.
+			if ( ! empty( $options['geo_enabled'] ) ) {
+				add_action( CidrUpdater::CRON_HOOK, [ $this, 'update_geo_cidrs' ] );
+
+				if ( ! wp_next_scheduled( CidrUpdater::CRON_HOOK ) ) {
+					wp_schedule_event( time(), 'weekly', CidrUpdater::CRON_HOOK );
+				}
+			}
 		}
 	}
 
@@ -67,6 +77,19 @@ final class Plugin {
 		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
 		$tracker = new NotFoundTracker( $storage );
 		$tracker->record();
+	}
+
+	/**
+	 * Update CIDR lists for blocked countries (cron callback).
+	 *
+	 * @return void
+	 */
+	public function update_geo_cidrs(): void {
+		$countries = (array) Options::get( 'blocked_countries', [] );
+
+		if ( ! empty( $countries ) ) {
+			CidrUpdater::update( $countries );
+		}
 	}
 
 	/**
