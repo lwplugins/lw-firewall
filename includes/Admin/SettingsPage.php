@@ -12,6 +12,7 @@ namespace LightweightPlugins\Firewall\Admin;
 use LightweightPlugins\Firewall\Admin\Settings\TabBots;
 use LightweightPlugins\Firewall\Admin\Settings\TabGeneral;
 use LightweightPlugins\Firewall\Admin\Settings\TabGeo;
+use LightweightPlugins\Firewall\Admin\Settings\TabImportExport;
 use LightweightPlugins\Firewall\Admin\Settings\TabInterface;
 use LightweightPlugins\Firewall\Admin\Settings\TabIpRules;
 use LightweightPlugins\Firewall\Admin\Settings\TabLogs;
@@ -49,10 +50,12 @@ final class SettingsPage {
 			new TabSecurity(),
 			new TabStatus(),
 			new TabLogs(),
+			new TabImportExport(),
 		];
 
 		add_action( 'admin_menu', [ $this, 'add_menu_page' ] );
 		add_action( 'admin_init', [ SettingsSaver::class, 'maybe_save' ] );
+		add_action( 'admin_init', [ ImportExportHandler::class, 'maybe_handle' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 	}
 
@@ -130,7 +133,7 @@ final class SettingsPage {
 				</div>
 			<?php endif; ?>
 
-			<form method="post" action="">
+			<form method="post" action="" enctype="multipart/form-data">
 				<?php wp_nonce_field( 'lw_firewall_save', '_lw_firewall_nonce' ); ?>
 				<input type="hidden" name="lw_firewall_active_tab" value="" />
 

@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.1.9
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,10 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.2.0 =
+* Add Import/Export settings tab — export all firewall settings as JSON, import on another site
+* JSON validation: only known setting keys are accepted, missing keys filled with defaults
 
 = 1.1.9 =
 * Add .htaccess CF-IPCountry rewrite — Apache-level geo blocking before PHP loads
