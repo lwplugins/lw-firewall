@@ -36,7 +36,8 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 
 **Features:**
 
-* Geo Blocking — block visitors by country (Cloudflare or CIDR fallback)
+* Geo Blocking — block visitors by country (Cloudflare or CIDR fallback), enabled by default for CN, RU, IN, VN, ID, BD
+* Apache-level geo blocking via .htaccess — blocks before PHP loads
 * Bot blocking by User-Agent (20+ bad bots blocked by default)
 * IP whitelist and blacklist with CIDR range support
 * Auto-ban — escalating protection for repeat offenders
@@ -44,10 +45,15 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 * Cloudflare-aware IP detection (CF-Connecting-IP)
 * Multiple storage backends: APCu, Redis, file-based fallback
 * MU-plugin worker for early request interception
-* Tabbed admin settings page under LW Plugins menu
+* Import/Export — transfer firewall settings between sites via JSON
+* Tabbed admin settings page under LW Plugins menu (9 tabs)
 * Optional request logging with viewer
 * Full WP-CLI support
 * wp-config.php constant overrides
+
+== Screenshots ==
+
+1. General Settings — configure firewall, storage backend, rate limits and filter parameters
 
 == Installation ==
 
