@@ -98,6 +98,12 @@ final class FirewallCommand {
 				'value'   => count( (array) ( $options['ip_blacklist'] ?? [] ) ) . ' entries',
 			],
 			[
+				'setting' => 'Geo blocking',
+				'value'   => ! empty( $options['geo_enabled'] )
+					? 'On (' . count( (array) ( $options['blocked_countries'] ?? [] ) ) . ' countries)'
+					: 'Off',
+			],
+			[
 				'setting' => 'Logging',
 				'value'   => ! empty( $options['log_enabled'] ) ? 'On' : 'Off',
 			],

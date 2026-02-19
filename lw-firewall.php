@@ -71,6 +71,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command( 'lw-firewall logs', LightweightPlugins\Firewall\CLI\LogsCommand::class );
 	WP_CLI::add_command( 'lw-firewall worker', LightweightPlugins\Firewall\CLI\WorkerCommand::class );
 	WP_CLI::add_command( 'lw-firewall ip', LightweightPlugins\Firewall\CLI\IpCommand::class );
+	WP_CLI::add_command( 'lw-firewall geo', LightweightPlugins\Firewall\CLI\GeoCommand::class );
 }
 
 // Shared helpers (also used by MU-plugin worker).

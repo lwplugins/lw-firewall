@@ -18,11 +18,12 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 
 1. **IP Whitelist** — whitelisted IPs skip all checks
 2. **IP Blacklist** — blacklisted IPs get 403 immediately
-3. **Auto-Ban** — previously banned IPs get 403
-4. **404 Flood** — IPs with excessive 404s get 429
-5. **Bot Blocking** — User-Agent matching (all requests)
-6. **Endpoint Detection** — filter params, cron, xmlrpc, login, REST API
-7. **Rate Limiting** — per-IP counters with auto-ban escalation
+3. **Geo Blocking** — block entire countries (Cloudflare header or CIDR lookup)
+4. **Auto-Ban** — previously banned IPs get 403
+5. **404 Flood** — IPs with excessive 404s get 429
+6. **Bot Blocking** — User-Agent matching (all requests)
+7. **Endpoint Detection** — filter params, cron, xmlrpc, login, REST API
+8. **Rate Limiting** — per-IP counters with auto-ban escalation
 
 ## Features
 
@@ -49,6 +50,15 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 - Supports individual IPs and CIDR ranges (e.g. `192.168.1.0/24`)
 - Whitelisted IPs bypass all firewall checks
 - Blacklisted IPs are always blocked with 403
+
+### Geo Blocking
+
+- Block visitors from specific countries by ISO 3166-1 alpha-2 code (e.g. CN, RU, IN)
+- **Cloudflare** — uses `CF-IPCountry` header (instant, zero-cost)
+- **Without Cloudflare** — CIDR-based lookup from local cache (weekly auto-update from ipdeny.com)
+- Fail-open: if no cache exists and no CF header is present, the request is not blocked
+- Configurable action: 403 Forbidden or redirect to homepage
+- Manual CIDR cache update via admin UI or WP-CLI
 
 ### Auto-Ban
 
@@ -119,6 +129,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | **Protection** | Endpoint toggles (cron, xmlrpc, login, REST API, 404) and auto-ban settings |
 | **Bots** | Manage blocked bot User-Agent patterns |
 | **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges) |
+| **Geo Blocking** | Country-based blocking with Cloudflare or CIDR fallback |
 | **Security** | HTTP security headers toggle |
 | **Status** | MU-plugin worker status, worker version, active storage backend, reinstall worker |
 | **Logs** | Enable logging, view blocked requests, clear log |
@@ -149,6 +160,12 @@ wp lw-firewall ip add whitelist 192.168.1.100
 wp lw-firewall ip add blacklist 10.0.0.0/8
 wp lw-firewall ip remove whitelist 192.168.1.100
 
+# Geo blocking
+wp lw-firewall geo list
+wp lw-firewall geo add CN
+wp lw-firewall geo remove CN
+wp lw-firewall geo update
+
 # Log management
 wp lw-firewall logs list --limit=50
 wp lw-firewall logs clear --yes
@@ -178,6 +195,7 @@ define( 'LW_FIREWALL_AUTO_BAN_THRESHOLD', 3 );
 define( 'LW_FIREWALL_AUTO_BAN_DURATION', 3600 );     // seconds
 define( 'LW_FIREWALL_SECURITY_HEADERS', true );
 define( 'LW_FIREWALL_LOG_ENABLED', false );
+define( 'LW_FIREWALL_GEO_ENABLED', true );
 ```
 
 ## Requirements
