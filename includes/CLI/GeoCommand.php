@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\CLI;
 
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
+use LightweightPlugins\Firewall\Geo\HtaccessWriter;
 use LightweightPlugins\Firewall\Options;
 use WP_CLI;
 use WP_CLI\Utils;
@@ -109,6 +110,7 @@ final class GeoCommand {
 		$current['geo_enabled']       = true;
 
 		if ( Options::save( $current ) ) {
+			HtaccessWriter::sync();
 			WP_CLI::success( "Added '{$cc}' to blocked countries. Geo blocking enabled." );
 		} else {
 			WP_CLI::error( 'Failed to update blocked countries.' );
@@ -143,6 +145,7 @@ final class GeoCommand {
 		$current['blocked_countries'] = $filtered;
 
 		if ( Options::save( $current ) ) {
+			HtaccessWriter::sync();
 			WP_CLI::success( "Removed '{$cc}' from blocked countries." );
 		} else {
 			WP_CLI::error( 'Failed to update blocked countries.' );

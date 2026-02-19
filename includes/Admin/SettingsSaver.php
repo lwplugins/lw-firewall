@@ -120,6 +120,8 @@ final class SettingsSaver {
 		$values['blocked_countries'] = self::parse_country_codes( $post_data );
 
 		Options::save( $values );
+
+		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
 	}
 
 	/**

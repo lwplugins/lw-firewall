@@ -39,6 +39,7 @@ final class Activator {
 	 */
 	public static function deactivate(): void {
 		self::remove_worker();
+		Geo\HtaccessWriter::remove();
 	}
 
 	/**
