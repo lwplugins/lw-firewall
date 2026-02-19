@@ -30,6 +30,8 @@ final class Activator {
 		if ( false === get_option( Options::OPTION_NAME ) ) {
 			add_option( Options::OPTION_NAME, Options::get_defaults() );
 		}
+
+		Geo\HtaccessWriter::sync();
 	}
 
 	/**
