@@ -133,6 +133,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | **Security** | HTTP security headers toggle |
 | **Status** | MU-plugin worker status, worker version, active storage backend, reinstall worker |
 | **Logs** | Enable logging, view blocked requests, clear log |
+| **Import / Export** | Export settings as JSON, import on another site |
 
 ## WP-CLI Commands
 
