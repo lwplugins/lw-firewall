@@ -13,6 +13,7 @@ use LightweightPlugins\Firewall\Admin\SettingsPage;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
+use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
 
 /**
  * Main plugin class.
@@ -25,6 +26,7 @@ final class Plugin {
 	public function __construct() {
 		$this->init_hooks();
 		$this->init_admin();
+		$this->init_site_manager();
 	}
 
 	/**
@@ -101,6 +103,15 @@ final class Plugin {
 		if ( is_admin() ) {
 			new SettingsPage();
 		}
+	}
+
+	/**
+	 * Initialize LW Site Manager integration.
+	 *
+	 * @return void
+	 */
+	private function init_site_manager(): void {
+		SiteManagerIntegration::init();
 	}
 
 	/**
