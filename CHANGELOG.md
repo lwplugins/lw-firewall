@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.3] - 2026-03-23
+
+### Fixed
+- Worker version synced to match plugin version (was stuck at 1.1.9)
+- Admin notice when MU-plugin worker installation fails (instead of silent failure)
+
 ## [1.2.2] - 2026-03-22
 
 ### Added

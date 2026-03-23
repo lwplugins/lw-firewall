@@ -39,7 +39,9 @@ final class Plugin {
 
 		// Auto-update worker when version mismatch.
 		if ( Activator::is_worker_outdated() ) {
-			Activator::install_worker();
+			if ( ! Activator::install_worker() ) {
+				add_action( 'admin_notices', [ $this, 'worker_install_notice' ] );
+			}
 		}
 
 		$options = Options::get_all();
@@ -112,6 +114,29 @@ final class Plugin {
 	 */
 	private function init_site_manager(): void {
 		SiteManagerIntegration::init();
+	}
+
+	/**
+	 * Show admin notice when worker installation fails.
+	 *
+	 * @return void
+	 */
+	public function worker_install_notice(): void {
+		$mu_dir = WPMU_PLUGIN_DIR;
+		?>
+		<div class="notice notice-error">
+			<p>
+				<strong>LW Firewall:</strong>
+				<?php
+				printf(
+					/* translators: %s: mu-plugins directory path */
+					esc_html__( 'Could not install the MU-plugin worker. Please ensure %s is writable.', 'lw-firewall' ),
+					'<code>' . esc_html( $mu_dir ) . '</code>'
+				);
+				?>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**
