@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.4] - 2026-04-26
+
+### Added
+- `LW_FIREWALL_DISABLE_WORKER` wp-config constant — emergency kill switch for the MU-plugin worker
+- Worker auto-reinstall on `upgrader_process_complete` to close the post-update race condition
+- Status tab now shows mu-plugins directory writability and the last install attempt result
+- Activator records the outcome of every install attempt (writable check, copy result) in a transient
+
+### Changed
+- If the MU-plugin worker is missing or its version does not match the plugin, runtime protection is disabled and a detailed admin notice is shown until the worker is restored — fail loud, not half-on
+- WorkerNotice replaces the previous single-line install notice with actionable diagnostics
+
+### Fixed
+- Worker is now wrapped in a top-level try/catch and verifies every required class file before running — prevents fatal errors when plugin files are partially missing
+- Worker refuses to run when its version drifts from the main plugin (prevents fatals during plugin updates when old worker meets new classes)
+- Worker bails silently on PHP < 8.1 instead of throwing a fatal
+
 ## [1.2.3] - 2026-03-23
 
 ### Fixed

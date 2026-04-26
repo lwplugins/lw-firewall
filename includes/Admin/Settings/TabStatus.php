@@ -47,6 +47,8 @@ final class TabStatus implements TabInterface {
 		$worker_version   = defined( 'LW_FIREWALL_WORKER_VERSION' ) ? LW_FIREWALL_WORKER_VERSION : '—';
 		$plugin_version   = LW_FIREWALL_VERSION;
 		$version_match    = $worker_version === $plugin_version;
+		$mu_writable      = Activator::is_mu_dir_writable();
+		$last_attempt     = Activator::get_last_attempt();
 		$storage_pref     = (string) Options::get( 'storage', 'auto' );
 		$active_storage   = StorageDetector::detect( $storage_pref );
 
@@ -91,6 +93,51 @@ final class TabStatus implements TabInterface {
 					<?php endif; ?>
 				</td>
 			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'mu-plugins writable', 'lw-firewall' ); ?></th>
+				<td>
+					<?php if ( $mu_writable ) : ?>
+						<span style="color: #00a32a; font-weight: 600;">&#10003; <?php esc_html_e( 'Yes', 'lw-firewall' ); ?></span>
+					<?php else : ?>
+						<span style="color: #d63638; font-weight: 600;">
+							&#10007;
+							<?php
+							printf(
+								/* translators: %s: mu-plugins directory path */
+								esc_html__( 'No — make %s writable by the web server.', 'lw-firewall' ),
+								'<code>' . esc_html( WPMU_PLUGIN_DIR ) . '</code>'
+							);
+							?>
+						</span>
+					<?php endif; ?>
+				</td>
+			</tr>
+			<?php if ( null !== $last_attempt ) : ?>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Last install attempt', 'lw-firewall' ); ?></th>
+					<td>
+						<?php if ( $last_attempt['success'] ) : ?>
+							<span style="color: #00a32a; font-weight: 600;">&#10003; <?php esc_html_e( 'Succeeded', 'lw-firewall' ); ?></span>
+						<?php else : ?>
+							<span style="color: #d63638; font-weight: 600;">
+								&#10007;
+								<?php echo esc_html( $last_attempt['error'] ); ?>
+							</span>
+						<?php endif; ?>
+						<span style="color: #666;">
+							(
+							<?php
+							printf(
+								/* translators: %s: human-readable time difference */
+								esc_html__( '%s ago', 'lw-firewall' ),
+								esc_html( human_time_diff( (int) $last_attempt['time'] ) )
+							);
+							?>
+							)
+						</span>
+					</td>
+				</tr>
+			<?php endif; ?>
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Active Storage', 'lw-firewall' ); ?></th>
 				<td>

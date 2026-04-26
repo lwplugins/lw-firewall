@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall;
 
 use LightweightPlugins\Firewall\Admin\SettingsPage;
+use LightweightPlugins\Firewall\Admin\WorkerNotice;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
@@ -24,46 +25,65 @@ final class Plugin {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->init_hooks();
+		$this->bootstrap_worker();
 		$this->init_admin();
 		$this->init_site_manager();
 	}
 
 	/**
-	 * Initialize hooks.
+	 * Bootstrap the MU-plugin worker, then either start the runtime or halt.
+	 *
+	 * If the worker file is missing or out of date we self-heal once. If the
+	 * heal fails the plugin refuses to register its runtime hooks and shows
+	 * an admin notice — better to be visibly broken than silently half-on.
 	 *
 	 * @return void
 	 */
-	private function init_hooks(): void {
+	private function bootstrap_worker(): void {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
+		add_action( 'upgrader_process_complete', [ $this, 'reinstall_after_upgrade' ], 10, 2 );
 
-		// Auto-update worker when version mismatch.
 		if ( Activator::is_worker_outdated() ) {
-			if ( ! Activator::install_worker() ) {
-				add_action( 'admin_notices', [ $this, 'worker_install_notice' ] );
-			}
+			Activator::install_worker();
 		}
 
+		if ( Activator::is_worker_outdated() ) {
+			add_action( 'admin_notices', [ WorkerNotice::class, 'render' ] );
+			add_action( 'network_admin_notices', [ WorkerNotice::class, 'render' ] );
+			return;
+		}
+
+		$this->init_runtime_hooks();
+	}
+
+	/**
+	 * Initialize hooks that depend on a healthy worker.
+	 *
+	 * @return void
+	 */
+	private function init_runtime_hooks(): void {
 		$options = Options::get_all();
 
-		if ( ! empty( $options['enabled'] ) ) {
-			// 404 flood tracking.
-			if ( ! empty( $options['protect_404'] ) ) {
-				add_action( 'template_redirect', [ $this, 'track_404' ] );
-			}
+		if ( empty( $options['enabled'] ) ) {
+			return;
+		}
 
-			// Security headers.
-			if ( ! empty( $options['security_headers'] ) ) {
-				add_action( 'send_headers', [ SecurityHeaders::class, 'send' ] );
-			}
+		// 404 flood tracking.
+		if ( ! empty( $options['protect_404'] ) ) {
+			add_action( 'template_redirect', [ $this, 'track_404' ] );
+		}
 
-			// Geo blocking CIDR updater cron.
-			if ( ! empty( $options['geo_enabled'] ) ) {
-				add_action( CidrUpdater::CRON_HOOK, [ $this, 'update_geo_cidrs' ] );
+		// Security headers.
+		if ( ! empty( $options['security_headers'] ) ) {
+			add_action( 'send_headers', [ SecurityHeaders::class, 'send' ] );
+		}
 
-				if ( ! wp_next_scheduled( CidrUpdater::CRON_HOOK ) ) {
-					wp_schedule_event( time(), 'weekly', CidrUpdater::CRON_HOOK );
-				}
+		// Geo blocking CIDR updater cron.
+		if ( ! empty( $options['geo_enabled'] ) ) {
+			add_action( CidrUpdater::CRON_HOOK, [ $this, 'update_geo_cidrs' ] );
+
+			if ( ! wp_next_scheduled( CidrUpdater::CRON_HOOK ) ) {
+				wp_schedule_event( time(), 'weekly', CidrUpdater::CRON_HOOK );
 			}
 		}
 	}
@@ -97,6 +117,41 @@ final class Plugin {
 	}
 
 	/**
+	 * Reinstall the worker right after a plugin self-update.
+	 *
+	 * Without this, the old worker keeps running against new class files
+	 * until the next page load triggers init_hooks reinstall — too late if
+	 * the API surface changed in the same release.
+	 *
+	 * @param mixed                $upgrader   Upgrader instance (unused).
+	 * @param array<string, mixed> $hook_extra Hook context.
+	 * @return void
+	 */
+	public function reinstall_after_upgrade( $upgrader, array $hook_extra ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		if ( ( $hook_extra['type'] ?? '' ) !== 'plugin' ) {
+			return;
+		}
+
+		$plugins = (array) ( $hook_extra['plugins'] ?? [] );
+
+		// Bail unless this update touched lw-firewall (or context is unknown).
+		if ( ! empty( $plugins ) ) {
+			$matched = false;
+			foreach ( $plugins as $plugin_file ) {
+				if ( str_contains( (string) $plugin_file, 'lw-firewall' ) ) {
+					$matched = true;
+					break;
+				}
+			}
+			if ( ! $matched ) {
+				return;
+			}
+		}
+
+		Activator::install_worker();
+	}
+
+	/**
 	 * Initialize admin components.
 	 *
 	 * @return void
@@ -114,29 +169,6 @@ final class Plugin {
 	 */
 	private function init_site_manager(): void {
 		SiteManagerIntegration::init();
-	}
-
-	/**
-	 * Show admin notice when worker installation fails.
-	 *
-	 * @return void
-	 */
-	public function worker_install_notice(): void {
-		$mu_dir = WPMU_PLUGIN_DIR;
-		?>
-		<div class="notice notice-error">
-			<p>
-				<strong>LW Firewall:</strong>
-				<?php
-				printf(
-					/* translators: %s: mu-plugins directory path */
-					esc_html__( 'Could not install the MU-plugin worker. Please ensure %s is writable.', 'lw-firewall' ),
-					'<code>' . esc_html( $mu_dir ) . '</code>'
-				);
-				?>
-			</p>
-		</div>
-		<?php
 	}
 
 	/**

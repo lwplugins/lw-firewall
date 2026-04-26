@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,14 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.2.4 =
+* Fix: Worker is now bulletproof — wraps all logic in try/catch, checks every required class file before running, and refuses to run if its version drifts from the main plugin (prevents fatals during plugin updates)
+* New: If the MU-plugin worker is missing or stale, runtime protection is disabled and a detailed admin notice is shown until the worker is restored
+* New: `LW_FIREWALL_DISABLE_WORKER` wp-config constant — emergency kill switch
+* New: Worker auto-reinstall on `upgrader_process_complete` — closes the post-update race
+* New: Status tab shows mu-plugins writability and last install attempt result
+* New: Activator records last install attempt outcome (writable check, copy result) for diagnostics
 
 = 1.2.3 =
 * Fix: Worker version synced to match plugin version
