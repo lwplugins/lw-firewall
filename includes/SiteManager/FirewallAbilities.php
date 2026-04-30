@@ -80,6 +80,7 @@ final class FirewallAbilities {
 				'permission_callback' => $permissions->callback( 'can_manage_options' ),
 				'input_schema'        => [
 					'type'       => 'object',
+					'default'    => [],
 					'properties' => [
 						'limit' => [
 							'type'        => 'integer',

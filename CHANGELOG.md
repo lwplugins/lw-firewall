@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.6] - 2026-04-30
+
+### Changed
+- Added missing `'default' => []` to top-level `input_schema` of `lw-firewall/get-log` so it can be invoked without arguments via the Abilities API
+
 ## [1.2.5] - 2026-04-30
 
 ### Added

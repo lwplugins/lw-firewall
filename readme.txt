@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,9 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.2.6 =
+* Change: Added missing `'default' => []` to top-level input_schema of `lw-firewall/get-log` so it can be invoked without arguments
 
 = 1.2.5 =
 * New: WP-CLI now handles list-typed options properly. `wp lw-firewall config set filter_params "filter_|30,add-to-cart|10"` accepts comma- or newline-separated entries; `--format=json` and `--format=yaml` preserve types instead of stringifying everything
