@@ -56,7 +56,7 @@ final class TabBots implements TabInterface {
 						[
 							'name'        => 'blocked_bots',
 							'rows'        => 12,
-							'description' => __( 'Requests matching these strings are immediately blocked with 403.', 'lw-firewall' ),
+							'description' => __( 'User-Agent substrings (case-insensitive, one per line). Any request whose User-Agent contains one of these is blocked with 403.', 'lw-firewall' ),
 						]
 					);
 					?>

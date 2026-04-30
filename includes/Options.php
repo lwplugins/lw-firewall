@@ -21,6 +21,22 @@ final class Options {
 	public const OPTION_NAME = 'lw_firewall';
 
 	/**
+	 * Option keys whose stored value must be an array. These get coerced on
+	 * read so any historical bad data (e.g. textarea content saved as a
+	 * single string with newlines) still produces a usable list — the
+	 * worker, admin, and CLI all see arrays.
+	 *
+	 * @var array<int, string>
+	 */
+	private const LIST_KEYS = [
+		'filter_params',
+		'blocked_bots',
+		'ip_whitelist',
+		'ip_blacklist',
+		'blocked_countries',
+	];
+
+	/**
 	 * Default settings.
 	 *
 	 * @return array<string, mixed>
@@ -104,7 +120,39 @@ final class Options {
 			$saved = [];
 		}
 
-		return array_merge( self::get_defaults(), $saved );
+		$merged = array_merge( self::get_defaults(), $saved );
+
+		foreach ( self::LIST_KEYS as $list_key ) {
+			if ( isset( $merged[ $list_key ] ) && ! is_array( $merged[ $list_key ] ) ) {
+				$merged[ $list_key ] = self::normalize_list( $merged[ $list_key ] );
+			}
+		}
+
+		return $merged;
+	}
+
+	/**
+	 * Coerce a non-array list value (typically a string with newlines or
+	 * commas) into a clean array of trimmed entries.
+	 *
+	 * @param mixed $value Stored value.
+	 * @return array<int, string>
+	 */
+	private static function normalize_list( mixed $value ): array {
+		if ( ! is_string( $value ) ) {
+			return [];
+		}
+
+		$parts = preg_split( '/[\r\n,]+/', $value );
+
+		if ( false === $parts ) {
+			return [];
+		}
+
+		$parts = array_map( 'trim', $parts );
+		$parts = array_filter( $parts, static fn ( string $p ): bool => '' !== $p );
+
+		return array_values( $parts );
 	}
 
 	/**
@@ -114,17 +162,11 @@ final class Options {
 	 * @return bool
 	 */
 	public static function save( array $values ): bool {
-		$current  = self::get_all();
-		$defaults = self::get_defaults();
-
-		// Only save keys that exist in defaults.
+		$current   = self::get_all();
 		$sanitized = [];
-		foreach ( $defaults as $key => $default_value ) {
-			if ( array_key_exists( $key, $values ) ) {
-				$sanitized[ $key ] = $values[ $key ];
-			} else {
-				$sanitized[ $key ] = $current[ $key ];
-			}
+
+		foreach ( array_keys( self::get_defaults() ) as $key ) {
+			$sanitized[ $key ] = array_key_exists( $key, $values ) ? $values[ $key ] : $current[ $key ];
 		}
 
 		return update_option( self::OPTION_NAME, $sanitized );

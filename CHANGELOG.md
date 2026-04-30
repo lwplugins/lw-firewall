@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.5] - 2026-04-30
+
+### Added
+- WP-CLI: `config set` now coerces values to match the option's stored type. List-typed options (`filter_params`, `blocked_bots`, `ip_whitelist`, `ip_blacklist`, `blocked_countries`) accept comma- or newline-separated entries and are stored as arrays
+- WP-CLI: `config list --format=json` (and `yaml`) preserve the stored types instead of stringifying everything; the `table` view renders arrays as `[a, b, c]` so lists are visually distinct from strings
+- WP-CLI: `config get <key> [--format=var_export|json|yaml]` for inspecting a single setting with the type preserved
+- WP-CLI: new `config-items` subcommand with `add` / `remove` for incremental edits to list-typed options without rewriting the whole list
+
+### Fixed
+- Defensive normalisation: list-typed options accidentally saved as a single string with newlines or commas (via `wp option update`, manual SQL, or legacy data) are now coerced to arrays on read. Without this the worker would `(array)` the string into a single-element list and only honour the first entry, silently dropping the rest of the rate-limit prefixes
+- `Options::save()` no longer assigns the unused `$default_value` loop variable; iterates `array_keys()` instead
+- Filter Parameters help text wrongly listed the default as `filter_, query_type_` — the actual default has been `filter_|30, query_type_|30` since 1.2.0
+- Tightened admin descriptions for Enable Firewall (master switch, not just filter requests), Rate Limit (applies to all rate-checked endpoints), Rate Limit Action (302 redirect strips query params; 429 sends Retry-After), IP Whitelist/Blacklist (CIDR/IPv6 supported), and Blocked User-Agents (case-insensitive substring match)
+
+### Internal
+- ConfigCommand split into `ConfigCommand` (list/get/set/reset) + `ConfigItemsCommand` (add/remove) sharing a `ConfigOpsTrait`, keeping each class under the 200-line limit
+- New `ValueCaster` utility centralises raw-input → typed-value casting and value → display-string rendering for the CLI
+
 ## [1.2.4] - 2026-04-26
 
 ### Added

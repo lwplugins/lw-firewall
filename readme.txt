@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,13 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.2.5 =
+* New: WP-CLI now handles list-typed options properly. `wp lw-firewall config set filter_params "filter_|30,add-to-cart|10"` accepts comma- or newline-separated entries; `--format=json` and `--format=yaml` preserve types instead of stringifying everything
+* New: `wp lw-firewall config get <key>` for inspecting a single setting (returns the raw type with `--format=json|yaml`)
+* New: `wp lw-firewall config-items add|remove <key> <entry>` for incremental edits to filter_params, blocked_bots, ip_whitelist, ip_blacklist, blocked_countries
+* Fix: List-typed options accidentally saved as a single newline-separated string (e.g. via `wp option update` without `--format=json`) are now coerced to arrays on read, so the worker, admin UI, and CLI all see a proper list. Previously the worker would only honor the first entry
+* Fix: Filter Parameters help text said the default was `filter_, query_type_` — actually `filter_|30, query_type_|30`. The descriptions for Enable Firewall, Rate Limit, Rate Limit Action, IP Whitelist/Blacklist (CIDR support), and Blocked User-Agents (case-insensitive substring) were also tightened
 
 = 1.2.4 =
 * Fix: Worker is now bulletproof — wraps all logic in try/catch, checks every required class file before running, and refuses to run if its version drifts from the main plugin (prevents fatals during plugin updates)

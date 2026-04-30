@@ -56,7 +56,7 @@ final class TabGeneral implements TabInterface {
 						[
 							'name'        => 'enabled',
 							'label'       => __( 'Enable firewall protection', 'lw-firewall' ),
-							'description' => __( 'When enabled, filter requests are monitored for bots and rate-limited per IP.', 'lw-firewall' ),
+							'description' => __( 'Master switch — when off, the MU-plugin worker performs no checks (rate-limit, bot blocking, IP/geo blocking, auto-ban all skipped).', 'lw-firewall' ),
 						]
 					);
 					?>
@@ -90,7 +90,7 @@ final class TabGeneral implements TabInterface {
 							'name'        => 'rate_limit',
 							'min'         => 1,
 							'max'         => 9999,
-							'description' => __( 'Maximum number of filter requests per IP within the time window.', 'lw-firewall' ),
+							'description' => __( 'Maximum number of rate-limited requests per IP within the time window. Applies to filter parameters, login, REST, XML-RPC and any other protected endpoint.', 'lw-firewall' ),
 						]
 					);
 					?>
@@ -122,7 +122,7 @@ final class TabGeneral implements TabInterface {
 								'redirect' => __( '302 Redirect (strip filters)', 'lw-firewall' ),
 								'429'      => __( '429 Too Many Requests', 'lw-firewall' ),
 							],
-							'description' => __( 'Action to take when rate limit is exceeded.', 'lw-firewall' ),
+							'description' => __( 'Response when the rate limit is exceeded. 302 strips query parameters and redirects to the same path; 429 returns a Retry-After header.', 'lw-firewall' ),
 						]
 					);
 					?>
@@ -136,7 +136,7 @@ final class TabGeneral implements TabInterface {
 						[
 							'name'        => 'filter_params',
 							'rows'        => 4,
-							'description' => __( 'URL parameter prefixes to monitor (one per line). Append |number for a custom rate limit (e.g. filter_|30). Default: filter_, query_type_', 'lw-firewall' ),
+							'description' => __( 'URL parameter substrings to rate-limit, one per line. Append |N for a stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, query_type_|30.', 'lw-firewall' ),
 						]
 					);
 					?>

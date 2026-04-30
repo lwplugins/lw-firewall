@@ -56,7 +56,7 @@ final class TabIpRules implements TabInterface {
 						[
 							'name'        => 'ip_whitelist',
 							'rows'        => 6,
-							'description' => __( 'IPs that are never rate-limited or blocked (one per line).', 'lw-firewall' ),
+							'description' => __( 'IPs or CIDR ranges that bypass all firewall checks (one per line). Supports IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32).', 'lw-firewall' ),
 						]
 					);
 					?>
@@ -70,7 +70,7 @@ final class TabIpRules implements TabInterface {
 						[
 							'name'        => 'ip_blacklist',
 							'rows'        => 6,
-							'description' => __( 'IPs that are always blocked with 403 Forbidden (one per line).', 'lw-firewall' ),
+							'description' => __( 'IPs or CIDR ranges blocked with 403 Forbidden before any other check (one per line). Supports IPv4, IPv6, and CIDR notation.', 'lw-firewall' ),
 						]
 					);
 					?>
