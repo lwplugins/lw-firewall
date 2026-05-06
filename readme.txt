@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,10 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.2.7 =
+* Fix: MU-plugin worker is now bumped together with the main plugin. The worker's runtime version guard had silently disabled the firewall on sites where 1.2.6 shipped without a matching worker bump
+* Internal: Release workflow now fails the build when the main plugin and worker versions diverge, so this can never happen again
 
 = 1.2.6 =
 * Change: Added missing `'default' => []` to top-level input_schema of `lw-firewall/get-log` so it can be invoked without arguments

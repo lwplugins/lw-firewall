@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.7] - 2026-05-06
+
+### Fixed
+- MU-plugin worker (`worker/lw-firewall-worker.php`) now bumped in lockstep with the main plugin. The worker's runtime version guard silently disabled the firewall on sites that had a newer main plugin against an older worker; the missing bump in 1.2.6 left the firewall inactive after upgrade
+
+### Internal
+- Release workflow now fails the build when `LW_FIREWALL_VERSION`, `LW_FIREWALL_WORKER_VERSION`, and the worker's `@version` header drift apart, so a worker bump can never be skipped again
+
 ## [1.2.6] - 2026-04-30
 
 ### Changed

@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'lw-firewall.php'
+      - 'worker/lw-firewall-worker.php'
 
 jobs:
   release:
@@ -25,6 +26,35 @@ jobs:
           VERSION=$(grep -m1 "Version:" lw-firewall.php | sed 's/.*Version:[[:space:]]*//' | tr -d '[:space:]')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
+
+      - name: Verify worker version matches plugin version
+        env:
+          PLUGIN_VERSION: ${{ steps.get_version.outputs.version }}
+        run: |
+          WORKER_FILE="worker/lw-firewall-worker.php"
+          if [ ! -f "$WORKER_FILE" ]; then
+            echo "::error file=$WORKER_FILE::Worker file is missing"
+            exit 1
+          fi
+
+          WORKER_HEADER=$(grep -m1 "@version" "$WORKER_FILE" | sed 's/.*@version[[:space:]]*//' | tr -d '[:space:]')
+          WORKER_CONST=$(grep -m1 "LW_FIREWALL_WORKER_VERSION" "$WORKER_FILE" \
+            | sed -E "s/.*LW_FIREWALL_WORKER_VERSION'[^']*'([^']+)'.*/\1/")
+
+          echo "Plugin Version:  $PLUGIN_VERSION"
+          echo "Worker @version: $WORKER_HEADER"
+          echo "Worker constant: $WORKER_CONST"
+
+          FAIL=0
+          if [ "$WORKER_HEADER" != "$PLUGIN_VERSION" ]; then
+            echo "::error file=$WORKER_FILE::Worker @version ($WORKER_HEADER) does not match plugin Version ($PLUGIN_VERSION). The worker has a runtime version guard that silently disables the firewall on mismatch — bump worker/lw-firewall-worker.php in lockstep."
+            FAIL=1
+          fi
+          if [ "$WORKER_CONST" != "$PLUGIN_VERSION" ]; then
+            echo "::error file=$WORKER_FILE::LW_FIREWALL_WORKER_VERSION ($WORKER_CONST) does not match plugin Version ($PLUGIN_VERSION). Bump the constant alongside the @version header."
+            FAIL=1
+          fi
+          exit $FAIL
 
       - name: Check if tag exists
         id: check_tag
