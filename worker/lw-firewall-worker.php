@@ -16,7 +16,7 @@
  * wp-config.php to neutralize the worker completely.
  *
  * @package LightweightPlugins\Firewall
- * @version 1.2.7
+ * @version 1.3.0
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_WORKER_VERSION', '1.2.7' );
+define( 'LW_FIREWALL_WORKER_VERSION', '1.3.0' );
 
 // Emergency kill-switch — wp-config.php may neutralize the worker.
 if ( defined( 'LW_FIREWALL_DISABLE_WORKER' ) && LW_FIREWALL_DISABLE_WORKER ) {
@@ -148,8 +148,8 @@ if ( PHP_VERSION_ID < 80100 ) {
 
 					$storage = lw_firewall_resolve_storage( $options['storage'] ?? 'auto' );
 
-					// --- Auto-ban check ---
-					if ( ! empty( $options['auto_ban_enabled'] ) ) {
+					// --- Ban check (auto-ban escalation + brute-force login lockout) ---
+					if ( ! empty( $options['auto_ban_enabled'] ) || ! empty( $options['login_limit_enabled'] ) ) {
 						$banner = new \LightweightPlugins\Firewall\Rules\AutoBanner( $storage );
 
 						if ( $banner->is_banned( $ip ) ) {

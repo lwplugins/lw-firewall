@@ -74,16 +74,17 @@ final class SettingsSaver {
 		$current = Options::get_all();
 		$values  = [];
 
-		$values['enabled']          = ! empty( $post_data['enabled'] );
-		$values['log_enabled']      = ! empty( $post_data['log_enabled'] );
-		$values['protect_cron']     = ! empty( $post_data['protect_cron'] );
-		$values['protect_xmlrpc']   = ! empty( $post_data['protect_xmlrpc'] );
-		$values['protect_login']    = ! empty( $post_data['protect_login'] );
-		$values['protect_rest_api'] = ! empty( $post_data['protect_rest_api'] );
-		$values['protect_404']      = ! empty( $post_data['protect_404'] );
-		$values['auto_ban_enabled'] = ! empty( $post_data['auto_ban_enabled'] );
-		$values['security_headers'] = ! empty( $post_data['security_headers'] );
-		$values['geo_enabled']      = ! empty( $post_data['geo_enabled'] );
+		$values['enabled']             = ! empty( $post_data['enabled'] );
+		$values['log_enabled']         = ! empty( $post_data['log_enabled'] );
+		$values['protect_cron']        = ! empty( $post_data['protect_cron'] );
+		$values['protect_xmlrpc']      = ! empty( $post_data['protect_xmlrpc'] );
+		$values['protect_login']       = ! empty( $post_data['protect_login'] );
+		$values['protect_rest_api']    = ! empty( $post_data['protect_rest_api'] );
+		$values['protect_404']         = ! empty( $post_data['protect_404'] );
+		$values['auto_ban_enabled']    = ! empty( $post_data['auto_ban_enabled'] );
+		$values['login_limit_enabled'] = ! empty( $post_data['login_limit_enabled'] );
+		$values['security_headers']    = ! empty( $post_data['security_headers'] );
+		$values['geo_enabled']         = ! empty( $post_data['geo_enabled'] );
 
 		$values['storage'] = isset( $post_data['storage'] )
 			? sanitize_key( $post_data['storage'] )
@@ -104,6 +105,18 @@ final class SettingsSaver {
 		$values['auto_ban_duration'] = isset( $post_data['auto_ban_duration'] )
 			? absint( $post_data['auto_ban_duration'] )
 			: $current['auto_ban_duration'];
+
+		$values['login_max_attempts'] = isset( $post_data['login_max_attempts'] )
+			? absint( $post_data['login_max_attempts'] )
+			: $current['login_max_attempts'];
+
+		$values['login_lockout_window'] = isset( $post_data['login_lockout_window'] )
+			? absint( $post_data['login_lockout_window'] )
+			: $current['login_lockout_window'];
+
+		$values['login_lockout_duration'] = isset( $post_data['login_lockout_duration'] )
+			? absint( $post_data['login_lockout_duration'] )
+			: $current['login_lockout_duration'];
 
 		$values['action'] = isset( $post_data['action'] )
 			? sanitize_key( $post_data['action'] )

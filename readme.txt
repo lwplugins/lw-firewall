@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.2.7
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,10 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.3.0 =
+* New: Brute-Force Login Protection (fail2ban style). Counts failed login attempts per IP via wp_login_failed and bans the whole IP at the firewall once a configurable threshold is reached — the worker then blocks every request from it before WordPress loads
+* New: Three adjustable settings on the Protection tab — Failed Attempts (ban threshold), Detection Window, and Ban Duration. Whitelisted IPs are never counted
 
 = 1.2.7 =
 * Fix: MU-plugin worker is now bumped together with the main plugin. The worker's runtime version guard had silently disabled the firewall on sites where 1.2.6 shipped without a matching worker bump

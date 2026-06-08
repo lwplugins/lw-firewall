@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.0] - 2026-06-07
+
+### Added
+- Brute-Force Login Protection (fail2ban style). A new `LoginTracker` hooks `wp_login_failed` and counts failed login attempts per IP; once the configured threshold is reached within the detection window the IP is banned via the shared firewall ban store, so the MU-plugin worker blocks every request from it before WordPress loads
+- Three adjustable settings on the Protection tab: `login_max_attempts` (Failed Attempts), `login_lockout_window` (Detection Window), and `login_lockout_duration` (Ban Duration). Disabled by default; whitelisted IPs are never counted
+
 ## [1.2.7] - 2026-05-06
 
 ### Fixed

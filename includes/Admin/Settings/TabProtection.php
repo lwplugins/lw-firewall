@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Admin\Settings;
 
 /**
- * Protection tab: endpoint toggles and auto-ban settings.
+ * Protection tab: endpoint toggles, login protection and auto-ban settings.
  */
 final class TabProtection implements TabInterface {
 
@@ -41,122 +41,80 @@ final class TabProtection implements TabInterface {
 	 * Render the tab content.
 	 */
 	public function render(): void {
-		$this->render_endpoints();
-		$this->render_auto_ban();
+		$this->render_section(
+			__( 'Endpoint Protection', 'lw-firewall' ),
+			__( 'Enable rate limiting on specific WordPress endpoints.', 'lw-firewall' ),
+			ProtectionFields::endpoints()
+		);
+
+		$this->render_section(
+			__( 'Brute-Force Login Protection', 'lw-firewall' ),
+			__( 'Ban IPs that submit too many failed login attempts (fail2ban style). A banned IP is blocked from the whole site, not just wp-login.php.', 'lw-firewall' ),
+			ProtectionFields::login_protection()
+		);
+
+		$this->render_section(
+			__( 'Auto-Ban', 'lw-firewall' ),
+			__( 'Automatically ban IPs that repeatedly exceed rate limits.', 'lw-firewall' ),
+			ProtectionFields::auto_ban()
+		);
 	}
 
 	/**
-	 * Render endpoint protection toggles.
+	 * Render a settings section: heading, intro and a form-table of rows.
+	 *
+	 * @param string                              $heading Section heading.
+	 * @param string                              $intro   Section description.
+	 * @param array<string, array<string, mixed>> $rows    Field rows keyed by option name.
 	 */
-	private function render_endpoints(): void {
+	private function render_section( string $heading, string $intro, array $rows ): void {
 		?>
-		<h2><?php esc_html_e( 'Endpoint Protection', 'lw-firewall' ); ?></h2>
-		<p class="lw-firewall-section-description">
-			<?php esc_html_e( 'Enable rate limiting on specific WordPress endpoints.', 'lw-firewall' ); ?>
-		</p>
+		<h2><?php echo esc_html( $heading ); ?></h2>
+		<p class="lw-firewall-section-description"><?php echo esc_html( $intro ); ?></p>
 
 		<table class="form-table">
 			<?php
-			$endpoints = [
-				'protect_cron'     => [
-					'label' => __( 'Rate-limit wp-cron.php requests', 'lw-firewall' ),
-					'desc'  => __( 'Protects against DDoS attacks targeting wp-cron.php.', 'lw-firewall' ),
-				],
-				'protect_xmlrpc'   => [
-					'label' => __( 'Rate-limit xmlrpc.php requests', 'lw-firewall' ),
-					'desc'  => __( 'Protects against brute-force and DDoS via xmlrpc.php.', 'lw-firewall' ),
-				],
-				'protect_login'    => [
-					'label' => __( 'Rate-limit wp-login.php requests', 'lw-firewall' ),
-					'desc'  => __( 'Protects against brute-force login attempts.', 'lw-firewall' ),
-				],
-				'protect_rest_api' => [
-					'label' => __( 'Rate-limit REST API requests', 'lw-firewall' ),
-					'desc'  => __( 'Rate-limits /wp-json/ requests per IP.', 'lw-firewall' ),
-				],
-				'protect_404'      => [
-					'label' => __( 'Block 404 flood', 'lw-firewall' ),
-					'desc'  => __( 'Blocks IPs that generate excessive 404 errors (vulnerability scanning).', 'lw-firewall' ),
-				],
-			];
-
-			foreach ( $endpoints as $name => $config ) :
-				?>
-				<tr>
-					<th scope="row"><?php echo esc_html( $config['label'] ); ?></th>
-					<td>
-						<?php
-						$this->render_checkbox_field(
-							[
-								'name'        => $name,
-								'label'       => $config['label'],
-								'description' => $config['desc'],
-							]
-						);
-						?>
-					</td>
-				</tr>
-			<?php endforeach; ?>
+			foreach ( $rows as $name => $row ) {
+				$this->render_row( $name, $row );
+			}
+			?>
 		</table>
 		<?php
 	}
 
 	/**
-	 * Render auto-ban settings.
+	 * Render a single form-table row (checkbox by default, number when typed).
+	 *
+	 * @param string               $name Option name.
+	 * @param array<string, mixed> $row  Row config (th, label, desc, type, min, max).
 	 */
-	private function render_auto_ban(): void {
+	private function render_row( string $name, array $row ): void {
 		?>
-		<h2><?php esc_html_e( 'Auto-Ban', 'lw-firewall' ); ?></h2>
-		<p class="lw-firewall-section-description">
-			<?php esc_html_e( 'Automatically ban IPs that repeatedly exceed rate limits.', 'lw-firewall' ); ?>
-		</p>
-
-		<table class="form-table">
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Enable Auto-Ban', 'lw-firewall' ); ?></th>
-				<td>
-					<?php
+		<tr>
+			<th scope="row"><?php echo esc_html( (string) ( $row['th'] ?? $row['label'] ?? '' ) ); ?></th>
+			<td>
+				<?php
+				if ( 'number' === ( $row['type'] ?? '' ) ) {
+					$this->render_number_field(
+						[
+							'name'        => $name,
+							'min'         => (int) $row['min'],
+							'max'         => (int) $row['max'],
+							'description' => (string) $row['desc'],
+						]
+					);
+				} else {
 					$this->render_checkbox_field(
 						[
-							'name'        => 'auto_ban_enabled',
-							'label'       => __( 'Ban IPs after repeated violations', 'lw-firewall' ),
-							'description' => __( 'After the threshold is reached, the IP is banned for the configured duration.', 'lw-firewall' ),
+							'name'        => $name,
+							'label'       => (string) $row['label'],
+							'description' => (string) $row['desc'],
 						]
 					);
-					?>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Ban Threshold', 'lw-firewall' ); ?></th>
-				<td>
-					<?php
-					$this->render_number_field(
-						[
-							'name'        => 'auto_ban_threshold',
-							'min'         => 2,
-							'max'         => 100,
-							'description' => __( 'Number of rate-limit violations before an IP is banned.', 'lw-firewall' ),
-						]
-					);
-					?>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Ban Duration', 'lw-firewall' ); ?></th>
-				<td>
-					<?php
-					$this->render_number_field(
-						[
-							'name'        => 'auto_ban_duration',
-							'min'         => 60,
-							'max'         => 86400,
-							'description' => __( 'How long the ban lasts in seconds (3600 = 1 hour).', 'lw-firewall' ),
-						]
-					);
-					?>
-				</td>
-			</tr>
-		</table>
+				}
+				?>
+			</td>
+		</tr>
 		<?php
 	}
 }

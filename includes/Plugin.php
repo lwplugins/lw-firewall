@@ -12,6 +12,7 @@ namespace LightweightPlugins\Firewall;
 use LightweightPlugins\Firewall\Admin\SettingsPage;
 use LightweightPlugins\Firewall\Admin\WorkerNotice;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
+use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
 use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
@@ -73,6 +74,11 @@ final class Plugin {
 			add_action( 'template_redirect', [ $this, 'track_404' ] );
 		}
 
+		// Brute-force login protection.
+		if ( ! empty( $options['login_limit_enabled'] ) ) {
+			add_action( 'wp_login_failed', [ $this, 'track_failed_login' ] );
+		}
+
 		// Security headers.
 		if ( ! empty( $options['security_headers'] ) ) {
 			add_action( 'send_headers', [ SecurityHeaders::class, 'send' ] );
@@ -99,8 +105,16 @@ final class Plugin {
 		}
 
 		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
-		$tracker = new NotFoundTracker( $storage );
-		$tracker->record();
+		( new NotFoundTracker( $storage ) )->record();
+	}
+
+	/**
+	 * Record a failed login attempt for brute-force protection (hook callback).
+	 *
+	 * @return void
+	 */
+	public function track_failed_login(): void {
+		LoginTracker::handle();
 	}
 
 	/**

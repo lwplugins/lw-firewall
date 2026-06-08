@@ -60,8 +60,18 @@ final class AutoBanner {
 		$count = $this->storage->increment( $key, $duration );
 
 		if ( $count >= $threshold ) {
-			$this->storage->set( 'ban_' . $ip, 1, $duration );
+			$this->ban( $ip, $duration );
 		}
+	}
+
+	/**
+	 * Ban an IP for a given duration by writing the shared ban key.
+	 *
+	 * @param string $ip       Client IP.
+	 * @param int    $duration Ban length in seconds.
+	 */
+	public function ban( string $ip, int $duration ): void {
+		$this->storage->set( 'ban_' . $ip, 1, $duration );
 	}
 
 	/**
