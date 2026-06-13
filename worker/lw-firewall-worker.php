@@ -16,7 +16,7 @@
  * wp-config.php to neutralize the worker completely.
  *
  * @package LightweightPlugins\Firewall
- * @version 1.3.1
+ * @version 1.3.2
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_WORKER_VERSION', '1.3.1' );
+define( 'LW_FIREWALL_WORKER_VERSION', '1.3.2' );
 
 // Emergency kill-switch — wp-config.php may neutralize the worker.
 if ( defined( 'LW_FIREWALL_DISABLE_WORKER' ) && LW_FIREWALL_DISABLE_WORKER ) {

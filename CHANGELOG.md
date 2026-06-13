@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.2] - 2026-06-13
+
+### Changed
+- Registration spam protection now defaults to enabled on new installs. It still only runs when registration is open (`users_can_register`); existing sites keep their saved setting
+
 ## [1.3.1] - 2026-06-13
 
 ### Added

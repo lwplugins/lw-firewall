@@ -62,7 +62,7 @@ final class Options {
 			'login_max_attempts'       => 5,
 			'login_lockout_window'     => 600,
 			'login_lockout_duration'   => 3600,
-			'register_protect_enabled' => false,
+			'register_protect_enabled' => true,
 			'register_min_fill_time'   => 2,
 			'register_token_max_age'   => 3600,
 			'register_honeypot'        => true,
