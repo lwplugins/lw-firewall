@@ -8,6 +8,8 @@
     <!-- Exclude paths -->
     <exclude-pattern>/vendor/*</exclude-pattern>
     <exclude-pattern>/node_modules/*</exclude-pattern>
+    <!-- Standalone CLI test harness, not shipped plugin runtime code -->
+    <exclude-pattern>/tests/*</exclude-pattern>
 
     <!-- Show progress -->
     <arg value="ps"/>

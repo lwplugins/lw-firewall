@@ -14,6 +14,7 @@ use LightweightPlugins\Firewall\Admin\WorkerNotice;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
+use LightweightPlugins\Firewall\Rules\RegisterGuard;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
 use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
 
@@ -77,6 +78,12 @@ final class Plugin {
 		// Brute-force login protection.
 		if ( ! empty( $options['login_limit_enabled'] ) ) {
 			add_action( 'wp_login_failed', [ $this, 'track_failed_login' ] );
+		}
+
+		// Registration spam protection (default WP register form only).
+		if ( ! empty( $options['register_protect_enabled'] ) && get_option( 'users_can_register' ) ) {
+			add_action( 'register_form', [ RegisterGuard::class, 'render_fields' ] );
+			add_filter( 'registration_errors', [ RegisterGuard::class, 'validate' ], 10, 3 );
 		}
 
 		// Security headers.

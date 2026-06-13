@@ -18,6 +18,7 @@ use LightweightPlugins\Firewall\Admin\Settings\TabIpRules;
 use LightweightPlugins\Firewall\Admin\Settings\TabLogs;
 use LightweightPlugins\Firewall\Admin\Settings\TabProtection;
 use LightweightPlugins\Firewall\Admin\Settings\TabSecurity;
+use LightweightPlugins\Firewall\Admin\Settings\TabSpam;
 use LightweightPlugins\Firewall\Admin\Settings\TabStatus;
 
 /**
@@ -44,6 +45,7 @@ final class SettingsPage {
 		$this->tabs = [
 			new TabGeneral(),
 			new TabProtection(),
+			new TabSpam(),
 			new TabBots(),
 			new TabIpRules(),
 			new TabGeo(),

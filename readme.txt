@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,12 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.3.1 =
+* New: Registration spam protection — signed proof-of-render token + honeypot on wp-login.php?action=register, blocking bot sign-ups without a captcha
+* New: Spam settings tab with token timing, single-use enforcement, and per-IP auto-ban for repeated spam registrations
+* New: Complete Hungarian (hu_HU) translation — all admin, settings, Spam tab, worker notice, and Site Manager strings now translated
+* Update: Regenerated the translation template (lw-firewall.pot)
 
 = 1.3.0 =
 * New: Brute-Force Login Protection (fail2ban style). Counts failed login attempts per IP via wp_login_failed and bans the whole IP at the firewall once a configurable threshold is reached — the worker then blocks every request from it before WordPress loads

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.2.1\n"
+"Project-Id-Version: LW Firewall 1.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-19T07:22:46+00:00\n"
+"POT-Creation-Date: 2026-06-13T06:28:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lw-firewall\n"
@@ -58,6 +58,163 @@ msgstr ""
 msgid "Get Plugin"
 msgstr ""
 
+#: includes/Admin/Settings/ProtectionFields.php:30
+msgid "Rate-limit wp-cron.php requests"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:31
+msgid "Protects against DDoS attacks targeting wp-cron.php."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:34
+msgid "Rate-limit xmlrpc.php requests"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:35
+msgid "Protects against brute-force and DDoS via xmlrpc.php."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:38
+msgid "Rate-limit wp-login.php requests"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:39
+msgid "Rate-limits wp-login.php requests per IP."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:42
+msgid "Rate-limit REST API requests"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:43
+msgid "Rate-limits /wp-json/ requests per IP."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:46
+msgid "Block 404 flood"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:47
+msgid "Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:60
+msgid "Enable Login Protection"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:61
+msgid "Ban IPs after repeated failed logins"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:62
+msgid "Counts failed password attempts per IP via wp_login_failed."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:66
+msgid "Failed Attempts"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:69
+msgid "Number of failed login attempts before the IP is banned."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:73
+msgid "Detection Window"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:76
+msgid "Seconds within which failed attempts are counted (600 = 10 minutes)."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:80
+#: includes/Admin/Settings/ProtectionFields.php:109
+#: includes/Admin/Settings/SpamFields.php:77
+msgid "Ban Duration"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:83
+#: includes/Admin/Settings/ProtectionFields.php:112
+#: includes/Admin/Settings/SpamFields.php:80
+msgid "How long the ban lasts in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:96
+msgid "Enable Auto-Ban"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:97
+msgid "Ban IPs after repeated violations"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:98
+msgid "After the threshold is reached, the IP is banned for the configured duration."
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:102
+#: includes/Admin/Settings/SpamFields.php:70
+msgid "Ban Threshold"
+msgstr ""
+
+#: includes/Admin/Settings/ProtectionFields.php:105
+msgid "Number of rate-limit violations before an IP is banned."
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:30
+msgid "Enable Registration Protection"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:31
+msgid "Block bot registrations on wp-login.php?action=register"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:32
+msgid "Adds a signed proof-of-render token and honeypot to the registration form. Only active when \"Anyone can register\" is enabled."
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:35
+msgid "Honeypot"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:36
+msgid "Add a hidden honeypot field"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:37
+msgid "Catches generic bots that fill every field. Invisible to real users."
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:40
+msgid "Single-Use Token"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:41
+msgid "Reject reused tokens"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:42
+msgid "Stores used tokens in the firewall storage backend so each rendered form can register only once."
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:46
+msgid "Minimum Fill Time"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:49
+msgid "Reject submissions faster than this many seconds after the form loaded (catches instant bot POSTs)."
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:53
+msgid "Token Lifetime"
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:56
+msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: includes/Admin/Settings/SpamFields.php:73
+msgid "Number of rejected registrations from one IP before it is banned."
+msgstr ""
+
 #: includes/Admin/Settings/TabBots.php:30
 #: includes/Admin/Settings/TabBots.php:45
 msgid "Blocked Bots"
@@ -72,7 +229,7 @@ msgid "Blocked User-Agents"
 msgstr ""
 
 #: includes/Admin/Settings/TabBots.php:59
-msgid "Requests matching these strings are immediately blocked with 403."
+msgid "User-Agent substrings (case-insensitive, one per line). Any request whose User-Agent contains one of these is blocked with 403."
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:30
@@ -96,7 +253,7 @@ msgid "Enable firewall protection"
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:59
-msgid "When enabled, filter requests are monitored for bots and rate-limited per IP."
+msgid "Master switch — when off, the MU-plugin worker performs no checks (rate-limit, bot blocking, IP/geo blocking, auto-ban all skipped)."
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:66
@@ -120,7 +277,7 @@ msgid "Rate Limit"
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:93
-msgid "Maximum number of filter requests per IP within the time window."
+msgid "Maximum number of rate-limited requests per IP within the time window. Applies to filter parameters, login, REST, XML-RPC and any other protected endpoint."
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:100
@@ -144,7 +301,7 @@ msgid "429 Too Many Requests"
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:125
-msgid "Action to take when rate limit is exceeded."
+msgid "Response when the rate limit is exceeded. 302 strips query parameters and redirects to the same path; 429 returns a Retry-After header."
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:132
@@ -152,7 +309,7 @@ msgid "Filter Parameters"
 msgstr ""
 
 #: includes/Admin/Settings/TabGeneral.php:139
-msgid "URL parameter prefixes to monitor (one per line). Append |number for a custom rate limit (e.g. filter_|30). Default: filter_, query_type_"
+msgid "URL parameter substrings to rate-limit, one per line. Append |N for a stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, query_type_|30."
 msgstr ""
 
 #: includes/Admin/Settings/TabGeo.php:32
@@ -262,7 +419,7 @@ msgid "IP Whitelist"
 msgstr ""
 
 #: includes/Admin/Settings/TabIpRules.php:59
-msgid "IPs that are never rate-limited or blocked (one per line)."
+msgid "IPs or CIDR ranges that bypass all firewall checks (one per line). Supports IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32)."
 msgstr ""
 
 #: includes/Admin/Settings/TabIpRules.php:66
@@ -270,7 +427,7 @@ msgid "IP Blacklist"
 msgstr ""
 
 #: includes/Admin/Settings/TabIpRules.php:73
-msgid "IPs that are always blocked with 403 Forbidden (one per line)."
+msgid "IPs or CIDR ranges blocked with 403 Forbidden before any other check (one per line). Supports IPv4, IPv6, and CIDR notation."
 msgstr ""
 
 #: includes/Admin/Settings/TabLogs.php:32
@@ -325,88 +482,28 @@ msgstr ""
 msgid "Protection"
 msgstr ""
 
-#: includes/Admin/Settings/TabProtection.php:53
+#: includes/Admin/Settings/TabProtection.php:45
 msgid "Endpoint Protection"
 msgstr ""
 
-#: includes/Admin/Settings/TabProtection.php:55
+#: includes/Admin/Settings/TabProtection.php:46
 msgid "Enable rate limiting on specific WordPress endpoints."
 msgstr ""
 
-#: includes/Admin/Settings/TabProtection.php:62
-msgid "Rate-limit wp-cron.php requests"
+#: includes/Admin/Settings/TabProtection.php:51
+msgid "Brute-Force Login Protection"
 msgstr ""
 
-#: includes/Admin/Settings/TabProtection.php:63
-msgid "Protects against DDoS attacks targeting wp-cron.php."
+#: includes/Admin/Settings/TabProtection.php:52
+msgid "Ban IPs that submit too many failed login attempts (fail2ban style). A banned IP is blocked from the whole site, not just wp-login.php."
 msgstr ""
 
-#: includes/Admin/Settings/TabProtection.php:66
-msgid "Rate-limit xmlrpc.php requests"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:67
-msgid "Protects against brute-force and DDoS via xmlrpc.php."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:70
-msgid "Rate-limit wp-login.php requests"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:71
-msgid "Protects against brute-force login attempts."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:74
-msgid "Rate-limit REST API requests"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:75
-msgid "Rate-limits /wp-json/ requests per IP."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:78
-msgid "Block 404 flood"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:79
-msgid "Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:109
+#: includes/Admin/Settings/TabProtection.php:57
 msgid "Auto-Ban"
 msgstr ""
 
-#: includes/Admin/Settings/TabProtection.php:111
+#: includes/Admin/Settings/TabProtection.php:58
 msgid "Automatically ban IPs that repeatedly exceed rate limits."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:116
-msgid "Enable Auto-Ban"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:122
-msgid "Ban IPs after repeated violations"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:123
-msgid "After the threshold is reached, the IP is banned for the configured duration."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:130
-msgid "Ban Threshold"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:138
-msgid "Number of rate-limit violations before an IP is banned."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:145
-msgid "Ban Duration"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:153
-msgid "How long the ban lasts in seconds (3600 = 1 hour)."
 msgstr ""
 
 #: includes/Admin/Settings/TabSecurity.php:30
@@ -457,73 +554,271 @@ msgstr ""
 msgid "Enables the built-in XSS filter in older browsers (IE, older Chrome). When a reflected XSS attack is detected, the browser blocks the page instead of rendering it. Modern browsers use Content-Security-Policy instead, but this header provides a safety net for legacy browsers."
 msgstr ""
 
+#: includes/Admin/Settings/TabSpam.php:31
+msgid "Spam"
+msgstr ""
+
+#: includes/Admin/Settings/TabSpam.php:46
+msgid "Registration Protection"
+msgstr ""
+
+#: includes/Admin/Settings/TabSpam.php:47
+msgid "Block bot sign-ups on wp-login.php?action=register without a captcha. Active only when \"Anyone can register\" is enabled in Settings → General."
+msgstr ""
+
+#: includes/Admin/Settings/TabSpam.php:52
+msgid "Registration Auto-Ban"
+msgstr ""
+
+#: includes/Admin/Settings/TabSpam.php:53
+msgid "Ban IPs that repeatedly submit spam registrations. A banned IP is blocked from the whole site, not just the registration form."
+msgstr ""
+
 #: includes/Admin/Settings/TabStatus.php:32
 msgid "Status"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:54
+#: includes/Admin/Settings/TabStatus.php:56
 msgid "Firewall Status"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:58
+#: includes/Admin/Settings/TabStatus.php:60
 msgid "MU-Plugin Worker"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:62
+#: includes/Admin/Settings/TabStatus.php:64
 msgid "Installed"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:66
+#: includes/Admin/Settings/TabStatus.php:68
 msgid "Not installed"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:70
+#: includes/Admin/Settings/TabStatus.php:72
 msgid "The MU-plugin worker intercepts requests early, before themes and plugins load."
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:75
+#: includes/Admin/Settings/TabStatus.php:77
 msgid "Worker Version"
 msgstr ""
 
 #. translators: %s: expected plugin version
-#: includes/Admin/Settings/TabStatus.php:86
+#: includes/Admin/Settings/TabStatus.php:88
 #, php-format
 msgid "Mismatch — expected %s (will auto-update on next page load)"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:95
+#: includes/Admin/Settings/TabStatus.php:97
+msgid "mu-plugins writable"
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:100
+msgid "Yes"
+msgstr ""
+
+#. translators: %s: mu-plugins directory path
+#: includes/Admin/Settings/TabStatus.php:107
+#, php-format
+msgid "No — make %s writable by the web server."
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:117
+msgid "Last install attempt"
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:120
+msgid "Succeeded"
+msgstr ""
+
+#. translators: %s: human-readable time difference
+#: includes/Admin/Settings/TabStatus.php:132
+#, php-format
+msgid "%s ago"
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:142
 msgid "Active Storage"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:99
+#: includes/Admin/Settings/TabStatus.php:146
 msgid "Storage backend used for rate-limit counters."
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:104
+#: includes/Admin/Settings/TabStatus.php:151
 msgid "Reinstall Worker"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:108
+#: includes/Admin/Settings/TabStatus.php:155
 msgid "Reinstall MU-plugin worker on save"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:111
+#: includes/Admin/Settings/TabStatus.php:158
 msgid "Check this and save to reinstall the worker file."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:72
-#: includes/Admin/SettingsPage.php:73
+#: includes/Admin/SettingsPage.php:74
+#: includes/Admin/SettingsPage.php:75
+#: includes/SiteManager/Integration.php:42
 msgid "Firewall"
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:126
+#: includes/Admin/SettingsPage.php:128
 msgid "Lightweight Firewall"
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:132
+#: includes/Admin/SettingsPage.php:134
 msgid "Settings saved."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:145
+#: includes/Admin/SettingsPage.php:147
 msgid "Save Changes"
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:29
+msgid "The worker source file inside the plugin is missing."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:30
+msgid "The mu-plugins directory could not be created."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:31
+msgid "The mu-plugins directory is not writable."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:32
+msgid "Copying the worker file failed (disk full or permission denied)."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:53
+msgid "LW Firewall — protection is OFF"
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:58
+msgid "The MU-plugin worker is installed but its version does not match this plugin. Runtime protection is disabled until it is reinstalled."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:59
+msgid "The MU-plugin worker file is missing from mu-plugins/. Runtime protection is disabled until it is reinstalled."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:67
+msgid "Open Status tab"
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:86
+msgid "Unknown install error."
+msgstr ""
+
+#. translators: 1: reason text, 2: human-readable time difference
+#: includes/Admin/WorkerNotice.php:91
+#, php-format
+msgid "Last install attempt failed: %1$s (%2$s ago)"
+msgstr ""
+
+#. translators: %s: mu-plugins directory path
+#: includes/Admin/WorkerNotice.php:110
+#, php-format
+msgid "Make %s writable by the web server, then re-save the firewall settings."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:118
+msgid "A security plugin or hosting cleanup may be removing the worker. Check the Status tab for the last install attempt and reinstall from there."
+msgstr ""
+
+#: includes/Rules/RegisterGuard.php:54
+msgid "Leave this field empty"
+msgstr ""
+
+#: includes/Rules/RegisterGuard.php:70
+msgid "Registration failed, please try again."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:45
+msgid "Get Firewall Options"
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:46
+msgid "Get all LW Firewall settings including rate limits, bot blocking and geo rules."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:76
+msgid "Get Firewall Log"
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:77
+msgid "Get recent firewall log entries (up to 100 blocked requests)."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:87
+msgid "Number of log entries to return. Defaults to 25, max 100."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:120
+msgid "List Blocked IPs"
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:121
+msgid "List all manually blocked (blacklisted) IP addresses."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:155
+msgid "Block IP Address"
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:156
+msgid "Add an IP address or CIDR range to the blacklist."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:166
+msgid "IP address or CIDR range to block (e.g. 1.2.3.4 or 10.0.0.0/8)."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:192
+msgid "Unblock IP Address"
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:193
+msgid "Remove an IP address or CIDR range from the blacklist."
+msgstr ""
+
+#: includes/SiteManager/FirewallAbilities.php:203
+msgid "IP address or CIDR range to unblock."
+msgstr ""
+
+#: includes/SiteManager/FirewallService.php:84
+#: includes/SiteManager/FirewallService.php:137
+msgid "Provide an ip address or CIDR range."
+msgstr ""
+
+#: includes/SiteManager/FirewallService.php:92
+msgid "The provided value is not a valid IP address or CIDR range."
+msgstr ""
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:104
+#, php-format
+msgid "%s is already on the blacklist."
+msgstr ""
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:119
+#, php-format
+msgid "%s has been added to the blacklist."
+msgstr ""
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:150
+#, php-format
+msgid "%s was not found on the blacklist."
+msgstr ""
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:165
+#, php-format
+msgid "%s has been removed from the blacklist."
+msgstr ""
+
+#: includes/SiteManager/Integration.php:43
+msgid "Firewall management abilities: rate limiting, IP blocking, bot control and logs."
 msgstr ""

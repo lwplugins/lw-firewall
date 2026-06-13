@@ -43,27 +43,34 @@ final class Options {
 	 */
 	public static function get_defaults(): array {
 		return [
-			'enabled'                => true,
-			'storage'                => 'auto', // 'auto' | 'apcu' | 'redis' | 'file'.
-			'rate_limit'             => 30,
-			'rate_window'            => 60,
-			'action'                 => 'redirect', // 'redirect' | '429'.
-			'protect_cron'           => false,
-			'protect_xmlrpc'         => false,
-			'protect_login'          => true,
-			'protect_rest_api'       => false,
-			'protect_404'            => false,
-			'ip_whitelist'           => [],
-			'ip_blacklist'           => [],
-			'auto_ban_enabled'       => false,
-			'auto_ban_threshold'     => 3,
-			'auto_ban_duration'      => 3600,
-			'login_limit_enabled'    => false,
-			'login_max_attempts'     => 5,
-			'login_lockout_window'   => 600,
-			'login_lockout_duration' => 3600,
-			'security_headers'       => false,
-			'blocked_bots'           => [
+			'enabled'                  => true,
+			'storage'                  => 'auto', // 'auto' | 'apcu' | 'redis' | 'file'.
+			'rate_limit'               => 30,
+			'rate_window'              => 60,
+			'action'                   => 'redirect', // 'redirect' | '429'.
+			'protect_cron'             => false,
+			'protect_xmlrpc'           => false,
+			'protect_login'            => true,
+			'protect_rest_api'         => false,
+			'protect_404'              => false,
+			'ip_whitelist'             => [],
+			'ip_blacklist'             => [],
+			'auto_ban_enabled'         => false,
+			'auto_ban_threshold'       => 3,
+			'auto_ban_duration'        => 3600,
+			'login_limit_enabled'      => false,
+			'login_max_attempts'       => 5,
+			'login_lockout_window'     => 600,
+			'login_lockout_duration'   => 3600,
+			'register_protect_enabled' => false,
+			'register_min_fill_time'   => 2,
+			'register_token_max_age'   => 3600,
+			'register_honeypot'        => true,
+			'register_single_use'      => true,
+			'register_ban_threshold'   => 3,
+			'register_ban_duration'    => 3600,
+			'security_headers'         => false,
+			'blocked_bots'             => [
 				'meta-externalagent',
 				'meta-externalfetcher',
 				'gptbot',
@@ -85,11 +92,11 @@ final class Options {
 				'barkrowler',
 				'dataforseobot',
 			],
-			'log_enabled'            => false,
-			'filter_params'          => [ 'filter_|30', 'query_type_|30' ],
-			'geo_enabled'            => true,
-			'geo_action'             => '403', // '403' | 'redirect'.
-			'blocked_countries'      => [ 'CN', 'RU', 'IN', 'VN', 'ID', 'BD' ],
+			'log_enabled'              => false,
+			'filter_params'            => [ 'filter_|30', 'query_type_|30' ],
+			'geo_enabled'              => true,
+			'geo_action'               => '403', // '403' | 'redirect'.
+			'blocked_countries'        => [ 'CN', 'RU', 'IN', 'VN', 'ID', 'BD' ],
 		];
 	}
 

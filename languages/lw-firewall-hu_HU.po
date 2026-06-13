@@ -2,13 +2,13 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.1.0\n"
+"Project-Id-Version: LW Firewall 1.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-02-12T16:17:09+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: hu\n"
+"POT-Creation-Date: 2026-06-13T06:28:41+00:00\n"
+"PO-Revision-Date: 2026-06-13 08:00+0000\n"
+"Last-Translator: LW Plugins <hello@lwplugins.com>\n"
+"Language-Team: Hungarian <hu@lwplugins.com>\n"
+"Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -50,17 +50,183 @@ msgid "Lightweight plugins for WordPress - minimal footprint, maximum impact."
 msgstr ""
 "Könnyűsúlyú bővítmények WordPresshez – minimális terhelés, maximális hatás."
 
-#: includes/Admin/ParentPage.php:180
+#: includes/Admin/ParentPage.php:189
 msgid "Active"
 msgstr "Aktív"
 
-#: includes/Admin/ParentPage.php:188
+#: includes/Admin/ParentPage.php:197
 msgid "Settings"
 msgstr "Beállítások"
 
-#: includes/Admin/ParentPage.php:192
+#: includes/Admin/ParentPage.php:201
 msgid "Get Plugin"
 msgstr "Bővítmény letöltése"
+
+#: includes/Admin/Settings/ProtectionFields.php:30
+msgid "Rate-limit wp-cron.php requests"
+msgstr "wp-cron.php kérések rate limitingje"
+
+#: includes/Admin/Settings/ProtectionFields.php:31
+msgid "Protects against DDoS attacks targeting wp-cron.php."
+msgstr "Véd a wp-cron.php-t célzó DDoS támadások ellen."
+
+#: includes/Admin/Settings/ProtectionFields.php:34
+msgid "Rate-limit xmlrpc.php requests"
+msgstr "xmlrpc.php kérések rate limitingje"
+
+#: includes/Admin/Settings/ProtectionFields.php:35
+msgid "Protects against brute-force and DDoS via xmlrpc.php."
+msgstr "Véd a brute-force és DDoS támadások ellen xmlrpc.php-n keresztül."
+
+#: includes/Admin/Settings/ProtectionFields.php:38
+msgid "Rate-limit wp-login.php requests"
+msgstr "wp-login.php kérések rate limitingje"
+
+#: includes/Admin/Settings/ProtectionFields.php:39
+msgid "Rate-limits wp-login.php requests per IP."
+msgstr "IP-nként rate limitingeli a wp-login.php kéréseket."
+
+#: includes/Admin/Settings/ProtectionFields.php:42
+msgid "Rate-limit REST API requests"
+msgstr "REST API kérések rate limitingje"
+
+#: includes/Admin/Settings/ProtectionFields.php:43
+msgid "Rate-limits /wp-json/ requests per IP."
+msgstr "IP-nként rate limitingeli a /wp-json/ kéréseket."
+
+#: includes/Admin/Settings/ProtectionFields.php:46
+msgid "Block 404 flood"
+msgstr "404 flood blokkolása"
+
+#: includes/Admin/Settings/ProtectionFields.php:47
+msgid "Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
+msgstr ""
+"Blokkolja azokat az IP-ket, amelyek túl sok 404 hibát generálnak "
+"(sebezhetőség-szkennelés)."
+
+#: includes/Admin/Settings/ProtectionFields.php:60
+msgid "Enable Login Protection"
+msgstr "Bejelentkezés-védelem engedélyezése"
+
+#: includes/Admin/Settings/ProtectionFields.php:61
+msgid "Ban IPs after repeated failed logins"
+msgstr "IP-k tiltása ismételt sikertelen bejelentkezések után"
+
+#: includes/Admin/Settings/ProtectionFields.php:62
+msgid "Counts failed password attempts per IP via wp_login_failed."
+msgstr "IP-nként számolja a sikertelen jelszó-próbálkozásokat a wp_login_failed alapján."
+
+#: includes/Admin/Settings/ProtectionFields.php:66
+msgid "Failed Attempts"
+msgstr "Sikertelen próbálkozások"
+
+#: includes/Admin/Settings/ProtectionFields.php:69
+msgid "Number of failed login attempts before the IP is banned."
+msgstr "Hány sikertelen bejelentkezés után tiltódik az IP."
+
+#: includes/Admin/Settings/ProtectionFields.php:73
+msgid "Detection Window"
+msgstr "Észlelési ablak"
+
+#: includes/Admin/Settings/ProtectionFields.php:76
+msgid "Seconds within which failed attempts are counted (600 = 10 minutes)."
+msgstr "Hány másodpercen belül számítanak a sikertelen próbálkozások (600 = 10 perc)."
+
+#: includes/Admin/Settings/ProtectionFields.php:80
+#: includes/Admin/Settings/ProtectionFields.php:109
+#: includes/Admin/Settings/SpamFields.php:77
+msgid "Ban Duration"
+msgstr "Tiltás időtartama"
+
+#: includes/Admin/Settings/ProtectionFields.php:83
+#: includes/Admin/Settings/ProtectionFields.php:112
+#: includes/Admin/Settings/SpamFields.php:80
+msgid "How long the ban lasts in seconds (3600 = 1 hour)."
+msgstr "Mennyi ideig tart a tiltás másodpercekben (3600 = 1 óra)."
+
+#: includes/Admin/Settings/ProtectionFields.php:96
+msgid "Enable Auto-Ban"
+msgstr "Automatikus tiltás engedélyezése"
+
+#: includes/Admin/Settings/ProtectionFields.php:97
+msgid "Ban IPs after repeated violations"
+msgstr "IP-k tiltása ismételt szabálysértések után"
+
+#: includes/Admin/Settings/ProtectionFields.php:98
+msgid ""
+"After the threshold is reached, the IP is banned for the configured duration."
+msgstr "A küszöb elérése után az IP a beállított időtartamra tiltásra kerül."
+
+#: includes/Admin/Settings/ProtectionFields.php:102
+#: includes/Admin/Settings/SpamFields.php:70
+msgid "Ban Threshold"
+msgstr "Tiltási küszöb"
+
+#: includes/Admin/Settings/ProtectionFields.php:105
+msgid "Number of rate-limit violations before an IP is banned."
+msgstr "A rate limit megsértéseinek száma, ami után egy IP tiltásra kerül."
+
+#: includes/Admin/Settings/SpamFields.php:30
+msgid "Enable Registration Protection"
+msgstr "Regisztráció-védelem engedélyezése"
+
+#: includes/Admin/Settings/SpamFields.php:31
+msgid "Block bot registrations on wp-login.php?action=register"
+msgstr "Bot-regisztrációk blokkolása a wp-login.php?action=register oldalon"
+
+#: includes/Admin/Settings/SpamFields.php:32
+msgid ""
+"Adds a signed proof-of-render token and honeypot to the registration form. "
+"Only active when \"Anyone can register\" is enabled."
+msgstr "Aláírt proof-of-render tokent és honeypotot ad a regisztrációs űrlaphoz. Csak akkor aktív, ha az „Anyone can register” engedélyezve van."
+
+#: includes/Admin/Settings/SpamFields.php:35
+msgid "Honeypot"
+msgstr "Honeypot"
+
+#: includes/Admin/Settings/SpamFields.php:36
+msgid "Add a hidden honeypot field"
+msgstr "Rejtett honeypot mező hozzáadása"
+
+#: includes/Admin/Settings/SpamFields.php:37
+msgid "Catches generic bots that fill every field. Invisible to real users."
+msgstr "Elkapja a minden mezőt kitöltő általános botokat. Valódi felhasználók számára láthatatlan."
+
+#: includes/Admin/Settings/SpamFields.php:40
+msgid "Single-Use Token"
+msgstr "Egyszer használatos token"
+
+#: includes/Admin/Settings/SpamFields.php:41
+msgid "Reject reused tokens"
+msgstr "Újrahasznált tokenek elutasítása"
+
+#: includes/Admin/Settings/SpamFields.php:42
+msgid ""
+"Stores used tokens in the firewall storage backend so each rendered form can "
+"register only once."
+msgstr "A felhasznált tokeneket a tűzfal tárolórétegében tárolja, így minden megjelenített űrlap csak egyszer használható regisztrációra."
+
+#: includes/Admin/Settings/SpamFields.php:46
+msgid "Minimum Fill Time"
+msgstr "Minimális kitöltési idő"
+
+#: includes/Admin/Settings/SpamFields.php:49
+msgid ""
+"Reject submissions faster than this many seconds after the form loaded "
+"(catches instant bot POSTs)."
+msgstr "Elutasítja a beküldéseket, amelyek ennyi másodpercnél gyorsabban érkeznek az űrlap betöltése után (elkapja az azonnali bot-POST-okat)."
+
+#: includes/Admin/Settings/SpamFields.php:53
+msgid "Token Lifetime"
+msgstr "Token élettartama"
+
+#: includes/Admin/Settings/SpamFields.php:56
+msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
+msgstr "Meddig érvényes egy megjelenített űrlap, másodpercekben (3600 = 1 óra)."
+
+#: includes/Admin/Settings/SpamFields.php:73
+msgid "Number of rejected registrations from one IP before it is banned."
+msgstr "Hány elutasított regisztráció után tiltódik egy IP."
 
 #: includes/Admin/Settings/TabBots.php:30
 #: includes/Admin/Settings/TabBots.php:45
@@ -69,8 +235,7 @@ msgstr "Blokkolt botok"
 
 #: includes/Admin/Settings/TabBots.php:47
 msgid ""
-"User-Agent strings to block (one per line, case-insensitive substring "
-"match)."
+"User-Agent strings to block (one per line, case-insensitive substring match)."
 msgstr ""
 "Blokkolandó User-Agent stringek (soronként egy, kis- és nagybetűtől "
 "független részsztring egyezés)."
@@ -80,9 +245,10 @@ msgid "Blocked User-Agents"
 msgstr "Blokkolt User-Agentek"
 
 #: includes/Admin/Settings/TabBots.php:59
-msgid "Requests matching these strings are immediately blocked with 403."
-msgstr ""
-"Az ezekre a stringekre illeszkedő kérések azonnal blokkolva lesznek 403-mal."
+msgid ""
+"User-Agent substrings (case-insensitive, one per line). Any request whose "
+"User-Agent contains one of these is blocked with 403."
+msgstr "User-Agent részsztringek (kis-/nagybetű érzéketlen, soronként egy). Minden kérés, amelynek User-Agentje tartalmazza valamelyiket, 403-mal blokkolódik."
 
 #: includes/Admin/Settings/TabGeneral.php:30
 msgid "General"
@@ -110,11 +276,9 @@ msgstr "Firewall védelem engedélyezése"
 
 #: includes/Admin/Settings/TabGeneral.php:59
 msgid ""
-"When enabled, filter requests are monitored for bots and rate-limited per "
-"IP."
-msgstr ""
-"Ha engedélyezve van, a filter kéréseket botokra figyeljük és IP-nként rate "
-"limiteljük."
+"Master switch — when off, the MU-plugin worker performs no checks (rate-"
+"limit, bot blocking, IP/geo blocking, auto-ban all skipped)."
+msgstr "Főkapcsoló — kikapcsolva az MU-plugin worker semmilyen ellenőrzést nem végez (rate limiting, bot-blokkolás, IP/geo blokkolás, automatikus tiltás mind kimarad)."
 
 #: includes/Admin/Settings/TabGeneral.php:66
 msgid "Storage Backend"
@@ -130,8 +294,8 @@ msgstr "Fájl"
 
 #: includes/Admin/Settings/TabGeneral.php:78
 msgid ""
-"Storage backend for rate-limit counters. Auto-detect tries APCu, then Redis,"
-" then file."
+"Storage backend for rate-limit counters. Auto-detect tries APCu, then Redis, "
+"then file."
 msgstr ""
 "Tároló backend a rate limit számlálókhoz. Az automatikus felismerés először "
 "az APCu-t, majd a Redist, majd a fájlt próbálja."
@@ -141,8 +305,11 @@ msgid "Rate Limit"
 msgstr "Rate limit"
 
 #: includes/Admin/Settings/TabGeneral.php:93
-msgid "Maximum number of filter requests per IP within the time window."
-msgstr "A maximális filter kérések száma IP-nként az időablakon belül."
+msgid ""
+"Maximum number of rate-limited requests per IP within the time window. "
+"Applies to filter parameters, login, REST, XML-RPC and any other protected "
+"endpoint."
+msgstr "Az IP-nként engedélyezett rate limitelt kérések maximális száma az időablakon belül. Vonatkozik a filter paraméterekre, a bejelentkezésre, a REST-re, az XML-RPC-re és minden más védett végpontra."
 
 #: includes/Admin/Settings/TabGeneral.php:100
 msgid "Time Window"
@@ -165,8 +332,10 @@ msgid "429 Too Many Requests"
 msgstr "429 Túl sok kérés"
 
 #: includes/Admin/Settings/TabGeneral.php:125
-msgid "Action to take when rate limit is exceeded."
-msgstr "A végrehajtandó művelet, ha a rate limit túllépésre kerül."
+msgid ""
+"Response when the rate limit is exceeded. 302 strips query parameters and "
+"redirects to the same path; 429 returns a Retry-After header."
+msgstr "Válasz a rate limit túllépésekor. A 302 eltávolítja a query paramétereket és ugyanarra az útvonalra irányít át; a 429 Retry-After fejlécet ad vissza."
 
 #: includes/Admin/Settings/TabGeneral.php:132
 msgid "Filter Parameters"
@@ -174,11 +343,109 @@ msgstr "Filter paraméterek"
 
 #: includes/Admin/Settings/TabGeneral.php:139
 msgid ""
-"URL parameter prefixes to monitor (one per line). Default: filter_, "
-"query_type_"
-msgstr ""
-"Figyelt URL paraméter előtagok (soronként egy). Alapértelmezett: filter_, "
-"query_type_"
+"URL parameter substrings to rate-limit, one per line. Append |N for a "
+"stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, "
+"query_type_|30."
+msgstr "Rate limitelendő URL-paraméter részsztringek, soronként egy. Fűzz hozzá |N-t szigorúbb, prefixenkénti limithez (pl. add-to-cart|10). Alapértelmezések: filter_|30, query_type_|30."
+
+#: includes/Admin/Settings/TabGeo.php:32 includes/Admin/Settings/TabGeo.php:47
+msgid "Geo Blocking"
+msgstr "Geo blokkolás"
+
+#: includes/Admin/Settings/TabGeo.php:49
+msgid ""
+"Block visitors from specific countries. Behind Cloudflare, the CF-IPCountry "
+"header is used (instant). Without Cloudflare, CIDR-based lookup is used "
+"(updated weekly)."
+msgstr "Bizonyos országokból érkező látogatók blokkolása. Cloudflare mögött a CF-IPCountry fejléc használatos (azonnali). Cloudflare nélkül CIDR-alapú keresés (hetente frissül)."
+
+#: includes/Admin/Settings/TabGeo.php:68
+msgid "Enable"
+msgstr "Engedélyezés"
+
+#: includes/Admin/Settings/TabGeo.php:74
+msgid "Enable Geo Blocking"
+msgstr "Geo blokkolás engedélyezése"
+
+#: includes/Admin/Settings/TabGeo.php:89
+msgid "Block Action"
+msgstr "Blokkolási művelet"
+
+#: includes/Admin/Settings/TabGeo.php:97
+msgid "403 Forbidden"
+msgstr "403 Forbidden"
+
+#: includes/Admin/Settings/TabGeo.php:98
+msgid "Redirect to homepage"
+msgstr "Átirányítás a főoldalra"
+
+#: includes/Admin/Settings/TabGeo.php:114
+msgid "Blocked Countries"
+msgstr "Tiltott országok"
+
+#: includes/Admin/Settings/TabGeo.php:121
+msgid "ISO 3166-1 alpha-2 country codes, one per line (e.g. IN, CN, RU)."
+msgstr "ISO 3166-1 alpha-2 országkódok, soronként egy (pl. IN, CN, RU)."
+
+#: includes/Admin/Settings/TabGeo.php:138
+msgid "Update CIDR Lists Now"
+msgstr "CIDR listák frissítése most"
+
+#. translators: %s: human-readable time difference
+#: includes/Admin/Settings/TabGeo.php:144
+#, php-format
+msgid "Next automatic update: %s"
+msgstr "Következő automatikus frissítés: %s"
+
+#: includes/Admin/Settings/TabImportExport.php:28
+msgid "Import / Export"
+msgstr "Importálás / Exportálás"
+
+#: includes/Admin/Settings/TabImportExport.php:53
+#: includes/Admin/Settings/TabImportExport.php:59
+msgid "Export Settings"
+msgstr "Beállítások exportálása"
+
+#: includes/Admin/Settings/TabImportExport.php:55
+msgid ""
+"Download your current firewall settings as a JSON file. You can use this "
+"file to import settings on another site."
+msgstr "Töltsd le a jelenlegi tűzfal beállításaidat JSON-fájlként. Ezzel a fájllal egy másik oldalon importálhatod a beállításokat."
+
+#: includes/Admin/Settings/TabImportExport.php:73
+#: includes/Admin/Settings/TabImportExport.php:92
+msgid "Import Settings"
+msgstr "Beállítások importálása"
+
+#: includes/Admin/Settings/TabImportExport.php:75
+msgid ""
+"Upload a previously exported JSON file to restore firewall settings. This "
+"will overwrite all current settings."
+msgstr "Tölts fel egy korábban exportált JSON-fájlt a tűzfal beállítások visszaállításához. Ez felülír minden jelenlegi beállítást."
+
+#: includes/Admin/Settings/TabImportExport.php:83
+msgid "Settings File"
+msgstr "Beállításfájl"
+
+#: includes/Admin/Settings/TabImportExport.php:107
+msgid "Settings imported successfully."
+msgstr "A beállítások sikeresen importálva."
+
+#: includes/Admin/Settings/TabImportExport.php:116
+msgid "No file was uploaded."
+msgstr "Nem lett fájl feltöltve."
+
+#: includes/Admin/Settings/TabImportExport.php:117
+msgid "Could not read the uploaded file."
+msgstr "A feltöltött fájl nem olvasható."
+
+#: includes/Admin/Settings/TabImportExport.php:118
+msgid "The file does not contain valid JSON."
+msgstr "A fájl nem tartalmaz érvényes JSON-t."
+
+#: includes/Admin/Settings/TabImportExport.php:121
+msgid "Import failed."
+msgstr "Az importálás sikertelen."
 
 #: includes/Admin/Settings/TabIpRules.php:30
 #: includes/Admin/Settings/TabIpRules.php:45
@@ -190,27 +457,28 @@ msgid ""
 "Manually allow or block IP addresses. Supports individual IPs and CIDR "
 "ranges (e.g. 192.168.1.0/24)."
 msgstr ""
-"IP-címek kézi engedélyezése vagy blokkolása. Támogatja az egyedi IP-ket és a"
-" CIDR tartományokat (pl. 192.168.1.0/24)."
+"IP-címek kézi engedélyezése vagy blokkolása. Támogatja az egyedi IP-ket és a "
+"CIDR tartományokat (pl. 192.168.1.0/24)."
 
 #: includes/Admin/Settings/TabIpRules.php:52
 msgid "IP Whitelist"
 msgstr "IP whitelist"
 
 #: includes/Admin/Settings/TabIpRules.php:59
-msgid "IPs that are never rate-limited or blocked (one per line)."
-msgstr ""
-"IP-k, amelyekre soha nem vonatkozik rate limit vagy blokkolás (soronként "
-"egy)."
+msgid ""
+"IPs or CIDR ranges that bypass all firewall checks (one per line). Supports "
+"IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32)."
+msgstr "IP-k vagy CIDR tartományok, amelyek minden tűzfal-ellenőrzést kihagynak (soronként egy). Támogatja az IPv4, IPv6 és CIDR jelölést (pl. 10.0.0.0/8, 2001:db8::/32)."
 
 #: includes/Admin/Settings/TabIpRules.php:66
 msgid "IP Blacklist"
 msgstr "IP blacklist"
 
 #: includes/Admin/Settings/TabIpRules.php:73
-msgid "IPs that are always blocked with 403 Forbidden (one per line)."
-msgstr ""
-"IP-k, amelyek mindig 403 Forbiddennel blokkolva vannak (soronként egy)."
+msgid ""
+"IPs or CIDR ranges blocked with 403 Forbidden before any other check (one "
+"per line). Supports IPv4, IPv6, and CIDR notation."
+msgstr "IP-k vagy CIDR tartományok, amelyek minden más ellenőrzés előtt 403 Forbidden-nel blokkolódnak (soronként egy). Támogatja az IPv4, IPv6 és CIDR jelölést."
 
 #: includes/Admin/Settings/TabLogs.php:32
 msgid "Logs"
@@ -264,96 +532,33 @@ msgstr "URL"
 msgid "Protection"
 msgstr "Védelem"
 
-#: includes/Admin/Settings/TabProtection.php:53
+#: includes/Admin/Settings/TabProtection.php:45
 msgid "Endpoint Protection"
 msgstr "Endpoint-védelem"
 
-#: includes/Admin/Settings/TabProtection.php:55
+#: includes/Admin/Settings/TabProtection.php:46
 msgid "Enable rate limiting on specific WordPress endpoints."
 msgstr "Engedélyezd a rate limitinget bizonyos WordPress endpointokon."
 
-#: includes/Admin/Settings/TabProtection.php:62
-msgid "Rate-limit wp-cron.php requests"
-msgstr "wp-cron.php kérések rate limitingje"
+#: includes/Admin/Settings/TabProtection.php:51
+msgid "Brute-Force Login Protection"
+msgstr "Brute-force bejelentkezés-védelem"
 
-#: includes/Admin/Settings/TabProtection.php:63
-msgid "Protects against DDoS attacks targeting wp-cron.php."
-msgstr "Véd a wp-cron.php-t célzó DDoS támadások ellen."
-
-#: includes/Admin/Settings/TabProtection.php:66
-msgid "Rate-limit xmlrpc.php requests"
-msgstr "xmlrpc.php kérések rate limitingje"
-
-#: includes/Admin/Settings/TabProtection.php:67
-msgid "Protects against brute-force and DDoS via xmlrpc.php."
-msgstr "Véd a brute-force és DDoS támadások ellen xmlrpc.php-n keresztül."
-
-#: includes/Admin/Settings/TabProtection.php:70
-msgid "Rate-limit wp-login.php requests"
-msgstr "wp-login.php kérések rate limitingje"
-
-#: includes/Admin/Settings/TabProtection.php:71
-msgid "Protects against brute-force login attempts."
-msgstr "Véd a brute-force bejelentkezési próbálkozások ellen."
-
-#: includes/Admin/Settings/TabProtection.php:74
-msgid "Rate-limit REST API requests"
-msgstr "REST API kérések rate limitingje"
-
-#: includes/Admin/Settings/TabProtection.php:75
-msgid "Rate-limits /wp-json/ requests per IP."
-msgstr "IP-nként rate limitingeli a /wp-json/ kéréseket."
-
-#: includes/Admin/Settings/TabProtection.php:78
-msgid "Block 404 flood"
-msgstr "404 flood blokkolása"
-
-#: includes/Admin/Settings/TabProtection.php:79
+#: includes/Admin/Settings/TabProtection.php:52
 msgid ""
-"Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
-msgstr ""
-"Blokkolja azokat az IP-ket, amelyek túl sok 404 hibát generálnak "
-"(sebezhetőség-szkennelés)."
+"Ban IPs that submit too many failed login attempts (fail2ban style). A "
+"banned IP is blocked from the whole site, not just wp-login.php."
+msgstr "Tiltsa azokat az IP-ket, amelyek túl sok sikertelen bejelentkezést küldenek (fail2ban-stílus). A tiltott IP az egész oldalról ki van zárva, nem csak a wp-login.php-ról."
 
-#: includes/Admin/Settings/TabProtection.php:109
+#: includes/Admin/Settings/TabProtection.php:57
 msgid "Auto-Ban"
 msgstr "Automatikus tiltás"
 
-#: includes/Admin/Settings/TabProtection.php:111
+#: includes/Admin/Settings/TabProtection.php:58
 msgid "Automatically ban IPs that repeatedly exceed rate limits."
 msgstr ""
 "Automatikusan kitiltja azokat az IP-ket, amelyek ismételten túllépik a rate "
 "limitet."
-
-#: includes/Admin/Settings/TabProtection.php:116
-msgid "Enable Auto-Ban"
-msgstr "Automatikus tiltás engedélyezése"
-
-#: includes/Admin/Settings/TabProtection.php:122
-msgid "Ban IPs after repeated violations"
-msgstr "IP-k tiltása ismételt szabálysértések után"
-
-#: includes/Admin/Settings/TabProtection.php:123
-msgid ""
-"After the threshold is reached, the IP is banned for the configured "
-"duration."
-msgstr "A küszöb elérése után az IP a beállított időtartamra tiltásra kerül."
-
-#: includes/Admin/Settings/TabProtection.php:130
-msgid "Ban Threshold"
-msgstr "Tiltási küszöb"
-
-#: includes/Admin/Settings/TabProtection.php:138
-msgid "Number of rate-limit violations before an IP is banned."
-msgstr "A rate limit megsértéseinek száma, ami után egy IP tiltásra kerül."
-
-#: includes/Admin/Settings/TabProtection.php:145
-msgid "Ban Duration"
-msgstr "Tiltás időtartama"
-
-#: includes/Admin/Settings/TabProtection.php:153
-msgid "How long the ban lasts in seconds (3600 = 1 hour)."
-msgstr "Mennyi ideig tart a tiltás másodpercekben (3600 = 1 óra)."
 
 #: includes/Admin/Settings/TabSecurity.php:30
 msgid "Security"
@@ -400,10 +605,10 @@ msgid ""
 "protects against clickjacking attacks, where a malicious site overlays your "
 "page with invisible elements to trick users into clicking."
 msgstr ""
-"Megakadályozza, hogy a webhelyedet egy másik domainen iframe-be ágyazzák. Ez"
-" véd a clickjacking támadások ellen, amikor egy rosszindulatú oldal "
-"láthatatlan elemekkel takarja le az oldaladat, hogy rávegye a felhasználókat"
-" a kattintásra."
+"Megakadályozza, hogy a webhelyedet egy másik domainen iframe-be ágyazzák. Ez "
+"véd a clickjacking támadások ellen, amikor egy rosszindulatú oldal "
+"láthatatlan elemekkel takarja le az oldaladat, hogy rávegye a felhasználókat "
+"a kattintásra."
 
 #: includes/Admin/Settings/TabSecurity.php:96
 msgid ""
@@ -412,8 +617,8 @@ msgid ""
 "for same-origin requests but only the origin (domain) for cross-origin "
 "requests, preventing sensitive URL paths from leaking to third parties."
 msgstr ""
-"Szabályozza, mennyi referrer információ kerül elküldésre, amikor elnavigálsz"
-" a webhelyedről. A \"strict-origin-when-cross-origin\" érték same-origin "
+"Szabályozza, mennyi referrer információ kerül elküldésre, amikor elnavigálsz "
+"a webhelyedről. A \"strict-origin-when-cross-origin\" érték same-origin "
 "kéréseknél a teljes URL-t küldi, cross-origin kéréseknél viszont csak az "
 "origint (domaint), megakadályozva, hogy érzékeny URL útvonalak harmadik "
 "felekhez kerüljenek."
@@ -431,37 +636,61 @@ msgstr ""
 
 #: includes/Admin/Settings/TabSecurity.php:108
 msgid ""
-"Enables the built-in XSS filter in older browsers (IE, older Chrome). When a"
-" reflected XSS attack is detected, the browser blocks the page instead of "
+"Enables the built-in XSS filter in older browsers (IE, older Chrome). When a "
+"reflected XSS attack is detected, the browser blocks the page instead of "
 "rendering it. Modern browsers use Content-Security-Policy instead, but this "
 "header provides a safety net for legacy browsers."
 msgstr ""
 "Bekapcsolja a beépített XSS szűrőt a régebbi böngészőkben (IE, régebbi "
 "Chrome). Ha reflected XSS támadást észlel, a böngésző az oldal renderelése "
-"helyett blokkolja azt. A modern böngészők inkább a Content-Security-Policy-t"
-" használják, de ez a header egy plusz védőhálót ad a legacy böngészőknek."
+"helyett blokkolja azt. A modern böngészők inkább a Content-Security-Policy-t "
+"használják, de ez a header egy plusz védőhálót ad a legacy böngészőknek."
+
+#: includes/Admin/Settings/TabSpam.php:31
+msgid "Spam"
+msgstr "Spam"
+
+#: includes/Admin/Settings/TabSpam.php:46
+msgid "Registration Protection"
+msgstr "Regisztráció-védelem"
+
+#: includes/Admin/Settings/TabSpam.php:47
+msgid ""
+"Block bot sign-ups on wp-login.php?action=register without a captcha. Active "
+"only when \"Anyone can register\" is enabled in Settings → General."
+msgstr "Bot-regisztrációk blokkolása a wp-login.php?action=register oldalon captcha nélkül. Csak akkor aktív, ha a Beállítások → Általános alatt az „Anyone can register” engedélyezve van."
+
+#: includes/Admin/Settings/TabSpam.php:52
+msgid "Registration Auto-Ban"
+msgstr "Regisztráció automatikus tiltása"
+
+#: includes/Admin/Settings/TabSpam.php:53
+msgid ""
+"Ban IPs that repeatedly submit spam registrations. A banned IP is blocked "
+"from the whole site, not just the registration form."
+msgstr "Tiltsa azokat az IP-ket, amelyek ismételten spam regisztrációkat küldenek. A tiltott IP az egész oldalról ki van zárva, nem csak a regisztrációs űrlapról."
 
 #: includes/Admin/Settings/TabStatus.php:32
 msgid "Status"
 msgstr "Állapot"
 
-#: includes/Admin/Settings/TabStatus.php:54
+#: includes/Admin/Settings/TabStatus.php:56
 msgid "Firewall Status"
 msgstr "Tűzfal állapota"
 
-#: includes/Admin/Settings/TabStatus.php:58
+#: includes/Admin/Settings/TabStatus.php:60
 msgid "MU-Plugin Worker"
 msgstr "MU-bővítmény worker"
 
-#: includes/Admin/Settings/TabStatus.php:62
+#: includes/Admin/Settings/TabStatus.php:64
 msgid "Installed"
 msgstr "Telepítve"
 
-#: includes/Admin/Settings/TabStatus.php:66
+#: includes/Admin/Settings/TabStatus.php:68
 msgid "Not installed"
 msgstr "Nincs telepítve"
 
-#: includes/Admin/Settings/TabStatus.php:70
+#: includes/Admin/Settings/TabStatus.php:72
 msgid ""
 "The MU-plugin worker intercepts requests early, before themes and plugins "
 "load."
@@ -469,49 +698,278 @@ msgstr ""
 "Az MU-bővítmény worker korán elfogja a kéréseket, még a sablonok és "
 "bővítmények betöltése előtt."
 
-#: includes/Admin/Settings/TabStatus.php:75
+#: includes/Admin/Settings/TabStatus.php:77
 msgid "Worker Version"
 msgstr "Worker verzió"
 
 #. translators: %s: expected plugin version
-#: includes/Admin/Settings/TabStatus.php:86
+#: includes/Admin/Settings/TabStatus.php:88
 #, php-format
 msgid "Mismatch — expected %s (will auto-update on next page load)"
 msgstr ""
 "Eltérés — a várt érték %s (a következő oldalbetöltéskor automatikusan "
 "frissül)"
 
-#: includes/Admin/Settings/TabStatus.php:95
+#: includes/Admin/Settings/TabStatus.php:97
+msgid "mu-plugins writable"
+msgstr "mu-plugins írható"
+
+#: includes/Admin/Settings/TabStatus.php:100
+msgid "Yes"
+msgstr "Igen"
+
+#. translators: %s: mu-plugins directory path
+#: includes/Admin/Settings/TabStatus.php:107
+#, php-format
+msgid "No — make %s writable by the web server."
+msgstr "Nem — tedd írhatóvá a(z) %s mappát a webszerver számára."
+
+#: includes/Admin/Settings/TabStatus.php:117
+msgid "Last install attempt"
+msgstr "Utolsó telepítési kísérlet"
+
+#: includes/Admin/Settings/TabStatus.php:120
+msgid "Succeeded"
+msgstr "Sikeres"
+
+#. translators: %s: human-readable time difference
+#: includes/Admin/Settings/TabStatus.php:132
+#, php-format
+msgid "%s ago"
+msgstr "%s ezelőtt"
+
+#: includes/Admin/Settings/TabStatus.php:142
 msgid "Active Storage"
 msgstr "Aktív tároló"
 
-#: includes/Admin/Settings/TabStatus.php:99
+#: includes/Admin/Settings/TabStatus.php:146
 msgid "Storage backend used for rate-limit counters."
 msgstr "A rate limit számlálókhoz használt tároló backend."
 
-#: includes/Admin/Settings/TabStatus.php:104
+#: includes/Admin/Settings/TabStatus.php:151
 msgid "Reinstall Worker"
 msgstr "Worker újratelepítése"
 
-#: includes/Admin/Settings/TabStatus.php:108
+#: includes/Admin/Settings/TabStatus.php:155
 msgid "Reinstall MU-plugin worker on save"
 msgstr "MU-bővítmény worker újratelepítése mentéskor"
 
-#: includes/Admin/Settings/TabStatus.php:111
+#: includes/Admin/Settings/TabStatus.php:158
 msgid "Check this and save to reinstall the worker file."
 msgstr "Jelöld be ezt, majd mentsd el a worker fájl újratelepítéséhez."
 
-#: includes/Admin/SettingsPage.php:67 includes/Admin/SettingsPage.php:68
+#: includes/Admin/SettingsPage.php:74 includes/Admin/SettingsPage.php:75
+#: includes/SiteManager/Integration.php:42
 msgid "Firewall"
 msgstr "Tűzfal"
 
-#: includes/Admin/SettingsPage.php:126
+#: includes/Admin/SettingsPage.php:128
+msgid "Lightweight Firewall"
+msgstr "Lightweight Firewall"
+
+#: includes/Admin/SettingsPage.php:134
 msgid "Settings saved."
 msgstr "Beállítások elmentve."
 
-#: includes/Admin/SettingsPage.php:139
+#: includes/Admin/SettingsPage.php:147
 msgid "Save Changes"
 msgstr "Változtatások mentése"
+
+#: includes/Admin/WorkerNotice.php:29
+msgid "The worker source file inside the plugin is missing."
+msgstr "A plugin worker forrásfájlja hiányzik."
+
+#: includes/Admin/WorkerNotice.php:30
+msgid "The mu-plugins directory could not be created."
+msgstr "Az mu-plugins mappa nem hozható létre."
+
+#: includes/Admin/WorkerNotice.php:31
+msgid "The mu-plugins directory is not writable."
+msgstr "Az mu-plugins mappa nem írható."
+
+#: includes/Admin/WorkerNotice.php:32
+msgid "Copying the worker file failed (disk full or permission denied)."
+msgstr "A worker fájl másolása sikertelen (a lemez megtelt vagy nincs jogosultság)."
+
+#: includes/Admin/WorkerNotice.php:53
+msgid "LW Firewall — protection is OFF"
+msgstr "LW Firewall — a védelem KI van kapcsolva"
+
+#: includes/Admin/WorkerNotice.php:58
+msgid ""
+"The MU-plugin worker is installed but its version does not match this "
+"plugin. Runtime protection is disabled until it is reinstalled."
+msgstr "Az MU-plugin worker telepítve van, de a verziója nem egyezik ezzel a pluginnal. A futásidejű védelem ki van kapcsolva, amíg újra nem települ."
+
+#: includes/Admin/WorkerNotice.php:59
+msgid ""
+"The MU-plugin worker file is missing from mu-plugins/. Runtime protection is "
+"disabled until it is reinstalled."
+msgstr "Az MU-plugin worker fájl hiányzik az mu-plugins/ mappából. A futásidejű védelem ki van kapcsolva, amíg újra nem települ."
+
+#: includes/Admin/WorkerNotice.php:67
+msgid "Open Status tab"
+msgstr "Állapot fül megnyitása"
+
+#: includes/Admin/WorkerNotice.php:86
+msgid "Unknown install error."
+msgstr "Ismeretlen telepítési hiba."
+
+#. translators: 1: reason text, 2: human-readable time difference
+#: includes/Admin/WorkerNotice.php:91
+#, php-format
+msgid "Last install attempt failed: %1$s (%2$s ago)"
+msgstr "Az utolsó telepítési kísérlet sikertelen: %1$s (%2$s ezelőtt)"
+
+#. translators: %s: mu-plugins directory path
+#: includes/Admin/WorkerNotice.php:110
+#, php-format
+msgid "Make %s writable by the web server, then re-save the firewall settings."
+msgstr "Tedd írhatóvá a(z) %s mappát a webszerver számára, majd mentsd újra a tűzfal beállításait."
+
+#: includes/Admin/WorkerNotice.php:118
+msgid ""
+"A security plugin or hosting cleanup may be removing the worker. Check the "
+"Status tab for the last install attempt and reinstall from there."
+msgstr "Egy biztonsági plugin vagy a tárhely takarítása eltávolíthatja a workert. Ellenőrizd az Állapot fülön az utolsó telepítési kísérletet, és telepítsd újra onnan."
+
+#: includes/Rules/RegisterGuard.php:54
+msgid "Leave this field empty"
+msgstr "Hagyd üresen ezt a mezőt"
+
+#: includes/Rules/RegisterGuard.php:70
+msgid "Registration failed, please try again."
+msgstr "A regisztráció sikertelen, kérjük, próbáld újra."
+
+#: includes/SiteManager/FirewallAbilities.php:45
+msgid "Get Firewall Options"
+msgstr "Tűzfal beállítások lekérése"
+
+#: includes/SiteManager/FirewallAbilities.php:46
+msgid ""
+"Get all LW Firewall settings including rate limits, bot blocking and geo "
+"rules."
+msgstr "Az összes LW Firewall beállítás lekérése, beleértve a rate limiteket, a bot-blokkolást és a geo szabályokat."
+
+#: includes/SiteManager/FirewallAbilities.php:76
+msgid "Get Firewall Log"
+msgstr "Tűzfal napló lekérése"
+
+#: includes/SiteManager/FirewallAbilities.php:77
+msgid "Get recent firewall log entries (up to 100 blocked requests)."
+msgstr "Legutóbbi tűzfal naplóbejegyzések lekérése (legfeljebb 100 blokkolt kérés)."
+
+#: includes/SiteManager/FirewallAbilities.php:87
+msgid "Number of log entries to return. Defaults to 25, max 100."
+msgstr "A visszaadandó naplóbejegyzések száma. Alapértelmezett 25, maximum 100."
+
+#: includes/SiteManager/FirewallAbilities.php:120
+msgid "List Blocked IPs"
+msgstr "Blokkolt IP-k listázása"
+
+#: includes/SiteManager/FirewallAbilities.php:121
+msgid "List all manually blocked (blacklisted) IP addresses."
+msgstr "Az összes manuálisan blokkolt (feketelistás) IP-cím listázása."
+
+#: includes/SiteManager/FirewallAbilities.php:155
+msgid "Block IP Address"
+msgstr "IP-cím blokkolása"
+
+#: includes/SiteManager/FirewallAbilities.php:156
+msgid "Add an IP address or CIDR range to the blacklist."
+msgstr "IP-cím vagy CIDR tartomány hozzáadása a feketelistához."
+
+#: includes/SiteManager/FirewallAbilities.php:166
+msgid "IP address or CIDR range to block (e.g. 1.2.3.4 or 10.0.0.0/8)."
+msgstr "Blokkolandó IP-cím vagy CIDR tartomány (pl. 1.2.3.4 vagy 10.0.0.0/8)."
+
+#: includes/SiteManager/FirewallAbilities.php:192
+msgid "Unblock IP Address"
+msgstr "IP-cím feloldása"
+
+#: includes/SiteManager/FirewallAbilities.php:193
+msgid "Remove an IP address or CIDR range from the blacklist."
+msgstr "IP-cím vagy CIDR tartomány eltávolítása a feketelistáról."
+
+#: includes/SiteManager/FirewallAbilities.php:203
+msgid "IP address or CIDR range to unblock."
+msgstr "Feloldandó IP-cím vagy CIDR tartomány."
+
+#: includes/SiteManager/FirewallService.php:84
+#: includes/SiteManager/FirewallService.php:137
+msgid "Provide an ip address or CIDR range."
+msgstr "Adj meg egy IP-címet vagy CIDR tartományt."
+
+#: includes/SiteManager/FirewallService.php:92
+msgid "The provided value is not a valid IP address or CIDR range."
+msgstr "A megadott érték nem érvényes IP-cím vagy CIDR tartomány."
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:104
+#, php-format
+msgid "%s is already on the blacklist."
+msgstr "%s már a feketelistán van."
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:119
+#, php-format
+msgid "%s has been added to the blacklist."
+msgstr "%s hozzáadva a feketelistához."
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:150
+#, php-format
+msgid "%s was not found on the blacklist."
+msgstr "%s nem található a feketelistán."
+
+#. translators: %s: IP address
+#: includes/SiteManager/FirewallService.php:165
+#, php-format
+msgid "%s has been removed from the blacklist."
+msgstr "%s eltávolítva a feketelistáról."
+
+#: includes/SiteManager/Integration.php:43
+msgid ""
+"Firewall management abilities: rate limiting, IP blocking, bot control and "
+"logs."
+msgstr "Tűzfal-kezelési képességek: rate limiting, IP-blokkolás, bot-vezérlés és naplók."
+
+#~ msgid "Requests matching these strings are immediately blocked with 403."
+#~ msgstr ""
+#~ "Az ezekre a stringekre illeszkedő kérések azonnal blokkolva lesznek 403-"
+#~ "mal."
+
+#~ msgid ""
+#~ "When enabled, filter requests are monitored for bots and rate-limited per "
+#~ "IP."
+#~ msgstr ""
+#~ "Ha engedélyezve van, a filter kéréseket botokra figyeljük és IP-nként "
+#~ "rate limiteljük."
+
+#~ msgid "Maximum number of filter requests per IP within the time window."
+#~ msgstr "A maximális filter kérések száma IP-nként az időablakon belül."
+
+#~ msgid "Action to take when rate limit is exceeded."
+#~ msgstr "A végrehajtandó művelet, ha a rate limit túllépésre kerül."
+
+#~ msgid ""
+#~ "URL parameter prefixes to monitor (one per line). Default: filter_, "
+#~ "query_type_"
+#~ msgstr ""
+#~ "Figyelt URL paraméter előtagok (soronként egy). Alapértelmezett: filter_, "
+#~ "query_type_"
+
+#~ msgid "IPs that are never rate-limited or blocked (one per line)."
+#~ msgstr ""
+#~ "IP-k, amelyekre soha nem vonatkozik rate limit vagy blokkolás (soronként "
+#~ "egy)."
+
+#~ msgid "IPs that are always blocked with 403 Forbidden (one per line)."
+#~ msgstr ""
+#~ "IP-k, amelyek mindig 403 Forbiddennel blokkolva vannak (soronként egy)."
+
+#~ msgid "Protects against brute-force login attempts."
+#~ msgstr "Véd a brute-force bejelentkezési próbálkozások ellen."
 
 #~ msgid "Configure firewall protection for WooCommerce filter requests."
 #~ msgstr "Állítsd be a firewall védelmet a WooCommerce filter kérésekhez."

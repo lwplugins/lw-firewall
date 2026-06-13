@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.1] - 2026-06-13
+
+### Added
+- Registration spam protection for `wp-login.php?action=register`. A signed proof-of-render token (HMAC over `wp_salt('nonce')` + issue time) plus an optional honeypot reject bots — including WordPress-aware bots that POST directly without rendering the form. Token checks cover timing (too-fast submits), expiry, and optional single-use via the firewall storage backend
+- New `RegisterTracker` counts rejected registrations per IP and bans repeat offenders through the shared ban store, so the MU-plugin worker blocks them before WordPress loads
+- New Spam settings tab exposing the master toggle, honeypot, single-use, minimum fill time, token lifetime, ban threshold, and ban duration. Disabled by default; only active when "Anyone can register" is enabled; whitelisted IPs are never counted
+- Complete Hungarian (hu_HU) translation covering all admin, settings, Spam tab, worker notice, and Site Manager strings
+
+### Changed
+- Regenerated the translation template (`languages/lw-firewall.pot`)
+
 ## [1.3.0] - 2026-06-07
 
 ### Added

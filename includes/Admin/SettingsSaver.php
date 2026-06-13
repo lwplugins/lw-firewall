@@ -118,6 +118,26 @@ final class SettingsSaver {
 			? absint( $post_data['login_lockout_duration'] )
 			: $current['login_lockout_duration'];
 
+		$values['register_protect_enabled'] = ! empty( $post_data['register_protect_enabled'] );
+		$values['register_honeypot']        = ! empty( $post_data['register_honeypot'] );
+		$values['register_single_use']      = ! empty( $post_data['register_single_use'] );
+
+		$values['register_min_fill_time'] = isset( $post_data['register_min_fill_time'] )
+			? absint( $post_data['register_min_fill_time'] )
+			: $current['register_min_fill_time'];
+
+		$values['register_token_max_age'] = isset( $post_data['register_token_max_age'] )
+			? absint( $post_data['register_token_max_age'] )
+			: $current['register_token_max_age'];
+
+		$values['register_ban_threshold'] = isset( $post_data['register_ban_threshold'] )
+			? absint( $post_data['register_ban_threshold'] )
+			: $current['register_ban_threshold'];
+
+		$values['register_ban_duration'] = isset( $post_data['register_ban_duration'] )
+			? absint( $post_data['register_ban_duration'] )
+			: $current['register_ban_duration'];
+
 		$values['action'] = isset( $post_data['action'] )
 			? sanitize_key( $post_data['action'] )
 			: $current['action'];
