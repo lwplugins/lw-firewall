@@ -102,11 +102,13 @@ final class RegisterToken {
 		if ( null !== $storage ) {
 			$key = 'reg_tok_' . hash( 'sha256', $decoded );
 
-			if ( $storage->get( $key ) ) {
+			// Atomic check-and-mark: the first use increments to 1 and passes;
+			// any replay (or concurrent double-submit) increments to > 1 and is
+			// rejected. A get()-then-set() had a TOCTOU window that let the same
+			// token register several accounts.
+			if ( $storage->increment( $key, $max_age ) > 1 ) {
 				return false;
 			}
-
-			$storage->set( $key, 1, $max_age );
 		}
 
 		return true;

@@ -79,8 +79,8 @@ final class RateLimiter {
 	 * 302 redirect to the shop base URL (strips filter params).
 	 */
 	private static function redirect(): void {
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Used for redirect target, path only.
-		$path = strtok( $_SERVER['REQUEST_URI'] ?? '/', '?' );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Path only, sanitized in safe_redirect_path().
+		$path = self::safe_redirect_path( (string) ( $_SERVER['REQUEST_URI'] ?? '/' ) );
 
 		if ( ! headers_sent() ) {
 			header( 'HTTP/1.1 302 Found' );
@@ -89,6 +89,22 @@ final class RateLimiter {
 		}
 
 		exit;
+	}
+
+	/**
+	 * Reduce a request URI to a single-slash-rooted local path.
+	 *
+	 * Strips the query string and collapses leading slashes so a crafted request
+	 * line like "GET //evil.example/" cannot turn into a protocol-relative (open)
+	 * redirect via the Location header.
+	 *
+	 * @param string $request_uri Raw REQUEST_URI.
+	 * @return string
+	 */
+	public static function safe_redirect_path( string $request_uri ): string {
+		$path = strtok( $request_uri, '?' );
+
+		return '/' . ltrim( (string) $path, '/' );
 	}
 
 	/**

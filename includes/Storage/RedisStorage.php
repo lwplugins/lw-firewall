@@ -33,14 +33,31 @@ final class RedisStorage implements StorageInterface {
 	private \Redis $redis;
 
 	/**
+	 * Whether the connection succeeded.
+	 *
+	 * @var bool
+	 */
+	private bool $connected = false;
+
+	/**
 	 * Connect to Redis on construction.
+	 *
+	 * A failed connection (server down, timeout, max-clients — likeliest exactly
+	 * while the site is under the flood this plugin mitigates) must never fatal
+	 * the front end: phpredis throws RedisException on connect failure, so we
+	 * catch it and degrade to a no-op (fail-open) instead.
 	 *
 	 * @param string $host Redis host.
 	 * @param int    $port Redis port.
 	 */
 	public function __construct( string $host = '127.0.0.1', int $port = 6379 ) {
 		$this->redis = new \Redis();
-		$this->redis->connect( $host, $port, 1.0 ); // 1s timeout.
+
+		try {
+			$this->connected = (bool) $this->redis->connect( $host, $port, 1.0 ); // 1s timeout.
+		} catch ( \Throwable $e ) {
+			$this->connected = false;
+		}
 	}
 
 	/**
@@ -50,6 +67,10 @@ final class RedisStorage implements StorageInterface {
 	 * @return mixed
 	 */
 	public function get( string $key ): mixed {
+		if ( ! $this->connected ) {
+			return null;
+		}
+
 		$value = $this->redis->get( $this->prefix . $key );
 
 		if ( false === $value ) {
@@ -68,6 +89,10 @@ final class RedisStorage implements StorageInterface {
 	 * @return bool
 	 */
 	public function set( string $key, mixed $value, int $ttl ): bool {
+		if ( ! $this->connected ) {
+			return false;
+		}
+
 		if ( $ttl > 0 ) {
 			return $this->redis->setex( $this->prefix . $key, $ttl, $value );
 		}
@@ -83,6 +108,12 @@ final class RedisStorage implements StorageInterface {
 	 * @return int
 	 */
 	public function increment( string $key, int $ttl ): int {
+		// Fail-open when disconnected: a value of 1 reads as "first hit, allowed"
+		// so a Redis outage degrades rate limiting rather than blocking traffic.
+		if ( ! $this->connected ) {
+			return 1;
+		}
+
 		$full_key = $this->prefix . $key;
 		$value    = $this->redis->incr( $full_key );
 

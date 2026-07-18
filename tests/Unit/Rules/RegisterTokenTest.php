@@ -13,6 +13,7 @@ namespace LightweightPlugins\Firewall\Tests\Unit\Rules;
 
 use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\Rules\RegisterToken;
+use LightweightPlugins\Firewall\Storage\StorageInterface;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
 use LightweightPlugins\Firewall\Tests\Unit\Support\ArrayStorage;
 
@@ -61,6 +62,34 @@ final class RegisterTokenTest extends MonkeyTestCase {
 	public function test_single_use_first_pass_then_replay_rejected(): void {
 		$storage = new ArrayStorage();
 		$token   = RegisterToken::make( self::NOW - 10 );
+
+		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage ) );
+		$this->assertFalse( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage ) );
+	}
+
+	/**
+	 * Single-use must rely on the atomic increment(), not a get()-then-set().
+	 * This storage double never reports the key as seen via get() (simulating
+	 * two concurrent requests in the TOCTOU window), but counts via increment().
+	 * A get-then-set implementation would pass the token twice; the atomic one
+	 * rejects the second use.
+	 */
+	public function test_single_use_is_race_safe(): void {
+		$storage = new class() implements StorageInterface {
+			/** @var array<string, int> */
+			private array $counts = array();
+			public function get( string $key ): mixed {
+				return null; }
+			public function set( string $key, mixed $value, int $ttl ): bool {
+				return true; }
+			public function increment( string $key, int $ttl ): int {
+				$this->counts[ $key ] = ( $this->counts[ $key ] ?? 0 ) + 1;
+				return $this->counts[ $key ]; }
+			public static function is_available(): bool {
+				return true; }
+		};
+
+		$token = RegisterToken::make( self::NOW - 10 );
 
 		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage ) );
 		$this->assertFalse( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage ) );

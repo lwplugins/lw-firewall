@@ -48,7 +48,11 @@ final class NotFoundTracker {
 		$limit  = (int) Options::get( 'rate_limit', 30 );
 		$count  = $this->storage->increment( '404_' . $ip, $window );
 
-		if ( $count > $limit && ! empty( Options::get( 'log_enabled' ) ) ) {
+		// Log only the request that first crosses the threshold. A 404 flood
+		// never escalates to a ban here, so `$count > $limit` would write a log
+		// line for every request past the limit — turning the logger into an
+		// unbounded write amplifier during the very flood it is meant to record.
+		if ( $count === $limit + 1 && ! empty( Options::get( 'log_enabled' ) ) ) {
 			Logger::log(
 				[
 					'ip'     => $ip,

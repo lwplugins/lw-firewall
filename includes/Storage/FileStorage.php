@@ -111,12 +111,65 @@ final class FileStorage implements StorageInterface {
 	 * @return int
 	 */
 	public function increment( string $key, int $ttl ): int {
-		$current = $this->get( $key );
-		$new     = is_int( $current ) ? $current + 1 : 1;
+		$file = $this->get_file_path( $key );
 
-		$this->set( $key, $new, $ttl );
+		// Atomic read-modify-write under an exclusive lock. A plain get()+set()
+		// lets two concurrent requests both read the same counter and each
+		// overwrite the other's increment, so a burst of N parallel requests
+		// raises the counter by far less than N — letting a flood past the
+		// limit exactly under the load rate limiting exists to stop.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$handle = @fopen( $file, 'c+' );
 
-		return $new;
+		if ( false === $handle ) {
+			// Best-effort fallback if the file can't be opened.
+			$current = $this->get( $key );
+			$new     = is_int( $current ) ? $current + 1 : 1;
+			$this->set( $key, $new, $ttl );
+			return $new;
+		}
+
+		try {
+			if ( ! flock( $handle, LOCK_EX ) ) {
+				$current = $this->get( $key );
+				$new     = is_int( $current ) ? $current + 1 : 1;
+				$this->set( $key, $new, $ttl );
+				return $new;
+			}
+
+			$raw   = stream_get_contents( $handle );
+			$entry = ( is_string( $raw ) && '' !== $raw )
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
+				? @unserialize( $raw )
+				: false;
+
+			$now     = time();
+			$expired = ! is_array( $entry )
+				|| ! isset( $entry['expires'], $entry['value'] )
+				|| ( $entry['expires'] > 0 && $entry['expires'] < $now );
+
+			$current = ( ! $expired && is_int( $entry['value'] ) ) ? $entry['value'] : 0;
+			$new     = $current + 1;
+
+			$payload = serialize( // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
+				[
+					'expires' => $ttl > 0 ? $now + $ttl : 0,
+					'value'   => $new,
+				]
+			);
+
+			rewind( $handle );
+			ftruncate( $handle, 0 );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- Locked counter file needs raw, atomic writes; WP_Filesystem is unsuitable here.
+			fwrite( $handle, $payload );
+			fflush( $handle );
+
+			return $new;
+		} finally {
+			flock( $handle, LOCK_UN );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			fclose( $handle );
+		}
 	}
 
 	/**
