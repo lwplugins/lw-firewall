@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.4.0] - 2026-07-18
+
+### Security
+- Fixed a local file inclusion in geo blocking: blocked-country codes are validated before being used to build the cached CIDR include path
+- Fixed .htaccess directive injection: blocked-country codes are validated before being written into RewriteCond rules
+- Settings import now validates values (matching the settings form), so an untrusted import file can no longer inject unsafe options into the geo sinks above
+- Fixed IPv4/IPv6 CIDR matching: a crafted IPv4 could match the first bytes of an IPv6 range, being trusted as Cloudflare (IP spoofing) or matching the wrong allow/deny entry. IPv6 allowlist entries now match regardless of notation
+- Reworked the logged-in rate-limit exemption into a scoped, higher-limit bucket on REST/filter endpoints; a forged `wordpress_logged_in_` cookie can no longer disable rate limiting, and login/xmlrpc/cron stay fully throttled
+
+### Fixed
+- A blank entry in the bot list matched every request and 403'd the whole site
+- File-based rate-limit counters now increment atomically under an exclusive lock, so concurrent floods no longer lose increments
+- A Redis connection failure now fails open instead of fataling the front end
+- Registration single-use tokens are enforced via an atomic counter (no reuse under concurrent submits)
+- Hardened the filter rate-limit redirect against protocol-relative open redirects
+
+### Changed
+- Minimum PHP is now 8.2
+
+### Added
+- PHPStan level 5 static analysis and a PHPUnit test suite (with security regression tests) in CI
+
 ## [1.3.2] - 2026-06-13
 
 ### Changed

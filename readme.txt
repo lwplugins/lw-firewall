@@ -3,8 +3,8 @@ Contributors: developer
 Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 6.7
-Requires PHP: 8.1
-Stable tag: 1.3.2
+Requires PHP: 8.2
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,18 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.4.0 =
+* Security: Fixed a local file inclusion in geo blocking — blocked-country values are validated before being used to load cached CIDR lists
+* Security: Fixed .htaccess directive injection — blocked-country values are validated before being written to .htaccess
+* Security: Settings import now validates values the same way the settings form does, so an untrusted import file can no longer inject unsafe options
+* Security: Fixed IPv4/IPv6 range matching so a crafted address can't be trusted as Cloudflare or match the wrong allow/deny rule; IPv6 allowlist entries now match regardless of notation
+* Fix: A blank entry in the bot list no longer blocks every request
+* Fix: File-based rate-limit counters now increment atomically, so parallel floods can't slip past the limit
+* Fix: A Redis outage now fails open instead of causing a fatal error
+* Fix: Registration single-use tokens are enforced atomically (no token reuse under concurrent submits)
+* Change: Logged-in users now get a higher rate limit on REST/filter endpoints (so admin dashboards load) instead of a full exemption; a forged login cookie can no longer disable rate limiting, and login, xmlrpc and cron stay fully throttled
+* Update: Minimum PHP is now 8.2; added PHPStan level 5 and a PHPUnit test suite to CI
 
 = 1.3.2 =
 * Change: Registration spam protection is now enabled by default on new installs (still only active when "Anyone can register" is on)
