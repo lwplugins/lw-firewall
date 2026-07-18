@@ -18,3 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+
+// Shared worker/plugin helper functions are a plain functions file (not PSR-4),
+// so load them explicitly for the tests that cover them.
+require_once dirname( __DIR__ ) . '/includes/helpers.php';

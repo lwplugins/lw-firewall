@@ -16,7 +16,7 @@
  * wp-config.php to neutralize the worker completely.
  *
  * @package LightweightPlugins\Firewall
- * @version 1.3.2
+ * @version 1.3.3
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_WORKER_VERSION', '1.3.2' );
+define( 'LW_FIREWALL_WORKER_VERSION', '1.3.3' );
 
 // Emergency kill-switch — wp-config.php may neutralize the worker.
 if ( defined( 'LW_FIREWALL_DISABLE_WORKER' ) && LW_FIREWALL_DISABLE_WORKER ) {
@@ -187,9 +187,26 @@ if ( PHP_VERSION_ID < 80100 ) {
 					}
 
 					// --- Rate limiting ---
+					// Signed-in users get a SEPARATE, higher-limit bucket on the
+					// REST/filter endpoints (where dashboards fire request bursts),
+					// not a full exemption. login/xmlrpc/cron stay fully throttled
+					// regardless of any cookie, so a forged logged-in cookie cannot
+					// disable brute-force or abuse protection — at worst it raises
+					// the limit on two endpoints, and abuse there is still recorded
+					// for auto-ban.
+					$logged_in = lw_firewall_login_exempt_reason( $reason ) && lw_firewall_has_login_cookie();
+
+					if ( $logged_in ) {
+						$rl_key   = $reason . '_li_' . $ip;
+						$rl_limit = lw_firewall_loggedin_limit( $custom_limit, $options );
+					} else {
+						$rl_key   = $reason . '_' . $ip;
+						$rl_limit = $custom_limit;
+					}
+
 					$limiter = new \LightweightPlugins\Firewall\Rules\RateLimiter( $storage );
 
-					if ( ! $limiter->is_allowed_key( $reason . '_' . $ip, $custom_limit ) ) {
+					if ( ! $limiter->is_allowed_key( $rl_key, $rl_limit ) ) {
 						lw_firewall_log( $options, $ip, 'rate_limited_' . $reason );
 
 						// Record violation for auto-ban.
@@ -232,6 +249,13 @@ if ( PHP_VERSION_ID < 80100 ) {
  */
 function lw_firewall_detect_type( string $uri, array $options ): array {
 	if ( str_contains( $uri, '/wp-cron.php' ) && ! empty( $options['protect_cron'] ) ) {
+		// Never throttle WordPress's own cron loopback (?doing_wp_cron=…) — that
+		// would stall scheduled work such as WooCommerce Analytics imports. A
+		// bare GET /wp-cron.php (the common DoS trigger) is still rate-limited.
+		if ( lw_firewall_is_cron_loopback( $uri ) ) {
+			return [ null, null ];
+		}
+
 		return [ 'cron', null ];
 	}
 
