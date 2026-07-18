@@ -1,25 +1,37 @@
 {
     "name": "lwplugins/lw-firewall",
-    "description": "WooCommerce filter rate limiter — blocks bots crawling filter combinations and rate-limits requests per IP.",
+    "description": "Lightweight firewall — rate-limits endpoints, blocks bots, bans repeat offenders, and adds security headers.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {
-        "php": ">=8.1"
+        "php": ">=8.2"
     },
     "autoload": {
         "psr-4": {
             "LightweightPlugins\\Firewall\\": "includes/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "LightweightPlugins\\Firewall\\Tests\\": "tests/"
+        }
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",
         "wp-coding-standards/wpcs": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "php-stubs/woocommerce-stubs": "^10.9",
+        "php-stubs/wp-cli-stubs": "^2.12",
+        "phpunit/phpunit": "^10.0",
+        "brain/monkey": "^2.6"
     },
     "scripts": {
         "phpcs": "phpcs",
-        "phpcbf": "phpcbf"
+        "phpcbf": "phpcbf",
+        "analyse": "phpstan analyse --memory-limit=2G",
+        "test": "phpunit"
     },
     "config": {
         "preferred-install": "dist",
