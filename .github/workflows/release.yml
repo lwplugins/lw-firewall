@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -88,7 +88,9 @@ jobs:
           rsync -av --exclude='.git' --exclude='.github' --exclude='dist' \
             --exclude='builds' --exclude='composer.json' --exclude='composer.lock' \
             --exclude='phpcs.xml.dist' --exclude='node_modules' --exclude='.gitignore' \
-            --exclude='*.log' . dist/lw-firewall/
+            --exclude='tests' --exclude='phpstan.neon.dist' --exclude='phpstan-baseline.neon' \
+            --exclude='phpstan-bootstrap.php' --exclude='phpunit.xml.dist' \
+            --exclude='.claude' --exclude='*.log' . dist/lw-firewall/
           cd dist && zip -r "lw-firewall-${VERSION}.zip" lw-firewall/
 
       - name: Create tag and release
