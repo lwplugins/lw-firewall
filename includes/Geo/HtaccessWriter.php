@@ -58,17 +58,34 @@ final class HtaccessWriter {
 			return;
 		}
 
-		$rules = [];
+		insert_with_markers( $path, self::MARKER, self::build_rules( $enabled, $countries ) );
+	}
 
-		if ( $enabled && ! empty( $countries ) ) {
-			$pattern = implode( '|', array_map( 'strtoupper', $countries ) );
-			$rules   = [
-				'RewriteCond %{HTTP:CF-IPCountry} ^(' . $pattern . ')$ [NC]',
-				'RewriteRule .* - [F,L]',
-			];
+	/**
+	 * Build the .htaccess rule lines for the given geo settings.
+	 *
+	 * Country codes are validated down to `^[A-Z]{2}$` before being embedded in
+	 * the RewriteCond, so an attacker-influenced value (e.g. one carrying a
+	 * newline, imported from an untrusted settings JSON) cannot inject arbitrary
+	 * Apache directives via insert_with_markers().
+	 *
+	 * @param bool                     $enabled   Whether geo blocking is active.
+	 * @param array<int|string, mixed> $countries Raw blocked country codes.
+	 * @return array<int, string>
+	 */
+	public static function build_rules( bool $enabled, array $countries ): array {
+		$countries = Options::sanitize_country_codes( $countries );
+
+		if ( ! $enabled || empty( $countries ) ) {
+			return [];
 		}
 
-		insert_with_markers( $path, self::MARKER, $rules );
+		$pattern = implode( '|', $countries );
+
+		return [
+			'RewriteCond %{HTTP:CF-IPCountry} ^(' . $pattern . ')$ [NC]',
+			'RewriteRule .* - [F,L]',
+		];
 	}
 
 	/**

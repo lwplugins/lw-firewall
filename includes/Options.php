@@ -167,6 +167,42 @@ final class Options {
 	}
 
 	/**
+	 * Whether a string is a syntactically valid ISO 3166-1 alpha-2 country code.
+	 *
+	 * Used as a defensive guard everywhere a country code is turned into a file
+	 * path (GeoDetector include, CidrUpdater cache write) or an .htaccess rule
+	 * (HtaccessWriter), so an attacker-influenced value (e.g. imported from an
+	 * untrusted settings JSON) cannot smuggle path traversal or newlines into
+	 * those sinks.
+	 *
+	 * @param string $code Candidate code.
+	 * @return bool
+	 */
+	public static function is_country_code( string $code ): bool {
+		return 1 === preg_match( '/^[A-Za-z]{2}$/', $code );
+	}
+
+	/**
+	 * Reduce a raw list to valid, unique, uppercase country codes.
+	 *
+	 * @param array<int|string, mixed> $codes Raw codes.
+	 * @return array<int, string>
+	 */
+	public static function sanitize_country_codes( array $codes ): array {
+		$clean = [];
+
+		foreach ( $codes as $code ) {
+			$code = strtoupper( trim( (string) $code ) );
+
+			if ( self::is_country_code( $code ) ) {
+				$clean[] = $code;
+			}
+		}
+
+		return array_values( array_unique( $clean ) );
+	}
+
+	/**
 	 * Save options.
 	 *
 	 * @param array<string, mixed> $values New values to save.

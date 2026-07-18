@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Geo;
 
+use LightweightPlugins\Firewall\Options;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -61,6 +63,12 @@ final class CidrUpdater {
 	 * @return bool True on success.
 	 */
 	public static function update_country( string $cc ): bool {
+		// Defensive: never build a URL or cache-file path from an unvalidated
+		// code (guards the write_cache() path against traversal).
+		if ( ! Options::is_country_code( $cc ) ) {
+			return false;
+		}
+
 		$cc  = strtolower( $cc );
 		$url = sprintf( self::SOURCE_URL, $cc );
 
@@ -99,6 +107,10 @@ final class CidrUpdater {
 	 * @return bool
 	 */
 	public static function is_stale( string $cc ): bool {
+		if ( ! Options::is_country_code( $cc ) ) {
+			return true;
+		}
+
 		$file = self::get_cache_dir() . strtolower( $cc ) . '.php';
 
 		if ( ! file_exists( $file ) ) {

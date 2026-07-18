@@ -39,7 +39,15 @@ final class BotBlocker {
 		}
 
 		foreach ( $blocked_bots as $bot ) {
-			if ( str_contains( $ua_lower, strtolower( (string) $bot ) ) ) {
+			$needle = strtolower( trim( (string) $bot ) );
+
+			// Skip empty entries: str_contains( $ua, '' ) is always true and
+			// would 403 every request (a single blank list entry = full outage).
+			if ( '' === $needle ) {
+				continue;
+			}
+
+			if ( str_contains( $ua_lower, $needle ) ) {
 				return true;
 			}
 		}

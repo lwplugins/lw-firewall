@@ -93,11 +93,52 @@ final class ImportExportHandler {
 			$sanitized[ $key ] = array_key_exists( $key, $data ) ? $data[ $key ] : $default_value;
 		}
 
-		Options::save( $sanitized );
+		Options::save( self::sanitize_lists( $sanitized ) );
 
 		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
 
 		self::redirect( 'imported', '1' );
+	}
+
+	/**
+	 * Sanitize list-type option values coming from an untrusted import file.
+	 *
+	 * The form-save path validates these via InputParserTrait, but the import
+	 * path previously copied raw JSON values straight into Options::save(). This
+	 * strips empty entries (a blank blocked_bots entry would 403 every request)
+	 * and reduces blocked_countries to valid codes (which reach include()/
+	 * .htaccess/cache-file sinks).
+	 *
+	 * @param array<string, mixed> $values Merged option values.
+	 * @return array<string, mixed>
+	 */
+	private static function sanitize_lists( array $values ): array {
+		foreach ( [ 'blocked_bots', 'ip_whitelist', 'ip_blacklist', 'filter_params' ] as $key ) {
+			$values[ $key ] = self::clean_list( $values[ $key ] ?? [] );
+		}
+
+		$values['blocked_countries'] = Options::sanitize_country_codes(
+			(array) ( $values['blocked_countries'] ?? [] )
+		);
+
+		return $values;
+	}
+
+	/**
+	 * Coerce a raw imported value into an array of non-empty, sanitized strings.
+	 *
+	 * @param mixed $value Raw value (array, or newline/comma string).
+	 * @return array<int, string>
+	 */
+	private static function clean_list( mixed $value ): array {
+		if ( ! is_array( $value ) ) {
+			$value = is_string( $value ) ? (array) preg_split( '/[\r\n,]+/', $value ) : [];
+		}
+
+		$value = array_map( static fn ( $entry ): string => sanitize_text_field( (string) $entry ), $value );
+		$value = array_filter( array_map( 'trim', $value ), static fn ( string $entry ): bool => '' !== $entry );
+
+		return array_values( $value );
 	}
 
 	/**

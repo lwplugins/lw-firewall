@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Geo;
 
+use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Rules\IpMatcher;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,7 +73,12 @@ final class GeoDetector {
 		$cache_dir = CidrUpdater::get_cache_dir();
 
 		foreach ( $blocked_countries as $cc ) {
-			$file = $cache_dir . strtolower( $cc ) . '.php';
+			// Defensive: never turn an unvalidated value into an include() path.
+			if ( ! Options::is_country_code( (string) $cc ) ) {
+				continue;
+			}
+
+			$file = $cache_dir . strtolower( (string) $cc ) . '.php';
 
 			if ( ! file_exists( $file ) ) {
 				continue; // Fail-open: no cache = no block.
