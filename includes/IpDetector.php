@@ -108,9 +108,17 @@ final class IpDetector {
 			return false;
 		}
 
+		// Different address families (IPv4 vs IPv6) never match. Without this,
+		// PHP's string `&` truncates to the shorter operand, so a crafted IPv4
+		// REMOTE_ADDR could match the first 4 bytes of a Cloudflare IPv6 range
+		// and be trusted as Cloudflare — enabling CF-Connecting-IP spoofing.
+		if ( strlen( $packed_ip ) !== strlen( $packed_range ) ) {
+			return false;
+		}
+
 		$mask = str_repeat( "\xff", (int) ( $bits / 8 ) );
 		if ( 0 !== $bits % 8 ) {
-			$mask .= chr( 0xff << ( 8 - ( $bits % 8 ) ) );
+			$mask .= chr( ( 0xff << ( 8 - ( $bits % 8 ) ) ) & 0xff );
 		}
 		$mask = str_pad( $mask, strlen( $packed_ip ), "\x00" );
 

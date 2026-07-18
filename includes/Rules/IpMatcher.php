@@ -53,8 +53,12 @@ final class IpMatcher {
 				continue;
 			}
 
-			// Exact match.
-			if ( $ip === $entry ) {
+			// Exact match — compare canonical packed bytes so IPv6 notation
+			// differences (letter case, zero-compression) still match the
+			// canonical form IpDetector produces.
+			$packed_entry = inet_pton( $entry );
+
+			if ( false !== $packed_entry && $packed_entry === $packed ) {
 				return true;
 			}
 		}
@@ -78,10 +82,17 @@ final class IpMatcher {
 			return false;
 		}
 
+		// Different address families (IPv4 vs IPv6) never match. Without this,
+		// PHP's string `&` truncates to the shorter operand and an IPv4 can
+		// collide with the first 4 bytes of an IPv6 range (and vice versa).
+		if ( strlen( $packed ) !== strlen( $packed_range ) ) {
+			return false;
+		}
+
 		$mask = str_repeat( "\xff", (int) ( $bits / 8 ) );
 
 		if ( 0 !== $bits % 8 ) {
-			$mask .= chr( 0xff << ( 8 - ( $bits % 8 ) ) );
+			$mask .= chr( ( 0xff << ( 8 - ( $bits % 8 ) ) ) & 0xff );
 		}
 
 		$mask = str_pad( $mask, strlen( $packed ), "\x00" );
