@@ -23,6 +23,8 @@
         <exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames"/>
         <!-- Allow code-like comments -->
         <exclude name="Squiz.PHP.CommentedOutCode"/>
+        <!-- @phpstan-ignore directive comments end in an identifier, not punctuation -->
+        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
         <!-- PSR-4 autoloading: use PascalCase filenames instead of class- prefix -->
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
         <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>

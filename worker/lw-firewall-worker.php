@@ -32,8 +32,12 @@ if ( defined( 'LW_FIREWALL_DISABLE_WORKER' ) && LW_FIREWALL_DISABLE_WORKER ) {
 	return;
 }
 
-// Hard PHP requirement — bail silently on anything older than 8.1.
-if ( PHP_VERSION_ID < 80100 ) {
+// Hard PHP requirement — bail silently on anything older than 8.2. This is a
+// standalone MU-plugin file that may run on older PHP than the main plugin
+// requires, so the guard is real at runtime even though static analysis
+// (which assumes >= 8.2) sees it as always false.
+// @phpstan-ignore smaller.alwaysFalse
+if ( PHP_VERSION_ID < 80200 ) {
 	return;
 }
 

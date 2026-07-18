@@ -95,6 +95,9 @@ final class Activator {
 
 		if ( file_exists( $target ) ) {
 			wp_delete_file( $target );
+			// file_exists() is re-evaluated at runtime after the delete; PHPStan
+			// cannot model wp_delete_file()'s filesystem side effect.
+			// @phpstan-ignore booleanNot.alwaysFalse
 			return ! file_exists( $target );
 		}
 
@@ -116,8 +119,16 @@ final class Activator {
 			return true;
 		}
 
-		return ! defined( 'LW_FIREWALL_WORKER_VERSION' )
-			|| LW_FIREWALL_WORKER_VERSION !== LW_FIREWALL_VERSION;
+		if ( ! defined( 'LW_FIREWALL_WORKER_VERSION' ) ) {
+			return true;
+		}
+
+		// The two constants are defined in separate files — the installed
+		// MU-worker vs the current plugin — and legitimately differ at runtime
+		// after an update. Static analysis sees only one build, so it reads them
+		// as identical.
+		// @phpstan-ignore notIdentical.alwaysFalse
+		return LW_FIREWALL_WORKER_VERSION !== LW_FIREWALL_VERSION;
 	}
 
 	/**

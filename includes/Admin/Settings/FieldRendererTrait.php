@@ -19,7 +19,7 @@ trait FieldRendererTrait {
 	/**
 	 * Render a checkbox field.
 	 *
-	 * @param array{name: string, label: string, description?: string} $args Field arguments.
+	 * @param array{name: string, label?: string, description?: string} $args Field arguments.
 	 * @return void
 	 */
 	protected function render_checkbox_field( array $args ): void {
@@ -44,7 +44,7 @@ trait FieldRendererTrait {
 	/**
 	 * Render a select field.
 	 *
-	 * @param array{name: string, label: string, options: array<string, string>, description?: string} $args Field arguments.
+	 * @param array{name: string, label?: string, options?: array<array-key, string>, description?: string} $args Field arguments.
 	 * @return void
 	 */
 	protected function render_select_field( array $args ): void {
@@ -84,7 +84,7 @@ trait FieldRendererTrait {
 	/**
 	 * Render a number field.
 	 *
-	 * @param array{name: string, label: string, min?: int, max?: int, step?: int, description?: string} $args Field arguments.
+	 * @param array{name: string, label?: string, min?: int, max?: int, step?: int, description?: string} $args Field arguments.
 	 * @return void
 	 */
 	protected function render_number_field( array $args ): void {
