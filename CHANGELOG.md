@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.4.1] - 2026-08-20
+
+### Changed
+- Tested up to WordPress 7.1.
+
 ## [1.4.0] - 2026-07-18
 
 ### Security
