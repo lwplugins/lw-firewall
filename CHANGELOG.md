@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.5.0] - 2026-08-24
+
+### Added
+- New administrator alert: an email is sent whenever an account gains administrator privileges. WordPress hooks (`user_register`, `set_user_role`, `add_user_role`, `granted_super_admin`, `add_user_to_blog`) catch anything going through the user API — admin screens, plugins, REST, WP-CLI — and report the acting user and request IP
+- Hourly reconciliation scan diffing the live administrator list against a stored snapshot, which is what catches accounts created by a direct database write, by code bypassing the WordPress user API, or while the plugin was inactive
+- Alerts settings tab: recipient address (comma-separated list supported, falls back to the site admin email), scan toggle, run-scan and send-test buttons, and monitoring status including a warning when the last alert email failed to send
+- `wp lw-firewall alerts status|scan|test|baseline` WP-CLI commands; `alerts scan` also lets sites with WP-Cron disabled drive the scan from a system cron
+- Account takeover detection: the snapshot also fingerprints each administrator's username, email address and password (as a digest of the stored hash), and alerts when any of them changes on an account that already existed. Rewriting an admin's email address hands the attacker the password reset flow while the user ID stays the same, so watching for *new* accounts alone would never see it. Covered live by the `profile_update` and `wp_set_password` hooks, and by the same reconciliation scan for changes written straight to the database
+- New options: `admin_alert_enabled`, `admin_alert_email`, `admin_alert_scan_enabled`, `admin_alert_changes` (overridable from wp-config.php like every other option)
+
 ## [1.4.1] - 2026-08-20
 
 ### Changed

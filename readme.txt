@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.4.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,7 +46,8 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 * Multiple storage backends: APCu, Redis, file-based fallback
 * MU-plugin worker for early request interception
 * Import/Export — transfer firewall settings between sites via JSON
-* Tabbed admin settings page under LW Plugins menu (9 tabs)
+* New administrator alert — email notification when any account gains admin rights or an existing admin is modified, including changes written straight into the database
+* Tabbed admin settings page under LW Plugins menu (11 tabs)
 * Optional request logging with viewer
 * Full WP-CLI support
 * wp-config.php constant overrides
@@ -84,6 +85,12 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.0 =
+* New: Email alert when an account gains administrator privileges — covers the admin screens, plugins, the REST API and WP-CLI via WordPress hooks, and direct database inserts via an hourly reconciliation scan
+* New: Account takeover alert — the snapshot also tracks each administrator's username, email address and password digest, and reports a change on an existing account (the classic email-rewrite takeover leaves the user ID untouched)
+* New: Alerts settings tab — recipient address (comma-separated list supported, falls back to the site admin email), scan toggle, run-scan and test-email buttons, monitoring status
+* New: `wp lw-firewall alerts status|scan|test|baseline` WP-CLI commands
 
 = 1.4.1 =
 * Update: Tested up to WordPress 7.1.

@@ -70,6 +70,10 @@ final class Options {
 			'register_ban_threshold'   => 3,
 			'register_ban_duration'    => 3600,
 			'security_headers'         => false,
+			'admin_alert_enabled'      => false,
+			'admin_alert_email'        => '',
+			'admin_alert_scan_enabled' => true,
+			'admin_alert_changes'      => true,
 			'blocked_bots'             => [
 				'meta-externalagent',
 				'meta-externalfetcher',

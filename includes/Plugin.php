@@ -11,6 +11,7 @@ namespace LightweightPlugins\Firewall;
 
 use LightweightPlugins\Firewall\Admin\SettingsPage;
 use LightweightPlugins\Firewall\Admin\WorkerNotice;
+use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
@@ -27,9 +28,23 @@ final class Plugin {
 	 * Constructor.
 	 */
 	public function __construct() {
+		$this->init_alerts();
 		$this->bootstrap_worker();
 		$this->init_admin();
 		$this->init_site_manager();
+	}
+
+	/**
+	 * Register administrator-creation monitoring.
+	 *
+	 * Registered before (and independently of) bootstrap_worker() on purpose:
+	 * this is passive monitoring, and it must keep watching even when the
+	 * MU-worker is outdated or the request-filtering runtime is switched off.
+	 *
+	 * @return void
+	 */
+	private function init_alerts(): void {
+		AdminMonitor::init();
 	}
 
 	/**

@@ -36,6 +36,12 @@ final class Activator {
 			add_option( Options::OPTION_NAME, Options::get_defaults() );
 		}
 
+		// Record the administrators that already exist so enabling alerts later
+		// reports only accounts that appear from now on.
+		if ( ! Alerts\AdminBaseline::is_seeded() ) {
+			Alerts\AdminBaseline::seed();
+		}
+
 		Geo\HtaccessWriter::sync();
 	}
 
@@ -47,6 +53,12 @@ final class Activator {
 	public static function deactivate(): void {
 		self::remove_worker();
 		Geo\HtaccessWriter::remove();
+
+		$scan_event = wp_next_scheduled( Alerts\AdminMonitor::CRON_HOOK );
+
+		if ( $scan_event ) {
+			wp_unschedule_event( $scan_event, Alerts\AdminMonitor::CRON_HOOK );
+		}
 	}
 
 	/**

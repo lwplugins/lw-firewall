@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Admin;
 
 use LightweightPlugins\Firewall\Activator;
+use LightweightPlugins\Firewall\Alerts\AdminBaseline;
+use LightweightPlugins\Firewall\Alerts\AdminMonitor;
+use LightweightPlugins\Firewall\Alerts\AlertMailer;
 use LightweightPlugins\Firewall\Logger;
 use LightweightPlugins\Firewall\Options;
 
@@ -42,20 +45,23 @@ final class SettingsSaver {
 		}
 
 		self::save_options();
-		self::handle_actions();
+		$notice = self::handle_actions();
 
 		$active_tab = isset( $_POST['lw_firewall_active_tab'] )
 			? sanitize_key( $_POST['lw_firewall_active_tab'] )
 			: '';
 
+		$query = [
+			'page'    => SettingsPage::SLUG,
+			'updated' => '1',
+		];
+
+		if ( '' !== $notice ) {
+			$query['lw_notice'] = $notice;
+		}
+
 		wp_safe_redirect(
-			add_query_arg(
-				[
-					'page'    => SettingsPage::SLUG,
-					'updated' => '1',
-				],
-				admin_url( 'admin.php' )
-			) . ( $active_tab ? '#' . $active_tab : '' )
+			add_query_arg( $query, admin_url( 'admin.php' ) ) . ( $active_tab ? '#' . $active_tab : '' )
 		);
 		exit;
 	}
@@ -84,7 +90,14 @@ final class SettingsSaver {
 		$values['auto_ban_enabled']    = ! empty( $post_data['auto_ban_enabled'] );
 		$values['login_limit_enabled'] = ! empty( $post_data['login_limit_enabled'] );
 		$values['security_headers']    = ! empty( $post_data['security_headers'] );
-		$values['geo_enabled']         = ! empty( $post_data['geo_enabled'] );
+
+		$values['admin_alert_enabled']      = ! empty( $post_data['admin_alert_enabled'] );
+		$values['admin_alert_scan_enabled'] = ! empty( $post_data['admin_alert_scan_enabled'] );
+		$values['admin_alert_changes']      = ! empty( $post_data['admin_alert_changes'] );
+		$values['admin_alert_email']        = isset( $post_data['admin_alert_email'] )
+			? self::parse_email_list( (string) $post_data['admin_alert_email'] )
+			: $current['admin_alert_email'];
+		$values['geo_enabled']              = ! empty( $post_data['geo_enabled'] );
 
 		$values['storage'] = isset( $post_data['storage'] )
 			? sanitize_key( $post_data['storage'] )
@@ -154,15 +167,42 @@ final class SettingsSaver {
 
 		Options::save( $values );
 
+		// Turning alerts on must not mail about the administrators the site
+		// already had — snapshot them silently so only later arrivals alert.
+		if ( empty( $current['admin_alert_enabled'] ) && ! empty( $values['admin_alert_enabled'] ) && ! AdminBaseline::is_seeded() ) {
+			AdminBaseline::seed();
+		}
+
 		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
 	}
 
 	/**
-	 * Handle special actions (worker reinstall, clear log, geo update).
+	 * Reduce a raw recipient string to a comma-separated list of valid addresses.
 	 *
-	 * @return void
+	 * @param string $raw Raw field value.
+	 * @return string
 	 */
-	private static function handle_actions(): void {
+	private static function parse_email_list( string $raw ): string {
+		$parts = preg_split( '/[\r\n,;]+/', $raw );
+		$clean = [];
+
+		foreach ( is_array( $parts ) ? $parts : [] as $part ) {
+			$email = sanitize_email( trim( (string) $part ) );
+
+			if ( '' !== $email && is_email( $email ) ) {
+				$clean[] = $email;
+			}
+		}
+
+		return implode( ', ', array_unique( $clean ) );
+	}
+
+	/**
+	 * Handle special actions (worker reinstall, clear log, geo update, alerts).
+	 *
+	 * @return string Notice key to surface after the redirect, or '' for none.
+	 */
+	private static function handle_actions(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
 		if ( ! empty( $_POST['lw_firewall_reinstall_worker'] ) ) {
 			Activator::install_worker();
@@ -171,6 +211,23 @@ final class SettingsSaver {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
 		if ( ! empty( $_POST['lw_firewall_clear_log'] ) ) {
 			Logger::clear();
+		}
+
+		// The Alerts tab buttons submit through the shared save button with a
+		// distinct value, so a click saves the form and then runs the action.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
+		$action = isset( $_POST['lw_firewall_save'] ) ? sanitize_key( wp_unslash( $_POST['lw_firewall_save'] ) ) : '';
+
+		$notice = '';
+
+		if ( 'admin_scan' === $action ) {
+			$found  = AdminMonitor::run_scan();
+			$clean  = empty( $found['new'] ) && empty( $found['changes'] );
+			$notice = $clean ? 'scan_clean' : 'scan_found';
+		}
+
+		if ( 'admin_alert_test' === $action ) {
+			$notice = AlertMailer::send_test() ? 'test_sent' : 'test_failed';
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
@@ -182,5 +239,7 @@ final class SettingsSaver {
 				\LightweightPlugins\Firewall\Geo\CidrUpdater::update( $countries );
 			}
 		}
+
+		return $notice;
 	}
 }

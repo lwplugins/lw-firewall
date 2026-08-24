@@ -96,6 +96,44 @@ wp lw-firewall geo remove CN
 wp lw-firewall geo update
 ```
 
+## New Administrator Alerts
+
+```bash
+# Show alert configuration and monitoring state
+wp lw-firewall alerts status
+
+# Run the reconciliation scan now (also usable from a system cron
+# when WP-Cron is disabled)
+wp lw-firewall alerts scan
+
+# Send a test alert to the configured recipients
+wp lw-firewall alerts test
+
+# Inspect the known-administrator snapshot
+wp lw-firewall alerts baseline
+
+# Re-take the snapshot from the current administrator list
+# (everything present now is treated as known and will not alert)
+wp lw-firewall alerts baseline --reset
+```
+
+Relevant settings: `admin_alert_enabled`, `admin_alert_email`,
+`admin_alert_scan_enabled`, `admin_alert_changes` — settable with
+`wp lw-firewall config set`.
+
+```bash
+wp lw-firewall config set admin_alert_enabled true
+wp lw-firewall config set admin_alert_email security@example.com
+
+# Turn off takeover tracking (username / email / password changes on
+# administrators that already existed)
+wp lw-firewall config set admin_alert_changes false
+```
+
+The snapshot stores, per administrator: user ID, username, email address and a
+SHA-256 digest of the stored password hash. The digest only answers "did this
+change?" — no password or usable hash is kept.
+
 ## Configuration via wp-config.php
 
 Settings can be overridden via constants in `wp-config.php`:

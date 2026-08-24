@@ -16,6 +16,16 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // Remove log data only — keep settings for reinstall.
 delete_option( 'lw_firewall_log' );
 
+// Remove the known-administrator snapshot used by the new-admin alert.
+delete_option( 'lw_firewall_admin_baseline' );
+delete_transient( 'lw_firewall_admin_alert_mail_error' );
+
+// Remove the administrator scan cron event.
+$lw_firewall_scan_event = wp_next_scheduled( 'lw_firewall_admin_scan' );
+if ( $lw_firewall_scan_event ) {
+	wp_unschedule_event( $lw_firewall_scan_event, 'lw_firewall_admin_scan' );
+}
+
 // Remove MU-plugin worker.
 $lw_firewall_worker = WPMU_PLUGIN_DIR . '/lw-firewall-worker.php';
 if ( file_exists( $lw_firewall_worker ) ) {

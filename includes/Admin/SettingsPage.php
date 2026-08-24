@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Admin;
 
+use LightweightPlugins\Firewall\Admin\Settings\TabAlerts;
 use LightweightPlugins\Firewall\Admin\Settings\TabBots;
 use LightweightPlugins\Firewall\Admin\Settings\TabGeneral;
 use LightweightPlugins\Firewall\Admin\Settings\TabGeo;
@@ -50,6 +51,7 @@ final class SettingsPage {
 			new TabIpRules(),
 			new TabGeo(),
 			new TabSecurity(),
+			new TabAlerts(),
 			new TabStatus(),
 			new TabLogs(),
 			new TabImportExport(),
@@ -135,6 +137,8 @@ final class SettingsPage {
 				</div>
 			<?php endif; ?>
 
+			<?php $this->render_action_notice(); ?>
+
 			<form method="post" action="" enctype="multipart/form-data">
 				<?php wp_nonce_field( 'lw_firewall_save', '_lw_firewall_nonce' ); ?>
 				<input type="hidden" name="lw_firewall_active_tab" value="" />
@@ -150,6 +154,33 @@ final class SettingsPage {
 			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Render the outcome notice for an Alerts tab action.
+	 *
+	 * @return void
+	 */
+	private function render_action_notice(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display of an action outcome.
+		$notice = isset( $_GET['lw_notice'] ) ? sanitize_key( wp_unslash( $_GET['lw_notice'] ) ) : '';
+
+		$notices = [
+			'test_sent'   => [ 'success', __( 'Test alert sent. If it does not arrive, the problem is your site mail configuration, not the firewall.', 'lw-firewall' ) ],
+			'test_failed' => [ 'error', __( 'The test alert could not be sent — wp_mail() refused it. Check your SMTP plugin or hosting mail limits.', 'lw-firewall' ) ],
+			'scan_clean'  => [ 'success', __( 'Scan finished: no new or modified administrators found.', 'lw-firewall' ) ],
+			'scan_found'  => [ 'warning', __( 'Scan finished: new or modified administrators were found and an alert email was sent.', 'lw-firewall' ) ],
+		];
+
+		if ( ! isset( $notices[ $notice ] ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-%s lw-notice is-dismissible"><p>%s</p></div>',
+			esc_attr( $notices[ $notice ][0] ),
+			esc_html( $notices[ $notice ][1] )
+		);
 	}
 
 	/**
