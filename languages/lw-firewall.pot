@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.4.0\n"
+"Project-Id-Version: LW Firewall 1.5.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-13T06:28:41+00:00\n"
+"POT-Creation-Date: 2026-08-26T14:36:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lw-firewall\n"
@@ -128,12 +128,14 @@ msgstr ""
 
 #: includes/Admin/Settings/ProtectionFields.php:80
 #: includes/Admin/Settings/ProtectionFields.php:109
+#: includes/Admin/Settings/ResetFields.php:111
 #: includes/Admin/Settings/SpamFields.php:77
 msgid "Ban Duration"
 msgstr ""
 
 #: includes/Admin/Settings/ProtectionFields.php:83
 #: includes/Admin/Settings/ProtectionFields.php:112
+#: includes/Admin/Settings/ResetFields.php:114
 #: includes/Admin/Settings/SpamFields.php:80
 msgid "How long the ban lasts in seconds (3600 = 1 hour)."
 msgstr ""
@@ -157,6 +159,139 @@ msgstr ""
 
 #: includes/Admin/Settings/ProtectionFields.php:105
 msgid "Number of rate-limit violations before an IP is banned."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:31
+msgid "Enable Reset Protection"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:32
+msgid "Rate limit password reset requests"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:33
+msgid "Covers wp-login.php?action=lostpassword and the WooCommerce \"Lost your password?\" form — both go through the same WordPress hook. Requests started by an administrator or by WP-CLI are never limited."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:37
+msgid "Requests per IP"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:40
+msgid "How many reset requests one IP address may make per window. 0 disables this limit."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:44
+msgid "Per-IP Window"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:47
+msgid "Length of the per-IP window in seconds (900 = 15 minutes)."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:51
+msgid "Requests per Account"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:54
+msgid "How many reset emails one account may receive per window, no matter how many different IPs ask. This is the only limit that stops a distributed flood of one person's inbox. 0 disables it."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:58
+msgid "Per-Account Window"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:61
+msgid "Length of the per-account window in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:65
+msgid "Site-Wide Hourly Cap"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:68
+msgid "Total reset emails the site will send in an hour. Protects your hosting mail quota and stops your domain being flagged as a spam source. 0 disables it."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:81
+msgid "Proof of Render"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:82
+msgid "Require a signed token and honeypot on the wp-login form"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:83
+msgid "Rejects direct POSTs that never loaded the form. Only enforced on wp-login.php, since other lost-password forms (WooCommerce, custom login pages) do not render the token. Turn this off if a login plugin replaces the wp-login form."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:87
+#: includes/Admin/Settings/SpamFields.php:46
+msgid "Minimum Fill Time"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:90
+msgid "Reject submissions faster than this many seconds after the form loaded. Separate from the registration setting, so the two forms can be tuned independently."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:94
+#: includes/Admin/Settings/SpamFields.php:53
+msgid "Token Lifetime"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:97
+msgid "How long a rendered lost-password form stays valid, in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:100
+#: includes/Admin/Settings/SpamFields.php:40
+msgid "Single-Use Token"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:101
+#: includes/Admin/Settings/SpamFields.php:41
+msgid "Reject reused tokens"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:102
+msgid "Each rendered form may submit one reset request. Without this, a bot can load the form once and replay that token for the whole token lifetime."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:105
+#: includes/Admin/Settings/TabProtection.php:57
+msgid "Auto-Ban"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:106
+msgid "Ban IPs that trip the per-IP limit or fail the token check"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:107
+msgid "A banned IP is blocked from the whole site by the MU-plugin worker. Account and site-wide limits never ban: they say nothing about who happened to ask last."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:117
+msgid "Email Alert"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:118
+msgid "Email me when a reset limit is reached"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:119
+msgid "Sends at most one message per limit per hour, to the recipients configured on the Alerts tab."
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:122
+msgid "Block Admin Resets"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:123
+msgid "Never allow password reset for administrator accounts"
+msgstr ""
+
+#: includes/Admin/Settings/ResetFields.php:124
+msgid "Closes the \"flood the admin inbox, then phish the reset link\" path entirely. A locked-out administrator can then only be recovered by WP-CLI or by another administrator, so leave this off unless you have that access."
 msgstr ""
 
 #: includes/Admin/Settings/SpamFields.php:30
@@ -183,28 +318,12 @@ msgstr ""
 msgid "Catches generic bots that fill every field. Invisible to real users."
 msgstr ""
 
-#: includes/Admin/Settings/SpamFields.php:40
-msgid "Single-Use Token"
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:41
-msgid "Reject reused tokens"
-msgstr ""
-
 #: includes/Admin/Settings/SpamFields.php:42
 msgid "Stores used tokens in the firewall storage backend so each rendered form can register only once."
 msgstr ""
 
-#: includes/Admin/Settings/SpamFields.php:46
-msgid "Minimum Fill Time"
-msgstr ""
-
 #: includes/Admin/Settings/SpamFields.php:49
 msgid "Reject submissions faster than this many seconds after the form loaded (catches instant bot POSTs)."
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:53
-msgid "Token Lifetime"
 msgstr ""
 
 #: includes/Admin/Settings/SpamFields.php:56
@@ -213,6 +332,140 @@ msgstr ""
 
 #: includes/Admin/Settings/SpamFields.php:73
 msgid "Number of rejected registrations from one IP before it is banned."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:36
+msgid "Alerts"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:51
+msgid "New Administrator Alert"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:53
+msgid "Send an email whenever an account gains administrator privileges, or an existing administrator account is modified — no matter how it happened: the admin screens, a plugin, the REST API, WP-CLI, or a direct write into the database."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:58
+msgid "Enable Alerts"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:64
+msgid "Email me when a new administrator appears"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:65
+msgid "Works independently of the main firewall switch."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:72
+msgid "Notification Email"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:78
+msgid "Account Takeover"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:84
+msgid "Also alert when an existing administrator is modified"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:85
+msgid "Watches the username, email address and password of every administrator. Rewriting an admin's email address is how an account is seized — it hands over the password reset flow while the user ID stays the same, so watching for new accounts alone would never see it."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:92
+msgid "Database Scan"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:98
+msgid "Hourly scan for administrators created outside WordPress"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:99
+msgid "Compares the live administrator list against a stored snapshot. This is what catches accounts inserted straight into the database, created by code that bypasses the WordPress user API, or added while this plugin was inactive."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:105
+msgid "Save &amp; run scan now"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:108
+msgid "Save &amp; send test email"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:117
+msgid "How detection works"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:121
+msgid "WordPress hooks"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:123
+msgid "Immediate. Catches every account creation or role change that goes through the WordPress user API — the Users screen, user registration, the REST API, WP-CLI, and any plugin or theme calling wp_insert_user() or set_role(). The alert names the acting user and their IP address."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:127
+msgid "Database scan"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:129
+msgid "Within the hour. A snapshot of every administrator user ID is stored, and the scheduled scan diffs it against the live list. Anything that appears without a hook firing — a direct SQL INSERT, a modified wp_capabilities meta row, an account added while the plugin was off — shows up here and is flagged as created outside the normal WordPress flow."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:133
+msgid "What the snapshot stores"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:135
+msgid "Per administrator: the user ID, the username, the email address, and a digest of the stored password hash. The digest only ever answers \"did this change?\" — the password itself is never stored, never compared and never printed in an alert."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:139
+msgid "No duplicate alerts"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:141
+msgid "Both paths write to the same snapshot, so each event is reported exactly once. Existing administrators are recorded silently when the feature is turned on — you are only told about what happens afterwards. Removing an administrator is not reported; the account simply leaves the snapshot."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:165
+msgid "Separate multiple addresses with commas. Leave empty to use the site admin email."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:179
+#: includes/Admin/Settings/TabStatus.php:32
+#: includes/Alerts/AdminDetector.php:136
+msgid "Status"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:184
+msgid "The last alert email could not be sent. Check your site mail configuration (SMTP plugin, hosting mail limits) — an alert that never arrives is no alert at all."
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:192
+msgid "Administrators tracked"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:198
+msgid "Alerts go to"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:204
+msgid "Snapshot taken"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:205
+msgid "never — taken on the first scan"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:210
+msgid "Next scan"
+msgstr ""
+
+#: includes/Admin/Settings/TabAlerts.php:211
+msgid "not scheduled"
 msgstr ""
 
 #: includes/Admin/Settings/TabBots.php:30
@@ -498,10 +751,6 @@ msgstr ""
 msgid "Ban IPs that submit too many failed login attempts (fail2ban style). A banned IP is blocked from the whole site, not just wp-login.php."
 msgstr ""
 
-#: includes/Admin/Settings/TabProtection.php:57
-msgid "Auto-Ban"
-msgstr ""
-
 #: includes/Admin/Settings/TabProtection.php:58
 msgid "Automatically ban IPs that repeatedly exceed rate limits."
 msgstr ""
@@ -574,8 +823,20 @@ msgstr ""
 msgid "Ban IPs that repeatedly submit spam registrations. A banned IP is blocked from the whole site, not just the registration form."
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:32
-msgid "Status"
+#: includes/Admin/Settings/TabSpam.php:58
+msgid "Password Reset Flood Protection"
+msgstr ""
+
+#: includes/Admin/Settings/TabSpam.php:59
+msgid "A reset flood has three shapes, and each needs its own limit: one IP hammering the form, many IPs targeting one person's inbox, and sheer volume burning your hosting mail quota."
+msgstr ""
+
+#: includes/Admin/Settings/TabSpam.php:64
+msgid "Password Reset Hardening"
+msgstr ""
+
+#: includes/Admin/Settings/TabSpam.php:65
+msgid "Filter out direct bot POSTs, escalate repeat offenders to a site-wide ban, and optionally take administrator accounts out of the reset flow entirely."
 msgstr ""
 
 #: includes/Admin/Settings/TabStatus.php:56
@@ -656,22 +917,38 @@ msgstr ""
 msgid "Check this and save to reinstall the worker file."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:74
-#: includes/Admin/SettingsPage.php:75
+#: includes/Admin/SettingsPage.php:76
+#: includes/Admin/SettingsPage.php:77
 #: includes/SiteManager/Integration.php:42
 msgid "Firewall"
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:128
+#: includes/Admin/SettingsPage.php:130
 msgid "Lightweight Firewall"
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:134
+#: includes/Admin/SettingsPage.php:136
 msgid "Settings saved."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:147
+#: includes/Admin/SettingsPage.php:151
 msgid "Save Changes"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:169
+msgid "Test alert sent. If it does not arrive, the problem is your site mail configuration, not the firewall."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:170
+msgid "The test alert could not be sent — wp_mail() refused it. Check your SMTP plugin or hosting mail limits."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:171
+msgid "Scan finished: no new or modified administrators found."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:172
+msgid "Scan finished: new or modified administrators were found and an alert email was sent."
 msgstr ""
 
 #: includes/Admin/WorkerNotice.php:29
@@ -726,12 +1003,292 @@ msgstr ""
 msgid "A security plugin or hosting cleanup may be removing the worker. Check the Status tab for the last install attempt and reinstall from there."
 msgstr ""
 
+#: includes/Alerts/AdminDetector.php:135
+#: includes/Alerts/AdminDetector.php:146
+msgid "User ID"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:136
+msgid "account no longer exists"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:143
+msgid "Username"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:144
+msgid "Email"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:145
+msgid "Display name"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:147
+msgid "Roles"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:147
+msgid "(none)"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:148
+msgid "Registered"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:152
+msgid "Super admin"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:152
+msgid "yes"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:155
+msgid "Profile"
+msgstr ""
+
+#. translators: 1: site name, 2: username of the new administrator.
+#: includes/Alerts/AlertMessage.php:37
+#, php-format
+msgid "[%1$s] Security alert: new administrator \"%2$s\""
+msgstr ""
+
+#. translators: 1: site name, 2: number of new administrator accounts.
+#: includes/Alerts/AlertMessage.php:45
+#, php-format
+msgid "[%1$s] Security alert: %2$d new administrator accounts"
+msgstr ""
+
+#: includes/Alerts/AlertMessage.php:61
+msgid "An account with administrator privileges appeared on your site."
+msgstr ""
+
+#: includes/Alerts/AlertMessage.php:82
+msgid "If you did not expect this, treat the site as compromised: remove the account, rotate all administrator passwords, and review recently modified files and plugins."
+msgstr ""
+
+#. translators: %s: site name.
+#: includes/Alerts/AlertMessage.php:96
+#, php-format
+msgid "[%s] LW Firewall test alert"
+msgstr ""
+
+#: includes/Alerts/AlertMessage.php:110
+msgid "This is a test message from LW Firewall."
+msgstr ""
+
+#: includes/Alerts/AlertMessage.php:112
+msgid "If you received it, administrator alerts will reach this address."
+msgstr ""
+
+#. translators: %s: site URL.
+#. translators: %s: site name.
+#: includes/Alerts/AlertMessage.php:115
+#: includes/Alerts/MessageContext.php:41
+#, php-format
+msgid "Site: %s"
+msgstr ""
+
+#. translators: %s: local date and time.
+#: includes/Alerts/AlertMessage.php:117
+#, php-format
+msgid "Time: %s"
+msgstr ""
+
+#. translators: 1: site name, 2: username of the changed administrator.
+#: includes/Alerts/ChangeMessage.php:40
+#, php-format
+msgid "[%1$s] Security alert: administrator \"%2$s\" was modified"
+msgstr ""
+
+#. translators: 1: site name, 2: number of modified administrator accounts.
+#: includes/Alerts/ChangeMessage.php:48
+#, php-format
+msgid "[%1$s] Security alert: %2$d administrator accounts were modified"
+msgstr ""
+
+#: includes/Alerts/ChangeMessage.php:64
+msgid "The login details of an existing administrator account changed. This is how an account is taken over: rewriting the email address hands the attacker the password reset flow, and the user ID never changes, so the account still looks familiar."
+msgstr ""
+
+#: includes/Alerts/ChangeMessage.php:80
+msgid "What changed:"
+msgstr ""
+
+#: includes/Alerts/ChangeMessage.php:92
+msgid "If you did not make this change yourself, act now: reset the password, restore the correct email address, check the account for a second administrator it may have created, and review recently modified files and plugins."
+msgstr ""
+
+#. translators: 1: previous username, 2: new username.
+#: includes/Alerts/ChangeMessage.php:125
+#, php-format
+msgid "Username changed from \"%1$s\" to \"%2$s\""
+msgstr ""
+
+#. translators: 1: previous email address, 2: new email address.
+#: includes/Alerts/ChangeMessage.php:133
+#, php-format
+msgid "Email address changed from \"%1$s\" to \"%2$s\""
+msgstr ""
+
+#: includes/Alerts/ChangeMessage.php:139
+msgid "Password changed (the new password is not shown)"
+msgstr ""
+
+#. translators: %s: name of the changed field.
+#: includes/Alerts/ChangeMessage.php:143
+#, php-format
+msgid "\"%s\" changed"
+msgstr ""
+
+#. translators: %s: site name.
+#: includes/Alerts/FloodMessage.php:35
+#, php-format
+msgid "[%s] Password reset flood blocked"
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:51
+msgid "LW Firewall started refusing password reset requests on your site."
+msgstr ""
+
+#. translators: %s: IP address.
+#: includes/Alerts/FloodMessage.php:61
+#, php-format
+msgid "Requesting IP: %s"
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:69
+msgid "Further blocks in the next hour will not be emailed, so this alert cannot become the flood it reports. Blocked requests are still written to the firewall log when logging is enabled."
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:76
+msgid "No action is needed if this looks like ordinary bot noise — the requests were refused and no reset emails were sent. Investigate if a specific account is being targeted repeatedly: whoever is asking wants that person's inbox flooded, usually to bury a real notification or to set up a phishing email that looks like the reset."
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:91
+msgid "A single IP address asked for more password resets than the per-IP limit allows."
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:94
+msgid "One account received more reset requests than its limit allows — the requests may be coming from many different IP addresses, which is what an inbox-flooding attack looks like."
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:97
+msgid "The site reached its hourly cap on reset emails. This cap exists to protect your hosting mail quota and stop your domain being flagged as a spam source."
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:100
+msgid "A request was submitted without a valid proof-of-render token, meaning it did not come from the lost-password form — that is a direct bot POST."
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:103
+msgid "A password reset request was refused."
+msgstr ""
+
+#. translators: 1: username, 2: user ID.
+#: includes/Alerts/FloodMessage.php:127
+#, php-format
+msgid "Targeted account: %1$s (ID %2$d)"
+msgstr ""
+
+#: includes/Alerts/FloodMessage.php:134
+msgid "This account is an administrator. Treat repeated reset attempts against it as a targeted attack, not background noise."
+msgstr ""
+
+#. translators: %s: site URL.
+#: includes/Alerts/MessageContext.php:43
+#, php-format
+msgid "URL: %s"
+msgstr ""
+
+#. translators: %s: local date and time.
+#: includes/Alerts/MessageContext.php:45
+#, php-format
+msgid "Detected: %s"
+msgstr ""
+
+#. translators: %s: how the change was detected.
+#: includes/Alerts/MessageContext.php:47
+#, php-format
+msgid "Detected via: %s"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:61
+msgid "WARNING: this was found by a database scan, not by a WordPress hook. It most likely happened outside the normal WordPress flow — a direct database write, a plugin bypassing core APIs, or while LW Firewall was inactive."
+msgstr ""
+
+#. translators: 1: username of the acting user, 2: user ID.
+#: includes/Alerts/MessageContext.php:72
+#, php-format
+msgid "Performed by: %1$s (ID %2$d)"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:77
+msgid "Performed by: no logged-in user (WP-CLI, cron or unauthenticated request)"
+msgstr ""
+
+#. translators: %s: IP address.
+#: includes/Alerts/MessageContext.php:84
+#, php-format
+msgid "Request IP: %s"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:102
+msgid "Sent by LW Firewall."
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:114
+msgid "new user registration"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:115
+msgid "role assignment (set_user_role)"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:116
+msgid "role addition (add_user_role)"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:117
+msgid "super admin grant"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:118
+msgid "user added to site"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:119
+msgid "profile update"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:120
+msgid "password change or reset"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:121
+msgid "scheduled database scan"
+msgstr ""
+
+#: includes/Alerts/MessageContext.php:122
+msgid "password reset rate limit"
+msgstr ""
+
+#: includes/Rules/PasswordResetGuard.php:84
 #: includes/Rules/RegisterGuard.php:54
 msgid "Leave this field empty"
 msgstr ""
 
 #: includes/Rules/RegisterGuard.php:70
 msgid "Registration failed, please try again."
+msgstr ""
+
+#: includes/Rules/ResetPenalty.php:60
+msgid "<strong>Error:</strong> Password reset failed, please try again."
+msgstr ""
+
+#: includes/Rules/ResetPenalty.php:63
+msgid "<strong>Error:</strong> Too many password reset requests. Please try again later."
 msgstr ""
 
 #: includes/SiteManager/FirewallAbilities.php:45

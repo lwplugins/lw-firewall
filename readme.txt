@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,10 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.2 =
+* New: Complete Hungarian translation — the Alerts tab, the password-reset settings, every alert email and the lost-password form messages (127 new strings)
+* Update: Regenerated the translation template from the current source
 
 = 1.5.1 =
 * New: Password reset flood protection — rate limits per IP, **per targeted account** (stops a distributed flood of one person's inbox, which per-IP limiting cannot see) and a site-wide hourly cap protecting your mail quota

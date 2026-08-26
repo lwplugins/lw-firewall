@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.3.1\n"
+"Project-Id-Version: LW Firewall 1.5.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-06-13T06:28:41+00:00\n"
-"PO-Revision-Date: 2026-06-13 08:00+0000\n"
+"POT-Creation-Date: 2026-08-26T14:00:00+00:00\n"
+"PO-Revision-Date: 2026-08-26 14:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
 "Language: hu_HU\n"
@@ -114,7 +114,9 @@ msgstr "IP-k tiltása ismételt sikertelen bejelentkezések után"
 
 #: includes/Admin/Settings/ProtectionFields.php:62
 msgid "Counts failed password attempts per IP via wp_login_failed."
-msgstr "IP-nként számolja a sikertelen jelszó-próbálkozásokat a wp_login_failed alapján."
+msgstr ""
+"IP-nként számolja a sikertelen jelszó-próbálkozásokat a wp_login_failed "
+"alapján."
 
 #: includes/Admin/Settings/ProtectionFields.php:66
 msgid "Failed Attempts"
@@ -130,16 +132,19 @@ msgstr "Észlelési ablak"
 
 #: includes/Admin/Settings/ProtectionFields.php:76
 msgid "Seconds within which failed attempts are counted (600 = 10 minutes)."
-msgstr "Hány másodpercen belül számítanak a sikertelen próbálkozások (600 = 10 perc)."
+msgstr ""
+"Hány másodpercen belül számítanak a sikertelen próbálkozások (600 = 10 perc)."
 
 #: includes/Admin/Settings/ProtectionFields.php:80
 #: includes/Admin/Settings/ProtectionFields.php:109
+#: includes/Admin/Settings/ResetFields.php:111
 #: includes/Admin/Settings/SpamFields.php:77
 msgid "Ban Duration"
 msgstr "Tiltás időtartama"
 
 #: includes/Admin/Settings/ProtectionFields.php:83
 #: includes/Admin/Settings/ProtectionFields.php:112
+#: includes/Admin/Settings/ResetFields.php:114
 #: includes/Admin/Settings/SpamFields.php:80
 msgid "How long the ban lasts in seconds (3600 = 1 hour)."
 msgstr "Mennyi ideig tart a tiltás másodpercekben (3600 = 1 óra)."
@@ -166,6 +171,204 @@ msgstr "Tiltási küszöb"
 msgid "Number of rate-limit violations before an IP is banned."
 msgstr "A rate limit megsértéseinek száma, ami után egy IP tiltásra kerül."
 
+#: includes/Admin/Settings/ResetFields.php:31
+msgid "Enable Reset Protection"
+msgstr "Visszaállítás-védelem bekapcsolása"
+
+#: includes/Admin/Settings/ResetFields.php:32
+msgid "Rate limit password reset requests"
+msgstr "Rate limitet alkalmaz a jelszó-visszaállítási kérésekre"
+
+#: includes/Admin/Settings/ResetFields.php:33
+msgid ""
+"Covers wp-login.php?action=lostpassword and the WooCommerce \"Lost your "
+"password?\" form — both go through the same WordPress hook. Requests started "
+"by an administrator or by WP-CLI are never limited."
+msgstr ""
+"Lefedi a wp-login.php?action=lostpassword oldalt és a WooCommerce "
+"„Elfelejtett jelszó” űrlapját is — mindkettő ugyanazon a WordPress hookon "
+"megy át. Az adminisztrátor vagy a WP-CLI által indított kéréseket soha nem "
+"korlátozza."
+
+#: includes/Admin/Settings/ResetFields.php:37
+msgid "Requests per IP"
+msgstr "Kérések IP-nként"
+
+#: includes/Admin/Settings/ResetFields.php:40
+msgid ""
+"How many reset requests one IP address may make per window. 0 disables this "
+"limit."
+msgstr ""
+"Hány visszaállítási kérést küldhet egy IP-cím időablakonként. A 0 "
+"kikapcsolja ezt a korlátot."
+
+#: includes/Admin/Settings/ResetFields.php:44
+msgid "Per-IP Window"
+msgstr "IP-nkénti időablak"
+
+#: includes/Admin/Settings/ResetFields.php:47
+msgid "Length of the per-IP window in seconds (900 = 15 minutes)."
+msgstr "Az IP-nkénti időablak hossza másodpercben (900 = 15 perc)."
+
+#: includes/Admin/Settings/ResetFields.php:51
+msgid "Requests per Account"
+msgstr "Kérések fiókonként"
+
+#: includes/Admin/Settings/ResetFields.php:54
+msgid ""
+"How many reset emails one account may receive per window, no matter how many "
+"different IPs ask. This is the only limit that stops a distributed flood of "
+"one person's inbox. 0 disables it."
+msgstr ""
+"Hány visszaállító e-mailt kaphat egy fiók időablakonként, függetlenül attól, "
+"hány különböző IP kéri. Egyedül ez a korlát állítja meg egy postafiók "
+"elosztott elárasztását. A 0 kikapcsolja."
+
+#: includes/Admin/Settings/ResetFields.php:58
+msgid "Per-Account Window"
+msgstr "Fiókonkénti időablak"
+
+#: includes/Admin/Settings/ResetFields.php:61
+msgid "Length of the per-account window in seconds (3600 = 1 hour)."
+msgstr "A fiókonkénti időablak hossza másodpercben (3600 = 1 óra)."
+
+#: includes/Admin/Settings/ResetFields.php:65
+msgid "Site-Wide Hourly Cap"
+msgstr "Oldalszintű óránkénti korlát"
+
+#: includes/Admin/Settings/ResetFields.php:68
+msgid ""
+"Total reset emails the site will send in an hour. Protects your hosting mail "
+"quota and stops your domain being flagged as a spam source. 0 disables it."
+msgstr ""
+"Ennyi visszaállító e-mailt küld az oldal összesen egy óra alatt. Védi a "
+"tárhely levélkvótáját, és megakadályozza, hogy a domaint spamforrásként "
+"jelöljék meg. A 0 kikapcsolja."
+
+#: includes/Admin/Settings/ResetFields.php:81
+msgid "Proof of Render"
+msgstr "Proof-of-render"
+
+#: includes/Admin/Settings/ResetFields.php:82
+msgid "Require a signed token and honeypot on the wp-login form"
+msgstr "Aláírt tokent és honeypotot követel meg a wp-login űrlapon"
+
+#: includes/Admin/Settings/ResetFields.php:83
+msgid ""
+"Rejects direct POSTs that never loaded the form. Only enforced on wp-"
+"login.php, since other lost-password forms (WooCommerce, custom login pages) "
+"do not render the token. Turn this off if a login plugin replaces the wp-"
+"login form."
+msgstr ""
+"Elutasítja azokat a közvetlen POST-okat, amelyek soha nem töltötték be az "
+"űrlapot. Csak a wp-login.php oldalon van kikényszerítve, mert a többi "
+"jelszóemlékeztető űrlap (WooCommerce, egyedi bejelentkező oldalak) nem "
+"jeleníti meg a tokent. Érdemes kikapcsolni, ha egy bejelentkezés-bővítmény "
+"lecseréli a wp-login űrlapot."
+
+#: includes/Admin/Settings/ResetFields.php:87
+#: includes/Admin/Settings/SpamFields.php:46
+msgid "Minimum Fill Time"
+msgstr "Minimális kitöltési idő"
+
+#: includes/Admin/Settings/ResetFields.php:90
+msgid ""
+"Reject submissions faster than this many seconds after the form loaded. "
+"Separate from the registration setting, so the two forms can be tuned "
+"independently."
+msgstr ""
+"Elutasítja a beküldéseket, amelyek ennyi másodpercnél gyorsabban érkeznek az "
+"űrlap betöltése után. Külön a regisztrációs beállítástól, így a két űrlap "
+"egymástól függetlenül hangolható."
+
+#: includes/Admin/Settings/ResetFields.php:94
+#: includes/Admin/Settings/SpamFields.php:53
+msgid "Token Lifetime"
+msgstr "Token élettartama"
+
+#: includes/Admin/Settings/ResetFields.php:97
+msgid ""
+"How long a rendered lost-password form stays valid, in seconds (3600 = 1 "
+"hour)."
+msgstr ""
+"Meddig marad érvényes egy megjelenített jelszóemlékeztető űrlap, "
+"másodpercben (3600 = 1 óra)."
+
+#: includes/Admin/Settings/ResetFields.php:100
+#: includes/Admin/Settings/SpamFields.php:40
+msgid "Single-Use Token"
+msgstr "Egyszer használatos token"
+
+#: includes/Admin/Settings/ResetFields.php:101
+#: includes/Admin/Settings/SpamFields.php:41
+msgid "Reject reused tokens"
+msgstr "Újrahasznált tokenek elutasítása"
+
+#: includes/Admin/Settings/ResetFields.php:102
+msgid ""
+"Each rendered form may submit one reset request. Without this, a bot can "
+"load the form once and replay that token for the whole token lifetime."
+msgstr ""
+"Minden megjelenített űrlap egyetlen visszaállítási kérést küldhet. E nélkül "
+"a bot egyszer betölti az űrlapot, és a token teljes élettartama alatt "
+"visszajátszhatja azt."
+
+#: includes/Admin/Settings/ResetFields.php:105
+#: includes/Admin/Settings/TabProtection.php:57
+msgid "Auto-Ban"
+msgstr "Automatikus tiltás"
+
+#: includes/Admin/Settings/ResetFields.php:106
+msgid "Ban IPs that trip the per-IP limit or fail the token check"
+msgstr ""
+"Kitiltja azokat az IP-ket, amelyek átlépik az IP-nkénti korlátot vagy "
+"elbuknak a token-ellenőrzésen"
+
+#: includes/Admin/Settings/ResetFields.php:107
+msgid ""
+"A banned IP is blocked from the whole site by the MU-plugin worker. Account "
+"and site-wide limits never ban: they say nothing about who happened to ask "
+"last."
+msgstr ""
+"A kitiltott IP-t az MU-plugin worker az egész oldalról kizárja. A "
+"fiókonkénti és az oldalszintű korlát soha nem tilt ki: azok semmit nem "
+"mondanak arról, ki kérte éppen utoljára."
+
+#: includes/Admin/Settings/ResetFields.php:117
+msgid "Email Alert"
+msgstr "E-mail riasztás"
+
+#: includes/Admin/Settings/ResetFields.php:118
+msgid "Email me when a reset limit is reached"
+msgstr "E-mailt küld, ha egy visszaállítási korlát betelik"
+
+#: includes/Admin/Settings/ResetFields.php:119
+msgid ""
+"Sends at most one message per limit per hour, to the recipients configured "
+"on the Alerts tab."
+msgstr ""
+"Korlátonként legfeljebb óránként egy üzenetet küld, a Riasztások fülön "
+"beállított címzetteknek."
+
+#: includes/Admin/Settings/ResetFields.php:122
+msgid "Block Admin Resets"
+msgstr "Admin-visszaállítás tiltása"
+
+#: includes/Admin/Settings/ResetFields.php:123
+msgid "Never allow password reset for administrator accounts"
+msgstr "Soha nem engedi a jelszó visszaállítását adminisztrátori fiókoknál"
+
+#: includes/Admin/Settings/ResetFields.php:124
+msgid ""
+"Closes the \"flood the admin inbox, then phish the reset link\" path "
+"entirely. A locked-out administrator can then only be recovered by WP-CLI or "
+"by another administrator, so leave this off unless you have that access."
+msgstr ""
+"Teljesen lezárja az „áraszd el az admin postafiókját, majd halászd le a "
+"visszaállító linket” útvonalat. Egy kizárt adminisztrátort ezután már csak "
+"WP-CLI-vel vagy egy másik adminisztrátorral lehet visszaállítani, ezért csak "
+"akkor érdemes bekapcsolni, ha van ilyen hozzáférés."
+
 #: includes/Admin/Settings/SpamFields.php:30
 msgid "Enable Registration Protection"
 msgstr "Regisztráció-védelem engedélyezése"
@@ -178,7 +381,9 @@ msgstr "Bot-regisztrációk blokkolása a wp-login.php?action=register oldalon"
 msgid ""
 "Adds a signed proof-of-render token and honeypot to the registration form. "
 "Only active when \"Anyone can register\" is enabled."
-msgstr "Aláírt proof-of-render tokent és honeypotot ad a regisztrációs űrlaphoz. Csak akkor aktív, ha az „Anyone can register” engedélyezve van."
+msgstr ""
+"Aláírt proof-of-render tokent és honeypotot ad a regisztrációs űrlaphoz. "
+"Csak akkor aktív, ha az „Anyone can register” engedélyezve van."
 
 #: includes/Admin/Settings/SpamFields.php:35
 msgid "Honeypot"
@@ -190,43 +395,240 @@ msgstr "Rejtett honeypot mező hozzáadása"
 
 #: includes/Admin/Settings/SpamFields.php:37
 msgid "Catches generic bots that fill every field. Invisible to real users."
-msgstr "Elkapja a minden mezőt kitöltő általános botokat. Valódi felhasználók számára láthatatlan."
-
-#: includes/Admin/Settings/SpamFields.php:40
-msgid "Single-Use Token"
-msgstr "Egyszer használatos token"
-
-#: includes/Admin/Settings/SpamFields.php:41
-msgid "Reject reused tokens"
-msgstr "Újrahasznált tokenek elutasítása"
+msgstr ""
+"Elkapja a minden mezőt kitöltő általános botokat. Valódi felhasználók "
+"számára láthatatlan."
 
 #: includes/Admin/Settings/SpamFields.php:42
 msgid ""
 "Stores used tokens in the firewall storage backend so each rendered form can "
 "register only once."
-msgstr "A felhasznált tokeneket a tűzfal tárolórétegében tárolja, így minden megjelenített űrlap csak egyszer használható regisztrációra."
-
-#: includes/Admin/Settings/SpamFields.php:46
-msgid "Minimum Fill Time"
-msgstr "Minimális kitöltési idő"
+msgstr ""
+"A felhasznált tokeneket a tűzfal tárolórétegében tárolja, így minden "
+"megjelenített űrlap csak egyszer használható regisztrációra."
 
 #: includes/Admin/Settings/SpamFields.php:49
 msgid ""
 "Reject submissions faster than this many seconds after the form loaded "
 "(catches instant bot POSTs)."
-msgstr "Elutasítja a beküldéseket, amelyek ennyi másodpercnél gyorsabban érkeznek az űrlap betöltése után (elkapja az azonnali bot-POST-okat)."
-
-#: includes/Admin/Settings/SpamFields.php:53
-msgid "Token Lifetime"
-msgstr "Token élettartama"
+msgstr ""
+"Elutasítja a beküldéseket, amelyek ennyi másodpercnél gyorsabban érkeznek az "
+"űrlap betöltése után (elkapja az azonnali bot-POST-okat)."
 
 #: includes/Admin/Settings/SpamFields.php:56
 msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
-msgstr "Meddig érvényes egy megjelenített űrlap, másodpercekben (3600 = 1 óra)."
+msgstr ""
+"Meddig érvényes egy megjelenített űrlap, másodpercekben (3600 = 1 óra)."
 
 #: includes/Admin/Settings/SpamFields.php:73
 msgid "Number of rejected registrations from one IP before it is banned."
 msgstr "Hány elutasított regisztráció után tiltódik egy IP."
+
+#: includes/Admin/Settings/TabAlerts.php:36
+msgid "Alerts"
+msgstr "Riasztások"
+
+#: includes/Admin/Settings/TabAlerts.php:51
+msgid "New Administrator Alert"
+msgstr "Új adminisztrátor riasztás"
+
+#: includes/Admin/Settings/TabAlerts.php:53
+msgid ""
+"Send an email whenever an account gains administrator privileges, or an "
+"existing administrator account is modified — no matter how it happened: the "
+"admin screens, a plugin, the REST API, WP-CLI, or a direct write into the "
+"database."
+msgstr ""
+"E-mailt küld, valahányszor egy fiók adminisztrátori jogot kap, vagy egy "
+"meglévő adminisztrátori fiókot módosítanak — függetlenül attól, hogyan "
+"történt: admin felület, bővítmény, REST API, WP-CLI vagy közvetlen adatbázis-"
+"írás."
+
+#: includes/Admin/Settings/TabAlerts.php:58
+msgid "Enable Alerts"
+msgstr "Riasztások bekapcsolása"
+
+#: includes/Admin/Settings/TabAlerts.php:64
+msgid "Email me when a new administrator appears"
+msgstr "E-mailt küld, ha új adminisztrátor jelenik meg"
+
+#: includes/Admin/Settings/TabAlerts.php:65
+msgid "Works independently of the main firewall switch."
+msgstr "A fő tűzfal-kapcsolótól függetlenül működik."
+
+#: includes/Admin/Settings/TabAlerts.php:72
+msgid "Notification Email"
+msgstr "Értesítési e-mail cím"
+
+#: includes/Admin/Settings/TabAlerts.php:78
+msgid "Account Takeover"
+msgstr "Fiókátvétel"
+
+#: includes/Admin/Settings/TabAlerts.php:84
+msgid "Also alert when an existing administrator is modified"
+msgstr "Riaszt akkor is, ha egy meglévő adminisztrátort módosítanak"
+
+#: includes/Admin/Settings/TabAlerts.php:85
+msgid ""
+"Watches the username, email address and password of every administrator. "
+"Rewriting an admin's email address is how an account is seized — it hands "
+"over the password reset flow while the user ID stays the same, so watching "
+"for new accounts alone would never see it."
+msgstr ""
+"Figyeli minden adminisztrátor felhasználónevét, e-mail címét és jelszavát. "
+"Egy admin e-mail címének átírásával veszik át a fiókot — ezzel a támadó "
+"megszerzi a jelszó-visszaállítási folyamatot, miközben a felhasználói "
+"azonosító változatlan marad, így a csak új fiókokat figyelő megoldás ezt "
+"sosem venné észre."
+
+#: includes/Admin/Settings/TabAlerts.php:92
+msgid "Database Scan"
+msgstr "Adatbázis-ellenőrzés"
+
+#: includes/Admin/Settings/TabAlerts.php:98
+msgid "Hourly scan for administrators created outside WordPress"
+msgstr ""
+"Óránkénti ellenőrzés a WordPressen kívül létrehozott adminisztrátorokra"
+
+#: includes/Admin/Settings/TabAlerts.php:99
+msgid ""
+"Compares the live administrator list against a stored snapshot. This is what "
+"catches accounts inserted straight into the database, created by code that "
+"bypasses the WordPress user API, or added while this plugin was inactive."
+msgstr ""
+"Összeveti az élő adminisztrátorlistát egy eltárolt pillanatképpel. Ez fogja "
+"el azokat a fiókokat, amelyeket közvetlenül az adatbázisba szúrtak be, a "
+"WordPress felhasználói API-ját megkerülő kód hozott létre, vagy a bővítmény "
+"inaktív állapotában jöttek létre."
+
+#: includes/Admin/Settings/TabAlerts.php:105
+msgid "Save &amp; run scan now"
+msgstr "Mentés és ellenőrzés futtatása"
+
+#: includes/Admin/Settings/TabAlerts.php:108
+msgid "Save &amp; send test email"
+msgstr "Mentés és teszt e-mail küldése"
+
+#: includes/Admin/Settings/TabAlerts.php:117
+msgid "How detection works"
+msgstr "Hogyan működik az észlelés"
+
+#: includes/Admin/Settings/TabAlerts.php:121
+msgid "WordPress hooks"
+msgstr "WordPress hookok"
+
+#: includes/Admin/Settings/TabAlerts.php:123
+msgid ""
+"Immediate. Catches every account creation or role change that goes through "
+"the WordPress user API — the Users screen, user registration, the REST API, "
+"WP-CLI, and any plugin or theme calling wp_insert_user() or set_role(). The "
+"alert names the acting user and their IP address."
+msgstr ""
+"Azonnali. Elfog minden fióklétrehozást és szerepkör-változást, ami a "
+"WordPress felhasználói API-n megy át — a Felhasználók képernyő, a "
+"regisztráció, a REST API, a WP-CLI, valamint bármely bővítmény vagy sablon, "
+"amely a wp_insert_user() vagy a set_role() függvényt hívja. A riasztás "
+"megnevezi a műveletet végző felhasználót és az IP-címét."
+
+#: includes/Admin/Settings/TabAlerts.php:127
+msgid "Database scan"
+msgstr "Adatbázis-ellenőrzés"
+
+#: includes/Admin/Settings/TabAlerts.php:129
+msgid ""
+"Within the hour. A snapshot of every administrator user ID is stored, and "
+"the scheduled scan diffs it against the live list. Anything that appears "
+"without a hook firing — a direct SQL INSERT, a modified wp_capabilities meta "
+"row, an account added while the plugin was off — shows up here and is "
+"flagged as created outside the normal WordPress flow."
+msgstr ""
+"Egy órán belül. Minden adminisztrátor felhasználói azonosítójáról "
+"pillanatkép készül, és az ütemezett ellenőrzés ezt veti össze az élő "
+"listával. Bármi, ami hook lefutása nélkül jelenik meg — közvetlen SQL "
+"INSERT, módosított wp_capabilities meta sor, a bővítmény kikapcsolt "
+"állapotában hozzáadott fiók —, itt bukkan elő, és a normál WordPress "
+"folyamaton kívül létrehozottként jelöljük meg."
+
+#: includes/Admin/Settings/TabAlerts.php:133
+msgid "What the snapshot stores"
+msgstr "Mit tárol a pillanatkép"
+
+#: includes/Admin/Settings/TabAlerts.php:135
+msgid ""
+"Per administrator: the user ID, the username, the email address, and a "
+"digest of the stored password hash. The digest only ever answers \"did this "
+"change?\" — the password itself is never stored, never compared and never "
+"printed in an alert."
+msgstr ""
+"Adminisztrátoronként: a felhasználói azonosítót, a felhasználónevet, az e-"
+"mail címet és a tárolt jelszó-hash lenyomatát. A lenyomat kizárólag arra ad "
+"választ, hogy „változott-e” — magát a jelszót soha nem tárolja, nem "
+"hasonlítja össze és nem írja ki riasztásban."
+
+#: includes/Admin/Settings/TabAlerts.php:139
+msgid "No duplicate alerts"
+msgstr "Nincs kettős riasztás"
+
+#: includes/Admin/Settings/TabAlerts.php:141
+msgid ""
+"Both paths write to the same snapshot, so each event is reported exactly "
+"once. Existing administrators are recorded silently when the feature is "
+"turned on — you are only told about what happens afterwards. Removing an "
+"administrator is not reported; the account simply leaves the snapshot."
+msgstr ""
+"Mindkét útvonal ugyanabba a pillanatképbe ír, így minden esemény pontosan "
+"egyszer kerül jelentésre. A meglévő adminisztrátorok csendben rögzülnek a "
+"funkció bekapcsolásakor — csak az azt követő eseményekről érkezik értesítés. "
+"Adminisztrátor eltávolításáról nem jelent; a fiók egyszerűen kikerül a "
+"pillanatképből."
+
+#: includes/Admin/Settings/TabAlerts.php:165
+msgid ""
+"Separate multiple addresses with commas. Leave empty to use the site admin "
+"email."
+msgstr ""
+"Több címet vesszővel kell elválasztani. Üresen hagyva az oldal admin e-mail "
+"címét használja."
+
+#: includes/Admin/Settings/TabAlerts.php:179
+#: includes/Admin/Settings/TabStatus.php:32
+#: includes/Alerts/AdminDetector.php:136
+msgid "Status"
+msgstr "Állapot"
+
+#: includes/Admin/Settings/TabAlerts.php:184
+msgid ""
+"The last alert email could not be sent. Check your site mail configuration "
+"(SMTP plugin, hosting mail limits) — an alert that never arrives is no alert "
+"at all."
+msgstr ""
+"A legutóbbi riasztó e-mailt nem sikerült elküldeni. Érdemes ellenőrizni az "
+"oldal levélküldési beállításait (SMTP bővítmény, tárhely levélkorlátok) — az "
+"a riasztás, ami sosem érkezik meg, nem riasztás."
+
+#: includes/Admin/Settings/TabAlerts.php:192
+msgid "Administrators tracked"
+msgstr "Követett adminisztrátorok"
+
+#: includes/Admin/Settings/TabAlerts.php:198
+msgid "Alerts go to"
+msgstr "Riasztás címzettje"
+
+#: includes/Admin/Settings/TabAlerts.php:204
+msgid "Snapshot taken"
+msgstr "Pillanatkép készült"
+
+#: includes/Admin/Settings/TabAlerts.php:205
+msgid "never — taken on the first scan"
+msgstr "soha — az első ellenőrzéskor készül el"
+
+#: includes/Admin/Settings/TabAlerts.php:210
+msgid "Next scan"
+msgstr "Következő ellenőrzés"
+
+#: includes/Admin/Settings/TabAlerts.php:211
+msgid "not scheduled"
+msgstr "nincs ütemezve"
 
 #: includes/Admin/Settings/TabBots.php:30
 #: includes/Admin/Settings/TabBots.php:45
@@ -248,7 +650,9 @@ msgstr "Blokkolt User-Agentek"
 msgid ""
 "User-Agent substrings (case-insensitive, one per line). Any request whose "
 "User-Agent contains one of these is blocked with 403."
-msgstr "User-Agent részsztringek (kis-/nagybetű érzéketlen, soronként egy). Minden kérés, amelynek User-Agentje tartalmazza valamelyiket, 403-mal blokkolódik."
+msgstr ""
+"User-Agent részsztringek (kis-/nagybetű érzéketlen, soronként egy). Minden "
+"kérés, amelynek User-Agentje tartalmazza valamelyiket, 403-mal blokkolódik."
 
 #: includes/Admin/Settings/TabGeneral.php:30
 msgid "General"
@@ -278,7 +682,10 @@ msgstr "Firewall védelem engedélyezése"
 msgid ""
 "Master switch — when off, the MU-plugin worker performs no checks (rate-"
 "limit, bot blocking, IP/geo blocking, auto-ban all skipped)."
-msgstr "Főkapcsoló — kikapcsolva az MU-plugin worker semmilyen ellenőrzést nem végez (rate limiting, bot-blokkolás, IP/geo blokkolás, automatikus tiltás mind kimarad)."
+msgstr ""
+"Főkapcsoló — kikapcsolva az MU-plugin worker semmilyen ellenőrzést nem végez "
+"(rate limiting, bot-blokkolás, IP/geo blokkolás, automatikus tiltás mind "
+"kimarad)."
 
 #: includes/Admin/Settings/TabGeneral.php:66
 msgid "Storage Backend"
@@ -309,7 +716,10 @@ msgid ""
 "Maximum number of rate-limited requests per IP within the time window. "
 "Applies to filter parameters, login, REST, XML-RPC and any other protected "
 "endpoint."
-msgstr "Az IP-nként engedélyezett rate limitelt kérések maximális száma az időablakon belül. Vonatkozik a filter paraméterekre, a bejelentkezésre, a REST-re, az XML-RPC-re és minden más védett végpontra."
+msgstr ""
+"Az IP-nként engedélyezett rate limitelt kérések maximális száma az "
+"időablakon belül. Vonatkozik a filter paraméterekre, a bejelentkezésre, a "
+"REST-re, az XML-RPC-re és minden más védett végpontra."
 
 #: includes/Admin/Settings/TabGeneral.php:100
 msgid "Time Window"
@@ -335,7 +745,9 @@ msgstr "429 Túl sok kérés"
 msgid ""
 "Response when the rate limit is exceeded. 302 strips query parameters and "
 "redirects to the same path; 429 returns a Retry-After header."
-msgstr "Válasz a rate limit túllépésekor. A 302 eltávolítja a query paramétereket és ugyanarra az útvonalra irányít át; a 429 Retry-After fejlécet ad vissza."
+msgstr ""
+"Válasz a rate limit túllépésekor. A 302 eltávolítja a query paramétereket és "
+"ugyanarra az útvonalra irányít át; a 429 Retry-After fejlécet ad vissza."
 
 #: includes/Admin/Settings/TabGeneral.php:132
 msgid "Filter Parameters"
@@ -346,7 +758,10 @@ msgid ""
 "URL parameter substrings to rate-limit, one per line. Append |N for a "
 "stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, "
 "query_type_|30."
-msgstr "Rate limitelendő URL-paraméter részsztringek, soronként egy. Fűzz hozzá |N-t szigorúbb, prefixenkénti limithez (pl. add-to-cart|10). Alapértelmezések: filter_|30, query_type_|30."
+msgstr ""
+"Rate limitelendő URL-paraméter részsztringek, soronként egy. Fűzz hozzá |N-t "
+"szigorúbb, prefixenkénti limithez (pl. add-to-cart|10). Alapértelmezések: "
+"filter_|30, query_type_|30."
 
 #: includes/Admin/Settings/TabGeo.php:32 includes/Admin/Settings/TabGeo.php:47
 msgid "Geo Blocking"
@@ -357,7 +772,10 @@ msgid ""
 "Block visitors from specific countries. Behind Cloudflare, the CF-IPCountry "
 "header is used (instant). Without Cloudflare, CIDR-based lookup is used "
 "(updated weekly)."
-msgstr "Bizonyos országokból érkező látogatók blokkolása. Cloudflare mögött a CF-IPCountry fejléc használatos (azonnali). Cloudflare nélkül CIDR-alapú keresés (hetente frissül)."
+msgstr ""
+"Bizonyos országokból érkező látogatók blokkolása. Cloudflare mögött a CF-"
+"IPCountry fejléc használatos (azonnali). Cloudflare nélkül CIDR-alapú "
+"keresés (hetente frissül)."
 
 #: includes/Admin/Settings/TabGeo.php:68
 msgid "Enable"
@@ -410,7 +828,9 @@ msgstr "Beállítások exportálása"
 msgid ""
 "Download your current firewall settings as a JSON file. You can use this "
 "file to import settings on another site."
-msgstr "Töltsd le a jelenlegi tűzfal beállításaidat JSON-fájlként. Ezzel a fájllal egy másik oldalon importálhatod a beállításokat."
+msgstr ""
+"Töltsd le a jelenlegi tűzfal beállításaidat JSON-fájlként. Ezzel a fájllal "
+"egy másik oldalon importálhatod a beállításokat."
 
 #: includes/Admin/Settings/TabImportExport.php:73
 #: includes/Admin/Settings/TabImportExport.php:92
@@ -421,7 +841,9 @@ msgstr "Beállítások importálása"
 msgid ""
 "Upload a previously exported JSON file to restore firewall settings. This "
 "will overwrite all current settings."
-msgstr "Tölts fel egy korábban exportált JSON-fájlt a tűzfal beállítások visszaállításához. Ez felülír minden jelenlegi beállítást."
+msgstr ""
+"Tölts fel egy korábban exportált JSON-fájlt a tűzfal beállítások "
+"visszaállításához. Ez felülír minden jelenlegi beállítást."
 
 #: includes/Admin/Settings/TabImportExport.php:83
 msgid "Settings File"
@@ -468,7 +890,10 @@ msgstr "IP whitelist"
 msgid ""
 "IPs or CIDR ranges that bypass all firewall checks (one per line). Supports "
 "IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32)."
-msgstr "IP-k vagy CIDR tartományok, amelyek minden tűzfal-ellenőrzést kihagynak (soronként egy). Támogatja az IPv4, IPv6 és CIDR jelölést (pl. 10.0.0.0/8, 2001:db8::/32)."
+msgstr ""
+"IP-k vagy CIDR tartományok, amelyek minden tűzfal-ellenőrzést kihagynak "
+"(soronként egy). Támogatja az IPv4, IPv6 és CIDR jelölést (pl. 10.0.0.0/8, "
+"2001:db8::/32)."
 
 #: includes/Admin/Settings/TabIpRules.php:66
 msgid "IP Blacklist"
@@ -478,7 +903,10 @@ msgstr "IP blacklist"
 msgid ""
 "IPs or CIDR ranges blocked with 403 Forbidden before any other check (one "
 "per line). Supports IPv4, IPv6, and CIDR notation."
-msgstr "IP-k vagy CIDR tartományok, amelyek minden más ellenőrzés előtt 403 Forbidden-nel blokkolódnak (soronként egy). Támogatja az IPv4, IPv6 és CIDR jelölést."
+msgstr ""
+"IP-k vagy CIDR tartományok, amelyek minden más ellenőrzés előtt 403 "
+"Forbidden-nel blokkolódnak (soronként egy). Támogatja az IPv4, IPv6 és CIDR "
+"jelölést."
 
 #: includes/Admin/Settings/TabLogs.php:32
 msgid "Logs"
@@ -548,11 +976,10 @@ msgstr "Brute-force bejelentkezés-védelem"
 msgid ""
 "Ban IPs that submit too many failed login attempts (fail2ban style). A "
 "banned IP is blocked from the whole site, not just wp-login.php."
-msgstr "Tiltsa azokat az IP-ket, amelyek túl sok sikertelen bejelentkezést küldenek (fail2ban-stílus). A tiltott IP az egész oldalról ki van zárva, nem csak a wp-login.php-ról."
-
-#: includes/Admin/Settings/TabProtection.php:57
-msgid "Auto-Ban"
-msgstr "Automatikus tiltás"
+msgstr ""
+"Tiltsa azokat az IP-ket, amelyek túl sok sikertelen bejelentkezést küldenek "
+"(fail2ban-stílus). A tiltott IP az egész oldalról ki van zárva, nem csak a "
+"wp-login.php-ról."
 
 #: includes/Admin/Settings/TabProtection.php:58
 msgid "Automatically ban IPs that repeatedly exceed rate limits."
@@ -658,7 +1085,10 @@ msgstr "Regisztráció-védelem"
 msgid ""
 "Block bot sign-ups on wp-login.php?action=register without a captcha. Active "
 "only when \"Anyone can register\" is enabled in Settings → General."
-msgstr "Bot-regisztrációk blokkolása a wp-login.php?action=register oldalon captcha nélkül. Csak akkor aktív, ha a Beállítások → Általános alatt az „Anyone can register” engedélyezve van."
+msgstr ""
+"Bot-regisztrációk blokkolása a wp-login.php?action=register oldalon captcha "
+"nélkül. Csak akkor aktív, ha a Beállítások → Általános alatt az „Anyone can "
+"register” engedélyezve van."
 
 #: includes/Admin/Settings/TabSpam.php:52
 msgid "Registration Auto-Ban"
@@ -668,11 +1098,36 @@ msgstr "Regisztráció automatikus tiltása"
 msgid ""
 "Ban IPs that repeatedly submit spam registrations. A banned IP is blocked "
 "from the whole site, not just the registration form."
-msgstr "Tiltsa azokat az IP-ket, amelyek ismételten spam regisztrációkat küldenek. A tiltott IP az egész oldalról ki van zárva, nem csak a regisztrációs űrlapról."
+msgstr ""
+"Tiltsa azokat az IP-ket, amelyek ismételten spam regisztrációkat küldenek. A "
+"tiltott IP az egész oldalról ki van zárva, nem csak a regisztrációs űrlapról."
 
-#: includes/Admin/Settings/TabStatus.php:32
-msgid "Status"
-msgstr "Állapot"
+#: includes/Admin/Settings/TabSpam.php:58
+msgid "Password Reset Flood Protection"
+msgstr "Jelszó-visszaállítási árasztás elleni védelem"
+
+#: includes/Admin/Settings/TabSpam.php:59
+msgid ""
+"A reset flood has three shapes, and each needs its own limit: one IP "
+"hammering the form, many IPs targeting one person's inbox, and sheer volume "
+"burning your hosting mail quota."
+msgstr ""
+"A visszaállítási árasztásnak három alakja van, és mindegyikhez saját korlát "
+"kell: egy IP veri az űrlapot, sok IP ugyanazt a postafiókot célozza, illetve "
+"a puszta mennyiség éli fel a tárhely levélkvótáját."
+
+#: includes/Admin/Settings/TabSpam.php:64
+msgid "Password Reset Hardening"
+msgstr "Jelszó-visszaállítás megerősítése"
+
+#: includes/Admin/Settings/TabSpam.php:65
+msgid ""
+"Filter out direct bot POSTs, escalate repeat offenders to a site-wide ban, "
+"and optionally take administrator accounts out of the reset flow entirely."
+msgstr ""
+"Kiszűri a közvetlen bot-POST-okat, a visszaeső támadókat oldalszintű "
+"tiltásra lépteti elő, és igény szerint teljesen kiveszi az adminisztrátori "
+"fiókokat a visszaállítási folyamatból."
 
 #: includes/Admin/Settings/TabStatus.php:56
 msgid "Firewall Status"
@@ -758,22 +1213,50 @@ msgstr "MU-bővítmény worker újratelepítése mentéskor"
 msgid "Check this and save to reinstall the worker file."
 msgstr "Jelöld be ezt, majd mentsd el a worker fájl újratelepítéséhez."
 
-#: includes/Admin/SettingsPage.php:74 includes/Admin/SettingsPage.php:75
+#: includes/Admin/SettingsPage.php:76 includes/Admin/SettingsPage.php:77
 #: includes/SiteManager/Integration.php:42
 msgid "Firewall"
 msgstr "Tűzfal"
 
-#: includes/Admin/SettingsPage.php:128
+#: includes/Admin/SettingsPage.php:130
 msgid "Lightweight Firewall"
 msgstr "Lightweight Firewall"
 
-#: includes/Admin/SettingsPage.php:134
+#: includes/Admin/SettingsPage.php:136
 msgid "Settings saved."
 msgstr "Beállítások elmentve."
 
-#: includes/Admin/SettingsPage.php:147
+#: includes/Admin/SettingsPage.php:151
 msgid "Save Changes"
 msgstr "Változtatások mentése"
+
+#: includes/Admin/SettingsPage.php:169
+msgid ""
+"Test alert sent. If it does not arrive, the problem is your site mail "
+"configuration, not the firewall."
+msgstr ""
+"Teszt riasztás elküldve. Ha nem érkezik meg, a hiba az oldal levélküldési "
+"beállításaiban van, nem a tűzfalban."
+
+#: includes/Admin/SettingsPage.php:170
+msgid ""
+"The test alert could not be sent — wp_mail() refused it. Check your SMTP "
+"plugin or hosting mail limits."
+msgstr ""
+"A teszt riasztást nem sikerült elküldeni — a wp_mail() visszautasította. "
+"Érdemes ellenőrizni az SMTP bővítményt vagy a tárhely levélkorlátait."
+
+#: includes/Admin/SettingsPage.php:171
+msgid "Scan finished: no new or modified administrators found."
+msgstr "Ellenőrzés kész: nem található új vagy módosított adminisztrátor."
+
+#: includes/Admin/SettingsPage.php:172
+msgid ""
+"Scan finished: new or modified administrators were found and an alert email "
+"was sent."
+msgstr ""
+"Ellenőrzés kész: új vagy módosított adminisztrátor található, riasztó e-mail "
+"elküldve."
 
 #: includes/Admin/WorkerNotice.php:29
 msgid "The worker source file inside the plugin is missing."
@@ -789,7 +1272,8 @@ msgstr "Az mu-plugins mappa nem írható."
 
 #: includes/Admin/WorkerNotice.php:32
 msgid "Copying the worker file failed (disk full or permission denied)."
-msgstr "A worker fájl másolása sikertelen (a lemez megtelt vagy nincs jogosultság)."
+msgstr ""
+"A worker fájl másolása sikertelen (a lemez megtelt vagy nincs jogosultság)."
 
 #: includes/Admin/WorkerNotice.php:53
 msgid "LW Firewall — protection is OFF"
@@ -799,13 +1283,17 @@ msgstr "LW Firewall — a védelem KI van kapcsolva"
 msgid ""
 "The MU-plugin worker is installed but its version does not match this "
 "plugin. Runtime protection is disabled until it is reinstalled."
-msgstr "Az MU-plugin worker telepítve van, de a verziója nem egyezik ezzel a pluginnal. A futásidejű védelem ki van kapcsolva, amíg újra nem települ."
+msgstr ""
+"Az MU-plugin worker telepítve van, de a verziója nem egyezik ezzel a "
+"pluginnal. A futásidejű védelem ki van kapcsolva, amíg újra nem települ."
 
 #: includes/Admin/WorkerNotice.php:59
 msgid ""
 "The MU-plugin worker file is missing from mu-plugins/. Runtime protection is "
 "disabled until it is reinstalled."
-msgstr "Az MU-plugin worker fájl hiányzik az mu-plugins/ mappából. A futásidejű védelem ki van kapcsolva, amíg újra nem települ."
+msgstr ""
+"Az MU-plugin worker fájl hiányzik az mu-plugins/ mappából. A futásidejű "
+"védelem ki van kapcsolva, amíg újra nem települ."
 
 #: includes/Admin/WorkerNotice.php:67
 msgid "Open Status tab"
@@ -825,21 +1313,384 @@ msgstr "Az utolsó telepítési kísérlet sikertelen: %1$s (%2$s ezelőtt)"
 #: includes/Admin/WorkerNotice.php:110
 #, php-format
 msgid "Make %s writable by the web server, then re-save the firewall settings."
-msgstr "Tedd írhatóvá a(z) %s mappát a webszerver számára, majd mentsd újra a tűzfal beállításait."
+msgstr ""
+"Tedd írhatóvá a(z) %s mappát a webszerver számára, majd mentsd újra a tűzfal "
+"beállításait."
 
 #: includes/Admin/WorkerNotice.php:118
 msgid ""
 "A security plugin or hosting cleanup may be removing the worker. Check the "
 "Status tab for the last install attempt and reinstall from there."
-msgstr "Egy biztonsági plugin vagy a tárhely takarítása eltávolíthatja a workert. Ellenőrizd az Állapot fülön az utolsó telepítési kísérletet, és telepítsd újra onnan."
+msgstr ""
+"Egy biztonsági plugin vagy a tárhely takarítása eltávolíthatja a workert. "
+"Ellenőrizd az Állapot fülön az utolsó telepítési kísérletet, és telepítsd "
+"újra onnan."
 
-#: includes/Rules/RegisterGuard.php:54
+#: includes/Alerts/AdminDetector.php:135 includes/Alerts/AdminDetector.php:146
+msgid "User ID"
+msgstr "Felhasználói azonosító"
+
+#: includes/Alerts/AdminDetector.php:136
+msgid "account no longer exists"
+msgstr "a fiók már nem létezik"
+
+#: includes/Alerts/AdminDetector.php:143
+msgid "Username"
+msgstr "Felhasználónév"
+
+#: includes/Alerts/AdminDetector.php:144
+msgid "Email"
+msgstr "E-mail"
+
+#: includes/Alerts/AdminDetector.php:145
+msgid "Display name"
+msgstr "Megjelenítendő név"
+
+#: includes/Alerts/AdminDetector.php:147
+msgid "Roles"
+msgstr "Szerepkörök"
+
+#: includes/Alerts/AdminDetector.php:147
+msgid "(none)"
+msgstr "(nincs)"
+
+#: includes/Alerts/AdminDetector.php:148
+msgid "Registered"
+msgstr "Regisztrált"
+
+#: includes/Alerts/AdminDetector.php:152
+msgid "Super admin"
+msgstr "Szuper admin"
+
+#: includes/Alerts/AdminDetector.php:152
+msgid "yes"
+msgstr "igen"
+
+#: includes/Alerts/AdminDetector.php:155
+msgid "Profile"
+msgstr "Profil"
+
+#. translators: 1: site name, 2: username of the new administrator.
+#: includes/Alerts/AlertMessage.php:37
+#, php-format
+msgid "[%1$s] Security alert: new administrator \"%2$s\""
+msgstr "[%1$s] Biztonsági riasztás: új adminisztrátor – „%2$s”"
+
+#. translators: 1: site name, 2: number of new administrator accounts.
+#: includes/Alerts/AlertMessage.php:45
+#, php-format
+msgid "[%1$s] Security alert: %2$d new administrator accounts"
+msgstr "[%1$s] Biztonsági riasztás: %2$d új adminisztrátori fiók"
+
+#: includes/Alerts/AlertMessage.php:61
+msgid "An account with administrator privileges appeared on your site."
+msgstr "Adminisztrátori jogosultsággal rendelkező fiók jelent meg az oldalon."
+
+#: includes/Alerts/AlertMessage.php:82
+msgid ""
+"If you did not expect this, treat the site as compromised: remove the "
+"account, rotate all administrator passwords, and review recently modified "
+"files and plugins."
+msgstr ""
+"Ha ez nem várt esemény, tekintsd az oldalt feltörtnek: töröld a fiókot, "
+"cseréld le az összes adminisztrátori jelszót, és nézd át a nemrég módosított "
+"fájlokat és bővítményeket."
+
+#. translators: %s: site name.
+#: includes/Alerts/AlertMessage.php:96
+#, php-format
+msgid "[%s] LW Firewall test alert"
+msgstr "[%s] LW Firewall teszt riasztás"
+
+#: includes/Alerts/AlertMessage.php:110
+msgid "This is a test message from LW Firewall."
+msgstr "Ez egy teszt üzenet az LW Firewall bővítménytől."
+
+#: includes/Alerts/AlertMessage.php:112
+msgid "If you received it, administrator alerts will reach this address."
+msgstr ""
+"Ha megérkezett, az adminisztrátori riasztások is el fognak jutni erre a "
+"címre."
+
+#. translators: %s: site URL.
+#. translators: %s: site name.
+#: includes/Alerts/AlertMessage.php:115 includes/Alerts/MessageContext.php:41
+#, php-format
+msgid "Site: %s"
+msgstr "Oldal: %s"
+
+#. translators: %s: local date and time.
+#: includes/Alerts/AlertMessage.php:117
+#, php-format
+msgid "Time: %s"
+msgstr "Időpont: %s"
+
+#. translators: 1: site name, 2: username of the changed administrator.
+#: includes/Alerts/ChangeMessage.php:40
+#, php-format
+msgid "[%1$s] Security alert: administrator \"%2$s\" was modified"
+msgstr "[%1$s] Biztonsági riasztás: a(z) „%2$s” adminisztrátort módosították"
+
+#. translators: 1: site name, 2: number of modified administrator accounts.
+#: includes/Alerts/ChangeMessage.php:48
+#, php-format
+msgid "[%1$s] Security alert: %2$d administrator accounts were modified"
+msgstr "[%1$s] Biztonsági riasztás: %2$d adminisztrátori fiókot módosítottak"
+
+#: includes/Alerts/ChangeMessage.php:64
+msgid ""
+"The login details of an existing administrator account changed. This is how "
+"an account is taken over: rewriting the email address hands the attacker the "
+"password reset flow, and the user ID never changes, so the account still "
+"looks familiar."
+msgstr ""
+"Egy meglévő adminisztrátori fiók bejelentkezési adatai megváltoztak. Így "
+"veszik át a fiókot: az e-mail cím átírásával a támadó megszerzi a jelszó-"
+"visszaállítási folyamatot, a felhasználói azonosító pedig soha nem változik, "
+"így a fiók továbbra is ismerősnek látszik."
+
+#: includes/Alerts/ChangeMessage.php:80
+msgid "What changed:"
+msgstr "Mi változott:"
+
+#: includes/Alerts/ChangeMessage.php:92
+msgid ""
+"If you did not make this change yourself, act now: reset the password, "
+"restore the correct email address, check the account for a second "
+"administrator it may have created, and review recently modified files and "
+"plugins."
+msgstr ""
+"Ha nem te végezted ezt a változtatást, azonnal cselekedj: állítsd vissza a "
+"jelszót, javítsd vissza a helyes e-mail címet, ellenőrizd, nem hozott-e "
+"létre a fiók egy második adminisztrátort, és nézd át a nemrég módosított "
+"fájlokat és bővítményeket."
+
+#. translators: 1: previous username, 2: new username.
+#: includes/Alerts/ChangeMessage.php:125
+#, php-format
+msgid "Username changed from \"%1$s\" to \"%2$s\""
+msgstr "A felhasználónév megváltozott: „%1$s” → „%2$s”"
+
+#. translators: 1: previous email address, 2: new email address.
+#: includes/Alerts/ChangeMessage.php:133
+#, php-format
+msgid "Email address changed from \"%1$s\" to \"%2$s\""
+msgstr "Az e-mail cím megváltozott: „%1$s” → „%2$s”"
+
+#: includes/Alerts/ChangeMessage.php:139
+msgid "Password changed (the new password is not shown)"
+msgstr "A jelszó megváltozott (az új jelszót nem mutatjuk)"
+
+#. translators: %s: name of the changed field.
+#: includes/Alerts/ChangeMessage.php:143
+#, php-format
+msgid "\"%s\" changed"
+msgstr "A(z) „%s” megváltozott"
+
+#. translators: %s: site name.
+#: includes/Alerts/FloodMessage.php:35
+#, php-format
+msgid "[%s] Password reset flood blocked"
+msgstr "[%s] Jelszó-visszaállítási árasztás blokkolva"
+
+#: includes/Alerts/FloodMessage.php:51
+msgid "LW Firewall started refusing password reset requests on your site."
+msgstr ""
+"Az LW Firewall elkezdte visszautasítani a jelszó-visszaállítási kéréseket az "
+"oldalon."
+
+#. translators: %s: IP address.
+#: includes/Alerts/FloodMessage.php:61
+#, php-format
+msgid "Requesting IP: %s"
+msgstr "Kérő IP-cím: %s"
+
+#: includes/Alerts/FloodMessage.php:69
+msgid ""
+"Further blocks in the next hour will not be emailed, so this alert cannot "
+"become the flood it reports. Blocked requests are still written to the "
+"firewall log when logging is enabled."
+msgstr ""
+"A következő egy órában a további blokkolásokról nem küld e-mailt, így ez a "
+"riasztás nem válhat azzá az árasztássá, amiről beszámol. A blokkolt kérések "
+"bekapcsolt naplózás mellett továbbra is bekerülnek a tűzfal naplójába."
+
+#: includes/Alerts/FloodMessage.php:76
+msgid ""
+"No action is needed if this looks like ordinary bot noise — the requests "
+"were refused and no reset emails were sent. Investigate if a specific "
+"account is being targeted repeatedly: whoever is asking wants that person's "
+"inbox flooded, usually to bury a real notification or to set up a phishing "
+"email that looks like the reset."
+msgstr ""
+"Nincs teendő, ha ez szokásos bot-zajnak tűnik — a kéréseket visszautasította "
+"a tűzfal, visszaállító e-mail nem ment ki. Akkor érdemes utánanézni, ha egy "
+"konkrét fiókot céloznak ismételten: aki kéri, annak a személynek a "
+"postafiókját akarja elárasztani, jellemzően azért, hogy elrejtsen egy valódi "
+"értesítést, vagy hogy a visszaállításnak látszó adathalász levelet küldjön."
+
+#: includes/Alerts/FloodMessage.php:91
+msgid ""
+"A single IP address asked for more password resets than the per-IP limit "
+"allows."
+msgstr ""
+"Egyetlen IP-cím több jelszó-visszaállítást kért, mint amennyit az IP-nkénti "
+"korlát megenged."
+
+#: includes/Alerts/FloodMessage.php:94
+msgid ""
+"One account received more reset requests than its limit allows — the "
+"requests may be coming from many different IP addresses, which is what an "
+"inbox-flooding attack looks like."
+msgstr ""
+"Egy fiók több visszaállítási kérést kapott, mint amennyit a korlátja "
+"megenged — a kérések akár sok különböző IP-címről is érkezhetnek, és "
+"pontosan így néz ki egy postafiók-árasztó támadás."
+
+#: includes/Alerts/FloodMessage.php:97
+msgid ""
+"The site reached its hourly cap on reset emails. This cap exists to protect "
+"your hosting mail quota and stop your domain being flagged as a spam source."
+msgstr ""
+"Az oldal elérte az óránkénti visszaállító e-mail korlátját. Ez a korlát a "
+"tárhely levélkvótáját védi, és megakadályozza, hogy a domaint spamforrásként "
+"jelöljék meg."
+
+#: includes/Alerts/FloodMessage.php:100
+msgid ""
+"A request was submitted without a valid proof-of-render token, meaning it "
+"did not come from the lost-password form — that is a direct bot POST."
+msgstr ""
+"Egy kérés érvényes proof-of-render token nélkül érkezett, vagyis nem a "
+"jelszóemlékeztető űrlapról jött — ez közvetlen bot-POST."
+
+#: includes/Alerts/FloodMessage.php:103
+msgid "A password reset request was refused."
+msgstr "Egy jelszó-visszaállítási kérést visszautasított a tűzfal."
+
+#. translators: 1: username, 2: user ID.
+#: includes/Alerts/FloodMessage.php:127
+#, php-format
+msgid "Targeted account: %1$s (ID %2$d)"
+msgstr "Célzott fiók: %1$s (azonosító: %2$d)"
+
+#: includes/Alerts/FloodMessage.php:134
+msgid ""
+"This account is an administrator. Treat repeated reset attempts against it "
+"as a targeted attack, not background noise."
+msgstr ""
+"Ez a fiók adminisztrátor. Az ellene irányuló ismételt visszaállítási "
+"kísérleteket célzott támadásként érdemes kezelni, nem háttérzajként."
+
+#. translators: %s: site URL.
+#: includes/Alerts/MessageContext.php:43
+#, php-format
+msgid "URL: %s"
+msgstr "URL: %s"
+
+#. translators: %s: local date and time.
+#: includes/Alerts/MessageContext.php:45
+#, php-format
+msgid "Detected: %s"
+msgstr "Észlelve: %s"
+
+#. translators: %s: how the change was detected.
+#: includes/Alerts/MessageContext.php:47
+#, php-format
+msgid "Detected via: %s"
+msgstr "Észlelés módja: %s"
+
+#: includes/Alerts/MessageContext.php:61
+msgid ""
+"WARNING: this was found by a database scan, not by a WordPress hook. It most "
+"likely happened outside the normal WordPress flow — a direct database write, "
+"a plugin bypassing core APIs, or while LW Firewall was inactive."
+msgstr ""
+"FIGYELEM: ezt adatbázis-ellenőrzés találta meg, nem WordPress hook. Nagy "
+"valószínűséggel a normál WordPress folyamaton kívül történt — közvetlen "
+"adatbázis-írás, a core API-kat megkerülő bővítmény, vagy az LW Firewall "
+"inaktív állapota közben."
+
+#. translators: 1: username of the acting user, 2: user ID.
+#: includes/Alerts/MessageContext.php:72
+#, php-format
+msgid "Performed by: %1$s (ID %2$d)"
+msgstr "Végrehajtotta: %1$s (azonosító: %2$d)"
+
+#: includes/Alerts/MessageContext.php:77
+msgid ""
+"Performed by: no logged-in user (WP-CLI, cron or unauthenticated request)"
+msgstr ""
+"Végrehajtotta: nincs bejelentkezett felhasználó (WP-CLI, cron vagy "
+"hitelesítetlen kérés)"
+
+#. translators: %s: IP address.
+#: includes/Alerts/MessageContext.php:84
+#, php-format
+msgid "Request IP: %s"
+msgstr "Kérés IP-címe: %s"
+
+#: includes/Alerts/MessageContext.php:102
+msgid "Sent by LW Firewall."
+msgstr "Küldte az LW Firewall."
+
+#: includes/Alerts/MessageContext.php:114
+msgid "new user registration"
+msgstr "új felhasználói regisztráció"
+
+#: includes/Alerts/MessageContext.php:115
+msgid "role assignment (set_user_role)"
+msgstr "szerepkör-hozzárendelés (set_user_role)"
+
+#: includes/Alerts/MessageContext.php:116
+msgid "role addition (add_user_role)"
+msgstr "szerepkör-hozzáadás (add_user_role)"
+
+#: includes/Alerts/MessageContext.php:117
+msgid "super admin grant"
+msgstr "szuper admin jog megadása"
+
+#: includes/Alerts/MessageContext.php:118
+msgid "user added to site"
+msgstr "felhasználó hozzáadva az oldalhoz"
+
+#: includes/Alerts/MessageContext.php:119
+msgid "profile update"
+msgstr "profilfrissítés"
+
+#: includes/Alerts/MessageContext.php:120
+msgid "password change or reset"
+msgstr "jelszóváltoztatás vagy -visszaállítás"
+
+#: includes/Alerts/MessageContext.php:121
+msgid "scheduled database scan"
+msgstr "ütemezett adatbázis-ellenőrzés"
+
+#: includes/Alerts/MessageContext.php:122
+msgid "password reset rate limit"
+msgstr "jelszó-visszaállítási rate limit"
+
+#: includes/Rules/PasswordResetGuard.php:84 includes/Rules/RegisterGuard.php:54
 msgid "Leave this field empty"
 msgstr "Hagyd üresen ezt a mezőt"
 
 #: includes/Rules/RegisterGuard.php:70
 msgid "Registration failed, please try again."
 msgstr "A regisztráció sikertelen, kérjük, próbáld újra."
+
+#: includes/Rules/ResetPenalty.php:60
+msgid "<strong>Error:</strong> Password reset failed, please try again."
+msgstr ""
+"<strong>Hiba:</strong> A jelszó visszaállítása nem sikerült, kérjük próbáld "
+"újra."
+
+#: includes/Rules/ResetPenalty.php:63
+msgid ""
+"<strong>Error:</strong> Too many password reset requests. Please try again "
+"later."
+msgstr ""
+"<strong>Hiba:</strong> Túl sok jelszó-visszaállítási kérés. Kérjük, próbáld "
+"meg később."
 
 #: includes/SiteManager/FirewallAbilities.php:45
 msgid "Get Firewall Options"
@@ -849,7 +1700,9 @@ msgstr "Tűzfal beállítások lekérése"
 msgid ""
 "Get all LW Firewall settings including rate limits, bot blocking and geo "
 "rules."
-msgstr "Az összes LW Firewall beállítás lekérése, beleértve a rate limiteket, a bot-blokkolást és a geo szabályokat."
+msgstr ""
+"Az összes LW Firewall beállítás lekérése, beleértve a rate limiteket, a bot-"
+"blokkolást és a geo szabályokat."
 
 #: includes/SiteManager/FirewallAbilities.php:76
 msgid "Get Firewall Log"
@@ -857,11 +1710,13 @@ msgstr "Tűzfal napló lekérése"
 
 #: includes/SiteManager/FirewallAbilities.php:77
 msgid "Get recent firewall log entries (up to 100 blocked requests)."
-msgstr "Legutóbbi tűzfal naplóbejegyzések lekérése (legfeljebb 100 blokkolt kérés)."
+msgstr ""
+"Legutóbbi tűzfal naplóbejegyzések lekérése (legfeljebb 100 blokkolt kérés)."
 
 #: includes/SiteManager/FirewallAbilities.php:87
 msgid "Number of log entries to return. Defaults to 25, max 100."
-msgstr "A visszaadandó naplóbejegyzések száma. Alapértelmezett 25, maximum 100."
+msgstr ""
+"A visszaadandó naplóbejegyzések száma. Alapértelmezett 25, maximum 100."
 
 #: includes/SiteManager/FirewallAbilities.php:120
 msgid "List Blocked IPs"
@@ -932,44 +1787,6 @@ msgstr "%s eltávolítva a feketelistáról."
 msgid ""
 "Firewall management abilities: rate limiting, IP blocking, bot control and "
 "logs."
-msgstr "Tűzfal-kezelési képességek: rate limiting, IP-blokkolás, bot-vezérlés és naplók."
-
-#~ msgid "Requests matching these strings are immediately blocked with 403."
-#~ msgstr ""
-#~ "Az ezekre a stringekre illeszkedő kérések azonnal blokkolva lesznek 403-"
-#~ "mal."
-
-#~ msgid ""
-#~ "When enabled, filter requests are monitored for bots and rate-limited per "
-#~ "IP."
-#~ msgstr ""
-#~ "Ha engedélyezve van, a filter kéréseket botokra figyeljük és IP-nként "
-#~ "rate limiteljük."
-
-#~ msgid "Maximum number of filter requests per IP within the time window."
-#~ msgstr "A maximális filter kérések száma IP-nként az időablakon belül."
-
-#~ msgid "Action to take when rate limit is exceeded."
-#~ msgstr "A végrehajtandó művelet, ha a rate limit túllépésre kerül."
-
-#~ msgid ""
-#~ "URL parameter prefixes to monitor (one per line). Default: filter_, "
-#~ "query_type_"
-#~ msgstr ""
-#~ "Figyelt URL paraméter előtagok (soronként egy). Alapértelmezett: filter_, "
-#~ "query_type_"
-
-#~ msgid "IPs that are never rate-limited or blocked (one per line)."
-#~ msgstr ""
-#~ "IP-k, amelyekre soha nem vonatkozik rate limit vagy blokkolás (soronként "
-#~ "egy)."
-
-#~ msgid "IPs that are always blocked with 403 Forbidden (one per line)."
-#~ msgstr ""
-#~ "IP-k, amelyek mindig 403 Forbiddennel blokkolva vannak (soronként egy)."
-
-#~ msgid "Protects against brute-force login attempts."
-#~ msgstr "Véd a brute-force bejelentkezési próbálkozások ellen."
-
-#~ msgid "Configure firewall protection for WooCommerce filter requests."
-#~ msgstr "Állítsd be a firewall védelmet a WooCommerce filter kérésekhez."
+msgstr ""
+"Tűzfal-kezelési képességek: rate limiting, IP-blokkolás, bot-vezérlés és "
+"naplók."

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.2] - 2026-08-26
+
+### Added
+- Hungarian translations for everything added in 1.4.1, 1.5.0 and 1.5.1 — the Alerts tab, the password-reset sections of the Spam tab, every alert email (new administrator, account takeover, reset flood) and the messages shown on the lost-password form. 127 new strings; the catalogue is now complete at 319 of 319
+
+### Changed
+- Regenerated `languages/lw-firewall.pot` from the current source and dropped 31 obsolete entries from the Hungarian catalogue
+
 ## [1.5.1] - 2026-08-26
 
 ### Added
