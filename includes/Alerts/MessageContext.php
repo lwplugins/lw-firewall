@@ -119,6 +119,7 @@ final class MessageContext {
 			'profile_update'      => __( 'profile update', 'lw-firewall' ),
 			'wp_set_password'     => __( 'password change or reset', 'lw-firewall' ),
 			'scan'                => __( 'scheduled database scan', 'lw-firewall' ),
+			'reset_flood'         => __( 'password reset rate limit', 'lw-firewall' ),
 		];
 
 		return $labels[ $source ] ?? $source;

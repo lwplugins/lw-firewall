@@ -15,6 +15,7 @@ use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
+use LightweightPlugins\Firewall\Rules\PasswordResetGuard;
 use LightweightPlugins\Firewall\Rules\RegisterGuard;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
 use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
@@ -99,6 +100,11 @@ final class Plugin {
 		if ( ! empty( $options['register_protect_enabled'] ) && get_option( 'users_can_register' ) ) {
 			add_action( 'register_form', [ RegisterGuard::class, 'render_fields' ] );
 			add_filter( 'registration_errors', [ RegisterGuard::class, 'validate' ], 10, 3 );
+		}
+
+		// Password-reset flood protection (wp-login.php and WooCommerce alike).
+		if ( ! empty( $options['reset_protect_enabled'] ) ) {
+			PasswordResetGuard::init();
 		}
 
 		// Security headers.

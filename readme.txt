@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,7 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 * Multiple storage backends: APCu, Redis, file-based fallback
 * MU-plugin worker for early request interception
 * Import/Export — transfer firewall settings between sites via JSON
+* Password reset flood protection — per-IP, per-account and site-wide limits covering wp-login.php and WooCommerce
 * New administrator alert — email notification when any account gains admin rights or an existing admin is modified, including changes written straight into the database
 * Tabbed admin settings page under LW Plugins menu (11 tabs)
 * Optional request logging with viewer
@@ -85,6 +86,15 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.1 =
+* New: Password reset flood protection — rate limits per IP, **per targeted account** (stops a distributed flood of one person's inbox, which per-IP limiting cannot see) and a site-wide hourly cap protecting your mail quota
+* New: Covers both wp-login.php and the WooCommerce "Lost your password?" form via the shared WordPress hook
+* New: Proof-of-render token and honeypot on the wp-login lost-password form, with minimum fill time and single-use tokens (own settings, independent of the registration form); optional auto-ban for offending IPs
+* New: Optional hardening that takes administrator accounts out of the password reset flow entirely
+* New: Optional throttled email alert when a reset limit is reached
+* New: `wp lw-firewall reset status|on|off` WP-CLI command
+* Change: Resets started by an administrator or by WP-CLI are never limited, so "Send password reset link" keeps working
 
 = 1.5.0 =
 * New: Email alert when an account gains administrator privileges — covers the admin screens, plugins, the REST API and WP-CLI via WordPress hooks, and direct database inserts via an hourly reconciliation scan

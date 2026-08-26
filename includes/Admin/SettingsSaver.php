@@ -131,6 +131,19 @@ final class SettingsSaver {
 			? absint( $post_data['login_lockout_duration'] )
 			: $current['login_lockout_duration'];
 
+		$values['reset_protect_enabled'] = ! empty( $post_data['reset_protect_enabled'] );
+		$values['reset_proof_enabled']   = ! empty( $post_data['reset_proof_enabled'] );
+		$values['reset_auto_ban']        = ! empty( $post_data['reset_auto_ban'] );
+		$values['reset_block_admins']    = ! empty( $post_data['reset_block_admins'] );
+		$values['reset_alert_enabled']   = ! empty( $post_data['reset_alert_enabled'] );
+		$values['reset_single_use']      = ! empty( $post_data['reset_single_use'] );
+
+		foreach ( [ 'reset_ip_max', 'reset_ip_window', 'reset_user_max', 'reset_user_window', 'reset_global_max', 'reset_ban_duration', 'reset_min_fill_time', 'reset_token_max_age' ] as $reset_key ) {
+			$values[ $reset_key ] = isset( $post_data[ $reset_key ] )
+				? absint( $post_data[ $reset_key ] )
+				: $current[ $reset_key ];
+		}
+
 		$values['register_protect_enabled'] = ! empty( $post_data['register_protect_enabled'] );
 		$values['register_honeypot']        = ! empty( $post_data['register_honeypot'] );
 		$values['register_single_use']      = ! empty( $post_data['register_single_use'] );

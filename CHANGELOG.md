@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.1] - 2026-08-26
+
+### Added
+- Password reset flood protection, hooked on `lostpassword_post` — the one chokepoint both core's `retrieve_password()` and WooCommerce's own my-account implementation pass through, so the wp-login form and the WooCommerce "Lost your password?" form are covered by the same rules
+- Three independent limits, because a reset flood has three shapes: per IP (one host hammering the form), **per target account** (many hosts flooding one person's inbox — invisible to per-IP limiting, and the shape used to harass a user or bury a real notification), and a site-wide hourly cap that protects the hosting mail quota and the sending domain's reputation
+- Proof-of-render token and honeypot on the wp-login lost-password form, rejecting direct bot POSTs. Enforced only on wp-login.php, since other lost-password forms never render the token
+- Optional auto-ban for IPs that trip the per-IP limit or fail the token check; the ban is written to the shared firewall ban store, so the MU-plugin worker blocks them before WordPress loads. Account and site-wide limits deliberately never ban — they say nothing about who happened to ask last
+- Optional `reset_block_admins` hardening via the `allow_password_reset` filter: administrator accounts are taken out of the reset flow entirely, closing the "flood the admin inbox, then phish the reset link" path
+- Optional email alert when a limit is reached, throttled to one message per limit per hour so the alert cannot become the flood it reports
+- `wp lw-firewall reset status|on|off` WP-CLI command, with `--proof`, `--auto-ban`, `--alert` and `--block-admins` flags on `on`
+- Single-use lost-password tokens: each rendered form may submit one request, so a bot cannot load the form once and replay that token for the rest of its lifetime. The single-use store is namespaced per form, because the token is derived from the issue timestamp alone — a registration and a lost-password form rendered in the same second share a token and would otherwise consume each other's entry
+- Timing checks (minimum fill time, token lifetime) now have their own `reset_*` options instead of borrowing the registration ones, so the two forms are tunable independently and the Spam tab no longer shows registration fields governing reset behaviour
+- New options: `reset_protect_enabled`, `reset_ip_max`, `reset_ip_window`, `reset_user_max`, `reset_user_window`, `reset_global_max`, `reset_proof_enabled`, `reset_min_fill_time`, `reset_token_max_age`, `reset_single_use`, `reset_auto_ban`, `reset_ban_duration`, `reset_block_admins`, `reset_alert_enabled`
+
+### Changed
+- Requests started by a user with `edit_users` or by WP-CLI bypass every reset limit, so the Users screen "Send password reset link" action and provisioning scripts keep working during a flood
+
 ## [1.5.0] - 2026-08-24
 
 ### Added

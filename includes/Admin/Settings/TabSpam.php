@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Admin\Settings;
 
 /**
- * Spam tab: registration spam protection (proof-of-render token, honeypot,
- * auto-ban).
+ * Spam tab: registration spam protection and password-reset flood protection
+ * (proof-of-render token, honeypot, rate limits, auto-ban).
  */
 final class TabSpam implements TabInterface {
 
@@ -52,6 +52,18 @@ final class TabSpam implements TabInterface {
 			__( 'Registration Auto-Ban', 'lw-firewall' ),
 			__( 'Ban IPs that repeatedly submit spam registrations. A banned IP is blocked from the whole site, not just the registration form.', 'lw-firewall' ),
 			SpamFields::auto_ban()
+		);
+
+		$this->render_section(
+			__( 'Password Reset Flood Protection', 'lw-firewall' ),
+			__( 'A reset flood has three shapes, and each needs its own limit: one IP hammering the form, many IPs targeting one person\'s inbox, and sheer volume burning your hosting mail quota.', 'lw-firewall' ),
+			ResetFields::limits()
+		);
+
+		$this->render_section(
+			__( 'Password Reset Hardening', 'lw-firewall' ),
+			__( 'Filter out direct bot POSTs, escalate repeat offenders to a site-wide ban, and optionally take administrator accounts out of the reset flow entirely.', 'lw-firewall' ),
+			ResetFields::hardening()
 		);
 	}
 

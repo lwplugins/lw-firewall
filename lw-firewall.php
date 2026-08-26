@@ -3,7 +3,7 @@
  * Plugin Name: LW Firewall
  * Plugin URI:  https://github.com/lwplugins/lw-firewall
  * Description: Lightweight firewall — rate-limits endpoints, blocks bots, bans repeat offenders, and adds security headers.
- * Version:     1.5.0
+ * Version:     1.5.1
  * Author:      LW Plugins
  * Author URI:  https://lwplugins.com
  * License:     GPL-2.0-or-later
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_VERSION', '1.5.0' );
+define( 'LW_FIREWALL_VERSION', '1.5.1' );
 define( 'LW_FIREWALL_FILE', __FILE__ );
 define( 'LW_FIREWALL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LW_FIREWALL_URL', plugin_dir_url( __FILE__ ) );
@@ -74,6 +74,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command( 'lw-firewall ip', LightweightPlugins\Firewall\CLI\IpCommand::class );
 	WP_CLI::add_command( 'lw-firewall geo', LightweightPlugins\Firewall\CLI\GeoCommand::class );
 	WP_CLI::add_command( 'lw-firewall alerts', LightweightPlugins\Firewall\CLI\AlertsCommand::class );
+	WP_CLI::add_command( 'lw-firewall reset', LightweightPlugins\Firewall\CLI\ResetCommand::class );
 }
 
 // Shared helpers (also used by MU-plugin worker).

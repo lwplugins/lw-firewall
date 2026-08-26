@@ -68,6 +68,28 @@ final class RegisterTokenTest extends MonkeyTestCase {
 	}
 
 	/**
+	 * The token is derived from the issue timestamp alone, so a registration
+	 * form and a lost-password form rendered in the same second carry the same
+	 * token. Without separate single-use namespaces, whichever submitted first
+	 * would consume the other form's entry and get it rejected as a replay.
+	 */
+	public function test_single_use_namespaces_do_not_consume_each_other(): void {
+		$storage = new ArrayStorage();
+		$token   = RegisterToken::make( self::NOW - self::MIN );
+
+		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reg' ) );
+		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reset' ) );
+	}
+
+	public function test_single_use_still_blocks_a_replay_within_one_namespace(): void {
+		$storage = new ArrayStorage();
+		$token   = RegisterToken::make( self::NOW - self::MIN );
+
+		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reset' ) );
+		$this->assertFalse( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reset' ) );
+	}
+
+	/**
 	 * Single-use must rely on the atomic increment(), not a get()-then-set().
 	 * This storage double never reports the key as seen via get() (simulating
 	 * two concurrent requests in the TOCTOU window), but counts via increment().

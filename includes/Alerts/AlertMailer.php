@@ -131,6 +131,24 @@ final class AlertMailer {
 	}
 
 	/**
+	 * Send one alert about a password-reset flood.
+	 *
+	 * @param string $verdict Which limit was hit.
+	 * @param string $ip      Requesting IP.
+	 * @param int    $user_id Target account, or 0 when unknown.
+	 * @return bool Whether the mail was handed off successfully.
+	 */
+	public static function notify_flood( string $verdict, string $ip, int $user_id ): bool {
+		$to = self::recipients();
+
+		if ( empty( $to ) ) {
+			return false;
+		}
+
+		return self::send( $to, FloodMessage::subject(), FloodMessage::body( $verdict, $ip, $user_id ) );
+	}
+
+	/**
 	 * Send a delivery test to the configured recipients.
 	 *
 	 * @return bool

@@ -53,10 +53,13 @@ final class RegisterToken {
 	 * @param int                   $min_fill Minimum age in seconds (timing floor).
 	 * @param int                   $max_age  Maximum age in seconds (expiry).
 	 * @param StorageInterface|null $storage  When given, enforces single-use.
+	 * @param string                $scope    Single-use namespace, so two forms
+	 *                                        using this token cannot consume
+	 *                                        each other's entries.
 	 * @return bool
 	 */
-	public static function verify( string $token, int $min_fill, int $max_age, ?StorageInterface $storage = null ): bool {
-		return self::check( $token, time(), $min_fill, $max_age, $storage );
+	public static function verify( string $token, int $min_fill, int $max_age, ?StorageInterface $storage = null, string $scope = 'reg' ): bool {
+		return self::check( $token, time(), $min_fill, $max_age, $storage, $scope );
 	}
 
 	/**
@@ -67,9 +70,10 @@ final class RegisterToken {
 	 * @param int                   $min_fill Minimum age in seconds (timing floor).
 	 * @param int                   $max_age  Maximum age in seconds (expiry).
 	 * @param StorageInterface|null $storage  When given, enforces single-use.
+	 * @param string                $scope    Single-use namespace.
 	 * @return bool
 	 */
-	public static function check( string $token, int $now, int $min_fill, int $max_age, ?StorageInterface $storage = null ): bool {
+	public static function check( string $token, int $now, int $min_fill, int $max_age, ?StorageInterface $storage = null, string $scope = 'reg' ): bool {
 		if ( '' === $token ) {
 			return false;
 		}
@@ -100,7 +104,7 @@ final class RegisterToken {
 		}
 
 		if ( null !== $storage ) {
-			$key = 'reg_tok_' . hash( 'sha256', $decoded );
+			$key = $scope . '_tok_' . hash( 'sha256', $decoded );
 
 			// Atomic check-and-mark: the first use increments to 1 and passes;
 			// any replay (or concurrent double-submit) increments to > 1 and is
