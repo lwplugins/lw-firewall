@@ -2,7 +2,7 @@
 
 Lightweight WordPress firewall — rate-limits endpoints, blocks bots, bans repeat offenders, and adds security headers.
 
-[![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
 [![WordPress Version](https://img.shields.io/badge/WordPress-6.0%2B-blue.svg)](https://wordpress.org)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -24,6 +24,8 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 6. **Bot Blocking** — User-Agent matching (all requests)
 7. **Endpoint Detection** — filter params, cron, xmlrpc, login, REST API
 8. **Rate Limiting** — per-IP counters with auto-ban escalation
+
+That list is the worker's pre-WordPress path. Registration spam protection, password-reset flood protection and the administrator alerts run inside WordPress instead, because they need the user API — but they share the same storage backend and ban store, so an IP banned by any of them is blocked by the worker on its next request.
 
 ## Features
 
@@ -66,6 +68,51 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 - Configurable threshold (default: 3 violations)
 - Configurable ban duration (default: 1 hour)
 - Escalating protection — casual users won't trigger it, persistent attackers get banned
+
+### Registration Spam Protection
+
+Blocks bot sign-ups on `wp-login.php?action=register` without a captcha:
+
+- Signed proof-of-render token — a direct POST that never loaded the form is rejected
+- Hidden honeypot field, invisible to real users
+- Minimum fill time, so instant bot submissions are refused
+- Single-use tokens, so one rendered form can register only once
+- Auto-ban for IPs that repeatedly submit spam registrations
+
+### Password Reset Flood Protection
+
+Hooked on `lostpassword_post` — the one chokepoint both WordPress core and WooCommerce's own my-account form pass through, so `wp-login.php?action=lostpassword` and the WooCommerce "Lost your password?" form are covered by the same rules.
+
+A reset flood has three shapes, so there are three independent limits:
+
+| Limit | Default | What it stops |
+|-------|---------|---------------|
+| Per IP | 5 / 15 min | One host hammering the form |
+| **Per target account** | 3 / hour | Many hosts flooding **one person's inbox** — per-IP limiting cannot see this |
+| Site-wide | 30 / hour | Total reset emails per hour; protects your mail quota and your domain's sending reputation |
+
+The per-account counter is keyed by user ID, so `admin`, `Admin` and the account's email address share one bucket. Once an IP is over its own limit the request is refused *without* touching the target counter, so an attacker cannot use their own flood to lock the victim out of a genuine reset.
+
+Also included:
+
+- Proof-of-render token and honeypot on the wp-login form, with its own fill time, lifetime and single-use settings (enforced only there — other lost-password forms never render the token; the rate limits apply everywhere)
+- Optional auto-ban for IPs that trip the per-IP limit or fail the token check. Account and site-wide limits never ban — they say nothing about who happened to ask last
+- Optional hardening that takes administrator accounts out of the reset flow entirely
+- Optional email alert when a limit is reached, throttled to one message per limit per hour
+- Requests started by a user with `edit_users` or by WP-CLI bypass every check, so the Users screen "Send password reset link" keeps working during a flood
+
+### New Administrator Alerts
+
+Email notification whenever an account gains administrator privileges, or an existing administrator account is modified — no matter how it happened. Two detection paths, because neither is complete alone:
+
+| Path | Catches | Latency |
+|------|---------|---------|
+| Core hooks | Anything going through the WordPress user API — admin screens, plugins, REST, WP-CLI. Reports the acting user and their IP | Immediate |
+| Hourly reconciliation scan | A direct database write, code bypassing the user API, or changes made while the plugin was inactive | Within the hour |
+
+The stored snapshot fingerprints each administrator (user ID, username, email address, and a digest of the stored password hash), so a **takeover** is caught too: rewriting an admin's email address hands the attacker the password reset flow while the user ID stays the same, which an ID-only comparison would never see. The digest only answers "did this change?" — no password or usable hash is stored, and none is ever printed in an alert.
+
+Both paths write to the same snapshot, so one event produces one alert. Existing administrators are recorded silently when the feature is enabled, so upgrading sites are never mailed about accounts they already had.
 
 ### Security Headers
 
@@ -129,79 +176,200 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | **Protection** | Endpoint toggles (cron, xmlrpc, login, REST API, 404) and auto-ban settings |
 | **Bots** | Manage blocked bot User-Agent patterns |
 | **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges) |
+| **Spam** | Registration spam protection and password-reset flood protection |
 | **Geo Blocking** | Country-based blocking with Cloudflare or CIDR fallback |
 | **Security** | HTTP security headers toggle |
+| **Alerts** | New-administrator and account-takeover email alerts, recipients, scan schedule |
 | **Status** | MU-plugin worker status, worker version, active storage backend, reinstall worker |
 | **Logs** | Enable logging, view blocked requests, clear log |
 | **Import / Export** | Export settings as JSON, import on another site |
 
 ## WP-CLI Commands
 
-```bash
-# Show firewall status overview
-wp lw-firewall status
+Every command is listed below. `--format` accepts `table` (default), `json`, `csv` or `yaml`.
 
-# Configuration
-wp lw-firewall config list
+### Status
+
+```bash
+wp lw-firewall status
+```
+
+### Configuration
+
+`config` reads and writes whole values; `config-items` edits a single entry of a list setting without resending the whole list.
+
+```bash
+wp lw-firewall config list [--format=<format>]
+wp lw-firewall config get <key> [--format=<format>]
+wp lw-firewall config set <key> <value>
+wp lw-firewall config reset [--yes]
+
+wp lw-firewall config-items add <key> <entry>
+wp lw-firewall config-items remove <key> <entry>
+```
+
+```bash
+# Examples
 wp lw-firewall config set rate_limit 50
 wp lw-firewall config set storage redis
 wp lw-firewall config set protect_login true
-wp lw-firewall config set auto_ban_enabled true
-wp lw-firewall config reset --yes
+wp lw-firewall config set filter_params "filter_|30,add-to-cart|10"
+wp lw-firewall config-items add blocked_countries KP
+wp lw-firewall config-items remove ip_blacklist 203.0.113.42
+```
 
-# Bot management
-wp lw-firewall bots list
-wp lw-firewall bots add "BadBot/1.0"
-wp lw-firewall bots remove "BadBot/1.0"
+### Bots
 
-# IP whitelist / blacklist
-wp lw-firewall ip list whitelist
-wp lw-firewall ip list blacklist
+```bash
+wp lw-firewall bots list [--format=<format>]
+wp lw-firewall bots add <user_agent>
+wp lw-firewall bots remove <user_agent>
+```
+
+### IP whitelist / blacklist
+
+```bash
+wp lw-firewall ip list <whitelist|blacklist> [--format=<format>]
+wp lw-firewall ip add <whitelist|blacklist> <ip>
+wp lw-firewall ip remove <whitelist|blacklist> <ip>
+```
+
+```bash
+# Examples
 wp lw-firewall ip add whitelist 192.168.1.100
 wp lw-firewall ip add blacklist 10.0.0.0/8
-wp lw-firewall ip remove whitelist 192.168.1.100
+```
 
-# Geo blocking
-wp lw-firewall geo list
-wp lw-firewall geo add CN
-wp lw-firewall geo remove CN
-wp lw-firewall geo update
+### Geo blocking
 
-# Log management
-wp lw-firewall logs list --limit=50
-wp lw-firewall logs clear --yes
+```bash
+wp lw-firewall geo list [--format=<format>]
+wp lw-firewall geo add <code>
+wp lw-firewall geo remove <code>
+wp lw-firewall geo update          # refresh the cached CIDR lists now
+```
 
-# MU-plugin worker
+### New-administrator alerts
+
+```bash
+wp lw-firewall alerts status [--format=<format>]
+wp lw-firewall alerts scan                  # run the reconciliation scan now
+wp lw-firewall alerts test                  # send a test alert to the recipients
+wp lw-firewall alerts baseline              # show the known-administrator snapshot
+wp lw-firewall alerts baseline --reset      # re-take the snapshot from the live list
+```
+
+`alerts scan` also lets sites with WP-Cron disabled drive the scan from a system cron.
+
+### Password reset flood protection
+
+```bash
+wp lw-firewall reset status [--format=<format>]   # settings plus the option key behind each
+wp lw-firewall reset on [--proof] [--auto-ban] [--alert] [--block-admins]
+wp lw-firewall reset off                          # limits are kept, so `on` restores them
+```
+
+| Flag | Effect |
+|------|--------|
+| `--proof` | Require the proof-of-render token on the wp-login form |
+| `--auto-ban` | Ban IPs that trip the per-IP limit or fail the token check |
+| `--alert` | Email the Alerts-tab recipients when a limit is reached |
+| `--block-admins` | Refuse password resets for administrator accounts entirely — recovery then needs WP-CLI or another administrator |
+
+### Logs
+
+```bash
+wp lw-firewall logs list [--limit=<n>] [--format=<format>]
+wp lw-firewall logs clear [--yes]
+```
+
+### MU-plugin worker
+
+```bash
 wp lw-firewall worker install
 wp lw-firewall worker remove
 ```
 
 ## wp-config.php Overrides
 
-Override any setting via constants (takes precedence over admin UI):
+Every setting can be overridden by a constant named `LW_FIREWALL_` + the option key in uppercase. A constant always wins over the admin UI and WP-CLI.
 
 ```php
+// Core
 define( 'LW_FIREWALL_ENABLED', true );
-define( 'LW_FIREWALL_STORAGE', 'apcu' );            // apcu, redis, file
+define( 'LW_FIREWALL_STORAGE', 'apcu' );                 // auto, apcu, redis, file
 define( 'LW_FIREWALL_RATE_LIMIT', 30 );
-define( 'LW_FIREWALL_RATE_WINDOW', 60 );             // seconds
-define( 'LW_FIREWALL_ACTION', '429' );                // 429 or redirect
+define( 'LW_FIREWALL_RATE_WINDOW', 60 );                 // seconds
+define( 'LW_FIREWALL_ACTION', '429' );                   // 429 or redirect
+define( 'LW_FIREWALL_LOG_ENABLED', false );
+
+// Endpoint protection
 define( 'LW_FIREWALL_PROTECT_CRON', true );
 define( 'LW_FIREWALL_PROTECT_XMLRPC', true );
 define( 'LW_FIREWALL_PROTECT_LOGIN', true );
 define( 'LW_FIREWALL_PROTECT_REST_API', false );
 define( 'LW_FIREWALL_PROTECT_404', false );
+
+// Auto-ban
 define( 'LW_FIREWALL_AUTO_BAN_ENABLED', true );
 define( 'LW_FIREWALL_AUTO_BAN_THRESHOLD', 3 );
-define( 'LW_FIREWALL_AUTO_BAN_DURATION', 3600 );     // seconds
+define( 'LW_FIREWALL_AUTO_BAN_DURATION', 3600 );         // seconds
+
+// Brute-force login lockout
+define( 'LW_FIREWALL_LOGIN_LIMIT_ENABLED', false );
+define( 'LW_FIREWALL_LOGIN_MAX_ATTEMPTS', 5 );
+define( 'LW_FIREWALL_LOGIN_LOCKOUT_WINDOW', 600 );       // seconds
+define( 'LW_FIREWALL_LOGIN_LOCKOUT_DURATION', 3600 );    // seconds
+
+// Registration spam protection
+define( 'LW_FIREWALL_REGISTER_PROTECT_ENABLED', true );
+define( 'LW_FIREWALL_REGISTER_HONEYPOT', true );
+define( 'LW_FIREWALL_REGISTER_SINGLE_USE', true );
+define( 'LW_FIREWALL_REGISTER_MIN_FILL_TIME', 2 );       // seconds
+define( 'LW_FIREWALL_REGISTER_TOKEN_MAX_AGE', 3600 );    // seconds
+define( 'LW_FIREWALL_REGISTER_BAN_THRESHOLD', 3 );
+define( 'LW_FIREWALL_REGISTER_BAN_DURATION', 3600 );     // seconds
+
+// Password reset flood protection
+define( 'LW_FIREWALL_RESET_PROTECT_ENABLED', true );
+define( 'LW_FIREWALL_RESET_IP_MAX', 5 );                 // 0 disables this axis
+define( 'LW_FIREWALL_RESET_IP_WINDOW', 900 );            // seconds
+define( 'LW_FIREWALL_RESET_USER_MAX', 3 );               // 0 disables this axis
+define( 'LW_FIREWALL_RESET_USER_WINDOW', 3600 );         // seconds
+define( 'LW_FIREWALL_RESET_GLOBAL_MAX', 30 );            // per hour, 0 disables
+define( 'LW_FIREWALL_RESET_PROOF_ENABLED', true );
+define( 'LW_FIREWALL_RESET_MIN_FILL_TIME', 2 );          // seconds
+define( 'LW_FIREWALL_RESET_TOKEN_MAX_AGE', 3600 );       // seconds
+define( 'LW_FIREWALL_RESET_SINGLE_USE', true );
+define( 'LW_FIREWALL_RESET_AUTO_BAN', false );
+define( 'LW_FIREWALL_RESET_BAN_DURATION', 3600 );        // seconds
+define( 'LW_FIREWALL_RESET_BLOCK_ADMINS', false );
+define( 'LW_FIREWALL_RESET_ALERT_ENABLED', false );
+
+// New-administrator alerts
+define( 'LW_FIREWALL_ADMIN_ALERT_ENABLED', false );
+define( 'LW_FIREWALL_ADMIN_ALERT_EMAIL', 'security@example.com' );  // empty = site admin email
+define( 'LW_FIREWALL_ADMIN_ALERT_SCAN_ENABLED', true );
+define( 'LW_FIREWALL_ADMIN_ALERT_CHANGES', true );
+
+// Security headers and geo blocking
 define( 'LW_FIREWALL_SECURITY_HEADERS', true );
-define( 'LW_FIREWALL_LOG_ENABLED', false );
 define( 'LW_FIREWALL_GEO_ENABLED', true );
+define( 'LW_FIREWALL_GEO_ACTION', '403' );               // 403 or redirect
+
+// Emergency kill-switch for the MU-plugin worker
+define( 'LW_FIREWALL_DISABLE_WORKER', true );
+```
+
+The list settings (`ip_whitelist`, `ip_blacklist`, `blocked_bots`, `filter_params`, `blocked_countries`) accept constants too, as arrays — but they are usually easier to manage with `wp lw-firewall config-items` or the admin UI:
+
+```php
+define( 'LW_FIREWALL_IP_WHITELIST', [ '192.168.1.100', '10.0.0.0/8' ] );
 ```
 
 ## Requirements
 
-- PHP 8.1 or higher
+- PHP 8.2 or higher
 - WordPress 6.0 or higher
 
 ## Part of LW Plugins
