@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.4] - 2026-08-27
+
+### Added
+- The Automatic Bans table now has a search box, reason filters and pagination. 1.5.3 rendered every row on one page — the ban index holds up to 500 entries, so a single botnet run made the screen unusable exactly when it mattered most
+- Search matches partial addresses, because the support flow is "the customer gave me their IP"
+- Reason filter chips carry counts taken from the whole list, not the visible page, so "login attack or reset flood?" is answered before reading a row
+- Summary strip above the table: how many bans are enforced now, how many are tracked but no longer enforced, how many expire within the hour, and which backend holds them
+- Checkbox selection with an Unblock selected bulk action; the old Unblock all button remains, moved out of the way and styled as the destructive action it is
+- Each row shows both a relative and an absolute time for the ban and its expiry
+
+### Changed
+- Search, filtering and paging all run on the rendered rows rather than reloading the page. The table sits inside the settings form, so a `?paged=2` link would navigate away and silently discard unsaved settings on the other tabs
+
 ## [1.5.3] - 2026-08-27
 
 ### Added

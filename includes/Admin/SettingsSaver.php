@@ -213,6 +213,23 @@ final class SettingsSaver {
 		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
 		$banner  = new AutoBanner( $storage );
 
+		if ( '__selected__' === $target ) {
+			// Each entry is validated as an IP below, which is stricter than any
+			// sanitizer would be here.
+			$selected = isset( $_POST['lw_firewall_unban_ips'] ) ? (array) wp_unslash( $_POST['lw_firewall_unban_ips'] ) : []; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
+			$lifted   = 0;
+
+			foreach ( $selected as $candidate ) {
+				$candidate = sanitize_text_field( (string) $candidate );
+
+				if ( filter_var( $candidate, FILTER_VALIDATE_IP ) && $banner->unban( $candidate ) ) {
+					++$lifted;
+				}
+			}
+
+			return $lifted > 0 ? 'unban_done' : 'unban_invalid';
+		}
+
 		if ( '__all__' === $target ) {
 			foreach ( BanList::all() as $row ) {
 				$banner->unban( $row['ip'] );

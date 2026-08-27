@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.5.2\n"
+"Project-Id-Version: LW Firewall 1.5.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-08-26T14:00:00+00:00\n"
-"PO-Revision-Date: 2026-08-26 14:00+0000\n"
+"POT-Creation-Date: 2026-08-27T08:45:39+00:00\n"
+"PO-Revision-Date: 2026-08-27 09:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
 "Language: hu_HU\n"
@@ -61,6 +61,195 @@ msgstr "Beállítások"
 #: includes/Admin/ParentPage.php:201
 msgid "Get Plugin"
 msgstr "Bővítmény letöltése"
+
+#: includes/Admin/Settings/BanReasons.php:34
+msgid "Too many failed logins"
+msgstr "Túl sok hibás bejelentkezés"
+
+#: includes/Admin/Settings/BanReasons.php:35
+msgid "brute-force lockout"
+msgstr "brute-force kizárás"
+
+#: includes/Admin/Settings/BanReasons.php:38
+msgid "Password reset flood"
+msgstr "Jelszó-visszaállítási árasztás"
+
+#: includes/Admin/Settings/BanReasons.php:39
+msgid "per-IP limit"
+msgstr "IP-nkénti korlát"
+
+#: includes/Admin/Settings/BanReasons.php:42
+msgid "Password reset bot request"
+msgstr "Jelszó-visszaállítási bot-kérés"
+
+#: includes/Admin/Settings/BanReasons.php:43
+msgid "proof-of-render failed"
+msgstr "proof-of-render megbukott"
+
+#: includes/Admin/Settings/BanReasons.php:46
+msgid "Registration spam"
+msgstr "Regisztrációs spam"
+
+#: includes/Admin/Settings/BanReasons.php:47
+msgid "rejected sign-ups"
+msgstr "elutasított regisztrációk"
+
+#: includes/Admin/Settings/BanReasons.php:50
+msgid "Rate limit exceeded"
+msgstr "Rate limit túllépve"
+
+#: includes/Admin/Settings/BanReasons.php:51
+msgid "auto-ban escalation"
+msgstr "auto-ban eszkaláció"
+
+#: includes/Admin/Settings/BanReasons.php:65
+msgid "Unknown"
+msgstr "Ismeretlen"
+
+#: includes/Admin/Settings/BanReasons.php:77
+msgid "banned before reasons were recorded"
+msgstr "még az okok rögzítése előtt kitiltva"
+
+#: includes/Admin/Settings/BanTable.php:41
+msgid "Automatic Bans"
+msgstr "Automatikus kitiltások"
+
+#: includes/Admin/Settings/BanTable.php:43
+msgid ""
+"Addresses the firewall banned on its own — brute-force lockouts, "
+"registration spam, password-reset floods and rate-limit escalation. "
+"Unblocking also clears the counters behind the ban, so the address starts "
+"from zero instead of being banned again on its next request."
+msgstr ""
+"Címek, amelyeket a tűzfal magától tiltott ki — brute-force kizárás, "
+"regisztrációs spam, jelszó-visszaállítási árasztás és rate limit eszkaláció. "
+"A feloldás a kitiltás mögötti számlálókat is törli, így a cím nulláról indul "
+"ahelyett, hogy a következő kérésénél újra kitiltásra kerülne."
+
+#: includes/Admin/Settings/BanTable.php:48
+msgid "No addresses are banned right now."
+msgstr "Jelenleg egyetlen cím sincs kitiltva."
+
+#: includes/Admin/Settings/BanTable.php:49
+msgid "Bans appear here as soon as the firewall issues one."
+msgstr "A kitiltások itt jelennek meg, amint a tűzfal kiad egyet."
+
+#: includes/Admin/Settings/BanTable.php:89
+msgid "Enforced now"
+msgstr "Most érvényben"
+
+#: includes/Admin/Settings/BanTable.php:90
+#: includes/Admin/Settings/BanTable.php:230
+msgid "Tracked only"
+msgstr "Csak nyilvántartva"
+
+#: includes/Admin/Settings/BanTable.php:91
+msgid "Expire within the hour"
+msgstr "Egy órán belül lejár"
+
+#: includes/Admin/Settings/BanTable.php:92
+msgid "Ban store"
+msgstr "Kitiltás-tároló"
+
+#: includes/Admin/Settings/BanTable.php:131
+msgid "All"
+msgstr "Összes"
+
+#: includes/Admin/Settings/BanTable.php:144
+msgid "Not enforced"
+msgstr "Nincs érvényben"
+
+#: includes/Admin/Settings/BanTable.php:149
+msgid "Filter bans by reason"
+msgstr "Kitiltások szűrése ok szerint"
+
+#: includes/Admin/Settings/BanTable.php:159
+msgid "Search banned IP addresses"
+msgstr "Kitiltott IP-címek keresése"
+
+#: includes/Admin/Settings/BanTable.php:160
+msgid "Search an IP address…"
+msgstr "IP-cím keresése…"
+
+#: includes/Admin/Settings/BanTable.php:178
+msgid "Select all bans on this page"
+msgstr "Az oldal összes kitiltásának kijelölése"
+
+#: includes/Admin/Settings/BanTable.php:179
+msgid "IP address"
+msgstr "IP-cím"
+
+#: includes/Admin/Settings/BanTable.php:180
+#: includes/Admin/Settings/TabLogs.php:96
+msgid "Reason"
+msgstr "Ok"
+
+#: includes/Admin/Settings/BanTable.php:181
+msgid "Banned"
+msgstr "Kitiltva"
+
+#: includes/Admin/Settings/BanTable.php:182
+msgid "Expires"
+msgstr "Lejár"
+
+#: includes/Admin/Settings/BanTable.php:183
+#: includes/Admin/Settings/TabAlerts.php:179
+#: includes/Admin/Settings/TabStatus.php:32
+#: includes/Alerts/AdminDetector.php:136
+msgid "Status"
+msgstr "Állapot"
+
+#: includes/Admin/Settings/BanTable.php:193
+msgid "No banned address matches that search."
+msgstr "Egyetlen kitiltott cím sem egyezik a keresésre."
+
+#. translators: %s: IP address.
+#: includes/Admin/Settings/BanTable.php:209
+#, php-format
+msgid "Select %s"
+msgstr "%s kijelölése"
+
+#: includes/Admin/Settings/BanTable.php:228
+msgid "Enforced"
+msgstr "Érvényben"
+
+#: includes/Admin/Settings/BanTable.php:230
+msgid "Tracked but no longer enforced — the storage backend was cleared."
+msgstr "Nyilvántartva, de már nincs érvényben — a tárolóréteget kiürítették."
+
+#: includes/Admin/Settings/BanTable.php:235
+msgid "Unblock"
+msgstr "Feloldás"
+
+#: includes/Admin/Settings/BanTable.php:252
+msgid "Unblock selected"
+msgstr "Kijelöltek feloldása"
+
+#: includes/Admin/Settings/BanTable.php:261
+msgid "Unblock every banned address"
+msgstr "Az összes kitiltott cím feloldása"
+
+#: includes/Admin/Settings/BanTable.php:275
+msgid "unknown"
+msgstr "ismeretlen"
+
+#. translators: %s: human-readable time difference, e.g. "12 mins".
+#. translators: %s: human-readable time difference
+#: includes/Admin/Settings/BanTable.php:279
+#: includes/Admin/Settings/TabStatus.php:132
+#, php-format
+msgid "%s ago"
+msgstr "%s ezelőtt"
+
+#: includes/Admin/Settings/BanTable.php:290
+msgid "expired"
+msgstr "lejárt"
+
+#. translators: %s: human-readable time difference, e.g. "24 mins".
+#: includes/Admin/Settings/BanTable.php:294
+#, php-format
+msgid "in %s"
+msgstr "%s múlva"
 
 #: includes/Admin/Settings/ProtectionFields.php:30
 msgid "Rate-limit wp-cron.php requests"
@@ -590,12 +779,6 @@ msgstr ""
 "Több címet vesszővel kell elválasztani. Üresen hagyva az oldal admin e-mail "
 "címét használja."
 
-#: includes/Admin/Settings/TabAlerts.php:179
-#: includes/Admin/Settings/TabStatus.php:32
-#: includes/Alerts/AdminDetector.php:136
-msgid "Status"
-msgstr "Állapot"
-
 #: includes/Admin/Settings/TabAlerts.php:184
 msgid ""
 "The last alert email could not be sent. Check your site mail configuration "
@@ -944,10 +1127,6 @@ msgstr "Idő"
 msgid "IP"
 msgstr "IP"
 
-#: includes/Admin/Settings/TabLogs.php:96
-msgid "Reason"
-msgstr "Ok"
-
 #: includes/Admin/Settings/TabLogs.php:97
 msgid "User-Agent"
 msgstr "User-Agent"
@@ -1187,12 +1366,6 @@ msgstr "Utolsó telepítési kísérlet"
 msgid "Succeeded"
 msgstr "Sikeres"
 
-#. translators: %s: human-readable time difference
-#: includes/Admin/Settings/TabStatus.php:132
-#, php-format
-msgid "%s ago"
-msgstr "%s ezelőtt"
-
 #: includes/Admin/Settings/TabStatus.php:142
 msgid "Active Storage"
 msgstr "Aktív tároló"
@@ -1257,6 +1430,30 @@ msgid ""
 msgstr ""
 "Ellenőrzés kész: új vagy módosított adminisztrátor található, riasztó e-mail "
 "elküldve."
+
+#: includes/Admin/SettingsPage.php:173
+msgid ""
+"IP unblocked. Its rate-limit, login, registration and password-reset "
+"counters were cleared too, so the next request starts from zero."
+msgstr ""
+"IP feloldva. A rate limit, bejelentkezési, regisztrációs és jelszó-"
+"visszaállítási számlálói is törlődtek, így a következő kérés nulláról indul."
+
+#: includes/Admin/SettingsPage.php:174
+msgid "All tracked bans lifted and their counters cleared."
+msgstr "Minden nyilvántartott kitiltás feloldva, a számlálóikkal együtt."
+
+#: includes/Admin/SettingsPage.php:175
+msgid ""
+"The ban could not be lifted — the storage backend refused the delete. Check "
+"the Status tab for the active backend."
+msgstr ""
+"A kitiltást nem sikerült feloldani — a tárolóréteg elutasította a törlést. "
+"Az aktív backendet a Státusz fülön ellenőrizheted."
+
+#: includes/Admin/SettingsPage.php:176
+msgid "That is not a valid IP address."
+msgstr "Ez nem érvényes IP-cím."
 
 #: includes/Admin/WorkerNotice.php:29
 msgid "The worker source file inside the plugin is missing."
