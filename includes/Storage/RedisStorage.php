@@ -126,6 +126,26 @@ final class RedisStorage implements StorageInterface {
 	}
 
 	/**
+	 * Delete a key.
+	 *
+	 * @param string $key Cache key.
+	 * @return bool
+	 */
+	public function delete( string $key ): bool {
+		if ( ! $this->connected ) {
+			return false;
+		}
+
+		try {
+			$this->redis->del( $this->prefix . $key );
+		} catch ( \Throwable $e ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Check if Redis extension is available and connectable.
 	 *
 	 * @return bool

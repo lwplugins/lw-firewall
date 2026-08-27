@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.3] - 2026-08-27
+
+### Added
+- Automatic bans can now be listed and lifted. Until now a banned IP could only wait out its TTL, be whitelisted, or be freed by flushing the whole storage backend — there was no way to answer "who is banned?" or to release one person on request
+- `wp lw-firewall ban list|check <ip>|remove <ip>|clear` WP-CLI commands
+- Automatic Bans table on the IP Rules tab: IP, reason, when it started, when it expires, and an Unblock button per row plus Unblock all
+- `delete()` on the storage interface and all three backends (APCu, Redis, file), which the unban needs
+
+### Fixed
+- Lifting a ban now also clears the counters that produced it — rate-limit, failed-login, registration, password-reset and 404. Deleting only the ban key left those counters above their thresholds, so the very next request from that address would have been banned again immediately
+- Bans now record why they happened (failed logins, registration spam, password-reset flood, rate limit), so an administrator can tell a locked-out user what tripped
+
+### Changed
+- Ban records are tracked in a non-autoloaded option alongside the storage key, because no storage backend can enumerate keys portably — the file backend hashes them, so an IP cannot be recovered from a filename. The storage key remains the sole authority on whether an IP is blocked; a listing is reconciled against it and marks entries the backend no longer holds as no longer enforced
+
 ## [1.5.2] - 2026-08-26
 
 ### Added

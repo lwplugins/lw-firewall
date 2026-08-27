@@ -81,7 +81,7 @@ final class LoginTracker {
 			return;
 		}
 
-		( new AutoBanner( $this->storage ) )->ban( $ip, $duration );
+		( new AutoBanner( $this->storage ) )->ban( $ip, $duration, 'login_lockout' );
 
 		if ( ! empty( Options::get( 'log_enabled' ) ) ) {
 			Logger::log(

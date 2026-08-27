@@ -77,7 +77,7 @@ final class RegisterTracker {
 			return;
 		}
 
-		( new AutoBanner( $this->storage ) )->ban( $ip, $duration );
+		( new AutoBanner( $this->storage ) )->ban( $ip, $duration, 'register_spam' );
 
 		if ( ! empty( Options::get( 'log_enabled' ) ) ) {
 			Logger::log(

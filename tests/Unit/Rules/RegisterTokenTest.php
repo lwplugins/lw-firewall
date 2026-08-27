@@ -107,6 +107,9 @@ final class RegisterTokenTest extends MonkeyTestCase {
 			public function increment( string $key, int $ttl ): int {
 				$this->counts[ $key ] = ( $this->counts[ $key ] ?? 0 ) + 1;
 				return $this->counts[ $key ]; }
+			public function delete( string $key ): bool {
+				unset( $this->counts[ $key ] );
+				return true; }
 			public static function is_available(): bool {
 				return true; }
 		};

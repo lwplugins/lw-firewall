@@ -54,6 +54,15 @@ final class ArrayStorage implements StorageInterface {
 	}
 
 	/**
+	 * @param string $key Key.
+	 * @return bool
+	 */
+	public function delete( string $key ): bool {
+		unset( $this->data[ $key ] );
+		return true;
+	}
+
+	/**
 	 * @return bool
 	 */
 	public static function is_available(): bool {

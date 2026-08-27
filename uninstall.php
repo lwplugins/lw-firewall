@@ -18,6 +18,7 @@ delete_option( 'lw_firewall_log' );
 
 // Remove the known-administrator snapshot used by the new-admin alert.
 delete_option( 'lw_firewall_admin_baseline' );
+delete_option( 'lw_firewall_bans' );
 delete_transient( 'lw_firewall_admin_alert_mail_error' );
 
 // Remove the administrator scan cron event.

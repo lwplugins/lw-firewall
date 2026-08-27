@@ -173,6 +173,27 @@ final class FileStorage implements StorageInterface {
 	}
 
 	/**
+	 * Delete a key.
+	 *
+	 * @param string $key Cache key.
+	 * @return bool
+	 */
+	public function delete( string $key ): bool {
+		$file = $this->get_file_path( $key );
+
+		if ( ! file_exists( $file ) ) {
+			return true;
+		}
+
+		wp_delete_file( $file );
+
+		// file_exists() is re-evaluated at runtime after the delete; PHPStan
+		// cannot model wp_delete_file()'s filesystem side effect.
+		// @phpstan-ignore booleanNot.alwaysFalse
+		return ! file_exists( $file );
+	}
+
+	/**
 	 * Check if file storage is available.
 	 *
 	 * @return bool

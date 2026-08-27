@@ -75,6 +75,20 @@ final class ApcuStorage implements StorageInterface {
 	}
 
 	/**
+	 * Delete a key.
+	 *
+	 * @param string $key Cache key.
+	 * @return bool
+	 */
+	public function delete( string $key ): bool {
+		$full_key = $this->prefix . $key;
+
+		apcu_delete( $full_key );
+
+		return ! apcu_exists( $full_key );
+	}
+
+	/**
 	 * Check if APCu is available.
 	 *
 	 * @return bool

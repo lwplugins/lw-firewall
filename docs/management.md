@@ -214,6 +214,56 @@ consume each other's — but two visitors loading the *same* form in the same
 second will see the second submission rejected as a replay. On a lost-password
 form that is rare enough to be the right trade.
 
+## Automatic Bans
+
+```bash
+# Who is banned, why, until when
+wp lw-firewall ban list
+wp lw-firewall ban list --format=json
+
+# Is a specific address banned?
+wp lw-firewall ban check 203.0.113.42
+
+# Lift one ban (this is the "a user reported being locked out" command)
+wp lw-firewall ban remove 203.0.113.42
+
+# Lift every tracked ban
+wp lw-firewall ban clear --yes
+```
+
+`ban remove` deletes the ban key **and** the counters that produced it —
+`violations_`, `login_fail_`, `register_reject_`, `reset_ip_`, `404_` and `rl_`
+for that address. Deleting only the ban key would leave those counters above
+their thresholds, so the next single request would re-ban the address.
+
+The `active` column reconciles the tracked index against the storage backend.
+`no` means the entry is recorded but no longer enforced — normal after a Redis
+flush, an APCu restart, or a cleared file cache.
+
+Ban records live in the `lw_firewall_bans` option (not autoloaded). The storage
+key remains the sole authority on whether an address is blocked; the option
+exists because no backend can enumerate keys portably — the file backend hashes
+them, so an IP cannot be recovered from a filename.
+
+The same table, with an Unblock button per row and an Unblock all button, is on
+the **IP Rules** settings tab.
+
+### Brute-force login lockout
+
+Off by default. To reproduce the common "5 failures, 30 minute lockout" setup:
+
+```bash
+wp lw-firewall config set login_limit_enabled true
+wp lw-firewall config set login_max_attempts 5
+wp lw-firewall config set login_lockout_window 600     # failures counted over 10 minutes
+wp lw-firewall config set login_lockout_duration 1800  # 30 minute ban
+```
+
+Note that the resulting ban blocks the address from the **whole site**, not just
+the login form — the MU-plugin worker refuses the request before WordPress
+loads. Whitelisting an IP (`wp lw-firewall ip add whitelist <ip>`) bypasses an
+active ban immediately, because the worker checks the whitelist first.
+
 ## Configuration via wp-config.php
 
 Settings can be overridden via constants in `wp-config.php`:

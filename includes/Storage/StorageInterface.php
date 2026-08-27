@@ -46,6 +46,18 @@ interface StorageInterface {
 	public function increment( string $key, int $ttl ): int;
 
 	/**
+	 * Delete a key. Returns true when the key is gone afterwards.
+	 *
+	 * Used to lift a ban and clear the counters behind it, so the operation
+	 * must report success when the key never existed — an already-absent key
+	 * is the state the caller asked for.
+	 *
+	 * @param string $key Cache key.
+	 * @return bool
+	 */
+	public function delete( string $key ): bool;
+
+	/**
 	 * Check if storage backend is available.
 	 *
 	 * @return bool

@@ -114,7 +114,7 @@ final class ResetPenalty {
 
 		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
 
-		( new AutoBanner( $storage ) )->ban( $ip, (int) Options::get( 'reset_ban_duration', 3600 ) );
+		( new AutoBanner( $storage ) )->ban( $ip, (int) Options::get( 'reset_ban_duration', 3600 ), 'reset_' . $verdict );
 	}
 
 	/**

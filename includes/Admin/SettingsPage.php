@@ -166,10 +166,14 @@ final class SettingsPage {
 		$notice = isset( $_GET['lw_notice'] ) ? sanitize_key( wp_unslash( $_GET['lw_notice'] ) ) : '';
 
 		$notices = [
-			'test_sent'   => [ 'success', __( 'Test alert sent. If it does not arrive, the problem is your site mail configuration, not the firewall.', 'lw-firewall' ) ],
-			'test_failed' => [ 'error', __( 'The test alert could not be sent — wp_mail() refused it. Check your SMTP plugin or hosting mail limits.', 'lw-firewall' ) ],
-			'scan_clean'  => [ 'success', __( 'Scan finished: no new or modified administrators found.', 'lw-firewall' ) ],
-			'scan_found'  => [ 'warning', __( 'Scan finished: new or modified administrators were found and an alert email was sent.', 'lw-firewall' ) ],
+			'test_sent'     => [ 'success', __( 'Test alert sent. If it does not arrive, the problem is your site mail configuration, not the firewall.', 'lw-firewall' ) ],
+			'test_failed'   => [ 'error', __( 'The test alert could not be sent — wp_mail() refused it. Check your SMTP plugin or hosting mail limits.', 'lw-firewall' ) ],
+			'scan_clean'    => [ 'success', __( 'Scan finished: no new or modified administrators found.', 'lw-firewall' ) ],
+			'scan_found'    => [ 'warning', __( 'Scan finished: new or modified administrators were found and an alert email was sent.', 'lw-firewall' ) ],
+			'unban_done'    => [ 'success', __( 'IP unblocked. Its rate-limit, login, registration and password-reset counters were cleared too, so the next request starts from zero.', 'lw-firewall' ) ],
+			'unban_all'     => [ 'success', __( 'All tracked bans lifted and their counters cleared.', 'lw-firewall' ) ],
+			'unban_failed'  => [ 'error', __( 'The ban could not be lifted — the storage backend refused the delete. Check the Status tab for the active backend.', 'lw-firewall' ) ],
+			'unban_invalid' => [ 'error', __( 'That is not a valid IP address.', 'lw-firewall' ) ],
 		];
 
 		if ( ! isset( $notices[ $notice ] ) ) {

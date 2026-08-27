@@ -68,6 +68,20 @@ That list is the worker's pre-WordPress path. Registration spam protection, pass
 - Configurable threshold (default: 3 violations)
 - Configurable ban duration (default: 1 hour)
 - Escalating protection — casual users won't trigger it, persistent attackers get banned
+- Bans are listable and liftable from the IP Rules tab or WP-CLI, and record why they happened (failed logins, registration spam, password-reset flood, rate limit)
+- Lifting a ban clears the counters behind it, so the address is not re-banned on its next request
+
+### Brute-Force Login Lockout
+
+Counts failed logins per IP and bans the address once the threshold is reached inside the window. Off by default — enable it with `login_limit_enabled`.
+
+| Setting | Default | Meaning |
+|---------|---------|---------|
+| `login_max_attempts` | 5 | Failures before the ban |
+| `login_lockout_window` | 600 | Seconds the failures are counted over |
+| `login_lockout_duration` | 3600 | How long the ban lasts |
+
+The ban is written to the shared ban store, so the MU-plugin worker blocks the address **site-wide** on its next request, not just on the login form. Whitelisted IPs are checked first and bypass it entirely.
 
 ### Registration Spam Protection
 
@@ -175,7 +189,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | **General** | Enable/disable, storage backend, rate limit, time window, action, filter params |
 | **Protection** | Endpoint toggles (cron, xmlrpc, login, REST API, 404) and auto-ban settings |
 | **Bots** | Manage blocked bot User-Agent patterns |
-| **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges) |
+| **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges), plus the automatic-ban table with per-row unblock |
 | **Spam** | Registration spam protection and password-reset flood protection |
 | **Geo Blocking** | Country-based blocking with Cloudflare or CIDR fallback |
 | **Security** | HTTP security headers toggle |
@@ -186,7 +200,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 
 ## WP-CLI Commands
 
-Every command is listed below. `--format` accepts `table` (default), `json`, `csv` or `yaml`.
+All 31 commands are listed below. `--format` accepts `table` (default), `json`, `csv` or `yaml`.
 
 ### Status
 
@@ -275,6 +289,19 @@ wp lw-firewall reset off                          # limits are kept, so `on` res
 | `--auto-ban` | Ban IPs that trip the per-IP limit or fail the token check |
 | `--alert` | Email the Alerts-tab recipients when a limit is reached |
 | `--block-admins` | Refuse password resets for administrator accounts entirely — recovery then needs WP-CLI or another administrator |
+
+### Automatic bans
+
+```bash
+wp lw-firewall ban list [--format=<format>]   # who is banned, why, until when
+wp lw-firewall ban check <ip>                 # is this address banned?
+wp lw-firewall ban remove <ip>                # lift one ban
+wp lw-firewall ban clear [--yes]              # lift every tracked ban
+```
+
+`ban remove` also clears the counters that produced the ban — rate-limit, failed-login, registration, password-reset and 404 — so the address starts from zero instead of being re-banned on its next request. The `active` column in `ban list` reconciles the index against the storage backend: `no` means the entry is tracked but no longer enforced, which happens after a Redis flush or an APCu restart.
+
+The same table, with an Unblock button per row, is on the **IP Rules** settings tab.
 
 ### Logs
 

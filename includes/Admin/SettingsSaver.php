@@ -14,6 +14,8 @@ use LightweightPlugins\Firewall\Alerts\AdminBaseline;
 use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Alerts\AlertMailer;
 use LightweightPlugins\Firewall\Logger;
+use LightweightPlugins\Firewall\Rules\AutoBanner;
+use LightweightPlugins\Firewall\Rules\BanList;
 use LightweightPlugins\Firewall\Options;
 
 /**
@@ -29,7 +31,9 @@ final class SettingsSaver {
 	 * @return void
 	 */
 	public static function maybe_save(): void {
-		if ( ! isset( $_POST['lw_firewall_save'] ) ) {
+		// The Automatic Bans table submits with its own button name, carrying the
+		// IP in the value, so it never reaches the shared action field.
+		if ( ! isset( $_POST['lw_firewall_save'] ) && ! isset( $_POST['lw_firewall_unban'] ) ) {
 			return;
 		}
 
@@ -190,6 +194,43 @@ final class SettingsSaver {
 	}
 
 	/**
+	 * Lift one ban, or every tracked ban.
+	 *
+	 * The IP arrives as the submit button's value, so it must be validated as
+	 * an address rather than run through sanitize_key(), which would strip the
+	 * dots and colons out of it.
+	 *
+	 * @return string Notice key, or '' when no unban was requested.
+	 */
+	private static function handle_unban(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
+		if ( ! isset( $_POST['lw_firewall_unban'] ) ) {
+			return '';
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
+		$target  = sanitize_text_field( wp_unslash( $_POST['lw_firewall_unban'] ) );
+		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
+		$banner  = new AutoBanner( $storage );
+
+		if ( '__all__' === $target ) {
+			foreach ( BanList::all() as $row ) {
+				$banner->unban( $row['ip'] );
+			}
+
+			BanList::clear();
+
+			return 'unban_all';
+		}
+
+		if ( ! filter_var( $target, FILTER_VALIDATE_IP ) ) {
+			return 'unban_invalid';
+		}
+
+		return $banner->unban( $target ) ? 'unban_done' : 'unban_failed';
+	}
+
+	/**
 	 * Reduce a raw recipient string to a comma-separated list of valid addresses.
 	 *
 	 * @param string $raw Raw field value.
@@ -231,7 +272,11 @@ final class SettingsSaver {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in maybe_save().
 		$action = isset( $_POST['lw_firewall_save'] ) ? sanitize_key( wp_unslash( $_POST['lw_firewall_save'] ) ) : '';
 
-		$notice = '';
+		$notice = self::handle_unban();
+
+		if ( '' !== $notice ) {
+			return $notice;
+		}
 
 		if ( 'admin_scan' === $action ) {
 			$found  = AdminMonitor::run_scan();

@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,12 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.3 =
+* New: Automatic Bans table on the IP Rules tab — see who is banned and why, with an Unblock button per row
+* New: `wp lw-firewall ban list|check|remove|clear` WP-CLI commands
+* Fix: Unblocking an IP now also clears the counters behind the ban, so the address is not re-banned on its next request
+* New: Bans record their reason (failed logins, registration spam, password-reset flood, rate limit)
 
 = 1.5.2 =
 * New: Complete Hungarian translation — the Alerts tab, the password-reset settings, every alert email and the lost-password form messages (127 new strings)
