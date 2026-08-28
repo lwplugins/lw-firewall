@@ -264,6 +264,25 @@ the login form — the MU-plugin worker refuses the request before WordPress
 loads. Whitelisting an IP (`wp lw-firewall ip add whitelist <ip>`) bypasses an
 active ban immediately, because the worker checks the whitelist first.
 
+## Reverse Proxy
+
+Without configuration the firewall sees the proxy's address, not the visitor's —
+so every request shares one rate-limit bucket, one ban and one country. On a
+same-host proxy that address is `127.0.0.1`, which the worker also treats as its
+own and exempts entirely.
+
+```bash
+wp lw-firewall config set trusted_proxies "127.0.0.1"
+wp lw-firewall config set proxy_header x-forwarded-for   # or x-real-ip, forwarded
+```
+
+The chain is read right to left, skipping hops that are themselves listed, and
+the first address you do not vouch for is the client. It stays opt-in because a
+forwarded header is client-written until the hop that set it is known.
+
+Cloudflare needs nothing here — `CF-Connecting-IP` is detected automatically and
+only trusted from a Cloudflare range.
+
 ## Configuration via wp-config.php
 
 Settings can be overridden via constants in `wp-config.php`:

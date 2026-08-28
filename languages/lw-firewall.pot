@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.5.4\n"
+"Project-Id-Version: LW Firewall 1.5.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T08:45:39+00:00\n"
+"POT-Creation-Date: 2026-08-28T06:18:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lw-firewall\n"
@@ -46,15 +46,15 @@ msgstr ""
 msgid "Lightweight plugins for WordPress - minimal footprint, maximum impact."
 msgstr ""
 
-#: includes/Admin/ParentPage.php:189
+#: includes/Admin/ParentPage.php:193
 msgid "Active"
 msgstr ""
 
-#: includes/Admin/ParentPage.php:197
+#: includes/Admin/ParentPage.php:201
 msgid "Settings"
 msgstr ""
 
-#: includes/Admin/ParentPage.php:201
+#: includes/Admin/ParentPage.php:205
 msgid "Get Plugin"
 msgstr ""
 
@@ -181,8 +181,8 @@ msgid "Expires"
 msgstr ""
 
 #: includes/Admin/Settings/BanTable.php:183
-#: includes/Admin/Settings/TabAlerts.php:179
-#: includes/Admin/Settings/TabStatus.php:32
+#: includes/Admin/Settings/TabAlerts.php:180
+#: includes/Admin/Settings/TabStatus.php:34
 #: includes/Alerts/AdminDetector.php:136
 msgid "Status"
 msgstr ""
@@ -224,7 +224,7 @@ msgstr ""
 #. translators: %s: human-readable time difference, e.g. "12 mins".
 #. translators: %s: human-readable time difference
 #: includes/Admin/Settings/BanTable.php:279
-#: includes/Admin/Settings/TabStatus.php:132
+#: includes/Admin/Settings/TabStatus.php:184
 #, php-format
 msgid "%s ago"
 msgstr ""
@@ -515,131 +515,139 @@ msgstr ""
 msgid "Number of rejected registrations from one IP before it is banned."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:36
+#: includes/Admin/Settings/TabAlerts.php:37
 msgid "Alerts"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:51
+#: includes/Admin/Settings/TabAlerts.php:52
 msgid "New Administrator Alert"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:53
+#: includes/Admin/Settings/TabAlerts.php:54
 msgid "Send an email whenever an account gains administrator privileges, or an existing administrator account is modified — no matter how it happened: the admin screens, a plugin, the REST API, WP-CLI, or a direct write into the database."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:58
+#: includes/Admin/Settings/TabAlerts.php:59
 msgid "Enable Alerts"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:64
+#: includes/Admin/Settings/TabAlerts.php:65
 msgid "Email me when a new administrator appears"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:65
+#: includes/Admin/Settings/TabAlerts.php:66
 msgid "Works independently of the main firewall switch."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:72
+#: includes/Admin/Settings/TabAlerts.php:73
 msgid "Notification Email"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:78
+#: includes/Admin/Settings/TabAlerts.php:79
 msgid "Account Takeover"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:84
+#: includes/Admin/Settings/TabAlerts.php:85
 msgid "Also alert when an existing administrator is modified"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:85
+#: includes/Admin/Settings/TabAlerts.php:86
 msgid "Watches the username, email address and password of every administrator. Rewriting an admin's email address is how an account is seized — it hands over the password reset flow while the user ID stays the same, so watching for new accounts alone would never see it."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:92
+#: includes/Admin/Settings/TabAlerts.php:93
 msgid "Database Scan"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:98
+#: includes/Admin/Settings/TabAlerts.php:99
 msgid "Hourly scan for administrators created outside WordPress"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:99
+#: includes/Admin/Settings/TabAlerts.php:100
 msgid "Compares the live administrator list against a stored snapshot. This is what catches accounts inserted straight into the database, created by code that bypasses the WordPress user API, or added while this plugin was inactive."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:105
+#: includes/Admin/Settings/TabAlerts.php:106
 msgid "Save &amp; run scan now"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:108
+#: includes/Admin/Settings/TabAlerts.php:109
 msgid "Save &amp; send test email"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:117
+#: includes/Admin/Settings/TabAlerts.php:118
 msgid "How detection works"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:121
+#: includes/Admin/Settings/TabAlerts.php:122
 msgid "WordPress hooks"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:123
+#: includes/Admin/Settings/TabAlerts.php:124
 msgid "Immediate. Catches every account creation or role change that goes through the WordPress user API — the Users screen, user registration, the REST API, WP-CLI, and any plugin or theme calling wp_insert_user() or set_role(). The alert names the acting user and their IP address."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:127
+#: includes/Admin/Settings/TabAlerts.php:128
 msgid "Database scan"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:129
+#: includes/Admin/Settings/TabAlerts.php:130
 msgid "Within the hour. A snapshot of every administrator user ID is stored, and the scheduled scan diffs it against the live list. Anything that appears without a hook firing — a direct SQL INSERT, a modified wp_capabilities meta row, an account added while the plugin was off — shows up here and is flagged as created outside the normal WordPress flow."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:133
+#: includes/Admin/Settings/TabAlerts.php:134
 msgid "What the snapshot stores"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:135
+#: includes/Admin/Settings/TabAlerts.php:136
 msgid "Per administrator: the user ID, the username, the email address, and a digest of the stored password hash. The digest only ever answers \"did this change?\" — the password itself is never stored, never compared and never printed in an alert."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:139
+#: includes/Admin/Settings/TabAlerts.php:140
 msgid "No duplicate alerts"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:141
+#: includes/Admin/Settings/TabAlerts.php:142
 msgid "Both paths write to the same snapshot, so each event is reported exactly once. Existing administrators are recorded silently when the feature is turned on — you are only told about what happens afterwards. Removing an administrator is not reported; the account simply leaves the snapshot."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:165
+#: includes/Admin/Settings/TabAlerts.php:166
 msgid "Separate multiple addresses with commas. Leave empty to use the site admin email."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:184
+#. translators: %d: number of undelivered alerts.
+#: includes/Admin/Settings/TabAlerts.php:190
+#, php-format
+msgid "%d alert could not be sent yet and will be retried on the next scan."
+msgid_plural "%d alerts could not be sent yet and will be retried on the next scan."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Admin/Settings/TabAlerts.php:205
 msgid "The last alert email could not be sent. Check your site mail configuration (SMTP plugin, hosting mail limits) — an alert that never arrives is no alert at all."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:192
+#: includes/Admin/Settings/TabAlerts.php:213
 msgid "Administrators tracked"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:198
+#: includes/Admin/Settings/TabAlerts.php:219
 msgid "Alerts go to"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:204
+#: includes/Admin/Settings/TabAlerts.php:225
 msgid "Snapshot taken"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:205
+#: includes/Admin/Settings/TabAlerts.php:226
 msgid "never — taken on the first scan"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:210
+#: includes/Admin/Settings/TabAlerts.php:231
 msgid "Next scan"
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:211
+#: includes/Admin/Settings/TabAlerts.php:232
 msgid "not scheduled"
 msgstr ""
 
@@ -749,40 +757,28 @@ msgstr ""
 msgid "Block visitors from specific countries. Behind Cloudflare, the CF-IPCountry header is used (instant). Without Cloudflare, CIDR-based lookup is used (updated weekly)."
 msgstr ""
 
-#: includes/Admin/Settings/TabGeo.php:68
+#: includes/Admin/Settings/TabGeo.php:67
 msgid "Enable"
 msgstr ""
 
-#: includes/Admin/Settings/TabGeo.php:74
+#: includes/Admin/Settings/TabGeo.php:73
 msgid "Enable Geo Blocking"
 msgstr ""
 
-#: includes/Admin/Settings/TabGeo.php:89
-msgid "Block Action"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:97
-msgid "403 Forbidden"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:98
-msgid "Redirect to homepage"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:114
+#: includes/Admin/Settings/TabGeo.php:88
 msgid "Blocked Countries"
 msgstr ""
 
-#: includes/Admin/Settings/TabGeo.php:121
+#: includes/Admin/Settings/TabGeo.php:95
 msgid "ISO 3166-1 alpha-2 country codes, one per line (e.g. IN, CN, RU)."
 msgstr ""
 
-#: includes/Admin/Settings/TabGeo.php:138
+#: includes/Admin/Settings/TabGeo.php:112
 msgid "Update CIDR Lists Now"
 msgstr ""
 
 #. translators: %s: human-readable time difference
-#: includes/Admin/Settings/TabGeo.php:144
+#: includes/Admin/Settings/TabGeo.php:118
 #, php-format
 msgid "Next automatic update: %s"
 msgstr ""
@@ -856,6 +852,30 @@ msgstr ""
 
 #: includes/Admin/Settings/TabIpRules.php:73
 msgid "IPs or CIDR ranges blocked with 403 Forbidden before any other check (one per line). Supports IPv4, IPv6, and CIDR notation."
+msgstr ""
+
+#: includes/Admin/Settings/TabIpRules.php:81
+msgid "Reverse Proxy"
+msgstr ""
+
+#: includes/Admin/Settings/TabIpRules.php:83
+msgid "Leave this empty unless the site sits behind a proxy or load balancer. A forwarded-for header is written by the client until the hop that set it is known, so trusting one without listing the proxies would let any visitor choose their own IP — and with it their own rate-limit bucket, ban status and country. Cloudflare is handled automatically and needs nothing here."
+msgstr ""
+
+#: includes/Admin/Settings/TabIpRules.php:88
+msgid "Trusted Proxies"
+msgstr ""
+
+#: includes/Admin/Settings/TabIpRules.php:95
+msgid "IPs or CIDR ranges of your own proxies, one per line. On the common \"nginx in front of Apache on the same host\" layout this is 127.0.0.1 — without it every visitor arrives as 127.0.0.1 and shares a single bucket."
+msgstr ""
+
+#: includes/Admin/Settings/TabIpRules.php:102
+msgid "Forwarded Header"
+msgstr ""
+
+#: includes/Admin/Settings/TabIpRules.php:116
+msgid "Read right to left, skipping hops that are themselves listed above. Only used when a trusted proxy is configured."
 msgstr ""
 
 #: includes/Admin/Settings/TabLogs.php:32
@@ -1010,125 +1030,145 @@ msgstr ""
 msgid "Filter out direct bot POSTs, escalate repeat offenders to a site-wide ban, and optionally take administrator accounts out of the reset flow entirely."
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:56
-msgid "Firewall Status"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:60
-msgid "MU-Plugin Worker"
+#: includes/Admin/Settings/TabStatus.php:63
+msgid "The firewall cannot see real visitor addresses."
 msgstr ""
 
 #: includes/Admin/Settings/TabStatus.php:64
+msgid "Every request reaches it as the address below, which is not routable on the internet — so all visitors share one rate-limit bucket, one ban and one country. If this site is behind a proxy or load balancer, list it under IP Rules → Reverse Proxy."
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:86
+msgid "The worker file is installed but has never reported in."
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:87
+msgid "It records a heartbeat the first time it runs. If this notice stays after a few page loads, the worker cannot load the plugin — most often because the plugin directory was renamed. Reinstall it below."
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:105
+msgid "Firewall Status"
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:112
+msgid "MU-Plugin Worker"
+msgstr ""
+
+#: includes/Admin/Settings/TabStatus.php:116
 msgid "Installed"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:68
+#: includes/Admin/Settings/TabStatus.php:120
 msgid "Not installed"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:72
+#: includes/Admin/Settings/TabStatus.php:124
 msgid "The MU-plugin worker intercepts requests early, before themes and plugins load."
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:77
+#: includes/Admin/Settings/TabStatus.php:129
 msgid "Worker Version"
 msgstr ""
 
 #. translators: %s: expected plugin version
-#: includes/Admin/Settings/TabStatus.php:88
+#: includes/Admin/Settings/TabStatus.php:140
 #, php-format
 msgid "Mismatch — expected %s (will auto-update on next page load)"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:97
+#: includes/Admin/Settings/TabStatus.php:149
 msgid "mu-plugins writable"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:100
+#: includes/Admin/Settings/TabStatus.php:152
 msgid "Yes"
 msgstr ""
 
 #. translators: %s: mu-plugins directory path
-#: includes/Admin/Settings/TabStatus.php:107
+#: includes/Admin/Settings/TabStatus.php:159
 #, php-format
 msgid "No — make %s writable by the web server."
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:117
+#: includes/Admin/Settings/TabStatus.php:169
 msgid "Last install attempt"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:120
+#: includes/Admin/Settings/TabStatus.php:172
 msgid "Succeeded"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:142
+#: includes/Admin/Settings/TabStatus.php:194
 msgid "Active Storage"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:146
+#: includes/Admin/Settings/TabStatus.php:198
 msgid "Storage backend used for rate-limit counters."
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:151
+#: includes/Admin/Settings/TabStatus.php:203
 msgid "Reinstall Worker"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:155
+#: includes/Admin/Settings/TabStatus.php:207
 msgid "Reinstall MU-plugin worker on save"
 msgstr ""
 
-#: includes/Admin/Settings/TabStatus.php:158
+#: includes/Admin/Settings/TabStatus.php:210
 msgid "Check this and save to reinstall the worker file."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:76
 #: includes/Admin/SettingsPage.php:77
+#: includes/Admin/SettingsPage.php:78
 #: includes/SiteManager/Integration.php:42
 msgid "Firewall"
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:130
+#: includes/Admin/SettingsPage.php:131
 msgid "Lightweight Firewall"
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:136
+#: includes/Admin/SettingsPage.php:137
 msgid "Settings saved."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:151
+#: includes/Admin/SettingsPage.php:153
 msgid "Save Changes"
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:169
+#: includes/Admin/SettingsPage.php:178
+msgid "These settings are pinned by a constant in wp-config.php. Editing them here has no effect until the constant is removed:"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:193
 msgid "Test alert sent. If it does not arrive, the problem is your site mail configuration, not the firewall."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:170
+#: includes/Admin/SettingsPage.php:194
 msgid "The test alert could not be sent — wp_mail() refused it. Check your SMTP plugin or hosting mail limits."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:171
+#: includes/Admin/SettingsPage.php:195
 msgid "Scan finished: no new or modified administrators found."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:172
+#: includes/Admin/SettingsPage.php:196
 msgid "Scan finished: new or modified administrators were found and an alert email was sent."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:173
+#: includes/Admin/SettingsPage.php:197
 msgid "IP unblocked. Its rate-limit, login, registration and password-reset counters were cleared too, so the next request starts from zero."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:174
+#: includes/Admin/SettingsPage.php:198
 msgid "All tracked bans lifted and their counters cleared."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:175
+#: includes/Admin/SettingsPage.php:199
 msgid "The ban could not be lifted — the storage backend refused the delete. Check the Status tab for the active backend."
 msgstr ""
 
-#: includes/Admin/SettingsPage.php:176
+#: includes/Admin/SettingsPage.php:200
 msgid "That is not a valid IP address."
 msgstr ""
 
@@ -1460,7 +1500,7 @@ msgstr ""
 msgid "Leave this field empty"
 msgstr ""
 
-#: includes/Rules/RegisterGuard.php:70
+#: includes/Rules/RegisterGuard.php:79
 msgid "Registration failed, please try again."
 msgstr ""
 

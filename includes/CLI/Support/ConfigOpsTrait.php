@@ -68,5 +68,9 @@ trait ConfigOpsTrait {
 		if ( ! Options::save( $current ) ) {
 			WP_CLI::error( "Failed to update '{$key}'." );
 		}
+
+		// Geo rules live in .htaccess too; a list change here (blocked_countries)
+		// must reach the Apache layer as well.
+		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
 	}
 }

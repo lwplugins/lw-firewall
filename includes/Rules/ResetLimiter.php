@@ -85,15 +85,37 @@ final class ResetLimiter {
 			return self::IP;
 		}
 
-		if ( $this->over( 'reset_all', 'global_max', 'global_window' ) ) {
-			return self::GLOBAL;
-		}
-
 		if ( $user_id > 0 && $this->over( 'reset_user_' . $user_id, 'user_max', 'user_window' ) ) {
 			return self::USER;
 		}
 
+		// The site-wide counter is the hourly cap on reset emails, so it is
+		// charged last and only by a request that has cleared everything else.
+		// Charging it first let refused requests drain it: a flood against one
+		// account could exhaust the quota and deny password resets to every
+		// other user until the window rolled over.
+		if ( $this->over( 'reset_all', 'global_max', 'global_window' ) ) {
+			return self::GLOBAL;
+		}
+
 		return self::ALLOW;
+	}
+
+	/**
+	 * Record a request that is being refused for reasons of its own.
+	 *
+	 * Bot traffic still counts against the sender's own allowance — that is how
+	 * a direct-POST flood gets banned — but it must not consume the target's
+	 * allowance or the site's email budget, neither of which it was ever going
+	 * to spend.
+	 *
+	 * @param string $ip Requesting IP.
+	 * @return void
+	 */
+	public function record_rejected( string $ip ): void {
+		if ( '' !== $ip ) {
+			$this->over( 'reset_ip_' . $ip, 'ip_max', 'ip_window' );
+		}
 	}
 
 	/**

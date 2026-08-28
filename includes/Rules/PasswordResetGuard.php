@@ -76,7 +76,7 @@ final class PasswordResetGuard {
 		printf(
 			'<input type="hidden" name="%s" value="%s" />',
 			esc_attr( self::TOKEN_FIELD ),
-			esc_attr( RegisterToken::issue() )
+			esc_attr( RegisterToken::issue( 'reset' ) )
 		);
 
 		printf(
@@ -108,17 +108,23 @@ final class PasswordResetGuard {
 			return;
 		}
 
-		$spam    = self::is_login_form_request() && ! self::proof_ok();
+		$limiter = self::limiter();
 		$user_id = $user_data instanceof WP_User ? (int) $user_data->ID : 0;
 
-		// A submission that failed the proof-of-render check is bot traffic,
-		// not a real request for that account — it must not burn the target's
-		// allowance, or a bot could lock a user out of their own reset.
-		$verdict = self::limiter()->record( $ip, $spam ? 0 : $user_id );
+		// A submission that failed the proof-of-render check is bot traffic, not
+		// a real request for that account. It counts against the sender so a
+		// flood still gets banned, but it must not burn the target's allowance
+		// or the site's email budget — a bot could otherwise lock a user out of
+		// their own reset, or deny resets to everyone.
+		if ( self::is_login_form_request() && ! self::proof_ok() ) {
+			$limiter->record_rejected( $ip );
+			$errors->add( 'lw_fw_reset_blocked', ResetPenalty::message( self::SPAM ) );
+			ResetPenalty::apply( self::SPAM, $ip, $user_id );
 
-		if ( $spam ) {
-			$verdict = self::SPAM;
+			return;
 		}
+
+		$verdict = $limiter->record( $ip, $user_id );
 
 		if ( ResetLimiter::ALLOW === $verdict ) {
 			return;
@@ -147,11 +153,18 @@ final class PasswordResetGuard {
 
 		$user = get_userdata( (int) $user_id );
 
-		if ( $user instanceof WP_User && in_array( 'administrator', (array) $user->roles, true ) ) {
-			return false;
+		if ( ! $user instanceof WP_User ) {
+			return $allow;
 		}
 
-		return $allow;
+		// Role slug alone missed multisite super admins and any custom role
+		// carrying administrative capability, which is exactly who this setting
+		// exists to protect.
+		$privileged = in_array( 'administrator', (array) $user->roles, true )
+			|| ( is_multisite() && is_super_admin( (int) $user_id ) )
+			|| user_can( $user, 'manage_options' );
+
+		return $privileged ? false : $allow;
 	}
 
 	/**

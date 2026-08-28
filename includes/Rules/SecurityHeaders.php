@@ -30,6 +30,5 @@ final class SecurityHeaders {
 		header( 'X-Frame-Options: SAMEORIGIN' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
 		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
-		header( 'X-XSS-Protection: 1; mode=block' );
 	}
 }

@@ -2,13 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.5.4\n"
+"Project-Id-Version: LW Firewall 1.5.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-08-27T08:45:39+00:00\n"
-"PO-Revision-Date: 2026-08-27 09:00+0000\n"
+"POT-Creation-Date: 2026-08-28T06:18:18+00:00\n"
+"PO-Revision-Date: 2026-08-28 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
 "Language: hu_HU\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -50,15 +51,15 @@ msgid "Lightweight plugins for WordPress - minimal footprint, maximum impact."
 msgstr ""
 "Könnyűsúlyú bővítmények WordPresshez – minimális terhelés, maximális hatás."
 
-#: includes/Admin/ParentPage.php:189
+#: includes/Admin/ParentPage.php:193
 msgid "Active"
 msgstr "Aktív"
 
-#: includes/Admin/ParentPage.php:197
+#: includes/Admin/ParentPage.php:201
 msgid "Settings"
 msgstr "Beállítások"
 
-#: includes/Admin/ParentPage.php:201
+#: includes/Admin/ParentPage.php:205
 msgid "Get Plugin"
 msgstr "Bővítmény letöltése"
 
@@ -193,8 +194,8 @@ msgid "Expires"
 msgstr "Lejár"
 
 #: includes/Admin/Settings/BanTable.php:183
-#: includes/Admin/Settings/TabAlerts.php:179
-#: includes/Admin/Settings/TabStatus.php:32
+#: includes/Admin/Settings/TabAlerts.php:180
+#: includes/Admin/Settings/TabStatus.php:34
 #: includes/Alerts/AdminDetector.php:136
 msgid "Status"
 msgstr "Állapot"
@@ -236,7 +237,7 @@ msgstr "ismeretlen"
 #. translators: %s: human-readable time difference, e.g. "12 mins".
 #. translators: %s: human-readable time difference
 #: includes/Admin/Settings/BanTable.php:279
-#: includes/Admin/Settings/TabStatus.php:132
+#: includes/Admin/Settings/TabStatus.php:184
 #, php-format
 msgid "%s ago"
 msgstr "%s ezelőtt"
@@ -613,15 +614,15 @@ msgstr ""
 msgid "Number of rejected registrations from one IP before it is banned."
 msgstr "Hány elutasított regisztráció után tiltódik egy IP."
 
-#: includes/Admin/Settings/TabAlerts.php:36
+#: includes/Admin/Settings/TabAlerts.php:37
 msgid "Alerts"
 msgstr "Riasztások"
 
-#: includes/Admin/Settings/TabAlerts.php:51
+#: includes/Admin/Settings/TabAlerts.php:52
 msgid "New Administrator Alert"
 msgstr "Új adminisztrátor riasztás"
 
-#: includes/Admin/Settings/TabAlerts.php:53
+#: includes/Admin/Settings/TabAlerts.php:54
 msgid ""
 "Send an email whenever an account gains administrator privileges, or an "
 "existing administrator account is modified — no matter how it happened: the "
@@ -633,31 +634,31 @@ msgstr ""
 "történt: admin felület, bővítmény, REST API, WP-CLI vagy közvetlen adatbázis-"
 "írás."
 
-#: includes/Admin/Settings/TabAlerts.php:58
+#: includes/Admin/Settings/TabAlerts.php:59
 msgid "Enable Alerts"
 msgstr "Riasztások bekapcsolása"
 
-#: includes/Admin/Settings/TabAlerts.php:64
+#: includes/Admin/Settings/TabAlerts.php:65
 msgid "Email me when a new administrator appears"
 msgstr "E-mailt küld, ha új adminisztrátor jelenik meg"
 
-#: includes/Admin/Settings/TabAlerts.php:65
+#: includes/Admin/Settings/TabAlerts.php:66
 msgid "Works independently of the main firewall switch."
 msgstr "A fő tűzfal-kapcsolótól függetlenül működik."
 
-#: includes/Admin/Settings/TabAlerts.php:72
+#: includes/Admin/Settings/TabAlerts.php:73
 msgid "Notification Email"
 msgstr "Értesítési e-mail cím"
 
-#: includes/Admin/Settings/TabAlerts.php:78
+#: includes/Admin/Settings/TabAlerts.php:79
 msgid "Account Takeover"
 msgstr "Fiókátvétel"
 
-#: includes/Admin/Settings/TabAlerts.php:84
+#: includes/Admin/Settings/TabAlerts.php:85
 msgid "Also alert when an existing administrator is modified"
 msgstr "Riaszt akkor is, ha egy meglévő adminisztrátort módosítanak"
 
-#: includes/Admin/Settings/TabAlerts.php:85
+#: includes/Admin/Settings/TabAlerts.php:86
 msgid ""
 "Watches the username, email address and password of every administrator. "
 "Rewriting an admin's email address is how an account is seized — it hands "
@@ -670,16 +671,16 @@ msgstr ""
 "azonosító változatlan marad, így a csak új fiókokat figyelő megoldás ezt "
 "sosem venné észre."
 
-#: includes/Admin/Settings/TabAlerts.php:92
+#: includes/Admin/Settings/TabAlerts.php:93
 msgid "Database Scan"
 msgstr "Adatbázis-ellenőrzés"
 
-#: includes/Admin/Settings/TabAlerts.php:98
+#: includes/Admin/Settings/TabAlerts.php:99
 msgid "Hourly scan for administrators created outside WordPress"
 msgstr ""
 "Óránkénti ellenőrzés a WordPressen kívül létrehozott adminisztrátorokra"
 
-#: includes/Admin/Settings/TabAlerts.php:99
+#: includes/Admin/Settings/TabAlerts.php:100
 msgid ""
 "Compares the live administrator list against a stored snapshot. This is what "
 "catches accounts inserted straight into the database, created by code that "
@@ -690,23 +691,23 @@ msgstr ""
 "WordPress felhasználói API-ját megkerülő kód hozott létre, vagy a bővítmény "
 "inaktív állapotában jöttek létre."
 
-#: includes/Admin/Settings/TabAlerts.php:105
+#: includes/Admin/Settings/TabAlerts.php:106
 msgid "Save &amp; run scan now"
 msgstr "Mentés és ellenőrzés futtatása"
 
-#: includes/Admin/Settings/TabAlerts.php:108
+#: includes/Admin/Settings/TabAlerts.php:109
 msgid "Save &amp; send test email"
 msgstr "Mentés és teszt e-mail küldése"
 
-#: includes/Admin/Settings/TabAlerts.php:117
+#: includes/Admin/Settings/TabAlerts.php:118
 msgid "How detection works"
 msgstr "Hogyan működik az észlelés"
 
-#: includes/Admin/Settings/TabAlerts.php:121
+#: includes/Admin/Settings/TabAlerts.php:122
 msgid "WordPress hooks"
 msgstr "WordPress hookok"
 
-#: includes/Admin/Settings/TabAlerts.php:123
+#: includes/Admin/Settings/TabAlerts.php:124
 msgid ""
 "Immediate. Catches every account creation or role change that goes through "
 "the WordPress user API — the Users screen, user registration, the REST API, "
@@ -719,11 +720,11 @@ msgstr ""
 "amely a wp_insert_user() vagy a set_role() függvényt hívja. A riasztás "
 "megnevezi a műveletet végző felhasználót és az IP-címét."
 
-#: includes/Admin/Settings/TabAlerts.php:127
+#: includes/Admin/Settings/TabAlerts.php:128
 msgid "Database scan"
 msgstr "Adatbázis-ellenőrzés"
 
-#: includes/Admin/Settings/TabAlerts.php:129
+#: includes/Admin/Settings/TabAlerts.php:130
 msgid ""
 "Within the hour. A snapshot of every administrator user ID is stored, and "
 "the scheduled scan diffs it against the live list. Anything that appears "
@@ -738,11 +739,11 @@ msgstr ""
 "állapotában hozzáadott fiók —, itt bukkan elő, és a normál WordPress "
 "folyamaton kívül létrehozottként jelöljük meg."
 
-#: includes/Admin/Settings/TabAlerts.php:133
+#: includes/Admin/Settings/TabAlerts.php:134
 msgid "What the snapshot stores"
 msgstr "Mit tárol a pillanatkép"
 
-#: includes/Admin/Settings/TabAlerts.php:135
+#: includes/Admin/Settings/TabAlerts.php:136
 msgid ""
 "Per administrator: the user ID, the username, the email address, and a "
 "digest of the stored password hash. The digest only ever answers \"did this "
@@ -754,11 +755,11 @@ msgstr ""
 "választ, hogy „változott-e” — magát a jelszót soha nem tárolja, nem "
 "hasonlítja össze és nem írja ki riasztásban."
 
-#: includes/Admin/Settings/TabAlerts.php:139
+#: includes/Admin/Settings/TabAlerts.php:140
 msgid "No duplicate alerts"
 msgstr "Nincs kettős riasztás"
 
-#: includes/Admin/Settings/TabAlerts.php:141
+#: includes/Admin/Settings/TabAlerts.php:142
 msgid ""
 "Both paths write to the same snapshot, so each event is reported exactly "
 "once. Existing administrators are recorded silently when the feature is "
@@ -771,7 +772,7 @@ msgstr ""
 "Adminisztrátor eltávolításáról nem jelent; a fiók egyszerűen kikerül a "
 "pillanatképből."
 
-#: includes/Admin/Settings/TabAlerts.php:165
+#: includes/Admin/Settings/TabAlerts.php:166
 msgid ""
 "Separate multiple addresses with commas. Leave empty to use the site admin "
 "email."
@@ -779,7 +780,20 @@ msgstr ""
 "Több címet vesszővel kell elválasztani. Üresen hagyva az oldal admin e-mail "
 "címét használja."
 
-#: includes/Admin/Settings/TabAlerts.php:184
+#. translators: %d: number of undelivered alerts.
+#: includes/Admin/Settings/TabAlerts.php:190
+#, php-format
+msgid "%d alert could not be sent yet and will be retried on the next scan."
+msgid_plural ""
+"%d alerts could not be sent yet and will be retried on the next scan."
+msgstr[0] ""
+"%d riasztást még nem sikerült elküldeni, a következő ellenőrzéskor "
+"újrapróbálja."
+msgstr[1] ""
+"%d riasztást még nem sikerült elküldeni, a következő ellenőrzéskor "
+"újrapróbálja."
+
+#: includes/Admin/Settings/TabAlerts.php:205
 msgid ""
 "The last alert email could not be sent. Check your site mail configuration "
 "(SMTP plugin, hosting mail limits) — an alert that never arrives is no alert "
@@ -789,27 +803,27 @@ msgstr ""
 "oldal levélküldési beállításait (SMTP bővítmény, tárhely levélkorlátok) — az "
 "a riasztás, ami sosem érkezik meg, nem riasztás."
 
-#: includes/Admin/Settings/TabAlerts.php:192
+#: includes/Admin/Settings/TabAlerts.php:213
 msgid "Administrators tracked"
 msgstr "Követett adminisztrátorok"
 
-#: includes/Admin/Settings/TabAlerts.php:198
+#: includes/Admin/Settings/TabAlerts.php:219
 msgid "Alerts go to"
 msgstr "Riasztás címzettje"
 
-#: includes/Admin/Settings/TabAlerts.php:204
+#: includes/Admin/Settings/TabAlerts.php:225
 msgid "Snapshot taken"
 msgstr "Pillanatkép készült"
 
-#: includes/Admin/Settings/TabAlerts.php:205
+#: includes/Admin/Settings/TabAlerts.php:226
 msgid "never — taken on the first scan"
 msgstr "soha — az első ellenőrzéskor készül el"
 
-#: includes/Admin/Settings/TabAlerts.php:210
+#: includes/Admin/Settings/TabAlerts.php:231
 msgid "Next scan"
 msgstr "Következő ellenőrzés"
 
-#: includes/Admin/Settings/TabAlerts.php:211
+#: includes/Admin/Settings/TabAlerts.php:232
 msgid "not scheduled"
 msgstr "nincs ütemezve"
 
@@ -960,40 +974,28 @@ msgstr ""
 "IPCountry fejléc használatos (azonnali). Cloudflare nélkül CIDR-alapú "
 "keresés (hetente frissül)."
 
-#: includes/Admin/Settings/TabGeo.php:68
+#: includes/Admin/Settings/TabGeo.php:67
 msgid "Enable"
 msgstr "Engedélyezés"
 
-#: includes/Admin/Settings/TabGeo.php:74
+#: includes/Admin/Settings/TabGeo.php:73
 msgid "Enable Geo Blocking"
 msgstr "Geo blokkolás engedélyezése"
 
-#: includes/Admin/Settings/TabGeo.php:89
-msgid "Block Action"
-msgstr "Blokkolási művelet"
-
-#: includes/Admin/Settings/TabGeo.php:97
-msgid "403 Forbidden"
-msgstr "403 Forbidden"
-
-#: includes/Admin/Settings/TabGeo.php:98
-msgid "Redirect to homepage"
-msgstr "Átirányítás a főoldalra"
-
-#: includes/Admin/Settings/TabGeo.php:114
+#: includes/Admin/Settings/TabGeo.php:88
 msgid "Blocked Countries"
 msgstr "Tiltott országok"
 
-#: includes/Admin/Settings/TabGeo.php:121
+#: includes/Admin/Settings/TabGeo.php:95
 msgid "ISO 3166-1 alpha-2 country codes, one per line (e.g. IN, CN, RU)."
 msgstr "ISO 3166-1 alpha-2 országkódok, soronként egy (pl. IN, CN, RU)."
 
-#: includes/Admin/Settings/TabGeo.php:138
+#: includes/Admin/Settings/TabGeo.php:112
 msgid "Update CIDR Lists Now"
 msgstr "CIDR listák frissítése most"
 
 #. translators: %s: human-readable time difference
-#: includes/Admin/Settings/TabGeo.php:144
+#: includes/Admin/Settings/TabGeo.php:118
 #, php-format
 msgid "Next automatic update: %s"
 msgstr "Következő automatikus frissítés: %s"
@@ -1090,6 +1092,52 @@ msgstr ""
 "IP-k vagy CIDR tartományok, amelyek minden más ellenőrzés előtt 403 "
 "Forbidden-nel blokkolódnak (soronként egy). Támogatja az IPv4, IPv6 és CIDR "
 "jelölést."
+
+#: includes/Admin/Settings/TabIpRules.php:81
+msgid "Reverse Proxy"
+msgstr "Fordított proxy"
+
+#: includes/Admin/Settings/TabIpRules.php:83
+msgid ""
+"Leave this empty unless the site sits behind a proxy or load balancer. A "
+"forwarded-for header is written by the client until the hop that set it is "
+"known, so trusting one without listing the proxies would let any visitor "
+"choose their own IP — and with it their own rate-limit bucket, ban status "
+"and country. Cloudflare is handled automatically and needs nothing here."
+msgstr ""
+"Hagyd üresen, hacsak az oldal nem proxy vagy terheléselosztó mögött van. A "
+"forwarded-for fejlécet a kliens írja mindaddig, amíg nem ismerjük az azt "
+"beállító hopot, ezért a proxyk felsorolása nélkül megbízni benne annyit "
+"jelentene, hogy bármely látogató megválaszthatja a saját IP-jét — és vele a "
+"saját rate limit bucketjét, kitiltási állapotát és országát. A Cloudflare-t "
+"automatikusan kezeli, ide semmit nem kell írni."
+
+#: includes/Admin/Settings/TabIpRules.php:88
+msgid "Trusted Proxies"
+msgstr "Megbízható proxyk"
+
+#: includes/Admin/Settings/TabIpRules.php:95
+msgid ""
+"IPs or CIDR ranges of your own proxies, one per line. On the common \"nginx "
+"in front of Apache on the same host\" layout this is 127.0.0.1 — without it "
+"every visitor arrives as 127.0.0.1 and shares a single bucket."
+msgstr ""
+"A saját proxyk IP-címei vagy CIDR tartományai, soronként egy. A gyakori "
+"„nginx az Apache előtt ugyanazon a gépen” felállásban ez a 127.0.0.1 — "
+"enélkül minden látogató 127.0.0.1-ként érkezik, és egyetlen közös bucketen "
+"osztozik."
+
+#: includes/Admin/Settings/TabIpRules.php:102
+msgid "Forwarded Header"
+msgstr "Továbbító fejléc"
+
+#: includes/Admin/Settings/TabIpRules.php:116
+msgid ""
+"Read right to left, skipping hops that are themselves listed above. Only "
+"used when a trusted proxy is configured."
+msgstr ""
+"Jobbról balra olvassa, kihagyva azokat a hopokat, amelyek maguk is "
+"szerepelnek fent. Csak akkor használja, ha van beállított megbízható proxy."
 
 #: includes/Admin/Settings/TabLogs.php:32
 msgid "Logs"
@@ -1308,23 +1356,53 @@ msgstr ""
 "tiltásra lépteti elő, és igény szerint teljesen kiveszi az adminisztrátori "
 "fiókokat a visszaállítási folyamatból."
 
-#: includes/Admin/Settings/TabStatus.php:56
+#: includes/Admin/Settings/TabStatus.php:63
+msgid "The firewall cannot see real visitor addresses."
+msgstr "A tűzfal nem látja a valódi látogatói címeket."
+
+#: includes/Admin/Settings/TabStatus.php:64
+msgid ""
+"Every request reaches it as the address below, which is not routable on the "
+"internet — so all visitors share one rate-limit bucket, one ban and one "
+"country. If this site is behind a proxy or load balancer, list it under IP "
+"Rules → Reverse Proxy."
+msgstr ""
+"Minden kérés az alábbi címről érkezik hozzá, ami az interneten nem "
+"routolható — így minden látogató egyetlen rate limit bucketen, egyetlen "
+"kitiltáson és egyetlen országon osztozik. Ha az oldal proxy vagy "
+"terheléselosztó mögött van, vedd fel az IP-szabályok → Fordított proxy alatt."
+
+#: includes/Admin/Settings/TabStatus.php:86
+msgid "The worker file is installed but has never reported in."
+msgstr "A worker fájl telepítve van, de még soha nem jelentkezett be."
+
+#: includes/Admin/Settings/TabStatus.php:87
+msgid ""
+"It records a heartbeat the first time it runs. If this notice stays after a "
+"few page loads, the worker cannot load the plugin — most often because the "
+"plugin directory was renamed. Reinstall it below."
+msgstr ""
+"Az első futásakor életjelet rögzít. Ha ez az üzenet néhány oldalbetöltés "
+"után is megmarad, a worker nem tudja betölteni a bővítményt — leggyakrabban "
+"azért, mert a bővítmény könyvtárát átnevezték. Lentebb újratelepítheted."
+
+#: includes/Admin/Settings/TabStatus.php:105
 msgid "Firewall Status"
 msgstr "Tűzfal állapota"
 
-#: includes/Admin/Settings/TabStatus.php:60
+#: includes/Admin/Settings/TabStatus.php:112
 msgid "MU-Plugin Worker"
 msgstr "MU-bővítmény worker"
 
-#: includes/Admin/Settings/TabStatus.php:64
+#: includes/Admin/Settings/TabStatus.php:116
 msgid "Installed"
 msgstr "Telepítve"
 
-#: includes/Admin/Settings/TabStatus.php:68
+#: includes/Admin/Settings/TabStatus.php:120
 msgid "Not installed"
 msgstr "Nincs telepítve"
 
-#: includes/Admin/Settings/TabStatus.php:72
+#: includes/Admin/Settings/TabStatus.php:124
 msgid ""
 "The MU-plugin worker intercepts requests early, before themes and plugins "
 "load."
@@ -1332,78 +1410,86 @@ msgstr ""
 "Az MU-bővítmény worker korán elfogja a kéréseket, még a sablonok és "
 "bővítmények betöltése előtt."
 
-#: includes/Admin/Settings/TabStatus.php:77
+#: includes/Admin/Settings/TabStatus.php:129
 msgid "Worker Version"
 msgstr "Worker verzió"
 
 #. translators: %s: expected plugin version
-#: includes/Admin/Settings/TabStatus.php:88
+#: includes/Admin/Settings/TabStatus.php:140
 #, php-format
 msgid "Mismatch — expected %s (will auto-update on next page load)"
 msgstr ""
 "Eltérés — a várt érték %s (a következő oldalbetöltéskor automatikusan "
 "frissül)"
 
-#: includes/Admin/Settings/TabStatus.php:97
+#: includes/Admin/Settings/TabStatus.php:149
 msgid "mu-plugins writable"
 msgstr "mu-plugins írható"
 
-#: includes/Admin/Settings/TabStatus.php:100
+#: includes/Admin/Settings/TabStatus.php:152
 msgid "Yes"
 msgstr "Igen"
 
 #. translators: %s: mu-plugins directory path
-#: includes/Admin/Settings/TabStatus.php:107
+#: includes/Admin/Settings/TabStatus.php:159
 #, php-format
 msgid "No — make %s writable by the web server."
 msgstr "Nem — tedd írhatóvá a(z) %s mappát a webszerver számára."
 
-#: includes/Admin/Settings/TabStatus.php:117
+#: includes/Admin/Settings/TabStatus.php:169
 msgid "Last install attempt"
 msgstr "Utolsó telepítési kísérlet"
 
-#: includes/Admin/Settings/TabStatus.php:120
+#: includes/Admin/Settings/TabStatus.php:172
 msgid "Succeeded"
 msgstr "Sikeres"
 
-#: includes/Admin/Settings/TabStatus.php:142
+#: includes/Admin/Settings/TabStatus.php:194
 msgid "Active Storage"
 msgstr "Aktív tároló"
 
-#: includes/Admin/Settings/TabStatus.php:146
+#: includes/Admin/Settings/TabStatus.php:198
 msgid "Storage backend used for rate-limit counters."
 msgstr "A rate limit számlálókhoz használt tároló backend."
 
-#: includes/Admin/Settings/TabStatus.php:151
+#: includes/Admin/Settings/TabStatus.php:203
 msgid "Reinstall Worker"
 msgstr "Worker újratelepítése"
 
-#: includes/Admin/Settings/TabStatus.php:155
+#: includes/Admin/Settings/TabStatus.php:207
 msgid "Reinstall MU-plugin worker on save"
 msgstr "MU-bővítmény worker újratelepítése mentéskor"
 
-#: includes/Admin/Settings/TabStatus.php:158
+#: includes/Admin/Settings/TabStatus.php:210
 msgid "Check this and save to reinstall the worker file."
 msgstr "Jelöld be ezt, majd mentsd el a worker fájl újratelepítéséhez."
 
-#: includes/Admin/SettingsPage.php:76 includes/Admin/SettingsPage.php:77
+#: includes/Admin/SettingsPage.php:77 includes/Admin/SettingsPage.php:78
 #: includes/SiteManager/Integration.php:42
 msgid "Firewall"
 msgstr "Tűzfal"
 
-#: includes/Admin/SettingsPage.php:130
+#: includes/Admin/SettingsPage.php:131
 msgid "Lightweight Firewall"
 msgstr "Lightweight Firewall"
 
-#: includes/Admin/SettingsPage.php:136
+#: includes/Admin/SettingsPage.php:137
 msgid "Settings saved."
 msgstr "Beállítások elmentve."
 
-#: includes/Admin/SettingsPage.php:151
+#: includes/Admin/SettingsPage.php:153
 msgid "Save Changes"
 msgstr "Változtatások mentése"
 
-#: includes/Admin/SettingsPage.php:169
+#: includes/Admin/SettingsPage.php:178
+msgid ""
+"These settings are pinned by a constant in wp-config.php. Editing them here "
+"has no effect until the constant is removed:"
+msgstr ""
+"Ezeket a beállításokat a wp-config.php egy konstansa rögzíti. Az itteni "
+"szerkesztésük hatástalan, amíg a konstanst el nem távolítod:"
+
+#: includes/Admin/SettingsPage.php:193
 msgid ""
 "Test alert sent. If it does not arrive, the problem is your site mail "
 "configuration, not the firewall."
@@ -1411,7 +1497,7 @@ msgstr ""
 "Teszt riasztás elküldve. Ha nem érkezik meg, a hiba az oldal levélküldési "
 "beállításaiban van, nem a tűzfalban."
 
-#: includes/Admin/SettingsPage.php:170
+#: includes/Admin/SettingsPage.php:194
 msgid ""
 "The test alert could not be sent — wp_mail() refused it. Check your SMTP "
 "plugin or hosting mail limits."
@@ -1419,11 +1505,11 @@ msgstr ""
 "A teszt riasztást nem sikerült elküldeni — a wp_mail() visszautasította. "
 "Érdemes ellenőrizni az SMTP bővítményt vagy a tárhely levélkorlátait."
 
-#: includes/Admin/SettingsPage.php:171
+#: includes/Admin/SettingsPage.php:195
 msgid "Scan finished: no new or modified administrators found."
 msgstr "Ellenőrzés kész: nem található új vagy módosított adminisztrátor."
 
-#: includes/Admin/SettingsPage.php:172
+#: includes/Admin/SettingsPage.php:196
 msgid ""
 "Scan finished: new or modified administrators were found and an alert email "
 "was sent."
@@ -1431,7 +1517,7 @@ msgstr ""
 "Ellenőrzés kész: új vagy módosított adminisztrátor található, riasztó e-mail "
 "elküldve."
 
-#: includes/Admin/SettingsPage.php:173
+#: includes/Admin/SettingsPage.php:197
 msgid ""
 "IP unblocked. Its rate-limit, login, registration and password-reset "
 "counters were cleared too, so the next request starts from zero."
@@ -1439,11 +1525,11 @@ msgstr ""
 "IP feloldva. A rate limit, bejelentkezési, regisztrációs és jelszó-"
 "visszaállítási számlálói is törlődtek, így a következő kérés nulláról indul."
 
-#: includes/Admin/SettingsPage.php:174
+#: includes/Admin/SettingsPage.php:198
 msgid "All tracked bans lifted and their counters cleared."
 msgstr "Minden nyilvántartott kitiltás feloldva, a számlálóikkal együtt."
 
-#: includes/Admin/SettingsPage.php:175
+#: includes/Admin/SettingsPage.php:199
 msgid ""
 "The ban could not be lifted — the storage backend refused the delete. Check "
 "the Status tab for the active backend."
@@ -1451,7 +1537,7 @@ msgstr ""
 "A kitiltást nem sikerült feloldani — a tárolóréteg elutasította a törlést. "
 "Az aktív backendet a Státusz fülön ellenőrizheted."
 
-#: includes/Admin/SettingsPage.php:176
+#: includes/Admin/SettingsPage.php:200
 msgid "That is not a valid IP address."
 msgstr "Ez nem érvényes IP-cím."
 
@@ -1871,7 +1957,7 @@ msgstr "jelszó-visszaállítási rate limit"
 msgid "Leave this field empty"
 msgstr "Hagyd üresen ezt a mezőt"
 
-#: includes/Rules/RegisterGuard.php:70
+#: includes/Rules/RegisterGuard.php:79
 msgid "Registration failed, please try again."
 msgstr "A regisztráció sikertelen, kérjük, próbáld újra."
 

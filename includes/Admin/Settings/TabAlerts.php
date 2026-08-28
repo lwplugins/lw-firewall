@@ -13,6 +13,7 @@ use LightweightPlugins\Firewall\Alerts\AdminBaseline;
 use LightweightPlugins\Firewall\Alerts\AdminDetector;
 use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Alerts\AlertMailer;
+use LightweightPlugins\Firewall\Alerts\AlertQueue;
 use LightweightPlugins\Firewall\Options;
 
 /**
@@ -177,6 +178,26 @@ final class TabAlerts implements TabInterface {
 		$admins    = AdminBaseline::is_seeded() ? count( AdminBaseline::get_ids() ) : count( AdminDetector::current_admin_ids() );
 
 		echo '<h2>' . esc_html__( 'Status', 'lw-firewall' ) . '</h2>';
+
+		$pending = AlertQueue::pending();
+
+		if ( $pending > 0 ) {
+			printf(
+				'<div class="notice notice-warning inline"><p>%s</p></div>',
+				esc_html(
+					sprintf(
+						/* translators: %d: number of undelivered alerts. */
+						_n(
+							'%d alert could not be sent yet and will be retried on the next scan.',
+							'%d alerts could not be sent yet and will be retried on the next scan.',
+							$pending,
+							'lw-firewall'
+						),
+						$pending
+					)
+				)
+			);
+		}
 
 		if ( get_transient( AlertMailer::ERROR_TRANSIENT ) ) {
 			printf(

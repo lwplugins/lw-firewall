@@ -16,7 +16,7 @@
  * wp-config.php to neutralize the worker completely.
  *
  * @package LightweightPlugins\Firewall
- * @version 1.5.5
+ * @version 1.5.6
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_WORKER_VERSION', '1.5.5' );
+define( 'LW_FIREWALL_WORKER_VERSION', '1.5.6' );
 
 // Emergency kill-switch — wp-config.php may neutralize the worker.
 if ( defined( 'LW_FIREWALL_DISABLE_WORKER' ) && LW_FIREWALL_DISABLE_WORKER ) {
@@ -111,6 +111,15 @@ if ( PHP_VERSION_ID < 80200 ) {
 					}
 
 					$options = \LightweightPlugins\Firewall\Options::get_all();
+
+					// Health handshake: the main plugin can otherwise only see
+					// that the file exists and carries a matching version
+					// constant — which the worker defines before it has proved
+					// it can load anything. A renamed plugin directory left it
+					// looking current while it silently did nothing.
+					if ( ! get_transient( 'lw_firewall_worker_alive' ) ) {
+						set_transient( 'lw_firewall_worker_alive', time(), DAY_IN_SECONDS );
+					}
 
 					if ( empty( $options['enabled'] ) ) {
 						return;
@@ -244,148 +253,3 @@ if ( PHP_VERSION_ID < 80200 ) {
 		}
 	}
 } )();
-
-/**
- * Detect request type from URI.
- *
- * Returns an array of [reason, custom_limit]. The custom_limit is null unless
- * a filter param entry specifies one (e.g. "filter_|30").
- *
- * @param string               $uri     Request URI.
- * @param array<string, mixed> $options Plugin options.
- * @return array{0: string|null, 1: int|null}
- */
-function lw_firewall_detect_type( string $uri, array $options ): array {
-	if ( str_contains( $uri, '/wp-cron.php' ) && ! empty( $options['protect_cron'] ) ) {
-		// Never throttle WordPress's own cron loopback (?doing_wp_cron=…) — that
-		// would stall scheduled work such as WooCommerce Analytics imports. A
-		// bare GET /wp-cron.php (the common DoS trigger) is still rate-limited.
-		if ( lw_firewall_is_cron_loopback( $uri ) ) {
-			return [ null, null ];
-		}
-
-		return [ 'cron', null ];
-	}
-
-	if ( str_contains( $uri, '/xmlrpc.php' ) && ! empty( $options['protect_xmlrpc'] ) ) {
-		return [ 'xmlrpc', null ];
-	}
-
-	if ( str_contains( $uri, '/wp-login.php' ) && ! empty( $options['protect_login'] ) ) {
-		return [ 'login', null ];
-	}
-
-	if ( str_contains( $uri, '/wp-json/' ) && ! empty( $options['protect_rest_api'] ) ) {
-		return [ 'rest', null ];
-	}
-
-	// WooCommerce filter parameter detection.
-	// Entries may include a custom rate limit: "filter_|30".
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-	$query_string  = $_SERVER['QUERY_STRING'] ?? '';
-	$filter_params = (array) ( $options['filter_params'] ?? [ 'filter_|30', 'query_type_|30' ] );
-
-	if ( '' !== $query_string ) {
-		$matched      = false;
-		$custom_limit = null;
-
-		foreach ( $filter_params as $entry ) {
-			$parts  = explode( '|', (string) $entry, 2 );
-			$prefix = $parts[0];
-
-			if ( str_contains( $query_string, $prefix ) ) {
-				$matched = true;
-
-				// Use the lowest custom limit if multiple params match.
-				if ( isset( $parts[1] ) && is_numeric( $parts[1] ) ) {
-					$limit        = (int) $parts[1];
-					$custom_limit = ( null === $custom_limit ) ? $limit : min( $custom_limit, $limit );
-				}
-			}
-		}
-
-		if ( $matched ) {
-			return [ 'filter', $custom_limit ];
-		}
-	}
-
-	return [ null, null ];
-}
-
-/**
- * Log a firewall event if logging is enabled.
- *
- * @param array<string, mixed> $options Plugin options.
- * @param string               $ip      Client IP.
- * @param string               $reason  Block reason.
- */
-function lw_firewall_log( array $options, string $ip, string $reason ): void {
-	if ( empty( $options['log_enabled'] ) ) {
-		return;
-	}
-
-	\LightweightPlugins\Firewall\Logger::log(
-		[
-			'ip'     => $ip,
-			'reason' => $reason,
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			'ua'     => substr( (string) ( $_SERVER['HTTP_USER_AGENT'] ?? '' ), 0, 200 ),
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			'url'    => sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ),
-		]
-	);
-}
-
-/**
- * Check if the IP belongs to the server itself.
- *
- * Matches localhost, server address, and the site domain's resolved IP
- * (cached for 5 minutes to avoid DNS lookups on every request).
- *
- * @param string $ip Client IP to check.
- * @return bool
- */
-function lw_firewall_is_server_ip( string $ip ): bool {
-	// Localhost.
-	if ( '127.0.0.1' === $ip || '::1' === $ip ) {
-		return true;
-	}
-
-	// Server's own IP.
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-	$server_addr = $_SERVER['SERVER_ADDR'] ?? '';
-	if ( '' !== $server_addr && $server_addr === $ip ) {
-		return true;
-	}
-
-	// Domain resolved IP (cached in transient).
-	$domain_ip = get_transient( 'lw_firewall_domain_ip' );
-	if ( false === $domain_ip ) {
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$host     = $_SERVER['SERVER_NAME'] ?? wp_parse_url( home_url(), PHP_URL_HOST );
-		$resolved = (string) gethostbyname( (string) $host );
-		// Only cache if resolution succeeded (not same as input).
-		$domain_ip = ( $resolved !== $host ) ? $resolved : '';
-		set_transient( 'lw_firewall_domain_ip', $domain_ip, 300 );
-	}
-
-	if ( '' !== $domain_ip && $domain_ip === $ip ) {
-		return true;
-	}
-
-	return false;
-}
-
-/**
- * Send 403 Forbidden and exit.
- */
-function lw_firewall_block_403(): void {
-	if ( ! headers_sent() ) {
-		header( 'HTTP/1.1 403 Forbidden' );
-		header( 'Content-Type: text/plain; charset=utf-8' );
-		header( 'Cache-Control: no-store, no-cache' );
-	}
-
-	echo 'Access denied.';
-	exit;
-}

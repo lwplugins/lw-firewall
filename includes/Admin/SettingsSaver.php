@@ -172,8 +172,14 @@ final class SettingsSaver {
 			? sanitize_key( $post_data['action'] )
 			: $current['action'];
 
-		$values['filter_params']     = self::parse_filter_params( $post_data );
-		$values['blocked_bots']      = self::parse_blocked_bots( $post_data );
+		$values['filter_params']   = self::parse_filter_params( $post_data );
+		$values['blocked_bots']    = self::parse_blocked_bots( $post_data );
+		$values['trusted_proxies'] = self::parse_lines( $post_data, 'trusted_proxies' );
+
+		$values['proxy_header'] = isset( $post_data['proxy_header'] )
+			? sanitize_key( $post_data['proxy_header'] )
+			: $current['proxy_header'];
+
 		$values['ip_whitelist']      = self::parse_lines( $post_data, 'ip_whitelist' );
 		$values['ip_blacklist']      = self::parse_lines( $post_data, 'ip_blacklist' );
 		$values['blocked_countries'] = self::parse_country_codes( $post_data );

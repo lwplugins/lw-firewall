@@ -23,7 +23,7 @@ final class RedisStorage implements StorageInterface {
 	 *
 	 * @var string
 	 */
-	private string $prefix = 'lw_fw_';
+	private string $prefix;
 
 	/**
 	 * Redis client instance.
@@ -51,7 +51,8 @@ final class RedisStorage implements StorageInterface {
 	 * @param int    $port Redis port.
 	 */
 	public function __construct( string $host = '127.0.0.1', int $port = 6379 ) {
-		$this->redis = new \Redis();
+		$this->prefix = StorageDetector::key_prefix();
+		$this->redis  = new \Redis();
 
 		try {
 			$this->connected = (bool) $this->redis->connect( $host, $port, 1.0 ); // 1s timeout.

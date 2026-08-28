@@ -59,15 +59,49 @@ final class IpDetector {
 	 */
 	public static function get_ip(): string {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- IP addresses are validated by filter_var below.
-		$remote_addr = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+		$remote_addr = self::sanitize_ip( (string) ( $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0' ) );
 
-		// If CF-Connecting-IP is present and request comes from a Cloudflare IP, trust it.
-		if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) && self::is_cloudflare_ip( $remote_addr ) ) {
+		if ( self::is_cloudflare_request( $remote_addr ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Validated via filter_var in sanitize_ip().
-			return self::sanitize_ip( $_SERVER['HTTP_CF_CONNECTING_IP'] );
+			return self::sanitize_ip( (string) $_SERVER['HTTP_CF_CONNECTING_IP'] );
 		}
 
-		return self::sanitize_ip( $remote_addr );
+		// Operator-configured reverse proxy. Nothing is trusted until the
+		// proxies are listed, because a forwarded header is client-controlled
+		// until the hop that set it is known.
+		$forwarded = ProxyTrust::resolve(
+			$remote_addr,
+			(array) Options::get( 'trusted_proxies', [] ),
+			(string) Options::get( 'proxy_header', 'x-forwarded-for' )
+		);
+
+		if ( '' !== $forwarded ) {
+			return self::sanitize_ip( $forwarded );
+		}
+
+		return $remote_addr;
+	}
+
+	/**
+	 * Whether this request genuinely arrived through Cloudflare.
+	 *
+	 * Shared so every consumer of a Cloudflare header — the client IP and the
+	 * country code alike — applies the same trust test.
+	 *
+	 * @param string|null $remote_addr Connecting address, resolved when omitted.
+	 * @return bool
+	 */
+	public static function is_cloudflare_request( ?string $remote_addr = null ): bool {
+		if ( empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
+			return false;
+		}
+
+		if ( null === $remote_addr ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Validated in sanitize_ip().
+			$remote_addr = self::sanitize_ip( (string) ( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+		}
+
+		return self::is_cloudflare_ip( $remote_addr );
 	}
 
 	/**

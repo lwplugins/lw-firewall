@@ -151,6 +151,10 @@ final class ConfigCommand {
 			WP_CLI::error( "Failed to update '{$key}'." );
 		}
 
+		// Geo rules live in .htaccess too; without a resync the Apache layer
+		// keeps enforcing the previous country list after a CLI change.
+		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
+
 		WP_CLI::success( sprintf( "Set '%s' to %s.", $key, ValueCaster::stringify( $value ) ) );
 	}
 

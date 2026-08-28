@@ -19,6 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class StorageDetector {
 
 	/**
+	 * Key prefix for the backends that share memory between sites.
+	 *
+	 * A fixed prefix meant two WordPress installations on one APCu pool or Redis
+	 * database collided: the same visitor shared a rate-limit counter, a ban and
+	 * a single-use token across unrelated sites. Derived from the install path,
+	 * so it is stable for a site and distinct between sites.
+	 *
+	 * @return string
+	 */
+	public static function key_prefix(): string {
+		$seed = defined( 'ABSPATH' ) ? (string) ABSPATH : __DIR__;
+
+		return 'lw_fw_' . substr( md5( $seed ), 0, 8 ) . '_';
+	}
+
+	/**
 	 * Detect the active storage backend name.
 	 *
 	 * @param string $preference User preference: 'auto', 'apcu', 'redis', 'file'.

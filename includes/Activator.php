@@ -54,10 +54,16 @@ final class Activator {
 		self::remove_worker();
 		Geo\HtaccessWriter::remove();
 
-		$scan_event = wp_next_scheduled( Alerts\AdminMonitor::CRON_HOOK );
+		// Every schedule this plugin owns, or deactivating leaves orphan events
+		// firing against classes that are no longer loaded.
+		foreach ( [ Alerts\AdminMonitor::CRON_HOOK, Geo\CidrUpdater::CRON_HOOK ] as $hook ) {
+			$timestamp = wp_next_scheduled( $hook );
 
-		if ( $scan_event ) {
-			wp_unschedule_event( $scan_event, Alerts\AdminMonitor::CRON_HOOK );
+			if ( $timestamp ) {
+				wp_unschedule_event( $timestamp, $hook );
+			}
+
+			wp_clear_scheduled_hook( $hook );
 		}
 	}
 
@@ -135,6 +141,17 @@ final class Activator {
 			return true;
 		}
 
+		// Content, not just version. A worker edited without a version bump —
+		// a hotfix, or a deploy mid-release — left the stale copy running
+		// against new plugin classes, which is how a duplicate function
+		// declaration can fatal the whole site. Two stat calls, no read.
+		$source    = LW_FIREWALL_PATH . 'worker/lw-firewall-worker.php';
+		$installed = self::get_worker_target_path();
+
+		if ( file_exists( $source ) && filemtime( $source ) > filemtime( $installed ) ) {
+			return true;
+		}
+
 		// The two constants are defined in separate files — the installed
 		// MU-worker vs the current plugin — and legitimately differ at runtime
 		// after an update. Static analysis sees only one build, so it reads them
@@ -154,6 +171,19 @@ final class Activator {
 		}
 
 		return wp_is_writable( $mu_dir );
+	}
+
+	/**
+	 * When the installed worker last proved it actually executed.
+	 *
+	 * The version constant alone is not evidence: the worker defines it before
+	 * it tries to load the plugin's classes, so a renamed or moved plugin
+	 * directory produced a worker that looked current and did nothing.
+	 *
+	 * @return int UNIX timestamp, or 0 when it has never reported in.
+	 */
+	public static function worker_last_seen(): int {
+		return (int) get_transient( 'lw_firewall_worker_alive' );
 	}
 
 	/**

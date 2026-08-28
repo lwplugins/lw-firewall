@@ -9,16 +9,30 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Tests\Unit;
 
+use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\IpDetector;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \LightweightPlugins\Firewall\IpDetector
  */
-final class IpDetectorTest extends TestCase {
+final class IpDetectorTest extends MonkeyTestCase {
+
+	/**
+	 * No trusted proxy configured — the default, and the state every existing
+	 * assertion below describes.
+	 */
+	protected function setUp(): void {
+		parent::setUp();
+		Functions\when( 'get_option' )->justReturn( array() );
+	}
 
 	protected function tearDown(): void {
-		unset( $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_CF_CONNECTING_IP'] );
+		unset(
+			$_SERVER['REMOTE_ADDR'],
+			$_SERVER['HTTP_CF_CONNECTING_IP'],
+			$_SERVER['HTTP_X_FORWARDED_FOR'],
+			$_SERVER['HTTP_X_REAL_IP']
+		);
 		parent::tearDown();
 	}
 

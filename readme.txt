@@ -1,10 +1,10 @@
 === LW Firewall ===
 Contributors: developer
 Tags: firewall, rate-limit, bot-blocker, security, woocommerce
-Requires at least: 6.0
+Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.5
+Stable tag: 1.5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,21 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.6 =
+* Security: Reverse proxy support — behind a same-host proxy every request arrived as 127.0.0.1 and was exempted from every check, silently
+* Security: The Status tab now warns when the firewall cannot see real visitor addresses
+* Security: The server hostname is no longer resolved into a firewall exemption (it comes from the client's Host header)
+* Security: Endpoints are matched on the decoded path — the query string could previously impersonate one and skip rate limiting
+* Security: The Cloudflare country header is only trusted from Cloudflare
+* Security: A refused password reset no longer drains the hourly email quota for every other user
+* Security: Proof-of-render tokens get a per-render nonce and a signed scope
+* Security: The file cache is read under a shared lock and never deletes a live key on a partial read
+* Fix: Geo lookups use a sorted range index with binary search instead of walking ~29,000 CIDRs per request
+* Fix: One server-side value policy clamps every numeric setting and allowlists every enum
+* Fix: Per-installation cache keys, fixed counting windows, expired-file sweeping and atomic cache writes
+* Fix: Undelivered alerts are retried; the worker reports a heartbeat; logging no longer amplifies floods
+* Remove: The deprecated X-XSS-Protection header
 
 = 1.5.5 =
 * Security: A malformed CIDR prefix (e.g. `10.0.0.0/foo`) no longer matches every address — a single typo in the IP whitelist could disable the firewall

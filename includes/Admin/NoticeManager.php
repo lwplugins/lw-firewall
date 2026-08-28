@@ -53,7 +53,11 @@ final class NoticeManager {
 			return false;
 		}
 
-		return str_contains( $screen->id, 'lw-' );
+		// Matching a bare 'lw-' substring hid third-party notices on any screen
+		// whose id happened to contain it. Only our own parent page and its
+		// submenus qualify.
+		return 'toplevel_page_lw-plugins' === $screen->id
+			|| str_starts_with( $screen->id, 'lw-plugins_page_' );
 	}
 
 	/**

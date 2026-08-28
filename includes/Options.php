@@ -34,6 +34,7 @@ final class Options {
 	 * @var array<int, string>
 	 */
 	private const LIST_KEYS = [
+		'trusted_proxies',
 		'filter_params',
 		'blocked_bots',
 		'ip_whitelist',
@@ -58,6 +59,8 @@ final class Options {
 			'protect_login'            => true,
 			'protect_rest_api'         => false,
 			'protect_404'              => false,
+			'trusted_proxies'          => [],
+			'proxy_header'             => 'x-forwarded-for',
 			'ip_whitelist'             => [],
 			'ip_blacklist'             => [],
 			'auto_ban_enabled'         => false,
@@ -289,7 +292,13 @@ final class Options {
 		$sanitized = [];
 
 		foreach ( array_keys( self::get_defaults() ) as $key ) {
-			$sanitized[ $key ] = array_key_exists( $key, $values ) ? $values[ $key ] : $current[ $key ];
+			$candidate = array_key_exists( $key, $values ) ? $values[ $key ] : $current[ $key ];
+
+			// One policy for every ingress — the form, WP-CLI and the settings
+			// import each used to apply a different, partial one, and the form's
+			// only numeric bounds were HTML attributes the browser enforces and
+			// nothing else does.
+			$sanitized[ $key ] = OptionSchema::apply( $key, $candidate, $current[ $key ] );
 		}
 
 		return update_option( self::OPTION_NAME, $sanitized );

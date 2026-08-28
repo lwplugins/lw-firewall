@@ -78,6 +78,46 @@ final class TabIpRules implements TabInterface {
 			</tr>
 		</table>
 
+		<h2><?php esc_html_e( 'Reverse Proxy', 'lw-firewall' ); ?></h2>
+		<p class="lw-firewall-section-description">
+			<?php esc_html_e( 'Leave this empty unless the site sits behind a proxy or load balancer. A forwarded-for header is written by the client until the hop that set it is known, so trusting one without listing the proxies would let any visitor choose their own IP — and with it their own rate-limit bucket, ban status and country. Cloudflare is handled automatically and needs nothing here.', 'lw-firewall' ); ?>
+		</p>
+
+		<table class="form-table">
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Trusted Proxies', 'lw-firewall' ); ?></th>
+				<td>
+					<?php
+					$this->render_textarea_field(
+						[
+							'name'        => 'trusted_proxies',
+							'rows'        => 4,
+							'description' => __( 'IPs or CIDR ranges of your own proxies, one per line. On the common "nginx in front of Apache on the same host" layout this is 127.0.0.1 — without it every visitor arrives as 127.0.0.1 and shares a single bucket.', 'lw-firewall' ),
+						]
+					);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Forwarded Header', 'lw-firewall' ); ?></th>
+				<td>
+					<?php
+					$this->render_select_field(
+						[
+							'name'    => 'proxy_header',
+							'options' => [
+								'x-forwarded-for' => 'X-Forwarded-For',
+								'x-real-ip'       => 'X-Real-IP',
+								'forwarded'       => 'Forwarded (RFC 7239)',
+							],
+						]
+					);
+					?>
+					<p class="description"><?php esc_html_e( 'Read right to left, skipping hops that are themselves listed above. Only used when a trusted proxy is configured.', 'lw-firewall' ); ?></p>
+				</td>
+			</tr>
+		</table>
+
 		<?php BanTable::render(); ?>
 		<?php
 	}

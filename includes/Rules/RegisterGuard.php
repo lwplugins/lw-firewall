@@ -42,7 +42,7 @@ final class RegisterGuard {
 		printf(
 			'<input type="hidden" name="%s" value="%s" />',
 			esc_attr( self::TOKEN_FIELD ),
-			esc_attr( RegisterToken::issue() )
+			esc_attr( RegisterToken::issue( 'reg' ) )
 		);
 
 		if ( empty( Options::get( 'register_honeypot' ) ) ) {
@@ -59,12 +59,21 @@ final class RegisterGuard {
 	/**
 	 * Validate the registration; reject and record spam on any failed check.
 	 *
-	 * @param WP_Error $errors Registration errors object.
-	 * @param string   $login  Sanitized user login (unused).
-	 * @param string   $email  User email (unused).
-	 * @return WP_Error
+	 * The input is whatever the previously registered filters returned, so it
+	 * is validated rather than declared. Hard-typing it turned any other
+	 * plugin's non-WP_Error return into an uncatchable TypeError on a public
+	 * registration form.
+	 *
+	 * @param mixed $errors Registration errors object.
+	 * @param mixed $login  Sanitized user login (unused).
+	 * @param mixed $email  User email (unused).
+	 * @return mixed
 	 */
-	public static function validate( WP_Error $errors, string $login = '', string $email = '' ): WP_Error { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	public static function validate( $errors = null, $login = '', $email = '' ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( ! $errors instanceof WP_Error ) {
+			return $errors;
+		}
+
 		if ( self::is_spam() ) {
 			RegisterTracker::record_reject();
 			$errors->add( 'lw_fw_spam', __( 'Registration failed, please try again.', 'lw-firewall' ) );

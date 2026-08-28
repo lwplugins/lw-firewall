@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Admin\Settings;
 
 use LightweightPlugins\Firewall\Activator;
+use LightweightPlugins\Firewall\IpDetector;
 use LightweightPlugins\Firewall\Options;
+use LightweightPlugins\Firewall\ProxyTrust;
 use LightweightPlugins\Firewall\Storage\StorageDetector;
 
 /**
@@ -40,6 +42,53 @@ final class TabStatus implements TabInterface {
 	}
 
 	/**
+	 * Warn when the address the firewall sees is not a real client address.
+	 *
+	 * Behind an unconfigured reverse proxy every request arrives as the proxy's
+	 * own address, so the entire internet shares one rate-limit bucket, one ban
+	 * and one country — and nothing else on this screen would say so. That was
+	 * a silent, total bypass; now it is the first thing the tab reports.
+	 *
+	 * @return void
+	 */
+	private function render_client_ip_row(): void {
+		$ip = IpDetector::get_ip();
+
+		if ( ! ProxyTrust::is_non_routable( $ip ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-warning inline"><p><strong>%s</strong> %s</p><p><code>%s</code></p></div>',
+			esc_html__( 'The firewall cannot see real visitor addresses.', 'lw-firewall' ),
+			esc_html__( 'Every request reaches it as the address below, which is not routable on the internet — so all visitors share one rate-limit bucket, one ban and one country. If this site is behind a proxy or load balancer, list it under IP Rules → Reverse Proxy.', 'lw-firewall' ),
+			esc_html( '' !== $ip ? $ip : '(none)' )
+		);
+	}
+
+	/**
+	 * Warn when the installed worker has never reported in.
+	 *
+	 * A matching version constant is not proof the worker runs: it defines the
+	 * constant before it tries to load the plugin's classes, so a renamed or
+	 * moved plugin directory produced a worker that looked healthy and did
+	 * nothing at all.
+	 *
+	 * @return void
+	 */
+	private function render_worker_health_row(): void {
+		if ( ! Activator::is_worker_installed() || Activator::worker_last_seen() > 0 ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-warning inline"><p><strong>%s</strong> %s</p></div>',
+			esc_html__( 'The worker file is installed but has never reported in.', 'lw-firewall' ),
+			esc_html__( 'It records a heartbeat the first time it runs. If this notice stays after a few page loads, the worker cannot load the plugin — most often because the plugin directory was renamed. Reinstall it below.', 'lw-firewall' )
+		);
+	}
+
+	/**
 	 * Render the tab content.
 	 */
 	public function render(): void {
@@ -54,6 +103,9 @@ final class TabStatus implements TabInterface {
 
 		?>
 		<h2><?php esc_html_e( 'Firewall Status', 'lw-firewall' ); ?></h2>
+
+		<?php $this->render_client_ip_row(); ?>
+		<?php $this->render_worker_health_row(); ?>
 
 		<table class="form-table">
 			<tr>

@@ -170,7 +170,11 @@ final class ParentPage {
 	 * @return void
 	 */
 	private static function render_plugin_card( string $slug, array $plugin ): void {
-		$is_active = defined( $plugin['constant'] );
+		// The registry is fetched from a remote URL and cached for 12 hours, so a
+		// record missing this key would otherwise be a TypeError under
+		// strict_types — a white screen on the LW Plugins page, cached.
+		$constant  = isset( $plugin['constant'] ) ? (string) $plugin['constant'] : '';
+		$is_active = '' !== $constant && defined( $constant );
 		$svg_path  = WP_PLUGIN_DIR . '/' . $slug . '/assets/img/title-icon.svg';
 		$svg_url   = $is_active && file_exists( $svg_path )
 			? plugins_url( $slug . '/assets/img/title-icon.svg' )

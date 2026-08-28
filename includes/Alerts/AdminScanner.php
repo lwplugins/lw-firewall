@@ -54,12 +54,26 @@ final class AdminScanner {
 
 		AdminBaseline::store( $current );
 
+		// A send that fails is retried on the next scan. The baseline is the
+		// deduplication record, not a delivery receipt — treating it as one
+		// meant a single SMTP hiccup lost the notification that an
+		// administrator account had appeared, permanently and silently.
+		$pending = AlertQueue::take();
+
 		if ( ! empty( $new ) ) {
-			AlertMailer::notify( $new, 'scan' );
+			$pending['new'] = array_values( array_unique( array_merge( $pending['new'], $new ) ) );
 		}
 
 		if ( ! empty( $changes ) ) {
-			AlertMailer::notify_changes( $changes, 'scan' );
+			$pending['changes'] = array_merge( $pending['changes'], $changes );
+		}
+
+		if ( ! empty( $pending['new'] ) && ! AlertMailer::notify( $pending['new'], 'scan' ) ) {
+			AlertQueue::keep_new( $pending['new'] );
+		}
+
+		if ( ! empty( $pending['changes'] ) && ! AlertMailer::notify_changes( $pending['changes'], 'scan' ) ) {
+			AlertQueue::keep_changes( $pending['changes'] );
 		}
 
 		return [

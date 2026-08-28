@@ -18,6 +18,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return LightweightPlugins\Firewall\Storage\StorageInterface
  */
 function lw_firewall_resolve_storage( string $preference ): LightweightPlugins\Firewall\Storage\StorageInterface {
+	// Memoized per request. Every call used to re-run the availability probes
+	// and open a fresh connection, so a page that touched storage from several
+	// rules paid for several Redis handshakes — on the hot path, before the
+	// request was even classified.
+	static $resolved = [];
+
+	if ( isset( $resolved[ $preference ] ) ) {
+		return $resolved[ $preference ];
+	}
+
+	$resolved[ $preference ] = lw_firewall_build_storage( $preference );
+
+	return $resolved[ $preference ];
+}
+
+/**
+ * Build a storage backend for the given preference.
+ *
+ * @param string $preference 'auto' | 'apcu' | 'redis' | 'file'.
+ * @return LightweightPlugins\Firewall\Storage\StorageInterface
+ */
+function lw_firewall_build_storage( string $preference ): LightweightPlugins\Firewall\Storage\StorageInterface {
 	if ( 'apcu' === $preference && LightweightPlugins\Firewall\Storage\ApcuStorage::is_available() ) {
 		return new LightweightPlugins\Firewall\Storage\ApcuStorage();
 	}
@@ -109,18 +131,221 @@ function lw_firewall_loggedin_limit( ?int $custom_limit, array $options ): int {
 }
 
 /**
- * Detect WordPress's own WP-Cron loopback request.
+ * Split a request URI into a decoded path and its query arguments.
  *
- * WordPress's spawn_cron() always calls wp-cron.php with a ?doing_wp_cron=
- * timestamp query arg. Recognising it lets the worker exempt scheduled work
- * (e.g. WooCommerce Analytics imports run via Action Scheduler) from cron
- * rate-limiting, while a bare "GET /wp-cron.php" — the usual DoS trigger —
- * stays throttled. The path check keeps the marker from being smuggled onto
- * other endpoints to bypass their limits.
+ * Endpoint detection used to run str_contains() over the raw URI, so the query
+ * string could impersonate a path: "/wp-json/x?next=/wp-cron.php" classified as
+ * cron, and an innocent "?redirect=/wp-login.php" was billed to the login
+ * quota. Path and query are separated once, here, and compared exactly.
  *
  * @param string $uri Request URI (path plus query string).
+ * @return array{path: string, args: array<string, string>}
+ */
+function lw_firewall_parse_uri( string $uri ): array {
+	$path  = (string) strtok( $uri, '?' );
+	$query = (string) substr( $uri, strlen( $path ) + 1 );
+
+	// A percent-encoded separator must not hide an endpoint from an exact
+	// comparison; decoding before matching closes that.
+	$path = rawurldecode( $path );
+
+	// Collapse repeated slashes and strip a trailing one so "//wp-cron.php" and
+	// "/wp-cron.php/" cannot dodge an exact match.
+	$path = (string) preg_replace( '#/+#', '/', $path );
+
+	if ( '/' !== $path ) {
+		$path = rtrim( $path, '/' );
+	}
+
+	$args = [];
+
+	if ( '' !== $query ) {
+		parse_str( $query, $args );
+	}
+
+	return [
+		'path' => '' === $path ? '/' : $path,
+		'args' => array_map( static fn ( $v ): string => is_scalar( $v ) ? (string) $v : '', $args ),
+	];
+}
+
+/**
+ * Whether a parsed request is one of WordPress's own WP-Cron loopbacks.
+ *
+ * WordPress's spawn_cron() always calls wp-cron.php with a ?doing_wp_cron=
+ * timestamp.
+ * Recognising it exempts scheduled work (e.g. WooCommerce Analytics imports via
+ * Action Scheduler) from cron rate limiting, while a bare "GET /wp-cron.php" —
+ * the usual DoS trigger — stays throttled.
+ *
+ * The marker is only honoured on the cron path itself. Accepting it anywhere
+ * let any request opt out of classification entirely by appending it.
+ *
+ * @param array{path: string, args: array<string, string>} $request Parsed request.
  * @return bool
  */
-function lw_firewall_is_cron_loopback( string $uri ): bool {
-	return str_contains( $uri, '/wp-cron.php' ) && str_contains( $uri, 'doing_wp_cron=' );
+function lw_firewall_is_cron_loopback( array $request ): bool {
+	return '/wp-cron.php' === $request['path'] && isset( $request['args']['doing_wp_cron'] );
+}
+
+/**
+ * Whether a request path is (or sits under) a given WordPress endpoint.
+ *
+ * Matches the endpoint itself and anything beneath it, so a subdirectory
+ * install's "/blog/wp-login.php" is recognised while a query argument that
+ * merely mentions the filename is not.
+ *
+ * @param string $path     Decoded request path.
+ * @param string $endpoint Endpoint path, e.g. "/wp-login.php".
+ * @return bool
+ */
+function lw_firewall_path_is( string $path, string $endpoint ): bool {
+	return $path === $endpoint || str_ends_with( $path, $endpoint );
+}
+
+/**
+ * Detect request type from URI.
+ *
+ * Returns an array of [reason, custom_limit]. The custom_limit is null unless
+ * a filter param entry specifies one (e.g. "filter_|30").
+ *
+ * @param string               $uri     Request URI.
+ * @param array<string, mixed> $options Plugin options.
+ * @return array{0: string|null, 1: int|null}
+ */
+function lw_firewall_detect_type( string $uri, array $options ): array {
+	$request = lw_firewall_parse_uri( $uri );
+	$path    = $request['path'];
+
+	// Endpoints are matched on the decoded path only. The query string is a
+	// place a client can write anything, so letting it name an endpoint both
+	// exempted crafted requests and billed innocent ones to the wrong quota.
+	if ( lw_firewall_path_is( $path, '/wp-cron.php' ) && ! empty( $options['protect_cron'] ) ) {
+		// Never throttle WordPress's own cron loopback (?doing_wp_cron=…) — that
+		// would stall scheduled work such as WooCommerce Analytics imports. A
+		// bare GET /wp-cron.php (the common DoS trigger) is still rate-limited.
+		if ( lw_firewall_is_cron_loopback( $request ) ) {
+			return [ null, null ];
+		}
+
+		return [ 'cron', null ];
+	}
+
+	if ( lw_firewall_path_is( $path, '/xmlrpc.php' ) && ! empty( $options['protect_xmlrpc'] ) ) {
+		return [ 'xmlrpc', null ];
+	}
+
+	if ( lw_firewall_path_is( $path, '/wp-login.php' ) && ! empty( $options['protect_login'] ) ) {
+		return [ 'login', null ];
+	}
+
+	// Both REST shapes: the pretty /wp-json/ prefix and the ?rest_route= form
+	// that works even when pretty permalinks are off.
+	if ( ! empty( $options['protect_rest_api'] )
+		&& ( str_contains( $path . '/', '/wp-json/' ) || isset( $request['args']['rest_route'] ) )
+	) {
+		return [ 'rest', null ];
+	}
+
+	// WooCommerce filter parameter detection.
+	// Entries may include a custom rate limit: "filter_|30".
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$query_string  = $_SERVER['QUERY_STRING'] ?? '';
+	$filter_params = (array) ( $options['filter_params'] ?? [ 'filter_|30', 'query_type_|30' ] );
+
+	if ( '' !== $query_string ) {
+		$matched      = false;
+		$custom_limit = null;
+
+		foreach ( $filter_params as $entry ) {
+			$parts  = explode( '|', (string) $entry, 2 );
+			$prefix = $parts[0];
+
+			if ( str_contains( $query_string, $prefix ) ) {
+				$matched = true;
+
+				// Use the lowest custom limit if multiple params match.
+				if ( isset( $parts[1] ) && is_numeric( $parts[1] ) ) {
+					$limit        = (int) $parts[1];
+					$custom_limit = ( null === $custom_limit ) ? $limit : min( $custom_limit, $limit );
+				}
+			}
+		}
+
+		if ( $matched ) {
+			return [ 'filter', $custom_limit ];
+		}
+	}
+
+	return [ null, null ];
+}
+
+/**
+ * Log a firewall event if logging is enabled.
+ *
+ * @param array<string, mixed> $options Plugin options.
+ * @param string               $ip      Client IP.
+ * @param string               $reason  Block reason.
+ */
+function lw_firewall_log( array $options, string $ip, string $reason ): void {
+	if ( empty( $options['log_enabled'] ) ) {
+		return;
+	}
+
+	\LightweightPlugins\Firewall\Logger::log(
+		[
+			'ip'     => $ip,
+			'reason' => $reason,
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			// Sanitized like every other log producer: an unauthenticated client
+			// must not be able to write control bytes or invalid UTF-8 into the option.
+			'ua'     => substr( sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 0, 200 ),
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			'url'    => sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ),
+		]
+	);
+}
+
+/**
+ * Check if the IP belongs to the server itself.
+ *
+ * Matches localhost, server address, and the site domain's resolved IP
+ * (cached for 5 minutes to avoid DNS lookups on every request).
+ *
+ * @param string $ip Client IP to check.
+ * @return bool
+ */
+function lw_firewall_is_server_ip( string $ip ): bool {
+	// Localhost.
+	if ( '127.0.0.1' === $ip || '::1' === $ip ) {
+		return true;
+	}
+
+	// Server's own IP.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$server_addr = $_SERVER['SERVER_ADDR'] ?? '';
+	if ( '' !== $server_addr && $server_addr === $ip ) {
+		return true;
+	}
+
+	// The site's own hostname is deliberately NOT resolved here. SERVER_NAME
+	// comes from the client's Host header under Apache's default
+	// UseCanonicalName Off, so resolving it handed an attacker a full firewall
+	// exemption for any address they could make a hostname point at — cached
+	// for five minutes on top.
+	return false;
+}
+
+/**
+ * Send 403 Forbidden and exit.
+ */
+function lw_firewall_block_403(): void {
+	if ( ! headers_sent() ) {
+		header( 'HTTP/1.1 403 Forbidden' );
+		header( 'Content-Type: text/plain; charset=utf-8' );
+		header( 'Cache-Control: no-store, no-cache' );
+	}
+
+	echo 'Access denied.';
+	exit;
 }

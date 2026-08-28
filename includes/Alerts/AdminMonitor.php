@@ -217,7 +217,11 @@ final class AdminMonitor {
 
 		if ( ! AdminBaseline::knows( $user_id ) ) {
 			AdminBaseline::remember( $user_id );
-			AlertMailer::notify( [ $user_id ], $source );
+
+			if ( ! AlertMailer::notify( [ $user_id ], $source ) ) {
+				AlertQueue::keep_new( [ $user_id ] );
+			}
+
 			return;
 		}
 
@@ -253,8 +257,8 @@ final class AdminMonitor {
 		// existed gets filled in without raising a phantom alert.
 		AdminBaseline::remember( $user_id );
 
-		if ( ! empty( $changes ) ) {
-			AlertMailer::notify_changes( $changes, $source );
+		if ( ! empty( $changes ) && ! AlertMailer::notify_changes( $changes, $source ) ) {
+			AlertQueue::keep_changes( $changes );
 		}
 	}
 

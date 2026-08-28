@@ -23,7 +23,14 @@ final class ApcuStorage implements StorageInterface {
 	 *
 	 * @var string
 	 */
-	private string $prefix = 'lw_fw_';
+	private string $prefix;
+
+	/**
+	 * Namespace the keys to this installation.
+	 */
+	public function __construct() {
+		$this->prefix = StorageDetector::key_prefix();
+	}
 
 	/**
 	 * Get a value by key.
@@ -68,10 +75,16 @@ final class ApcuStorage implements StorageInterface {
 			return (int) $result;
 		}
 
-		// Key doesn't exist — create it.
-		apcu_store( $full_key, 1, $ttl );
+		// Key doesn't exist. apcu_add() only succeeds for whoever gets there
+		// first; apcu_store() would let concurrent first hits overwrite each
+		// other's 1 and undercount exactly at the start of a burst.
+		if ( apcu_add( $full_key, 1, $ttl ) ) {
+			return 1;
+		}
 
-		return 1;
+		$result = apcu_inc( $full_key, 1, $success );
+
+		return ( $success && false !== $result ) ? (int) $result : 1;
 	}
 
 	/**

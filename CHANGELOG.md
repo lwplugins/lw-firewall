@@ -1,5 +1,49 @@
 # Changelog
 
+## [1.5.6] - 2026-08-28
+
+The rest of the external security audit of 1.5.4. Every item was reproduced
+against the source before being changed.
+
+### Security
+- **Reverse proxy support.** Behind the common "nginx in front of Apache on the same host" layout every request arrived as `127.0.0.1`, which the worker treated as the server's own address and exempted from every check — a silent, total bypass while the Status tab reported health. Trusted proxies can now be listed under IP Rules → Reverse Proxy; the forwarded chain is read right to left, skipping trusted hops. It stays opt-in because a forwarded header is client-controlled until the hop that set it is known
+- **The Status tab now says when the firewall cannot see real visitor addresses**, instead of looking healthy while every visitor shares one bucket
+- **The server's own hostname is no longer resolved into a firewall exemption.** `SERVER_NAME` comes from the client's `Host` header under Apache's default `UseCanonicalName Off`, so this handed an attacker a full bypass for any address they could point a hostname at — cached for five minutes on top
+- **Endpoints are classified on the decoded path, not the raw URI.** A substring search let the query string impersonate a path: `/wp-json/x?next=/wp-cron.php&doing_wp_cron=1` skipped rate limiting entirely, and an innocent `?redirect=/wp-login.php` was billed to the login quota. The cron loopback marker is only honoured on the cron path itself, and `?rest_route=` is recognised as REST
+- **The country header must come from Cloudflare.** Any non-empty `CF-IPCountry` was believed and short-circuited the CIDR fallback, so a visitor from a blocked country could send `CF-IPCountry: US` straight to the origin. It now clears the same trust test as the client IP and must be exactly two letters
+- **A refused password reset no longer drains the hourly email quota.** The site-wide counter was charged before the per-account check, so a flood against one account could exhaust it and deny resets to everyone else. Proof-of-render failures count against the sender only
+- **Proof-of-render tokens carry a per-render nonce and a signed scope.** Signing only the timestamp meant every form rendered in the same second produced an identical token — single-use rejected all but the first visitor, and a shared page cache handed one token to everybody. A token issued by one form can no longer be presented to another
+- **The file cache is read under a shared lock and never deleted on a parse failure.** A reader racing a writer saw a truncated file and deleted the live key — a ban or a flood counter — under exactly the concurrency the firewall exists to handle. Stored data also refuses object instantiation outright
+- **The reset block covers every privileged account**, not just the `administrator` role slug: multisite super admins and custom roles holding `manage_options` are included
+
+### Fixed
+- Bans can no longer be permanent by accident: a zero duration meant "no TTL" to every backend. Durations are clamped, and one server-side value policy (`OptionSchema`) now clamps every numeric setting and allowlists every enum — the admin form previously relied on HTML `min`/`max`, which only a browser enforces
+- Geo lookups use a pre-packed, sorted range index with a binary search. The default configuration ships six countries, roughly 29,000 CIDRs, and every request without a Cloudflare header walked all of them. Measured at ~0.0003 ms per lookup against ~31 ms before. An older cache file is still read the old way, so an upgrade works before the weekly refresh runs
+- The CIDR cache is written to a temporary file and renamed, so a request reading it mid-update can no longer see a half-written include and fail open
+- The file backend counts in a fixed window like Redis and APCu. Re-stamping the expiry on every increment made it a sliding window, so the same counter banned on one backend and never banned on another
+- APCu uses `apcu_add()` for the first hit; `apcu_store()` let concurrent first requests overwrite each other and undercount exactly at the start of a burst
+- APCu and Redis keys are namespaced per installation. A fixed prefix meant two sites sharing one pool collided on counters, bans and single-use tokens
+- Expired cache files are swept probabilistically with a batch cap. They were only removed when the identical key was read again, so distributed traffic left dead files forever
+- The cache directory's guard files are written unconditionally and cover the geo sub-directory. They used to be created only when the storage backend happened to create the directory first, and the key names are predictable enough to reveal who is banned
+- Logging collapses repeated IP/reason pairs for five minutes. Every blocked request used to rewrite the whole log option, turning the defence into a database write amplifier under flood
+- An alert that fails to send is retried on the next scan instead of being lost. The baseline snapshot is a deduplication record, not a delivery receipt — one SMTP hiccup permanently lost the notice that an administrator had appeared
+- The worker records a heartbeat, and the Status tab reports a worker that is installed but has never run. The version constant is defined before the worker proves it can load anything, so a renamed plugin directory left it looking current while doing nothing
+- Storage is resolved once per request. Every call re-ran the availability probes and opened a fresh connection
+- The worker self-heals on a content change, not only on a version change. A worker edited without a version bump left the stale copy running against new plugin classes — which can fatal the whole site on a duplicate declaration
+- `wp lw-firewall config set` and `config-items` resync `.htaccess`, so a CLI change to the country list reaches the Apache layer
+- The registration filter callback no longer hard-types its input; another plugin returning a non-`WP_Error` caused an uncatchable TypeError on a public form
+- The LW Plugins page no longer fatals on a remote registry record missing a key, and admin notices are only hidden on this plugin's own screens rather than any screen whose ID contains `lw-`
+- The worker's log entry sanitizes the User-Agent like every other producer
+- Deactivation clears the geo cron; uninstall removes the cache tree recursively and drops every schedule
+- `Requires at least` corrected to 6.2 — the administrator password-change detection uses a hook added in 6.2 and silently never fired below it
+
+### Removed
+- `X-XSS-Protection`, which is deprecated and counterproductive in modern browsers
+
+### Known, not fixed
+- The logged-in rate-limit bucket still recognises the login cookie by shape rather than validating it, because the worker runs before WordPress can. Anyone can obtain the higher REST/filter limit; login, xmlrpc and cron stay fully throttled. This is a deliberate trade documented in the worker
+- `reset_block_admins` still answers differently for a privileged account, which allows administrator enumeration. Closing it needs the same generic-response handling as lost-password user enumeration, which is not implemented yet
+
 ## [1.5.5] - 2026-08-28
 
 Fixes from an external security audit of 1.5.4. Every item below was reproduced

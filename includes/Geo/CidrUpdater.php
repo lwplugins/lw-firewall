@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Geo;
 
+use LightweightPlugins\Firewall\Storage\CacheDirectory;
+
 use LightweightPlugins\Firewall\Options;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -136,9 +138,50 @@ final class CidrUpdater {
 			wp_mkdir_p( $dir );
 		}
 
-		$content = "<?php\nreturn " . var_export( array_values( $cidrs ), true ) . ";\n"; // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
+		// wp_mkdir_p() creates the shared cache parent too, so guard both —
+		// otherwise whichever component ran first decided whether the cache
+		// directory was reachable over HTTP.
+		CacheDirectory::protect( dirname( $dir ) . '/' );
+		CacheDirectory::protect( $dir );
 
+		$index = RangeIndex::build( array_values( $cidrs ) );
+
+		// The IPv4 ranges go into a flat binary blob: building a PHP array of
+		// tens of thousands of pairs on every include cost more than the search
+		// itself. The .php file keeps only the IPv6 remainder and the marker.
+		self::write_atomic( $dir . $cc . '.bin', RangeIndex::pack_ranges( $index['v4'] ) );
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export -- Generating a PHP cache file, not debug output.
+		$meta    = var_export(
+			[
+				'format' => $index['format'],
+				'v6'     => $index['v6'],
+			],
+			true
+		);
+		$content = "<?php\nreturn " . $meta . ";\n";
+
+		return self::write_atomic( $dir . $cc . '.php', $content );
+	}
+
+	/**
+	 * Write a cache file atomically.
+	 *
+	 * Temporary file plus rename, so a request reading the cache mid-update
+	 * sees either the old file or the new one — never a half-written include,
+	 * which would fail open.
+	 *
+	 * @param string $path     Destination.
+	 * @param string $contents File body.
+	 * @return bool
+	 */
+	private static function write_atomic( string $path, string $contents ): bool {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-		return false !== file_put_contents( $dir . $cc . '.php', $content );
+		if ( false === file_put_contents( $path . '.tmp', $contents, LOCK_EX ) ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- The atomic guarantee is the point; WP_Filesystem::move() does not offer one.
+		return rename( $path . '.tmp', $path );
 	}
 }

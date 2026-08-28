@@ -24,26 +24,54 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class RegisterToken {
 
 	/**
+	 * Token format version, signed along with the payload so a future change
+	 * cannot be presented as the current one.
+	 */
+	private const VERSION = 'v2';
+
+	/**
 	 * Issue a token stamped with the current time.
 	 *
+	 * @param string $scope Form the token belongs to.
 	 * @return string
 	 */
-	public static function issue(): string {
-		return self::make( time() );
+	public static function issue( string $scope = 'reg' ): string {
+		return self::make( time(), $scope, bin2hex( random_bytes( 16 ) ) );
 	}
 
 	/**
 	 * Build a token for a given issue time (seam for deterministic tests).
 	 *
-	 * @param int $issued UNIX timestamp the token was issued.
+	 * The nonce is what makes two forms rendered in the same second distinct.
+	 * Signing only the timestamp meant every visitor who loaded a form during
+	 * the same second received a byte-identical token, so single-use rejected
+	 * all but the first of them — and a shared page cache handed one token to
+	 * everybody. The scope is signed rather than merely prefixing the replay
+	 * key, so a token issued by one form cannot be presented to another.
+	 *
+	 * @param int    $issued UNIX timestamp the token was issued.
+	 * @param string $scope  Form the token belongs to.
+	 * @param string $nonce  Per-render random value.
 	 * @return string
 	 */
-	public static function make( int $issued ): string {
-		$issued_str = (string) $issued;
-		$hmac       = hash_hmac( 'sha256', $issued_str, self::secret() );
+	public static function make( int $issued, string $scope = 'reg', string $nonce = '' ): string {
+		$payload = self::payload( $issued, $scope, $nonce );
+		$hmac    = hash_hmac( 'sha256', $payload, self::secret() );
 
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Benign: compact form-safe encoding of the signed token, not obfuscation.
-		return base64_encode( $issued_str . ':' . $hmac );
+		return base64_encode( $payload . ':' . $hmac );
+	}
+
+	/**
+	 * The signed part of a token.
+	 *
+	 * @param int    $issued UNIX timestamp.
+	 * @param string $scope  Form the token belongs to.
+	 * @param string $nonce  Per-render random value.
+	 * @return string
+	 */
+	private static function payload( int $issued, string $scope, string $nonce ): string {
+		return self::VERSION . '.' . $issued . '.' . preg_replace( '/[^a-z0-9_-]/', '', strtolower( $scope ) ) . '.' . $nonce;
 	}
 
 	/**
@@ -85,26 +113,35 @@ final class RegisterToken {
 			return false;
 		}
 
-		[ $issued, $hmac ] = explode( ':', $decoded, 2 );
+		[ $payload, $hmac ] = explode( ':', $decoded, 2 );
 
-		if ( '' === $issued || ! ctype_digit( $issued ) ) {
+		$parts = explode( '.', $payload );
+
+		if ( 4 !== count( $parts ) || self::VERSION !== $parts[0] || ! ctype_digit( $parts[1] ) ) {
 			return false;
 		}
 
-		$expected = hash_hmac( 'sha256', $issued, self::secret() );
+		$expected = hash_hmac( 'sha256', $payload, self::secret() );
 
 		if ( ! hash_equals( $expected, $hmac ) ) {
 			return false;
 		}
 
-		$age = $now - (int) $issued;
+		// The scope is inside the signature, so a token issued for one form
+		// cannot be presented to another — previously it only namespaced the
+		// replay key, which a token never actually crossed.
+		if ( preg_replace( '/[^a-z0-9_-]/', '', strtolower( $scope ) ) !== $parts[2] ) {
+			return false;
+		}
+
+		$age = $now - (int) $parts[1];
 
 		if ( $age < $min_fill || $age > $max_age ) {
 			return false;
 		}
 
 		if ( null !== $storage ) {
-			$key = $scope . '_tok_' . hash( 'sha256', $decoded );
+			$key = $scope . '_tok_' . hash( 'sha256', $payload );
 
 			// Atomic check-and-mark: the first use increments to 1 and passes;
 			// any replay (or concurrent double-submit) increments to > 1 and is

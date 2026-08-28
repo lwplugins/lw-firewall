@@ -127,6 +127,44 @@ final class ResetLimiterTest extends TestCase {
 	}
 
 	/**
+	 * Regression: the site-wide counter used to be charged before the per-account
+	 * check, so refused requests drained the hourly email budget. A flood against
+	 * one account could exhaust it and deny password resets to everyone else.
+	 */
+	public function test_a_refused_account_request_does_not_drain_the_email_budget(): void {
+		$storage = new ArrayStorage();
+		$limiter = new ResetLimiter( $storage, self::limits( array( 'ip_max' => 100, 'user_max' => 1, 'global_max' => 3 ) ) );
+
+		$limiter->record( '1.1.1.1', 7 );
+
+		// Five more requests for the same account, all refused on the account
+		// limit — none of them is an email, so none may cost the budget.
+		for ( $i = 0; $i < 5; $i++ ) {
+			$this->assertSame( ResetLimiter::USER, $limiter->record( '2.2.2.2', 7 ) );
+		}
+
+		// A different account still has budget left.
+		$this->assertSame( ResetLimiter::ALLOW, $limiter->record( '3.3.3.3', 8 ) );
+		$this->assertSame( 2, $storage->get( 'reset_all' ) );
+	}
+
+	/**
+	 * Bot traffic counts against the sender so a flood still gets banned, but it
+	 * must not touch the target's allowance or the email budget.
+	 */
+	public function test_a_rejected_bot_request_only_costs_the_sender(): void {
+		$storage = new ArrayStorage();
+		$limiter = new ResetLimiter( $storage, self::limits( array( 'ip_max' => 2 ) ) );
+
+		$limiter->record_rejected( '9.9.9.9' );
+		$limiter->record_rejected( '9.9.9.9' );
+
+		$this->assertSame( 2, $storage->get( 'reset_ip_9.9.9.9' ) );
+		$this->assertNull( $storage->get( 'reset_all' ) );
+		$this->assertNull( $storage->get( 'reset_user_7' ) );
+	}
+
+	/**
 	 * @dataProvider provide_disabled_axes
 	 *
 	 * @param string $axis Limit key set to zero.

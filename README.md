@@ -136,7 +136,6 @@ One-click addition of security HTTP headers:
 - `X-Frame-Options: SAMEORIGIN`
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
-- `X-XSS-Protection: 1; mode=block`
 
 ### Storage Backends
 
@@ -159,6 +158,15 @@ Auto-detection picks the best available backend.
 
 - Automatic real IP detection via `CF-Connecting-IP` header
 - Cloudflare IP range validation to prevent header spoofing
+- The `CF-IPCountry` header used for geo blocking clears the same trust test
+
+### Reverse Proxy Support
+
+Behind a proxy or load balancer every request arrives with the proxy's address, so without configuration the whole internet shares one rate-limit bucket, one ban and one country. On the common "nginx in front of Apache on the same host" layout that address is `127.0.0.1`.
+
+List your own proxies under **IP Rules → Reverse Proxy**. The forwarded chain is then read right to left, skipping hops that are themselves trusted, and the first address you do not vouch for is the client.
+
+This is opt-in on purpose: a forwarded header is written by the client until the hop that set it is known, so trusting one by default would let any visitor pick their own IP. The **Status** tab warns when the address the firewall sees is not routable on the internet.
 
 ### Request Logging
 
@@ -189,7 +197,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | **General** | Enable/disable, storage backend, rate limit, time window, action, filter params |
 | **Protection** | Endpoint toggles (cron, xmlrpc, login, REST API, 404) and auto-ban settings |
 | **Bots** | Manage blocked bot User-Agent patterns |
-| **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges), plus the automatic-ban table with per-row unblock |
+| **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges), trusted reverse proxies, plus the automatic-ban table with per-row unblock |
 | **Spam** | Registration spam protection and password-reset flood protection |
 | **Geo Blocking** | Country-based blocking with Cloudflare or CIDR fallback |
 | **Security** | HTTP security headers toggle |
@@ -324,6 +332,11 @@ Every setting can be overridden by a constant named `LW_FIREWALL_` + the option 
 > Before 1.5.5 the constants applied to single option reads but not to the worker, the runtime hooks or the .htaccess sync. Upgrade if you rely on them.
 
 ```php
+// Reverse proxy — leave unset unless the site is behind one. Cloudflare is
+// detected automatically and needs nothing here.
+define( 'LW_FIREWALL_TRUSTED_PROXIES', [ '127.0.0.1' ] );
+define( 'LW_FIREWALL_PROXY_HEADER', 'x-forwarded-for' );  // or x-real-ip, forwarded
+
 // Core
 define( 'LW_FIREWALL_ENABLED', true );
 define( 'LW_FIREWALL_STORAGE', 'apcu' );                 // auto, apcu, redis, file

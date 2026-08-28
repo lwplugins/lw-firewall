@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Geo;
 
+use LightweightPlugins\Firewall\IpDetector;
+
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Rules\IpMatcher;
 
@@ -47,19 +49,71 @@ final class GeoDetector {
 	}
 
 	/**
+	 * Load a country's metadata file once per request.
+	 *
+	 * @param string $file Absolute path.
+	 * @return array<string, mixed>|null
+	 */
+	private static function load( string $file ): ?array {
+		static $cache = [];
+
+		if ( ! array_key_exists( $file, $cache ) ) {
+			$data           = include $file;
+			$cache[ $file ] = is_array( $data ) ? $data : null;
+		}
+
+		return $cache[ $file ];
+	}
+
+	/**
+	 * Load a country's packed IPv4 ranges once per request.
+	 *
+	 * @param string $file Absolute path to the .bin blob.
+	 * @return string
+	 */
+	private static function load_packed( string $file ): string {
+		static $cache = [];
+
+		if ( ! array_key_exists( $file, $cache ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents, WordPress.PHP.NoSilencedErrors.Discouraged -- Local cache blob; a missing file simply means no ranges.
+			$raw            = file_exists( $file ) ? @file_get_contents( $file ) : false;
+			$cache[ $file ] = false === $raw ? '' : $raw;
+		}
+
+		return $cache[ $file ];
+	}
+
+	/**
 	 * Get country code from Cloudflare header.
 	 *
 	 * @return string Uppercase 2-letter code or empty string.
 	 */
 	private static function get_cf_country(): string {
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$header = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
+		// The country header decides whether the CIDR fallback runs at all, so
+		// it has to clear the same trust test as the client IP. Accepting it
+		// from any source let a visitor of a blocked country send
+		// "CF-IPCountry: US" straight to the origin and skip geo blocking
+		// entirely — any non-empty value was enough.
+		if ( ! IpDetector::is_cloudflare_request() ) {
+			return '';
+		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Shape validated below.
+		$header = strtoupper( trim( (string) ( $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '' ) ) );
+
+		// XX is "unknown", T1 is Tor. Both mean "no country", so the CIDR
+		// fallback should decide instead.
 		if ( '' === $header || 'XX' === $header || 'T1' === $header ) {
 			return '';
 		}
 
-		return strtoupper( substr( (string) $header, 0, 2 ) );
+		// Exactly two letters, or it is not a country code — a malformed value
+		// must not short-circuit the fallback either.
+		if ( 1 !== preg_match( '/^[A-Z]{2}$/', $header ) ) {
+			return '';
+		}
+
+		return $header;
 	}
 
 	/**
@@ -84,13 +138,27 @@ final class GeoDetector {
 				continue; // Fail-open: no cache = no block.
 			}
 
-			$cidrs = include $file;
+			$data = self::load( $file );
 
-			if ( ! is_array( $cidrs ) ) {
+			if ( ! is_array( $data ) ) {
 				continue;
 			}
 
-			if ( IpMatcher::matches( $ip, $cidrs ) ) {
+			// A cache written before the packed format is still a plain CIDR
+			// list, so an upgrade keeps working until the weekly refresh runs.
+			if ( ( $data['format'] ?? '' ) !== RangeIndex::FORMAT ) {
+				if ( IpMatcher::matches( $ip, $data ) ) {
+					return true;
+				}
+
+				continue;
+			}
+
+			if ( RangeIndex::packed_contains( $ip, self::load_packed( substr( $file, 0, -4 ) . '.bin' ) ) ) {
+				return true;
+			}
+
+			if ( ! empty( $data['v6'] ) && IpMatcher::matches( $ip, (array) $data['v6'] ) ) {
 				return true;
 			}
 		}

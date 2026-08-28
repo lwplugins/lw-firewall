@@ -22,6 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class AutoBanner {
 
 	/**
+	 * Shortest ban the storage will be asked for, in seconds.
+	 */
+	public const MIN_DURATION = 60;
+
+	/**
 	 * Storage backend.
 	 *
 	 * @var StorageInterface
@@ -75,6 +80,11 @@ final class AutoBanner {
 	 * @param string $reason   Short machine-readable reason code.
 	 */
 	public function ban( string $ip, int $duration, string $reason = '' ): void {
+		// A zero duration meant "no TTL" to every backend, i.e. a permanent ban
+		// that nothing would ever lift on its own. A ban is a temporary measure;
+		// the blacklist is where permanent belongs.
+		$duration = max( self::MIN_DURATION, $duration );
+
 		$this->storage->set( 'ban_' . $ip, 1, $duration );
 
 		BanList::record( $ip, $duration, $reason );

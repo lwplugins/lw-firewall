@@ -36,13 +36,48 @@ final class FileStorage implements StorageInterface {
 		if ( ! is_dir( $this->dir ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
 			@mkdir( $this->dir, 0755, true );
+		}
 
-			// Prevent directory listing.
-			$htaccess = $this->dir . '.htaccess';
-			if ( ! file_exists( $htaccess ) ) {
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-				@file_put_contents( $htaccess, "Deny from all\n" );
+		CacheDirectory::protect( $this->dir );
+		CacheDirectory::sweep( $this->dir );
+	}
+
+	/**
+	 * Read a file under a shared lock.
+	 *
+	 * Writers truncate before they rewrite, so an unlocked read can see an
+	 * empty or half-written file.
+	 *
+	 * @param string $file Absolute path.
+	 * @return string|null Raw contents, or null when unreadable.
+	 */
+	private function read_locked( string $file ): ?string {
+		if ( ! file_exists( $file ) ) {
+			return null;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen, WordPress.PHP.NoSilencedErrors.Discouraged -- A vanished or unreadable cache file is an expected race, not an error to surface.
+		$handle = @fopen( $file, 'rb' );
+
+		if ( false === $handle ) {
+			return null;
+		}
+
+		try {
+			if ( ! flock( $handle, LOCK_SH ) ) {
+				return null;
 			}
+
+			$size = (int) filesize( $file );
+
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
+			$data = $size > 0 ? fread( $handle, $size ) : '';
+
+			return false === $data ? null : $data;
+		} finally {
+			flock( $handle, LOCK_UN );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			fclose( $handle );
 		}
 	}
 
@@ -59,19 +94,22 @@ final class FileStorage implements StorageInterface {
 			return null;
 		}
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$data = @file_get_contents( $file );
+		$data = $this->read_locked( $file );
 
-		if ( false === $data ) {
+		if ( null === $data ) {
 			return null;
 		}
 
+		// allowed_classes: this file only ever holds scalars, and refusing object
+		// instantiation removes the gadget surface entirely.
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
-		$entry = @unserialize( $data );
+		$entry = @unserialize( $data, [ 'allowed_classes' => false ] );
 
+		// A partial read is not a corrupt entry. Deleting here removed live
+		// keys — a ban or a flood counter — precisely under the concurrency the
+		// firewall exists to handle, because a writer truncates before it
+		// rewrites. Report "no value" and let the next write settle it.
 		if ( ! is_array( $entry ) || ! isset( $entry['expires'], $entry['value'] ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-			@unlink( $file );
 			return null;
 		}
 
@@ -140,7 +178,7 @@ final class FileStorage implements StorageInterface {
 			$raw   = stream_get_contents( $handle );
 			$entry = ( is_string( $raw ) && '' !== $raw )
 				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
-				? @unserialize( $raw )
+				? @unserialize( $raw, [ 'allowed_classes' => false ] )
 				: false;
 
 			$now     = time();
@@ -151,9 +189,17 @@ final class FileStorage implements StorageInterface {
 			$current = ( ! $expired && is_int( $entry['value'] ) ) ? $entry['value'] : 0;
 			$new     = $current + 1;
 
+			// Fixed window, matching Redis and APCu. Re-stamping the expiry on
+			// every increment turned this backend into a sliding window: steady
+			// low-rate traffic never reset, so the same counter banned on file
+			// storage and never banned on the others.
+			$expires = $expired
+				? ( $ttl > 0 ? $now + $ttl : 0 )
+				: (int) $entry['expires'];
+
 			$payload = serialize( // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
 				[
-					'expires' => $ttl > 0 ? $now + $ttl : 0,
+					'expires' => $expires,
 					'value'   => $new,
 				]
 			);

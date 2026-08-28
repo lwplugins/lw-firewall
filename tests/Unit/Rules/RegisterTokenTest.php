@@ -68,34 +68,55 @@ final class RegisterTokenTest extends MonkeyTestCase {
 	}
 
 	/**
-	 * The token is derived from the issue timestamp alone, so a registration
-	 * form and a lost-password form rendered in the same second carry the same
-	 * token. Without separate single-use namespaces, whichever submitted first
-	 * would consume the other form's entry and get it rejected as a replay.
+	 * Regression: the signature covered only the timestamp, so every form
+	 * rendered in the same second produced a byte-identical token. With
+	 * single-use on, all but the first visitor was rejected, and a shared page
+	 * cache handed one token to everybody. A per-render nonce makes them
+	 * distinct.
 	 */
-	public function test_single_use_namespaces_do_not_consume_each_other(): void {
-		$storage = new ArrayStorage();
-		$token   = RegisterToken::make( self::NOW - self::MIN );
+	public function test_two_tokens_issued_in_the_same_second_differ(): void {
+		$a = RegisterToken::make( self::NOW, 'reg', 'nonce-one' );
+		$b = RegisterToken::make( self::NOW, 'reg', 'nonce-two' );
 
-		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reg' ) );
-		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reset' ) );
+		$this->assertNotSame( $a, $b );
 	}
 
-	public function test_single_use_still_blocks_a_replay_within_one_namespace(): void {
+	public function test_both_same_second_tokens_are_accepted_with_single_use(): void {
 		$storage = new ArrayStorage();
-		$token   = RegisterToken::make( self::NOW - self::MIN );
+		$a       = RegisterToken::make( self::NOW - self::MIN, 'reg', 'nonce-one' );
+		$b       = RegisterToken::make( self::NOW - self::MIN, 'reg', 'nonce-two' );
+
+		$this->assertTrue( RegisterToken::check( $a, self::NOW, self::MIN, self::MAX, $storage, 'reg' ) );
+		$this->assertTrue( RegisterToken::check( $b, self::NOW, self::MIN, self::MAX, $storage, 'reg' ) );
+	}
+
+	/**
+	 * The scope is inside the signature, so a token handed out by one form
+	 * cannot be presented to another.
+	 */
+	public function test_a_token_is_bound_to_the_form_that_issued_it(): void {
+		$token = RegisterToken::make( self::NOW - self::MIN, 'reg', 'nonce-one' );
+
+		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, null, 'reg' ) );
+		$this->assertFalse( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, null, 'reset' ) );
+	}
+
+	public function test_single_use_still_blocks_a_replay_within_one_scope(): void {
+		$storage = new ArrayStorage();
+		$token   = RegisterToken::make( self::NOW - self::MIN, 'reset', 'nonce-one' );
 
 		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reset' ) );
 		$this->assertFalse( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage, 'reset' ) );
 	}
 
-	/**
-	 * Single-use must rely on the atomic increment(), not a get()-then-set().
-	 * This storage double never reports the key as seen via get() (simulating
-	 * two concurrent requests in the TOCTOU window), but counts via increment().
-	 * A get-then-set implementation would pass the token twice; the atomic one
-	 * rejects the second use.
-	 */
+	public function test_a_tampered_payload_is_rejected(): void {
+		$token   = RegisterToken::make( self::NOW - self::MIN, 'reg', 'nonce-one' );
+		$decoded = base64_decode( $token, true );
+		$forged  = base64_encode( str_replace( '.reg.', '.reset.', (string) $decoded ) );
+
+		$this->assertFalse( RegisterToken::check( $forged, self::NOW, self::MIN, self::MAX, null, 'reset' ) );
+	}
+
 	public function test_single_use_is_race_safe(): void {
 		$storage = new class() implements StorageInterface {
 			/** @var array<string, int> */
