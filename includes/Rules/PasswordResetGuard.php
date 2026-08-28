@@ -147,6 +147,13 @@ final class PasswordResetGuard {
 	 * @return bool|\WP_Error
 	 */
 	public static function filter_allow_reset( $allow, $user_id ) {
+		// Known trade: refusing here makes WordPress answer with its own
+		// no_password_reset error, which differs from the generic response an
+		// ordinary account gets — so a determined attacker can enumerate which
+		// accounts are privileged. Closing it needs the same generic-response
+		// handling as lost-password user enumeration, which does not exist yet;
+		// the setting is opt-in and off by default until it does.
+
 		if ( self::is_exempt( IpDetector::get_ip() ) ) {
 			return $allow;
 		}

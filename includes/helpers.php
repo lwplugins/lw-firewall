@@ -83,6 +83,14 @@ function lw_firewall_build_storage( string $preference ): LightweightPlugins\Fir
  * @return bool True when the request carries a plausible WordPress logged-in cookie.
  */
 function lw_firewall_has_login_cookie(): bool {
+	// Accepted trade, not an oversight: the worker runs before WordPress can
+	// validate an auth cookie, so this recognises one by shape only. Anyone can
+	// forge that shape and obtain the higher REST/filter bucket. The cost is
+	// bounded — login, xmlrpc and cron stay fully throttled regardless, and
+	// abuse in the raised bucket is still recorded for auto-ban — and the
+	// alternative is either no headroom for signed-in dashboards or booting
+	// WordPress before every request is classified.
+
 	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- cookie name/shape only, no value trust.
 	foreach ( $_COOKIE as $name => $value ) {
 		if ( str_starts_with( (string) $name, 'wordpress_logged_in_' )

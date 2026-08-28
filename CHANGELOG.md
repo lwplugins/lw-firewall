@@ -40,10 +40,6 @@ against the source before being changed.
 ### Removed
 - `X-XSS-Protection`, which is deprecated and counterproductive in modern browsers
 
-### Known, not fixed
-- The logged-in rate-limit bucket still recognises the login cookie by shape rather than validating it, because the worker runs before WordPress can. Anyone can obtain the higher REST/filter limit; login, xmlrpc and cron stay fully throttled. This is a deliberate trade documented in the worker
-- `reset_block_admins` still answers differently for a privileged account, which allows administrator enumeration. Closing it needs the same generic-response handling as lost-password user enumeration, which is not implemented yet
-
 ## [1.5.5] - 2026-08-28
 
 Fixes from an external security audit of 1.5.4. Every item below was reproduced
