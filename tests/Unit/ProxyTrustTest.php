@@ -143,8 +143,13 @@ final class ProxyTrustTest extends TestCase {
 			'private'   => array( '10.0.0.5', true ),
 			'private b' => array( '192.168.1.7', true ),
 			'empty'     => array( '', true ),
-			'public'    => array( '203.0.113.7', false ),
-			'public v6' => array( '2001:db8::1', false ),
+			'garbage'   => array( 'not-an-ip', true ),
+			// 203.0.113.0/24 and 2001:db8::/32 are documentation ranges, and PHP
+			// disagrees between versions about whether they count as reserved —
+			// so the routable cases use addresses that really are on the
+			// internet.
+			'public'    => array( '8.8.8.8', false ),
+			'public v6' => array( '2606:4700:4700::1111', false ),
 		);
 	}
 }
