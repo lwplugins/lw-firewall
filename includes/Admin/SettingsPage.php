@@ -21,6 +21,7 @@ use LightweightPlugins\Firewall\Admin\Settings\TabProtection;
 use LightweightPlugins\Firewall\Admin\Settings\TabSecurity;
 use LightweightPlugins\Firewall\Admin\Settings\TabSpam;
 use LightweightPlugins\Firewall\Admin\Settings\TabStatus;
+use LightweightPlugins\Firewall\Options;
 
 /**
  * Handles the plugin settings page.
@@ -138,6 +139,7 @@ final class SettingsPage {
 			<?php endif; ?>
 
 			<?php $this->render_action_notice(); ?>
+			<?php $this->render_locked_notice(); ?>
 
 			<form method="post" action="" enctype="multipart/form-data">
 				<?php wp_nonce_field( 'lw_firewall_save', '_lw_firewall_nonce' ); ?>
@@ -154,6 +156,28 @@ final class SettingsPage {
 			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Warn that some fields are pinned by a wp-config.php constant.
+	 *
+	 * Without this an operator can edit a locked field, save it, and see no
+	 * sign that the runtime is still using the constant.
+	 *
+	 * @return void
+	 */
+	private function render_locked_notice(): void {
+		$locked = Options::overridden();
+
+		if ( empty( $locked ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-info lw-notice"><p>%s<br /><code>%s</code></p></div>',
+			esc_html__( 'These settings are pinned by a constant in wp-config.php. Editing them here has no effect until the constant is removed:', 'lw-firewall' ),
+			esc_html( implode( ', ', array_map( static fn ( string $key ): string => Options::CONST_PREFIX . strtoupper( $key ), $locked ) ) )
+		);
 	}
 
 	/**

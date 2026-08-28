@@ -62,7 +62,7 @@ trait ConfigOpsTrait {
 	 * @param array<int, string> $list New list value.
 	 */
 	private static function save_list( string $key, array $list ): void {
-		$current         = Options::get_all();
+		$current         = Options::get_stored();
 		$current[ $key ] = array_values( $list );
 
 		if ( ! Options::save( $current ) ) {

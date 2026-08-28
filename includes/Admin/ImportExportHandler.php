@@ -47,7 +47,7 @@ final class ImportExportHandler {
 	 * @return void
 	 */
 	private static function handle_export(): void {
-		$options = Options::get_all();
+		$options = Options::get_stored();
 		$json    = wp_json_encode( $options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
 
 		header( 'Content-Type: application/json; charset=utf-8' );

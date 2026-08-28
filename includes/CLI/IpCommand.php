@@ -112,7 +112,7 @@ final class IpCommand {
 		}
 
 		$ips[]           = $ip;
-		$current         = Options::get_all();
+		$current         = Options::get_stored();
 		$current[ $key ] = $ips;
 
 		if ( Options::save( $current ) ) {
@@ -169,7 +169,7 @@ final class IpCommand {
 			WP_CLI::error( "'{$ip}' was not found in {$type}." );
 		}
 
-		$current         = Options::get_all();
+		$current         = Options::get_stored();
 		$current[ $key ] = $ips;
 
 		if ( Options::save( $current ) ) {

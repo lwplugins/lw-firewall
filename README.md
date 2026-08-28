@@ -319,7 +319,9 @@ wp lw-firewall worker remove
 
 ## wp-config.php Overrides
 
-Every setting can be overridden by a constant named `LW_FIREWALL_` + the option key in uppercase. A constant always wins over the admin UI and WP-CLI.
+Every setting can be overridden by a constant named `LW_FIREWALL_` + the option key in uppercase. A constant always wins over the admin UI and WP-CLI, and the settings screen lists the options a constant has pinned so a locked field is visibly locked.
+
+> Before 1.5.5 the constants applied to single option reads but not to the worker, the runtime hooks or the .htaccess sync. Upgrade if you rely on them.
 
 ```php
 // Core
@@ -382,7 +384,6 @@ define( 'LW_FIREWALL_ADMIN_ALERT_CHANGES', true );
 // Security headers and geo blocking
 define( 'LW_FIREWALL_SECURITY_HEADERS', true );
 define( 'LW_FIREWALL_GEO_ENABLED', true );
-define( 'LW_FIREWALL_GEO_ACTION', '403' );               // 403 or redirect
 
 // Emergency kill-switch for the MU-plugin worker
 define( 'LW_FIREWALL_DISABLE_WORKER', true );

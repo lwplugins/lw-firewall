@@ -51,7 +51,6 @@ final class TabGeo implements TabInterface {
 
 		<table class="form-table">
 			<?php $this->render_enable_row(); ?>
-			<?php $this->render_action_row(); ?>
 			<?php $this->render_countries_row(); ?>
 		</table>
 
@@ -72,31 +71,6 @@ final class TabGeo implements TabInterface {
 					[
 						'name'  => 'geo_enabled',
 						'label' => __( 'Enable Geo Blocking', 'lw-firewall' ),
-					]
-				);
-				?>
-			</td>
-		</tr>
-		<?php
-	}
-
-	/**
-	 * Render block action select row.
-	 */
-	private function render_action_row(): void {
-		?>
-		<tr>
-			<th scope="row"><?php esc_html_e( 'Block Action', 'lw-firewall' ); ?></th>
-			<td>
-				<?php
-				$this->render_select_field(
-					[
-						'name'    => 'geo_action',
-						'label'   => '',
-						'options' => [
-							'403'      => __( '403 Forbidden', 'lw-firewall' ),
-							'redirect' => __( 'Redirect to homepage', 'lw-firewall' ),
-						],
 					]
 				);
 				?>

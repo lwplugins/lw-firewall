@@ -74,11 +74,34 @@ final class IpMatcher {
 	 * @return bool
 	 */
 	private static function ip_in_cidr( string $packed, string $cidr ): bool {
-		[ $range, $bits ] = explode( '/', $cidr );
-		$bits             = (int) $bits;
-		$packed_range     = inet_pton( $range );
+		$parts = explode( '/', $cidr, 2 );
+
+		if ( 2 !== count( $parts ) ) {
+			return false;
+		}
+
+		$prefix = trim( $parts[1] );
+
+		// The prefix must be an exact decimal number. Casting it straight to int
+		// is what made a typo catastrophic: (int) 'foo' and (int) '-1' both
+		// produce a zero-width mask, which matches EVERY address of the same
+		// family — silently turning one bad whitelist line into "firewall off",
+		// or one bad blacklist line into "site down".
+		if ( '' === $prefix || ! ctype_digit( $prefix ) ) {
+			return false;
+		}
+
+		$packed_range = inet_pton( $parts[0] );
 
 		if ( false === $packed_range ) {
+			return false;
+		}
+
+		$bits = (int) $prefix;
+
+		// 0-32 for IPv4, 0-128 for IPv6. A wider prefix is not a wider match,
+		// it is a malformed rule.
+		if ( $bits > strlen( $packed_range ) * 8 ) {
 			return false;
 		}
 

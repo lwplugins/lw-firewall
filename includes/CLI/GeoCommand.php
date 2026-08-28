@@ -105,7 +105,7 @@ final class GeoCommand {
 		}
 
 		$countries[]                  = $cc;
-		$current                      = Options::get_all();
+		$current                      = Options::get_stored();
 		$current['blocked_countries'] = $countries;
 		$current['geo_enabled']       = true;
 
@@ -141,7 +141,7 @@ final class GeoCommand {
 			WP_CLI::error( "'{$cc}' was not found in the blocked list." );
 		}
 
-		$current                      = Options::get_all();
+		$current                      = Options::get_stored();
 		$current['blocked_countries'] = $filtered;
 
 		if ( Options::save( $current ) ) {

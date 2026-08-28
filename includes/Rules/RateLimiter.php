@@ -94,8 +94,9 @@ final class RateLimiter {
 	/**
 	 * Reduce a request URI to a single-slash-rooted local path.
 	 *
-	 * Strips the query string and collapses leading slashes so a crafted request
-	 * line like "GET //evil.example/" cannot turn into a protocol-relative (open)
+	 * Strips the query string, folds backslashes to slashes and collapses the
+	 * leading run so a crafted request line like "GET //evil.example/" or
+	 * "GET /\evil.example/" cannot turn into a protocol-relative (open)
 	 * redirect via the Location header.
 	 *
 	 * @param string $request_uri Raw REQUEST_URI.
@@ -104,7 +105,12 @@ final class RateLimiter {
 	public static function safe_redirect_path( string $request_uri ): string {
 		$path = strtok( $request_uri, '?' );
 
-		return '/' . ltrim( (string) $path, '/' );
+		// Browsers treat a leading backslash like a slash (WHATWG URL), so
+		// "/\evil.example/" survives an ltrim on '/' alone and still lands in
+		// the Location header as a protocol-relative, cross-origin redirect.
+		$path = str_replace( '\\', '/', (string) $path );
+
+		return '/' . ltrim( $path, '/' );
 	}
 
 	/**

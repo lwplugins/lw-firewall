@@ -81,7 +81,7 @@ final class SettingsSaver {
 			? wp_unslash( (array) $_POST['lw_firewall_options'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 			: [];
 
-		$current = Options::get_all();
+		$current = Options::get_stored();
 		$values  = [];
 
 		$values['enabled']             = ! empty( $post_data['enabled'] );
@@ -171,10 +171,6 @@ final class SettingsSaver {
 		$values['action'] = isset( $post_data['action'] )
 			? sanitize_key( $post_data['action'] )
 			: $current['action'];
-
-		$values['geo_action'] = isset( $post_data['geo_action'] )
-			? sanitize_key( $post_data['geo_action'] )
-			: $current['geo_action'];
 
 		$values['filter_params']     = self::parse_filter_params( $post_data );
 		$values['blocked_bots']      = self::parse_blocked_bots( $post_data );

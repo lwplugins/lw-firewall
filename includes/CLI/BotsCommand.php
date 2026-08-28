@@ -95,7 +95,7 @@ final class BotsCommand {
 		}
 
 		$bots[]                  = $ua;
-		$current                 = Options::get_all();
+		$current                 = Options::get_stored();
 		$current['blocked_bots'] = $bots;
 
 		if ( Options::save( $current ) ) {
@@ -144,7 +144,7 @@ final class BotsCommand {
 			WP_CLI::error( "'{$ua}' was not found in the block list." );
 		}
 
-		$current                 = Options::get_all();
+		$current                 = Options::get_stored();
 		$current['blocked_bots'] = $bots;
 
 		if ( Options::save( $current ) ) {

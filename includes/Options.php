@@ -21,6 +21,11 @@ final class Options {
 	public const OPTION_NAME = 'lw_firewall';
 
 	/**
+	 * Prefix for the wp-config.php constant that pins an option.
+	 */
+	public const CONST_PREFIX = 'LW_FIREWALL_';
+
+	/**
 	 * Option keys whose stored value must be an array. These get coerced on
 	 * read so any historical bad data (e.g. textarea content saved as a
 	 * single string with newlines) still produces a usable list — the
@@ -113,7 +118,6 @@ final class Options {
 			'log_enabled'              => false,
 			'filter_params'            => [ 'filter_|30', 'query_type_|30' ],
 			'geo_enabled'              => true,
-			'geo_action'               => '403', // '403' | 'redirect'.
 			'blocked_countries'        => [ 'CN', 'RU', 'IN', 'VN', 'ID', 'BD' ],
 		];
 	}
@@ -127,7 +131,7 @@ final class Options {
 	 */
 	public static function get( string $key, mixed $default = null ): mixed {
 		// wp-config.php constant override.
-		$const = 'LW_FIREWALL_' . strtoupper( $key );
+		$const = self::CONST_PREFIX . strtoupper( $key );
 		if ( defined( $const ) ) {
 			return constant( $const );
 		}
@@ -138,11 +142,45 @@ final class Options {
 	}
 
 	/**
-	 * Get all options merged with defaults.
+	 * The effective runtime configuration: stored values with wp-config.php
+	 * constants layered on top.
+	 *
+	 * Everything that makes a runtime decision must read this. Reading the
+	 * stored values alone was the bug: get() honoured constants but get_all()
+	 * did not, so the worker, the hook bootstrap, the .htaccess sync and the
+	 * status screen all ran on a different configuration than the one the
+	 * operator had pinned in wp-config.php — including the master switch.
 	 *
 	 * @return array<string, mixed>
 	 */
 	public static function get_all(): array {
+		$merged = self::get_stored();
+
+		foreach ( self::overridden() as $key ) {
+			$merged[ $key ] = constant( self::CONST_PREFIX . strtoupper( $key ) );
+		}
+
+		foreach ( self::LIST_KEYS as $list_key ) {
+			if ( isset( $merged[ $list_key ] ) && ! is_array( $merged[ $list_key ] ) ) {
+				$merged[ $list_key ] = self::normalize_list( $merged[ $list_key ] );
+			}
+		}
+
+		return $merged;
+	}
+
+	/**
+	 * The stored configuration: defaults merged with what is in the database,
+	 * with no constant overlay.
+	 *
+	 * This is the editing and persistence view. Saving must never read the
+	 * effective config, or a value pinned by a constant would be written into
+	 * the database as if the operator had chosen it there — and would stay
+	 * after the constant is removed.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public static function get_stored(): array {
 		$saved = get_option( self::OPTION_NAME, [] );
 
 		if ( ! is_array( $saved ) ) {
@@ -158,6 +196,26 @@ final class Options {
 		}
 
 		return $merged;
+	}
+
+	/**
+	 * Option keys currently pinned by a wp-config.php constant.
+	 *
+	 * Surfaced in the admin so a locked field is visibly locked rather than
+	 * silently ignored when someone edits it.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function overridden(): array {
+		$keys = [];
+
+		foreach ( array_keys( self::get_defaults() ) as $key ) {
+			if ( defined( self::CONST_PREFIX . strtoupper( $key ) ) ) {
+				$keys[] = $key;
+			}
+		}
+
+		return $keys;
 	}
 
 	/**
@@ -227,7 +285,7 @@ final class Options {
 	 * @return bool
 	 */
 	public static function save( array $values ): bool {
-		$current   = self::get_all();
+		$current   = self::get_stored();
 		$sanitized = [];
 
 		foreach ( array_keys( self::get_defaults() ) as $key ) {

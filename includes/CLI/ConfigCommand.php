@@ -144,7 +144,7 @@ final class ConfigCommand {
 		self::assert_known_key( $key, $defaults );
 
 		$value           = ValueCaster::cast( (string) $raw_value, $defaults[ $key ] );
-		$current         = Options::get_all();
+		$current         = Options::get_stored();
 		$current[ $key ] = $value;
 
 		if ( ! Options::save( $current ) ) {

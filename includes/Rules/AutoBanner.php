@@ -115,7 +115,7 @@ final class AutoBanner {
 	 * @return array<int, string>
 	 */
 	private static function counter_keys( string $ip ): array {
-		return [
+		$keys = [
 			'violations_' . $ip,      // Rate-limit escalation.
 			'login_fail_' . $ip,      // Brute-force login lockout.
 			'register_reject_' . $ip, // Registration spam.
@@ -123,6 +123,17 @@ final class AutoBanner {
 			'404_' . $ip,             // 404 flood.
 			'rl_' . $ip,              // Global per-IP rate-limit counter.
 		];
+
+		// The worker counts each endpoint in its own bucket, and signed-in
+		// requests in a second one. Leaving these behind meant an address could
+		// be unbanned and still be refused until the rate window aged out —
+		// while the admin screen reported it released.
+		foreach ( [ 'cron', 'xmlrpc', 'login', 'rest', 'filter' ] as $endpoint ) {
+			$keys[] = $endpoint . '_' . $ip;
+			$keys[] = $endpoint . '_li_' . $ip;
+		}
+
+		return $keys;
 	}
 
 	/**

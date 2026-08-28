@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.5] - 2026-08-28
+
+Fixes from an external security audit of 1.5.4. Every item below was reproduced
+against the source before being changed.
+
+### Security
+- A malformed CIDR prefix no longer matches every address. `10.0.0.0/foo` and `10.0.0.0/-1` were cast straight to int, producing a zero-width mask — one typo in the whitelist silently disabled the firewall, one in the blacklist took the site down. The prefix must now be an exact decimal within the family's range, and a malformed rule simply does not match
+- A ban is now enforced whenever the firewall is on. The worker only read the ban key when auto-ban or the login lockout happened to be enabled, so bans written by registration spam, password-reset floods or a manual CLI/admin action were listed as active while the address browsed the site freely
+- `safe_redirect_path()` folds backslashes to slashes. Browsers treat a leading backslash like a slash, so `/\evil.example/` survived the previous ltrim and reached the `Location` header as a protocol-relative, cross-origin redirect
+
+### Fixed
+- wp-config.php constants now apply to the runtime. `Options::get()` honoured them but `Options::get_all()` did not, and the worker, the hook bootstrap, the .htaccess sync and the status screen all read `get_all()` — including the master `enabled` switch. Saving reads the stored values through the new `Options::get_stored()`, so a pinned value is never written into the database
+- The settings screen now names the options a constant has pinned, instead of letting an operator edit a field that has no effect
+- Unblocking an address also clears the worker's per-endpoint rate counters. Clearing only the threshold counters left an unbanned address refused until the rate window aged out, while the admin screen reported it released
+
+### Removed
+- The `geo_action` setting. It has never been read at runtime — the worker always returned 403 and the .htaccess rule was always `[F,L]`. It is unimplementable as documented: geo blocking applies to every path, so redirecting a blocked visitor to the homepage would loop forever. The UI field, the option and the documentation are gone rather than pretending to offer a choice
+
 ## [1.5.4] - 2026-08-27
 
 ### Added
