@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.7] - 2026-09-06
+
+### Fixed
+- The release package and the Composer/Packagist dist no longer ship tests, docs or development configuration (`.gitattributes` export-ignore plus unified release excludes). A hosting malware scanner had flagged a unit-test fixture on a customer site
+
 ## [1.5.6] - 2026-08-28
 
 The rest of the external security audit of 1.5.4. Every item was reproduced
