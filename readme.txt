@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.7
+Stable tag: 1.5.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,11 @@ Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.8 =
+* Change: The default bot list no longer blocks ChatGPT-User, ClaudeBot, PerplexityBot or Meta-ExternalFetcher — these fetch pages for a real visitor or cite your site with a link, so blocking them cost referral traffic
+* Change: Anthropic's retired claude-web and anthropic-ai entries were removed; neither agent exists any more
+* Change: Sites that never edited the bot list receive the new default once on update. An edited list is left untouched
 
 = 1.5.7 =
 * Fix: the release package and Composer dist no longer ship tests, docs or development configuration

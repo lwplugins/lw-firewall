@@ -19,6 +19,7 @@ use LightweightPlugins\Firewall\Rules\PasswordResetGuard;
 use LightweightPlugins\Firewall\Rules\RegisterGuard;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
 use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
+use LightweightPlugins\Firewall\Upgrade\BotDefaultsMigration;
 
 /**
  * Main plugin class.
@@ -29,6 +30,7 @@ final class Plugin {
 	 * Constructor.
 	 */
 	public function __construct() {
+		BotDefaultsMigration::maybe_apply();
 		$this->init_alerts();
 		$this->bootstrap_worker();
 		$this->init_admin();

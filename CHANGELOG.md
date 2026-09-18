@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.8] - 2026-09-17
+
+### Changed
+- **The default bot list no longer blocks the AI agents that send traffic back.** `ChatGPT-User`, `ClaudeBot`, `PerplexityBot` and `Meta-ExternalFetcher` are out: the first and last fetch a page because a human asked for it, and the other two cite their sources with a link. Blocking them cost referral traffic rather than saving load. Pure training crawlers (`GPTBot`, `Meta-ExternalAgent`, `Bytespider`, `Amazonbot`, `cohere-ai`) and the SEO/scraper crawlers are unchanged
+- **Anthropic's retired `claude-web` and `anthropic-ai` entries were removed.** Neither agent has existed since ClaudeBot replaced them, so the rules only ever matched unrelated User-Agents by accident
+- **Sites that never edited the bot list get the new default once, on update.** Activation writes the full default set into the database, so a defaults change alone would never reach an existing install. The rewrite only fires when the stored list still matches the one shipped through 1.5.7 — add, remove or change a single entry and your list is left exactly as it is
+
 ## [1.5.7] - 2026-09-06
 
 ### Fixed

@@ -96,19 +96,25 @@ final class Options {
 			'admin_alert_email'        => '',
 			'admin_alert_scan_enabled' => true,
 			'admin_alert_changes'      => true,
+
+			/*
+			 * Shipped defaults. Deliberately absent: the AI agents that fetch
+			 * a page because a human asked for it and link back (ChatGPT-User,
+			 * OAI-SearchBot, Meta-ExternalFetcher, Claude-User,
+			 * Claude-SearchBot, Perplexity-User) plus the two crawlers that
+			 * cite their sources (ClaudeBot, PerplexityBot) — blocking those
+			 * costs referral traffic rather than saving load. Anthropic's
+			 * retired 'claude-web' and 'anthropic-ai' strings are gone too:
+			 * neither agent exists any more, so the entries only matched
+			 * unrelated User-Agents by accident.
+			 */
 			'blocked_bots'             => [
 				'meta-externalagent',
-				'meta-externalfetcher',
 				'gptbot',
-				'chatgpt-user',
-				'claudebot',
-				'claude-web',
 				'bytespider',
 				'amazonbot',
-				'anthropic-ai',
 				'cohere-ai',
 				'diffbot',
-				'perplexitybot',
 				'youbot',
 				'petalbot',
 				'semrushbot',

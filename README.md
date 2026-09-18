@@ -43,7 +43,8 @@ That list is the worker's pre-WordPress path. Registration spam protection, pass
 ### Bot Blocking
 
 - Block requests by User-Agent substring matching (case-insensitive)
-- 20+ known bad bots blocked by default (AhrefsBot, SemrushBot, DotBot, GPTBot, etc.)
+- 14 scraper and training crawlers blocked by default (AhrefsBot, SemrushBot, DotBot, GPTBot, Bytespider, etc.)
+- AI agents that fetch a page for a real visitor or cite it with a link (ChatGPT-User, OAI-SearchBot, ClaudeBot, PerplexityBot, Meta-ExternalFetcher) are deliberately **not** blocked
 - Add/remove bot patterns via admin UI or WP-CLI
 
 ### IP Whitelist / Blacklist
