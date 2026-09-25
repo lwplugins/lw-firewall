@@ -412,7 +412,7 @@ define( 'LW_FIREWALL_IP_WHITELIST', [ '192.168.1.100', '10.0.0.0/8' ] );
 ## Requirements
 
 - PHP 8.2 or higher
-- WordPress 6.0 or higher
+- WordPress 6.6 or higher
 
 ## Part of LW Plugins
 
