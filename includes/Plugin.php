@@ -16,6 +16,7 @@ use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Geo\GeoActivation;
 use LightweightPlugins\Firewall\Geo\HtaccessWriter;
+use LightweightPlugins\Firewall\Rest\Admin\Routes as AdminRoutes;
 use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\PasswordResetGuard;
@@ -37,6 +38,7 @@ final class Plugin {
 		$this->init_alerts();
 		$this->bootstrap_worker();
 		$this->init_admin();
+		$this->init_rest();
 		$this->init_site_manager();
 	}
 
@@ -211,6 +213,18 @@ final class Plugin {
 			NoticeManager::register();
 			new SettingsPage();
 		}
+	}
+
+	/**
+	 * Register the admin REST routes (REST requests are not is_admin()).
+	 *
+	 * Independent of the worker health check: the admin must stay usable to
+	 * diagnose and repair a broken worker.
+	 *
+	 * @return void
+	 */
+	private function init_rest(): void {
+		( new AdminRoutes() )->register();
 	}
 
 	/**
