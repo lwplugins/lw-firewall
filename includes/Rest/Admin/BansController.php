@@ -12,6 +12,7 @@ namespace LightweightPlugins\Firewall\Rest\Admin;
 use LightweightPlugins\Firewall\Admin\Bans\BanReasons;
 use LightweightPlugins\Firewall\Admin\Bans\BanRows;
 use LightweightPlugins\Firewall\Admin\Bans\Unbanner;
+use LightweightPlugins\Firewall\Admin\Bans\UserUnlocker;
 use LightweightPlugins\Firewall\Admin\Status\EnvironmentState;
 use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\OptionSchema;
@@ -19,6 +20,8 @@ use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Rules\AutoBanner;
 use LightweightPlugins\Firewall\Rules\BanList;
 use LightweightPlugins\Firewall\Rules\IpMatcher;
+use LightweightPlugins\Firewall\Rules\UserLockList;
+use LightweightPlugins\Firewall\Rules\UserLockout;
 use LightweightPlugins\Firewall\Settings\Input\IntParser;
 use LightweightPlugins\Firewall\Storage\StorageDetector;
 use LightweightPlugins\Firewall\Storage\StorageInterface;
@@ -104,27 +107,36 @@ final class BansController {
 	}
 
 	/**
-	 * Lift the given bans, or all of them; one result per address.
+	 * Lift the given bans and username locks, or all of them; one result per
+	 * address and per username.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function unban( WP_REST_Request $request ) {
-		$unbanner = new Unbanner( new AutoBanner( $this->storage() ) );
+		$storage  = $this->storage();
+		$unbanner = new Unbanner( new AutoBanner( $storage ) );
+		$unlocker = new UserUnlocker( new UserLockout( $storage ) );
 		$ips      = $request->get_param( 'ips' );
+		$users    = $request->get_param( 'users' );
+		$ips      = is_array( $ips ) ? array_values( $ips ) : [];
+		$users    = is_array( $users ) ? array_values( $users ) : [];
 
 		if ( true === rest_sanitize_boolean( $request->get_param( 'all' ) ) ) {
-			$results = $unbanner->lift_all();
-		} elseif ( is_array( $ips ) && [] !== $ips ) {
-			$results = $unbanner->lift( array_values( $ips ) );
+			$results      = $unbanner->lift_all();
+			$user_results = $unlocker->unlock_all();
+		} elseif ( [] !== $ips || [] !== $users ) {
+			$results      = $unbanner->lift( $ips );
+			$user_results = $unlocker->unlock( $users );
 		} else {
-			return Routes::error( 'lw_firewall_invalid', __( 'Send "ips" (a list of addresses) or "all": true.', 'lw-firewall' ), 400 );
+			return Routes::error( 'lw_firewall_invalid', __( 'Send "ips" (addresses), "users" (username lock keys) or "all": true.', 'lw-firewall' ), 400 );
 		}
 
 		return new WP_REST_Response(
 			[
-				'results' => $results,
-				'bans'    => $this->listing(),
+				'results'      => $results,
+				'user_results' => $user_results,
+				'bans'         => $this->listing(),
 			]
 		);
 	}
@@ -149,12 +161,13 @@ final class BansController {
 		return array_merge(
 			BanRows::build( BanList::all( $storage ), time() ),
 			[
-				'store'   => [
+				'store'      => [
 					'preference' => $preference,
 					'backend'    => EnvironmentState::backend_name( $storage ),
 					'label'      => StorageDetector::detect( $preference ),
 				],
-				'reasons' => $reasons,
+				'reasons'    => $reasons,
+				'user_locks' => UserLockList::all( $storage ),
 			]
 		);
 	}

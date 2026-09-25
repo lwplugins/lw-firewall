@@ -22,6 +22,7 @@ use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\PasswordResetGuard;
 use LightweightPlugins\Firewall\Rules\RegisterGuard;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
+use LightweightPlugins\Firewall\Rules\UserLockGuard;
 use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
 use LightweightPlugins\Firewall\Upgrade\BotDefaultsMigration;
 
@@ -105,9 +106,13 @@ final class Plugin {
 			add_action( 'template_redirect', [ $this, 'track_404' ] );
 		}
 
-		// Brute-force login protection.
+		// Brute-force login protection: per IP, and per username on top.
 		if ( ! empty( $options['login_limit_enabled'] ) ) {
 			add_action( 'wp_login_failed', [ $this, 'track_failed_login' ] );
+
+			if ( ! empty( $options['login_user_limit_enabled'] ) ) {
+				UserLockGuard::init();
+			}
 		}
 
 		// Registration spam protection (default WP register form only).

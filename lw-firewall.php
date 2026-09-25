@@ -76,6 +76,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command( 'lw-firewall alerts', LightweightPlugins\Firewall\CLI\AlertsCommand::class );
 	WP_CLI::add_command( 'lw-firewall reset', LightweightPlugins\Firewall\CLI\ResetCommand::class );
 	WP_CLI::add_command( 'lw-firewall ban', LightweightPlugins\Firewall\CLI\BanCommand::class );
+	WP_CLI::add_command( 'lw-firewall user-lock', LightweightPlugins\Firewall\CLI\UserLockCommand::class );
 }
 
 // Shared helpers (also used by MU-plugin worker).

@@ -37,6 +37,7 @@ final class LogReasons {
 			'rate_limited_rest'   => __( 'Rate limit: REST API', 'lw-firewall' ),
 			'rate_limited_filter' => __( 'Rate limit: filter parameters', 'lw-firewall' ),
 			'login_lockout'       => __( 'Too many failed logins', 'lw-firewall' ),
+			'login_user_lockout'  => __( 'Username locked after failed logins', 'lw-firewall' ),
 			'register_spam'       => __( 'Registration spam', 'lw-firewall' ),
 			'reset_ip'            => __( 'Password reset flood (per IP)', 'lw-firewall' ),
 			'reset_user'          => __( 'Password reset flood (per account)', 'lw-firewall' ),
