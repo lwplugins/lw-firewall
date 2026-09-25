@@ -68,7 +68,12 @@ final class RegisterTracker {
 	 * @return void
 	 */
 	public function record(): void {
-		$ip        = IpDetector::get_ip();
+		$ip = IpDetector::get_ip();
+
+		if ( ! CountGuard::allows( $ip ) ) {
+			return;
+		}
+
 		$threshold = (int) Options::get( 'register_ban_threshold', 3 );
 		$duration  = (int) Options::get( 'register_ban_duration', 3600 );
 

@@ -57,6 +57,7 @@ if ( PHP_VERSION_ID < 80200 ) {
 			'Rules/IpMatcher.php',
 			'Rules/BotBlocker.php',
 			'Rules/AutoBanner.php',
+			'Rules/CountGuard.php',
 			'Rules/NotFoundTracker.php',
 			'Geo/GeoDetector.php',
 			'Geo/RangeIndex.php',
@@ -164,6 +165,12 @@ if ( PHP_VERSION_ID < 80200 ) {
 
 					$storage = lw_firewall_resolve_storage( $options['storage'] ?? 'auto' );
 
+					// A shared or proxy address (private, loopback, a trusted proxy
+					// whose forwarded header is missing…) stands for every visitor at
+					// once. It is never counted or banned, or a few failed logins would
+					// lock out the whole site. The checks above still apply to it.
+					$countable = \LightweightPlugins\Firewall\Rules\CountGuard::allows( $ip );
+
 					// --- Ban check ---
 					// Unconditional while the firewall is on. Gating this on the
 					// auto-ban and login-lockout toggles left every other producer
@@ -173,7 +180,7 @@ if ( PHP_VERSION_ID < 80200 ) {
 					// freely.
 					$banner = new \LightweightPlugins\Firewall\Rules\AutoBanner( $storage );
 
-					if ( $banner->is_banned( $ip ) ) {
+					if ( $countable && $banner->is_banned( $ip ) ) {
 						lw_firewall_log( $options, $ip, 'auto_banned' );
 						\LightweightPlugins\Firewall\Rules\AutoBanner::block();
 					}
@@ -202,7 +209,7 @@ if ( PHP_VERSION_ID < 80200 ) {
 					$request_uri               = $_SERVER['REQUEST_URI'] ?? '';
 					[ $reason, $custom_limit ] = lw_firewall_detect_type( $request_uri, $options );
 
-					if ( null === $reason ) {
+					if ( null === $reason || ! $countable ) {
 						return;
 					}
 

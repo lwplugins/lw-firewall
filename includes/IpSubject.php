@@ -58,11 +58,35 @@ final class IpSubject {
 			return (string) inet_ntop( $packed );
 		}
 
-		if ( str_repeat( "\x00", 10 ) . "\xff\xff" === substr( $packed, 0, 12 ) ) {
+		if ( self::is_mapped( $packed ) ) {
 			return (string) inet_ntop( substr( $packed, 12 ) );
 		}
 
 		return inet_ntop( substr( $packed, 0, 8 ) . str_repeat( "\x00", 8 ) ) . $suffix;
+	}
+
+	/**
+	 * Fold an IPv4-mapped IPv6 address ("::ffff:203.0.113.7") to plain IPv4.
+	 *
+	 * Any other input is returned unchanged.
+	 *
+	 * @param string $ip Address.
+	 * @return string
+	 */
+	public static function unmap( string $ip ): string {
+		$packed = filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ? inet_pton( $ip ) : false;
+
+		return false !== $packed && self::is_mapped( $packed ) ? (string) inet_ntop( substr( $packed, 12 ) ) : $ip;
+	}
+
+	/**
+	 * Whether a packed address is IPv4-mapped IPv6 (::ffff:0:0/96).
+	 *
+	 * @param string $packed Output of inet_pton().
+	 * @return bool
+	 */
+	private static function is_mapped( string $packed ): bool {
+		return 16 === strlen( $packed ) && str_repeat( "\x00", 10 ) . "\xff\xff" === substr( $packed, 0, 12 );
 	}
 
 	/**

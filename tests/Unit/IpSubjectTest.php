@@ -51,6 +51,28 @@ final class IpSubjectTest extends TestCase {
 	}
 
 	/**
+	 * @dataProvider provide_mapped
+	 *
+	 * @param string $ip       Address.
+	 * @param string $expected Unmapped address.
+	 */
+	public function test_unmaps_ipv4_mapped_addresses( string $ip, string $expected ): void {
+		$this->assertSame( $expected, IpSubject::unmap( $ip ) );
+	}
+
+	/**
+	 * @return array<string, array{0: string, 1: string}>
+	 */
+	public static function provide_mapped(): array {
+		return [
+			'mapped'       => [ '::ffff:10.0.0.1', '10.0.0.1' ],
+			'plain IPv4'   => [ '10.0.0.1', '10.0.0.1' ],
+			'plain IPv6'   => [ '2001:db8::1', '2001:db8::1' ],
+			'not an IP'    => [ 'x', 'x' ],
+		];
+	}
+
+	/**
 	 * @dataProvider provide_targets
 	 *
 	 * @param string $input    Operator input (admin, CLI).

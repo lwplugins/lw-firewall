@@ -71,7 +71,12 @@ final class LoginTracker {
 	 * @return void
 	 */
 	public function record_failure(): void {
-		$ip        = IpDetector::get_ip();
+		$ip = IpDetector::get_ip();
+
+		if ( ! CountGuard::allows( $ip ) ) {
+			return;
+		}
+
 		$threshold = (int) Options::get( 'login_max_attempts', 5 );
 		$window    = (int) Options::get( 'login_lockout_window', 600 );
 		$duration  = (int) Options::get( 'login_lockout_duration', 3600 );

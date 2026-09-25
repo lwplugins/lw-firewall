@@ -44,7 +44,12 @@ final class NotFoundTracker {
 	 * Record a 404 hit for the current IP. Called from template_redirect.
 	 */
 	public function record(): void {
-		$ip     = IpDetector::get_ip();
+		$ip = IpDetector::get_ip();
+
+		if ( ! CountGuard::allows( $ip ) ) {
+			return;
+		}
+
 		$window = (int) Options::get( 'rate_window', 60 );
 		$limit  = (int) Options::get( 'rate_limit', 30 );
 		$count  = $this->storage->increment( '404_' . IpSubject::of( $ip ), $window );
@@ -72,6 +77,10 @@ final class NotFoundTracker {
 	 * @return bool True if the IP should be blocked.
 	 */
 	public function is_flooding( string $ip ): bool {
+		if ( ! CountGuard::allows( $ip ) ) {
+			return false;
+		}
+
 		$limit = (int) Options::get( 'rate_limit', 30 );
 		$count = $this->storage->get( '404_' . IpSubject::of( $ip ) );
 

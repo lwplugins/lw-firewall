@@ -72,6 +72,10 @@ final class AutoBanner {
 	 * @param string $ip Client IP.
 	 */
 	public function record_violation( string $ip ): void {
+		if ( ! CountGuard::allows( $ip ) ) {
+			return;
+		}
+
 		$threshold = (int) Options::get( 'auto_ban_threshold', 3 );
 		$duration  = (int) Options::get( 'auto_ban_duration', 3600 );
 
@@ -98,6 +102,12 @@ final class AutoBanner {
 		// that nothing would ever lift on its own. A ban is a temporary measure;
 		// the blacklist is where permanent belongs.
 		$duration = max( self::MIN_DURATION, $duration );
+
+		// A shared or proxy address stands for every visitor at once; banning
+		// it would lock out the whole site.
+		if ( ! CountGuard::allows( $ip ) ) {
+			return;
+		}
 
 		$subject = IpSubject::of( $ip );
 

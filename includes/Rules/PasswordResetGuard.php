@@ -111,20 +111,24 @@ final class PasswordResetGuard {
 		$limiter = self::limiter();
 		$user_id = $user_data instanceof WP_User ? (int) $user_data->ID : 0;
 
+		// A shared or proxy address is not one requester: skip the per-IP axis
+		// (an empty IP) and keep the per-account and site-wide limits.
+		$counted = CountGuard::allows( $ip ) ? $ip : '';
+
 		// A submission that failed the proof-of-render check is bot traffic, not
 		// a real request for that account. It counts against the sender so a
 		// flood still gets banned, but it must not burn the target's allowance
 		// or the site's email budget — a bot could otherwise lock a user out of
 		// their own reset, or deny resets to everyone.
 		if ( self::is_login_form_request() && ! self::proof_ok() ) {
-			$limiter->record_rejected( $ip );
+			$limiter->record_rejected( $counted );
 			$errors->add( 'lw_fw_reset_blocked', ResetPenalty::message( self::SPAM ) );
 			ResetPenalty::apply( self::SPAM, $ip, $user_id );
 
 			return;
 		}
 
-		$verdict = $limiter->record( $ip, $user_id );
+		$verdict = $limiter->record( $counted, $user_id );
 
 		if ( ResetLimiter::ALLOW === $verdict ) {
 			return;
