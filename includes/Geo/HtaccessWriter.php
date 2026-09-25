@@ -28,37 +28,55 @@ final class HtaccessWriter {
 	/**
 	 * Sync .htaccess with current geo blocking settings.
 	 *
-	 * Call after any change to geo_enabled or blocked_countries.
+	 * Call after any change to enabled, geo_enabled or blocked_countries.
 	 */
 	public static function sync(): void {
-		$options   = Options::get_all();
-		$enabled   = ! empty( $options['geo_enabled'] );
-		$countries = (array) ( $options['blocked_countries'] ?? [] );
+		self::write( self::rules_for( Options::get_all() ) );
+	}
 
-		self::write( $enabled, $countries );
+	/**
+	 * The rule lines the given effective settings call for.
+	 *
+	 * Empty (which removes the block) unless geo blocking is active — the
+	 * master switch included: with the firewall switched off, Apache must not
+	 * go on refusing visitors of the listed countries.
+	 *
+	 * @param array<string, mixed> $options Effective settings.
+	 * @return array<int, string>
+	 */
+	public static function rules_for( array $options ): array {
+		return self::build_rules(
+			GeoActivation::is_active( $options ),
+			(array) ( $options['blocked_countries'] ?? [] )
+		);
 	}
 
 	/**
 	 * Remove geo rules from .htaccess.
 	 */
 	public static function remove(): void {
-		self::write( false, [] );
+		self::write( [] );
 	}
 
 	/**
-	 * Write or clear geo blocking rules in .htaccess.
+	 * Write (or, with no lines, clear) the geo block in .htaccess.
 	 *
-	 * @param bool     $enabled   Whether geo blocking is active.
-	 * @param string[] $countries Blocked country codes.
+	 * @param array<int, string> $lines Rule lines.
 	 */
-	private static function write( bool $enabled, array $countries ): void {
+	private static function write( array $lines ): void {
 		$path = self::get_htaccess_path();
 
 		if ( ! file_exists( $path ) ) {
 			return;
 		}
 
-		insert_with_markers( $path, self::MARKER, self::build_rules( $enabled, $countries ) );
+		// insert_with_markers() lives in an admin include; sync() also runs on
+		// front-end requests (right after an update) and under WP-CLI.
+		if ( ! function_exists( 'insert_with_markers' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/misc.php';
+		}
+
+		insert_with_markers( $path, self::MARKER, $lines );
 	}
 
 	/**

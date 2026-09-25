@@ -181,6 +181,10 @@ final class ConfigCommand {
 			WP_CLI::error( 'Failed to reset settings.' );
 		}
 
+		// Same resync as `config set`: the defaults change the geo settings,
+		// and the Apache layer would otherwise keep the previous rules.
+		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
+
 		WP_CLI::success( 'All settings reset to defaults.' );
 	}
 }

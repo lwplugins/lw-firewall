@@ -13,6 +13,8 @@ use LightweightPlugins\Firewall\Admin\SettingsPage;
 use LightweightPlugins\Firewall\Admin\WorkerNotice;
 use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
+use LightweightPlugins\Firewall\Geo\GeoActivation;
+use LightweightPlugins\Firewall\Geo\HtaccessWriter;
 use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\PasswordResetGuard;
@@ -63,8 +65,11 @@ final class Plugin {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'upgrader_process_complete', [ $this, 'reinstall_after_upgrade' ], 10, 2 );
 
-		if ( Activator::is_worker_outdated() ) {
-			Activator::install_worker();
+		// A worker reinstall means the plugin was just updated: resync the
+		// .htaccess geo block too, so rules written under an earlier version's
+		// logic (e.g. with the master switch off) do not outlive the update.
+		if ( Activator::is_worker_outdated() && Activator::install_worker() ) {
+			HtaccessWriter::sync();
 		}
 
 		if ( Activator::is_worker_outdated() ) {
@@ -83,6 +88,10 @@ final class Plugin {
 	 */
 	private function init_runtime_hooks(): void {
 		$options = Options::get_all();
+
+		// Before the master-switch return, so switching geo blocking (or the
+		// whole firewall) off also clears the weekly CIDR download.
+		GeoActivation::sync_cron( $options );
 
 		if ( empty( $options['enabled'] ) ) {
 			return;
@@ -114,13 +123,9 @@ final class Plugin {
 			add_action( 'send_headers', [ SecurityHeaders::class, 'send' ] );
 		}
 
-		// Geo blocking CIDR updater cron.
-		if ( ! empty( $options['geo_enabled'] ) ) {
+		// Geo blocking CIDR updater cron (scheduled by GeoActivation above).
+		if ( GeoActivation::is_active( $options ) ) {
 			add_action( CidrUpdater::CRON_HOOK, [ $this, 'update_geo_cidrs' ] );
-
-			if ( ! wp_next_scheduled( CidrUpdater::CRON_HOOK ) ) {
-				wp_schedule_event( time(), 'weekly', CidrUpdater::CRON_HOOK );
-			}
 		}
 	}
 
