@@ -30,7 +30,7 @@ final class StorageProbe {
 	 */
 	public static function run( StorageInterface $storage ): array {
 		$key   = 'status_probe_' . bin2hex( random_bytes( 6 ) );
-		$token = bin2hex( random_bytes( 8 ) );
+		$token = 'probe-' . bin2hex( random_bytes( 8 ) ); // Never numeric: RedisStorage casts numeric strings.
 
 		if ( ! $storage->set( $key, $token, 60 ) ) {
 			return self::result( false, __( 'The storage backend refused a write. Rate limits, bans and counters are not being recorded.', 'lw-firewall' ) );

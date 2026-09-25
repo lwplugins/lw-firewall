@@ -61,4 +61,43 @@ final class StorageProbeTest extends MonkeyTestCase {
 	public function test_an_unknown_backend_class_is_named_unknown(): void {
 		$this->assertSame( 'unknown', EnvironmentState::backend_name( new ArrayStorage() ) );
 	}
+
+	/**
+	 * Regression: RedisStorage::get() turns numeric strings into numbers, so
+	 * a random hex token that happened to be all digits (or like "1e5")
+	 * failed the read-back check on a healthy backend.
+	 */
+	public function test_the_probe_token_never_looks_numeric(): void {
+		$storage = new class() implements \LightweightPlugins\Firewall\Storage\StorageInterface {
+			/** @var array<string, mixed> */
+			private array $data = array();
+			/** @var array<int, string> */
+			public array $written = array();
+			public function get( string $key ): mixed {
+				$value = $this->data[ $key ] ?? null;
+				return is_string( $value ) && is_numeric( $value ) ? $value + 0 : $value;
+			}
+			public function set( string $key, mixed $value, int $ttl ): bool {
+				$this->written[]    = (string) $value;
+				$this->data[ $key ] = $value;
+				return true;
+			}
+			public function increment( string $key, int $ttl ): int {
+				return 1;
+			}
+			public function delete( string $key ): bool {
+				unset( $this->data[ $key ] );
+				return true;
+			}
+			public static function is_available(): bool {
+				return true;
+			}
+		};
+
+		for ( $i = 0; $i < 64; $i++ ) {
+			StorageProbe::run( $storage );
+		}
+
+		$this->assertSame( array(), array_filter( $storage->written, static fn ( string $t ): bool => is_numeric( $t ) || ! ctype_alpha( $t[0] ) ) );
+	}
 }
