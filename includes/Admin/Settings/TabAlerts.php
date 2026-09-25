@@ -183,7 +183,7 @@ final class TabAlerts implements TabInterface {
 
 		if ( $pending > 0 ) {
 			printf(
-				'<div class="notice notice-warning inline"><p>%s</p></div>',
+				'<div class="notice notice-warning lw-notice inline"><p>%s</p></div>',
 				esc_html(
 					sprintf(
 						/* translators: %d: number of undelivered alerts. */
@@ -201,7 +201,7 @@ final class TabAlerts implements TabInterface {
 
 		if ( get_transient( AlertMailer::ERROR_TRANSIENT ) ) {
 			printf(
-				'<div class="notice notice-warning inline"><p>%s</p></div>',
+				'<div class="notice notice-warning lw-notice inline"><p>%s</p></div>',
 				esc_html__( 'The last alert email could not be sent. Check your site mail configuration (SMTP plugin, hosting mail limits) — an alert that never arrives is no alert at all.', 'lw-firewall' )
 			);
 		}

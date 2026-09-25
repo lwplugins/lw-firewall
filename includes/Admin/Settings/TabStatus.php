@@ -59,7 +59,7 @@ final class TabStatus implements TabInterface {
 		}
 
 		printf(
-			'<div class="notice notice-warning inline"><p><strong>%s</strong> %s</p><p><code>%s</code></p></div>',
+			'<div class="notice notice-warning lw-notice inline"><p><strong>%s</strong> %s</p><p><code>%s</code></p></div>',
 			esc_html__( 'The firewall cannot see real visitor addresses.', 'lw-firewall' ),
 			esc_html__( 'Every request reaches it as the address below, which is not routable on the internet — so all visitors share one rate-limit bucket, one ban and one country. If this site is behind a proxy or load balancer, list it under IP Rules → Reverse Proxy.', 'lw-firewall' ),
 			esc_html( '' !== $ip ? $ip : '(none)' )
@@ -82,7 +82,7 @@ final class TabStatus implements TabInterface {
 		}
 
 		printf(
-			'<div class="notice notice-warning inline"><p><strong>%s</strong> %s</p></div>',
+			'<div class="notice notice-warning lw-notice inline"><p><strong>%s</strong> %s</p></div>',
 			esc_html__( 'The worker file is installed but has never reported in.', 'lw-firewall' ),
 			esc_html__( 'It records a heartbeat the first time it runs. If this notice stays after a few page loads, the worker cannot load the plugin — most often because the plugin directory was renamed. Reinstall it below.', 'lw-firewall' )
 		);

@@ -103,7 +103,7 @@ final class TabImportExport implements TabInterface {
 	private function render_import_notices(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display only.
 		if ( isset( $_GET['imported'] ) && '1' === $_GET['imported'] ) {
-			echo '<div class="notice notice-success inline"><p>';
+			echo '<div class="notice notice-success lw-notice inline"><p>';
 			esc_html_e( 'Settings imported successfully.', 'lw-firewall' );
 			echo '</p></div>';
 		}
@@ -120,7 +120,7 @@ final class TabImportExport implements TabInterface {
 
 			$message = $messages[ $error ] ?? __( 'Import failed.', 'lw-firewall' );
 
-			echo '<div class="notice notice-error inline"><p>';
+			echo '<div class="notice notice-error lw-notice inline"><p>';
 			echo esc_html( $message );
 			echo '</p></div>';
 		}

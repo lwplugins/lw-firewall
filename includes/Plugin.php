@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall;
 
+use LightweightPlugins\Firewall\Admin\NoticeManager;
 use LightweightPlugins\Firewall\Admin\SettingsPage;
 use LightweightPlugins\Firewall\Admin\WorkerNotice;
 use LightweightPlugins\Firewall\Alerts\AdminMonitor;
@@ -207,6 +208,7 @@ final class Plugin {
 	 */
 	private function init_admin(): void {
 		if ( is_admin() ) {
+			NoticeManager::register();
 			new SettingsPage();
 		}
 	}
