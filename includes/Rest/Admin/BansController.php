@@ -11,9 +11,11 @@ namespace LightweightPlugins\Firewall\Rest\Admin;
 
 use LightweightPlugins\Firewall\Admin\Bans\BanReasons;
 use LightweightPlugins\Firewall\Admin\Bans\BanRows;
+use LightweightPlugins\Firewall\Admin\Bans\SelfBanGuard;
 use LightweightPlugins\Firewall\Admin\Bans\Unbanner;
 use LightweightPlugins\Firewall\Admin\Bans\UserUnlocker;
 use LightweightPlugins\Firewall\Admin\Status\EnvironmentState;
+use LightweightPlugins\Firewall\IpDetector;
 use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\OptionSchema;
 use LightweightPlugins\Firewall\Options;
@@ -87,6 +89,10 @@ final class BansController {
 
 		if ( filter_var( $ip, FILTER_VALIDATE_IP ) && IpMatcher::matches( $ip, array_map( 'strval', (array) Options::get( 'ip_whitelist', [] ) ) ) ) {
 			return Routes::error( 'lw_firewall_whitelisted', __( 'This address is on the IP whitelist, which bypasses every check — a ban would have no effect. Remove it from the whitelist first.', 'lw-firewall' ), 409 );
+		}
+
+		if ( SelfBanGuard::is_own_address( $ip, IpDetector::get_ip() ) ) {
+			return Routes::error( 'lw_firewall_own_address', __( 'This is the address you are using right now. Banning it would lock you out of the whole site, the admin included.', 'lw-firewall' ), 409 );
 		}
 
 		$banner = new AutoBanner( $this->storage() );
