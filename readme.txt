@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.10
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,7 +85,39 @@ Rate limits are per-IP (IPv6 clients per /64 network, the block a single connect
 
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
+= Can someone lock my account on purpose? =
+The per-username lockout locks an account after repeated failed logins from any IP, so anyone who knows a username can keep that account locked by retrying every lock period (15 minutes by default). Whitelisted IPs are never counted or refused: whitelist your own address under IP Rules. Lift an active lock from the Bans list or with `wp lw-firewall user-lock clear`. You can shorten the lock (Username Lock Duration) or turn the feature off.
+
 == Changelog ==
+
+= 1.6.0 =
+* New: New settings screen built with WordPress components: side navigation for the eleven sections, a top bar with Save/Discard and a Cmd/Ctrl+S shortcut, loading skeletons and a mobile layout. Only changed settings are saved; an invalid value is shown next to its field and nothing is saved.
+* New: Every action has its own button and never saves unsaved edits: unblock (per address, selected or all, with per-address results), manual ban, clear log, reinstall worker, update CIDR lists, run the administrator scan, send a test email, import and export.
+* New: Per-username login lockout: after 10 failed logins within the detection window, from any IP, the account is locked for 15 minutes, correct password included. Failures count under the account's real login, so email logins and Unicode look-alike spellings add up to the same lock. Whitelisted IPs bypass it. Lift a lock from the Bans list or with wp lw-firewall user-lock remove <username|email> / clear. login_user_limit_enabled defaults to on, so sites that already have brute-force login protection on get username locking after the update.
+* New: The Status tab shows how the firewall sees your IP (REMOTE_ADDR, forwarded headers, trusted proxy match, Cloudflare, routable) (#6), tests the storage backend with a write/read/delete round trip, checks the cache directory, shows geo list freshness per country and alert state, and lists warnings with a badge in the navigation.
+* New: The ban list shows the storage backend in use, IPv6 /64 and legacy entries and username locks; administrators can ban an address manually.
+* New: The log view has reason labels, a reason filter, search and paging.
+* New: Admin REST API under lw-firewall/v1/admin/ for users with manage_options.
+* New: Violet accent for the admin and the plugin logo; Hungarian translation of the whole new interface.
+* Change: XML-RPC rate limiting is on by default for new installs only. Existing sites, including multisite subsites without their own settings, keep their current setting.
+* Change: The Security tab lists exactly the headers that are sent, with what each one protects against.
+* Change: The classic settings screen and its stylesheet and script were removed.
+* Fix: "Update CIDR lists" works and reports each country for IPv4 and IPv6.
+* Fix: Country codes must be ISO 3166-1 codes: "Germany" is rejected instead of being saved as GE, and "CN, RU" on one line keeps both.
+* Fix: IP whitelist, blacklist and trusted proxy entries are validated, and invalid entries are reported.
+* Fix: An empty Filter Parameters list resets to filter_|30, query_type_|30, limits included.
+* Fix: Invalid alert email addresses are reported instead of being dropped silently.
+* Fix: Settings pinned in wp-config.php are never written to the database by the admin, the import or WP-CLI.
+* Fix: Import keeps settings missing from the file, reads "false" as off, validates every value and reports each setting.
+* Fix: The number limits in the admin match the server limits, so a value set through WP-CLI can no longer block saving the form.
+* Fix: "Unblock every banned address" reports each address, and a ban the storage refuses to lift stays listed.
+* Fix: The administrator scan no longer says "clean" when alerts are off, or "email sent" when the mail was queued.
+* Fix: A refusal caused by a locked username no longer counts against the visitor's IP, so an owner retrying with the right password cannot get their own IP banned.
+* Fix: The admin can no longer ban the address they are currently using.
+* Fix: Worker install errors are shown as sentences, not codes, and the plugin's own warnings (Status, Alerts, import results) are visible again.
+* Fix: The admin screen no longer depends on the translated parent-menu name to load.
+* Fix: WP-CLI config set rejects invalid values, and config reset leaves wp-config.php-pinned settings alone.
+* Fix: List settings are capped at 5000 entries, and settings requests at 256 KB.
 
 = 1.5.10 =
 * Fix: Notices from themes and other plugins (for example a theme's purchase-code or recommended-plugins notice) could show on the LW Firewall screen. They are now kept off every LW Plugins screen, whatever their markup
@@ -302,6 +334,9 @@ Yes. It automatically detects the real visitor IP via the CF-Connecting-IP heade
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.6.0 =
+New settings screen and per-username login lockout (on whenever login protection is on). XML-RPC rate limiting is now on by default for new installs only. Whitelist your own IP if you log in from a fixed address.
 
 = 1.5.9 =
 Security update: IPv6 attackers could evade rate limits and bans by rotating addresses, and some login/XML-RPC URLs escaped the limits. Update recommended.

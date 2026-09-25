@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.6.0] - 2026-09-25
+
+### Added
+- New settings screen built with WordPress components: side navigation for the eleven sections, a top bar with Save/Discard and a Cmd/Ctrl+S shortcut, loading skeletons and a mobile layout. Only changed settings are saved; an invalid value is shown next to its field and nothing is saved.
+- Every action has its own button and never saves unsaved edits: unblock (per address, selected or all, with per-address results), manual ban, clear log, reinstall worker, update CIDR lists, run the administrator scan, send a test email, import and export.
+- Per-username login lockout: after 10 failed logins within the detection window, from any IP, the account is locked for 15 minutes, correct password included. Failures count under the account's real login, so email logins and Unicode look-alike spellings add up to the same lock. Whitelisted IPs bypass it. Lift a lock from the Bans list or with `wp lw-firewall user-lock remove <username|email>` / `clear`. `login_user_limit_enabled` defaults to on, so sites that already have brute-force login protection on get username locking after the update.
+- The Status tab shows how the firewall sees your IP (REMOTE_ADDR, forwarded headers, trusted proxy match, Cloudflare, routable) (#6), tests the storage backend with a write/read/delete round trip, checks the cache directory, shows geo list freshness per country and alert state, and lists warnings with a badge in the navigation.
+- The ban list shows the storage backend in use, IPv6 /64 and legacy entries and username locks; administrators can ban an address manually.
+- The log view has reason labels, a reason filter, search and paging.
+- Admin REST API under `lw-firewall/v1/admin/` for users with `manage_options`.
+- Violet accent for the admin and the plugin logo; Hungarian translation of the whole new interface.
+
+### Changed
+- XML-RPC rate limiting is on by default for new installs only. Existing sites, including multisite subsites without their own settings, keep their current setting.
+- The Security tab lists exactly the headers that are sent, with what each one protects against.
+- The classic settings screen and its stylesheet and script were removed.
+
+### Fixed
+- "Update CIDR lists" works and reports each country for IPv4 and IPv6.
+- Country codes must be ISO 3166-1 codes: "Germany" is rejected instead of being saved as GE, and "CN, RU" on one line keeps both.
+- IP whitelist, blacklist and trusted proxy entries are validated, and invalid entries are reported.
+- An empty Filter Parameters list resets to `filter_|30, query_type_|30`, limits included.
+- Invalid alert email addresses are reported instead of being dropped silently.
+- Settings pinned in wp-config.php are never written to the database by the admin, the import or WP-CLI.
+- Import keeps settings missing from the file, reads "false" as off, validates every value and reports each setting.
+- The number limits in the admin match the server limits, so a value set through WP-CLI can no longer block saving the form.
+- "Unblock every banned address" reports each address, and a ban the storage refuses to lift stays listed.
+- The administrator scan no longer says "clean" when alerts are off, or "email sent" when the mail was queued.
+- A refusal caused by a locked username no longer counts against the visitor's IP, so an owner retrying with the right password cannot get their own IP banned.
+- The admin can no longer ban the address they are currently using.
+- Worker install errors are shown as sentences, not codes, and the plugin's own warnings (Status, Alerts, import results) are visible again.
+- The admin screen no longer depends on the translated parent-menu name to load.
+- WP-CLI `config set` rejects invalid values, and `config reset` leaves wp-config.php-pinned settings alone.
+- List settings are capped at 5000 entries, and settings requests at 256 KB.
+
 ## [1.5.10] - 2026-09-25
 
 ### Fixed
