@@ -43,6 +43,19 @@ final class Options {
 	];
 
 	/**
+	 * The previous default of every key whose default changed.
+	 *
+	 * Applied only when a stored option exists but does not hold the key, so
+	 * a site that was installed before the change keeps the behaviour it had;
+	 * a new install (no option yet) gets the current default.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private const LEGACY_DEFAULTS = [
+		'protect_xmlrpc' => false, // Default on for new installs since 1.6.0.
+	];
+
+	/**
 	 * Default settings.
 	 *
 	 * @return array<string, mixed>
@@ -55,7 +68,7 @@ final class Options {
 			'rate_window'                 => 60,
 			'action'                      => 'redirect', // 'redirect' | '429'.
 			'protect_cron'                => false,
-			'protect_xmlrpc'              => false,
+			'protect_xmlrpc'              => true,
 			'protect_login'               => true,
 			'protect_rest_api'            => false,
 			'protect_404'                 => false,
@@ -202,7 +215,8 @@ final class Options {
 			$saved = [];
 		}
 
-		$merged = array_merge( self::get_defaults(), $saved );
+		$defaults = [] === $saved ? self::get_defaults() : array_merge( self::get_defaults(), self::LEGACY_DEFAULTS );
+		$merged   = array_merge( $defaults, $saved );
 
 		foreach ( self::LIST_KEYS as $list_key ) {
 			if ( isset( $merged[ $list_key ] ) && ! is_array( $merged[ $list_key ] ) ) {
