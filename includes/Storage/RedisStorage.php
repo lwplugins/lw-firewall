@@ -15,8 +15,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Rate-limit counter storage using Redis.
+ *
+ * Every command is wrapped: phpredis throws RedisException when the connection
+ * drops mid-request (likeliest exactly under the flood this plugin mitigates),
+ * and these methods run inside WordPress hooks such as wp_login_failed and
+ * template_redirect, where an uncaught exception is a fatal error. A failure
+ * fails open, like the other backends.
  */
 final class RedisStorage implements StorageInterface {
+
+	/**
+	 * Atomic increment: INCR, then EXPIRE whenever the key has no TTL.
+	 *
+	 * One server-side step, so no crash or dropped connection can leave a
+	 * counter without an expiry. Checking for a missing TTL (rather than
+	 * "value is 1") also repairs a counter stranded by the old two-command
+	 * sequence. Plain EVAL and TTL — no Redis 7-only flags.
+	 */
+	private const INCREMENT_SCRIPT = "local v = redis.call('INCR', KEYS[1])\n"
+		. "if redis.call('TTL', KEYS[1]) == -1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end\n"
+		. 'return v';
 
 	/**
 	 * Key prefix for Redis entries.
@@ -30,7 +48,7 @@ final class RedisStorage implements StorageInterface {
 	 *
 	 * @var \Redis
 	 */
-	private \Redis $redis;
+	private object $redis;
 
 	/**
 	 * Whether the connection succeeded.
@@ -42,17 +60,24 @@ final class RedisStorage implements StorageInterface {
 	/**
 	 * Connect to Redis on construction.
 	 *
-	 * A failed connection (server down, timeout, max-clients — likeliest exactly
-	 * while the site is under the flood this plugin mitigates) must never fatal
+	 * A failed connection (server down, timeout, max-clients) must never fatal
 	 * the front end: phpredis throws RedisException on connect failure, so we
 	 * catch it and degrade to a no-op (fail-open) instead.
 	 *
-	 * @param string $host Redis host.
-	 * @param int    $port Redis port.
+	 * @param string      $host   Redis host.
+	 * @param int         $port   Redis port.
+	 * @param \Redis|null $client Already-connected client (tests); a new one is opened when null.
 	 */
-	public function __construct( string $host = '127.0.0.1', int $port = 6379 ) {
+	public function __construct( string $host = '127.0.0.1', int $port = 6379, ?object $client = null ) {
 		$this->prefix = StorageDetector::key_prefix();
-		$this->redis  = new \Redis();
+
+		if ( null !== $client ) {
+			$this->redis     = $client;
+			$this->connected = true;
+			return;
+		}
+
+		$this->redis = new \Redis();
 
 		try {
 			$this->connected = (bool) $this->redis->connect( $host, $port, 1.0 ); // 1s timeout.
@@ -72,7 +97,11 @@ final class RedisStorage implements StorageInterface {
 			return null;
 		}
 
-		$value = $this->redis->get( $this->prefix . $key );
+		try {
+			$value = $this->redis->get( $this->prefix . $key );
+		} catch ( \Throwable $e ) {
+			return null;
+		}
 
 		if ( false === $value ) {
 			return null;
@@ -94,11 +123,15 @@ final class RedisStorage implements StorageInterface {
 			return false;
 		}
 
-		if ( $ttl > 0 ) {
-			return $this->redis->setex( $this->prefix . $key, $ttl, $value );
-		}
+		try {
+			if ( $ttl > 0 ) {
+				return (bool) $this->redis->setex( $this->prefix . $key, $ttl, $value );
+			}
 
-		return $this->redis->set( $this->prefix . $key, $value );
+			return (bool) $this->redis->set( $this->prefix . $key, $value );
+		} catch ( \Throwable $e ) {
+			return false;
+		}
 	}
 
 	/**
@@ -116,14 +149,38 @@ final class RedisStorage implements StorageInterface {
 		}
 
 		$full_key = $this->prefix . $key;
-		$value    = $this->redis->incr( $full_key );
 
-		// Set TTL only on first increment (when value becomes 1).
-		if ( 1 === $value && $ttl > 0 ) {
+		try {
+			$value = $this->redis->eval( self::INCREMENT_SCRIPT, [ $full_key, max( 1, $ttl ) ], 1 );
+
+			if ( is_int( $value ) ) {
+				return $value;
+			}
+
+			return $this->increment_without_script( $full_key, $ttl );
+		} catch ( \Throwable $e ) {
+			return 1;
+		}
+	}
+
+	/**
+	 * Fallback for servers with scripting disabled.
+	 *
+	 * Not atomic, but self-healing: any increment that finds the key without a
+	 * TTL sets one, so a counter can be stranded for at most one step.
+	 *
+	 * @param string $full_key Prefixed key.
+	 * @param int    $ttl      Time-to-live in seconds.
+	 * @return int
+	 */
+	private function increment_without_script( string $full_key, int $ttl ): int {
+		$value = (int) $this->redis->incr( $full_key );
+
+		if ( $ttl > 0 && -1 === (int) $this->redis->ttl( $full_key ) ) {
 			$this->redis->expire( $full_key, $ttl );
 		}
 
-		return (int) $value;
+		return $value;
 	}
 
 	/**
