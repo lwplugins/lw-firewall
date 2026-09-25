@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace LightweightPlugins\Firewall\Admin\Settings;
+namespace LightweightPlugins\Firewall\Admin\Bans;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

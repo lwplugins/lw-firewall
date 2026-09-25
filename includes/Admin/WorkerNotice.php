@@ -20,20 +20,6 @@ use LightweightPlugins\Firewall\Activator;
 final class WorkerNotice {
 
 	/**
-	 * Error code → human reason (last install attempt).
-	 *
-	 * @return array<string, string>
-	 */
-	private static function reasons(): array {
-		return [
-			'source_missing'       => __( 'The worker source file inside the plugin is missing.', 'lw-firewall' ),
-			'mu_dir_create_failed' => __( 'The mu-plugins directory could not be created.', 'lw-firewall' ),
-			'mu_dir_not_writable'  => __( 'The mu-plugins directory is not writable.', 'lw-firewall' ),
-			'copy_failed'          => __( 'Copying the worker file failed (disk full or permission denied).', 'lw-firewall' ),
-		];
-	}
-
-	/**
 	 * Render the notice.
 	 *
 	 * @return void
@@ -82,8 +68,7 @@ final class WorkerNotice {
 			return;
 		}
 
-		$reasons = self::reasons();
-		$message = $reasons[ $attempt['error'] ] ?? __( 'Unknown install error.', 'lw-firewall' );
+		$message = WorkerInstallReasons::message( (string) $attempt['error'] );
 
 		echo '<p><em>';
 		printf(

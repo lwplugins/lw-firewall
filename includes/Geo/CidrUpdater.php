@@ -74,10 +74,29 @@ final class CidrUpdater {
 	 * @return bool True on success.
 	 */
 	public static function update_country( string $cc ): bool {
+		return self::update_country_report( $cc )['written'];
+	}
+
+	/**
+	 * Download and cache one country's lists, reporting each address family.
+	 *
+	 * A family counts as updated only when its download succeeded AND the
+	 * cache was written; one failed family does not discard the other.
+	 *
+	 * @param string $cc Uppercase 2-letter country code.
+	 * @return array{v4: bool, v6: bool, written: bool}
+	 */
+	public static function update_country_report( string $cc ): array {
+		$none = [
+			'v4'      => false,
+			'v6'      => false,
+			'written' => false,
+		];
+
 		// Defensive: never build a URL or cache-file path from an unvalidated
 		// code (guards the write_cache() path against traversal).
 		if ( ! Options::is_country_code( $cc ) ) {
-			return false;
+			return $none;
 		}
 
 		$cc = strtolower( $cc );
@@ -85,10 +104,16 @@ final class CidrUpdater {
 		$v6 = self::fetch( sprintf( self::SOURCE_URL_V6, $cc ) );
 
 		if ( null === $v4 && null === $v6 ) {
-			return false;
+			return $none;
 		}
 
-		return self::write_cache( $cc, self::cache_files( $v4, $v6 ) );
+		$written = self::write_cache( $cc, self::cache_files( $v4, $v6 ) );
+
+		return [
+			'v4'      => $written && null !== $v4,
+			'v6'      => $written && null !== $v6,
+			'written' => $written,
+		];
 	}
 
 	/**

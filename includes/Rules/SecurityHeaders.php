@@ -19,6 +19,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SecurityHeaders {
 
 	/**
+	 * The headers sent, name => value. The admin lists exactly these, so the
+	 * screen can never promise a header that is not sent.
+	 *
+	 * @var array<string, string>
+	 */
+	public const HEADERS = [
+		'X-Content-Type-Options' => 'nosniff',
+		'X-Frame-Options'        => 'SAMEORIGIN',
+		'Referrer-Policy'        => 'strict-origin-when-cross-origin',
+		'Permissions-Policy'     => 'camera=(), microphone=(), geolocation=()',
+	];
+
+	/**
 	 * Send security headers via WordPress send_headers action.
 	 */
 	public static function send(): void {
@@ -26,9 +39,8 @@ final class SecurityHeaders {
 			return;
 		}
 
-		header( 'X-Content-Type-Options: nosniff' );
-		header( 'X-Frame-Options: SAMEORIGIN' );
-		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
-		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
+		foreach ( self::HEADERS as $name => $value ) {
+			header( $name . ': ' . $value );
+		}
 	}
 }

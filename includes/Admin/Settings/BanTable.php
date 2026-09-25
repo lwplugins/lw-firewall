@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Admin\Settings;
 
+use LightweightPlugins\Firewall\Admin\Bans\BanReasons;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Rules\BanList;
 

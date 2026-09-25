@@ -27,16 +27,25 @@ final class AdminScanner {
 	/**
 	 * Run the reconciliation and alert on whatever it finds.
 	 *
-	 * @return array{new: array<int, int>, changes: array<int, array{id: int, field: string, from: string, to: string}>}
+	 * The flags say what happened, so a caller can report it honestly:
+	 * `disabled` (alerts off, nothing scanned), `seeded` (first snapshot
+	 * taken silently), `sent` (an alert mail went out) and `queued` (a mail
+	 * failed and was kept for the next scan).
+	 *
+	 * @return array{new: array<int, int>, changes: array<int, array{id: int, field: string, from: string, to: string}>, disabled: bool, seeded: bool, sent: bool, queued: bool}
 	 */
 	public static function run(): array {
 		$empty = [
-			'new'     => [],
-			'changes' => [],
+			'new'      => [],
+			'changes'  => [],
+			'disabled' => false,
+			'seeded'   => false,
+			'sent'     => false,
+			'queued'   => false,
 		];
 
 		if ( empty( Options::get( 'admin_alert_enabled' ) ) ) {
-			return $empty;
+			return array_merge( $empty, [ 'disabled' => true ] );
 		}
 
 		$current = AdminDetector::current_admins();
@@ -46,7 +55,7 @@ final class AdminScanner {
 		// already had.
 		if ( ! AdminBaseline::is_seeded() ) {
 			AdminBaseline::store( $current );
-			return $empty;
+			return array_merge( $empty, [ 'seeded' => true ] );
 		}
 
 		$new     = BaselineDiff::ids( AdminBaseline::get_ids(), array_keys( $current ) );
@@ -68,18 +77,36 @@ final class AdminScanner {
 			$pending['changes'] = array_merge( $pending['changes'], $changes );
 		}
 
-		if ( ! empty( $pending['new'] ) && ! AlertMailer::notify( $pending['new'], 'scan' ) ) {
-			AlertQueue::keep_new( $pending['new'] );
+		$sent   = false;
+		$queued = false;
+
+		if ( ! empty( $pending['new'] ) ) {
+			if ( AlertMailer::notify( $pending['new'], 'scan' ) ) {
+				$sent = true;
+			} else {
+				AlertQueue::keep_new( $pending['new'] );
+				$queued = true;
+			}
 		}
 
-		if ( ! empty( $pending['changes'] ) && ! AlertMailer::notify_changes( $pending['changes'], 'scan' ) ) {
-			AlertQueue::keep_changes( $pending['changes'] );
+		if ( ! empty( $pending['changes'] ) ) {
+			if ( AlertMailer::notify_changes( $pending['changes'], 'scan' ) ) {
+				$sent = true;
+			} else {
+				AlertQueue::keep_changes( $pending['changes'] );
+				$queued = true;
+			}
 		}
 
-		return [
-			'new'     => $new,
-			'changes' => $changes,
-		];
+		return array_merge(
+			$empty,
+			[
+				'new'     => $new,
+				'changes' => $changes,
+				'sent'    => $sent,
+				'queued'  => $queued,
+			]
+		);
 	}
 
 	/**

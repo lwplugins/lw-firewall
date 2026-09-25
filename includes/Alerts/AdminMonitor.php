@@ -170,7 +170,7 @@ final class AdminMonitor {
 	/**
 	 * Reconcile the live administrator list against the stored baseline.
 	 *
-	 * @return array{new: array<int, int>, changes: array<int, array{id: int, field: string, from: string, to: string}>}
+	 * @return array{new: array<int, int>, changes: array<int, array{id: int, field: string, from: string, to: string}>, disabled: bool, seeded: bool, sent: bool, queued: bool}
 	 */
 	public static function run_scan(): array {
 		return AdminScanner::run();
