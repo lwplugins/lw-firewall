@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.10] - 2026-09-25
+
+### Fixed
+- Notices from themes and other plugins (for example a theme's purchase-code or recommended-plugins notice) could show on the LW Firewall screen. They are now kept off every LW Plugins screen, whatever their markup
+- LW Firewall's own warnings and messages on its settings tabs (the Status tab's IP and worker warnings, the Alerts tab's pending-queue and mail-error warnings, and the import result) were hidden. They show again
+
 ## [1.5.9] - 2026-09-25
 
 ### Security

@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.9
+Stable tag: 1.5.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,10 @@ Rate limits are per-IP (IPv6 clients per /64 network, the block a single connect
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.10 =
+* Fix: Notices from themes and other plugins (for example a theme's purchase-code or recommended-plugins notice) could show on the LW Firewall screen. They are now kept off every LW Plugins screen, whatever their markup
+* Fix: LW Firewall's own warnings and messages on its settings tabs (the Status tab's IP and worker warnings, the Alerts tab's pending-queue and mail-error warnings, and the import result) were hidden. They show again
 
 = 1.5.9 =
 * Fix: IPv6 clients were counted and banned per address, so an attacker rotating addresses inside one /64 was never limited. Counters and bans now cover the whole /64; unblocking any address in it (or the /64 itself) lifts the ban, including bans created by 1.5.8
