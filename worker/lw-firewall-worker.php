@@ -59,6 +59,8 @@ if ( PHP_VERSION_ID < 80200 ) {
 			'Rules/AutoBanner.php',
 			'Rules/NotFoundTracker.php',
 			'Geo/GeoDetector.php',
+			'Geo/RangeIndex.php',
+			'Geo/RangeIndex6.php',
 			'Storage/StorageInterface.php',
 			'Storage/ApcuStorage.php',
 			'Storage/RedisStorage.php',

@@ -66,7 +66,7 @@ final class GeoDetector {
 	}
 
 	/**
-	 * Load a country's packed IPv4 ranges once per request.
+	 * Load a country's packed ranges (IPv4 or IPv6 blob) once per request.
 	 *
 	 * @param string $file Absolute path to the .bin blob.
 	 * @return string
@@ -125,6 +125,7 @@ final class GeoDetector {
 	 */
 	private static function matches_cidr_cache( string $ip, array $blocked_countries ): bool {
 		$cache_dir = CidrUpdater::get_cache_dir();
+		$is_v6     = str_contains( $ip, ':' );
 
 		foreach ( $blocked_countries as $cc ) {
 			// Defensive: never turn an unvalidated value into an include() path.
@@ -154,7 +155,13 @@ final class GeoDetector {
 				continue;
 			}
 
-			if ( RangeIndex::packed_contains( $ip, self::load_packed( substr( $file, 0, -4 ) . '.bin' ) ) ) {
+			// Each family has its own blob; only the visitor's is read.
+			$base = substr( $file, 0, -4 );
+
+			if ( $is_v6
+				? RangeIndex6::contains( $ip, self::load_packed( $base . '.v6.bin' ) )
+				: RangeIndex::packed_contains( $ip, self::load_packed( $base . '.bin' ) )
+			) {
 				return true;
 			}
 

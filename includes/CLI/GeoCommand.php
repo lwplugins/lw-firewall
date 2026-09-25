@@ -155,7 +155,7 @@ final class GeoCommand {
 	/**
 	 * Update CIDR cache for all blocked countries.
 	 *
-	 * Downloads aggregated CIDR lists from ipdeny.com.
+	 * Downloads aggregated IPv4 and IPv6 CIDR lists from ipdeny.com.
 	 *
 	 * ## EXAMPLES
 	 *
