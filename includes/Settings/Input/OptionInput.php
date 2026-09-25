@@ -27,6 +27,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class OptionInput {
 
 	/**
+	 * Most entries a list setting may hold. Every request reads the whole
+	 * option, so an unbounded list would slow the site down for good.
+	 */
+	public const MAX_LIST_ENTRIES = 5000;
+
+	/**
 	 * Keys with a dedicated list/text parser.
 	 *
 	 * @var array<string, class-string>
@@ -89,6 +95,13 @@ final class OptionInput {
 	 */
 	public static function parse_value( string $key, mixed $value ): ParseResult {
 		if ( isset( self::PARSERS[ $key ] ) ) {
+			$entries = ListSplitter::split( $value );
+
+			if ( null !== $entries && count( $entries ) > self::MAX_LIST_ENTRIES ) {
+				/* translators: %d: maximum number of entries */
+				return ParseResult::fail( [ sprintf( __( 'Too many entries: at most %d are allowed.', 'lw-firewall' ), self::MAX_LIST_ENTRIES ) ] );
+			}
+
 			return ( self::PARSERS[ $key ] )::parse( $value );
 		}
 

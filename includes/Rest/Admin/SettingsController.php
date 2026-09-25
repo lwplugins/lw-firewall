@@ -25,6 +25,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SettingsController {
 
 	/**
+	 * Largest accepted request body, in bytes (the same cap as the import).
+	 */
+	private const MAX_BYTES = 262144;
+
+	/**
 	 * Register the routes.
 	 *
 	 * @return void
@@ -57,6 +62,10 @@ final class SettingsController {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function save_settings( WP_REST_Request $request ) {
+		if ( strlen( (string) $request->get_body() ) > self::MAX_BYTES ) {
+			return Routes::error( 'lw_firewall_too_large', __( 'The request is too large (at most 256 KB).', 'lw-firewall' ), 413 );
+		}
+
 		$body = $request->get_json_params();
 
 		if ( empty( $body ) ) {

@@ -119,4 +119,36 @@ final class OptionInputTest extends InputTestCase {
 
 		return $keys;
 	}
+
+	/**
+	 * A list setting is capped like the import is, so one request cannot
+	 * make every later request parse a huge option.
+	 *
+	 * @dataProvider provide_oversized_lists
+	 *
+	 * @param mixed $raw Oversized list.
+	 */
+	public function test_rejects_a_list_over_the_entry_cap( mixed $raw ): void {
+		$this->assertFalse( OptionInput::parse_value( 'blocked_bots', $raw )->is_valid() );
+	}
+
+	/**
+	 * @return array<string, array{0: mixed}>
+	 */
+	public static function provide_oversized_lists(): array {
+		$entries = array();
+
+		for ( $i = 0; $i <= OptionInput::MAX_LIST_ENTRIES; $i++ ) {
+			$entries[] = 'bot' . $i;
+		}
+
+		return array(
+			'array'    => array( $entries ),
+			'textarea' => array( implode( "\n", $entries ) ),
+		);
+	}
+
+	public function test_accepts_a_list_at_the_cap(): void {
+		$this->assertTrue( OptionInput::parse_value( 'blocked_bots', array_map( static fn ( int $i ): string => 'bot' . $i, range( 1, OptionInput::MAX_LIST_ENTRIES ) ) )->is_valid() );
+	}
 }
