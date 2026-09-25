@@ -45,9 +45,10 @@ final class Options {
 	/**
 	 * The previous default of every key whose default changed.
 	 *
-	 * Applied only when a stored option exists but does not hold the key, so
-	 * a site that was installed before the change keeps the behaviour it had;
-	 * a new install (no option yet) gets the current default.
+	 * Applied whenever the stored option does not hold the key — including
+	 * when there is no stored row at all (a multisite subsite, a lost row) —
+	 * so no existing site changes behaviour. A new install gets the current
+	 * default because activation writes the full defaults row.
 	 *
 	 * @var array<string, mixed>
 	 */
@@ -215,8 +216,9 @@ final class Options {
 			$saved = [];
 		}
 
-		$defaults = [] === $saved ? self::get_defaults() : array_merge( self::get_defaults(), self::LEGACY_DEFAULTS );
-		$merged   = array_merge( $defaults, $saved );
+		// A missing key always takes its legacy default. A new install is
+		// not affected: activation writes the full current defaults row.
+		$merged = array_merge( self::get_defaults(), self::LEGACY_DEFAULTS, $saved );
 
 		foreach ( self::LIST_KEYS as $list_key ) {
 			if ( isset( $merged[ $list_key ] ) && ! is_array( $merged[ $list_key ] ) ) {
