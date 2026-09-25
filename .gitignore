@@ -28,6 +28,10 @@ debug.log
 composer.lock
 *.po~
 
+# Local-only agent planning docs (build/ is committed, never ignore it)
+/.superpowers/
+/docs/superpowers/
+
 # Test / analysis caches
 .phpunit.cache/
 .phpunit.result.cache
