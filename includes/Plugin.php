@@ -108,7 +108,7 @@ final class Plugin {
 
 		// Brute-force login protection: per IP, and per username on top.
 		if ( ! empty( $options['login_limit_enabled'] ) ) {
-			add_action( 'wp_login_failed', [ $this, 'track_failed_login' ] );
+			add_action( 'wp_login_failed', [ $this, 'track_failed_login' ], 10, 2 );
 
 			if ( ! empty( $options['login_user_limit_enabled'] ) ) {
 				UserLockGuard::init();
@@ -154,10 +154,12 @@ final class Plugin {
 	/**
 	 * Record a failed login attempt for brute-force protection (hook callback).
 	 *
+	 * @param mixed $username Submitted login (unused).
+	 * @param mixed $error    The WP_Error the login failed with.
 	 * @return void
 	 */
-	public function track_failed_login(): void {
-		LoginTracker::handle();
+	public function track_failed_login( $username = '', $error = null ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+		LoginTracker::handle( $error );
 	}
 
 	/**

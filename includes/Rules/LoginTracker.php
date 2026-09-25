@@ -47,12 +47,18 @@ final class LoginTracker {
 	}
 
 	/**
-	 * Hook entry point for wp_login_failed: skip whitelisted IPs, resolve the
-	 * configured storage backend and record the failure.
+	 * Hook entry point for wp_login_failed: skip refusals of a locked
+	 * username and whitelisted IPs, resolve the configured storage backend
+	 * and record the failure.
 	 *
+	 * @param mixed $error The WP_Error the login failed with (wp_login_failed's 2nd argument).
 	 * @return void
 	 */
-	public static function handle(): void {
+	public static function handle( mixed $error = null ): void {
+		if ( ! self::counts( $error ) ) {
+			return;
+		}
+
 		$ip        = IpDetector::get_ip();
 		$whitelist = (array) Options::get( 'ip_whitelist', [] );
 
@@ -62,6 +68,20 @@ final class LoginTracker {
 
 		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
 		( new self( $storage ) )->record_failure();
+	}
+
+	/**
+	 * Whether a failed login counts against the requesting IP.
+	 *
+	 * A refusal because the username is locked does not: the password may
+	 * well have been right, and counting it would get a locked-out owner's
+	 * own IP banned site-wide just for retrying.
+	 *
+	 * @param mixed $error The WP_Error the login failed with, if any.
+	 * @return bool
+	 */
+	public static function counts( mixed $error ): bool {
+		return ! ( is_object( $error ) && method_exists( $error, 'get_error_code' ) && UserLockGuard::ERROR_CODE === $error->get_error_code() );
 	}
 
 	/**
