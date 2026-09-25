@@ -37,8 +37,10 @@ trait InputParserTrait {
 	 * @return array<int, string>
 	 */
 	private static function parse_blocked_bots( array $post_data ): array {
+		// The stored list, never the effective one: a list pinned in
+		// wp-config.php must not be written into the database.
 		if ( ! isset( $post_data['blocked_bots'] ) ) {
-			return Options::get( 'blocked_bots' );
+			return (array) Options::get_stored()['blocked_bots'];
 		}
 
 		return self::textarea_to_lines( (string) $post_data['blocked_bots'] );

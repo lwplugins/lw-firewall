@@ -94,7 +94,9 @@ final class FirewallService {
 			);
 		}
 
-		$current = (array) Options::get( 'ip_blacklist', [] );
+		// Edit and save the stored list only. Saving the effective config
+		// (get_all()) wrote every wp-config.php pinned value into the database.
+		$current = self::stored_blacklist();
 
 		if ( in_array( $ip, $current, true ) ) {
 			return [
@@ -107,10 +109,8 @@ final class FirewallService {
 			];
 		}
 
-		$current[]           = $ip;
-		$all                 = Options::get_all();
-		$all['ip_blacklist'] = $current;
-		Options::save( $all );
+		$current[] = $ip;
+		Options::save( [ 'ip_blacklist' => $current ] );
 
 		return [
 			'success' => true,
@@ -139,7 +139,7 @@ final class FirewallService {
 			);
 		}
 
-		$current = (array) Options::get( 'ip_blacklist', [] );
+		$current = self::stored_blacklist();
 		$updated = array_values( array_filter( $current, static fn( $entry ) => $entry !== $ip ) );
 
 		if ( count( $updated ) === count( $current ) ) {
@@ -154,9 +154,7 @@ final class FirewallService {
 			);
 		}
 
-		$all                 = Options::get_all();
-		$all['ip_blacklist'] = $updated;
-		Options::save( $all );
+		Options::save( [ 'ip_blacklist' => $updated ] );
 
 		return [
 			'success' => true,
@@ -166,6 +164,18 @@ final class FirewallService {
 				$ip
 			),
 		];
+	}
+
+	/**
+	 * The blacklist as stored in the database, without any wp-config.php pin.
+	 *
+	 * Options::save() fills every key not passed from the stored values too,
+	 * so saving just this list never persists a pinned setting.
+	 *
+	 * @return array<int, string>
+	 */
+	private static function stored_blacklist(): array {
+		return array_values( (array) ( Options::get_stored()['ip_blacklist'] ?? [] ) );
 	}
 
 	/**
