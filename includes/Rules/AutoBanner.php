@@ -140,6 +140,8 @@ final class AutoBanner {
 
 		$identities = self::identities( trim( $target ), $subject );
 
+		$lifted = true;
+
 		foreach ( $identities as $identity ) {
 			$this->storage->delete( 'ban_' . $identity );
 
@@ -147,16 +149,17 @@ final class AutoBanner {
 				$this->storage->delete( $key );
 			}
 
+			// A ban the storage refused to delete is still enforced, so it
+			// stays in the index — dropping it would hide a live block.
+			if ( $this->storage->get( 'ban_' . $identity ) ) {
+				$lifted = false;
+				continue;
+			}
+
 			BanList::forget( $identity );
 		}
 
-		foreach ( $identities as $identity ) {
-			if ( $this->storage->get( 'ban_' . $identity ) ) {
-				return false;
-			}
-		}
-
-		return true;
+		return $lifted;
 	}
 
 	/**

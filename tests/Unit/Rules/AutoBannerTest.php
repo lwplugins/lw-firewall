@@ -14,6 +14,7 @@ use LightweightPlugins\Firewall\Rules\BanList;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
 use LightweightPlugins\Firewall\Tests\Unit\Support\ArrayStorage;
 use LightweightPlugins\Firewall\Tests\Unit\Support\OptionStore;
+use LightweightPlugins\Firewall\Tests\Unit\Support\StickyStorage;
 
 /**
  * @covers \LightweightPlugins\Firewall\Rules\AutoBanner
@@ -137,5 +138,18 @@ final class AutoBannerTest extends MonkeyTestCase {
 
 	public function test_unban_rejects_an_invalid_target(): void {
 		$this->assertFalse( ( new AutoBanner( $this->storage ) )->unban( 'nonsense' ) );
+	}
+
+	/**
+	 * Regression: the index entry was dropped even when the storage refused
+	 * the delete, so a ban that was still enforced vanished from the list.
+	 */
+	public function test_a_refused_delete_keeps_the_ban_listed(): void {
+		$banner = new AutoBanner( new StickyStorage() );
+		$banner->ban( '203.0.113.7', 600 );
+
+		$banner->unban( '203.0.113.7' );
+
+		$this->assertSame( [ '203.0.113.7' ], BanList::ips() );
 	}
 }
