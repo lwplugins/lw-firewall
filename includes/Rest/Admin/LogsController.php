@@ -56,6 +56,9 @@ final class LogsController {
 			sanitize_text_field( (string) $request->get_param( 'search' ) )
 		);
 
+		// An empty reason map must still be a JSON object.
+		$result['reasons'] = (object) $result['reasons'];
+
 		return new WP_REST_Response( array_merge( $result, [ 'enabled' => ! empty( Options::get( 'log_enabled' ) ) ] ) );
 	}
 

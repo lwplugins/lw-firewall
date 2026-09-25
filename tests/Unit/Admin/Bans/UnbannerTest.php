@@ -68,4 +68,10 @@ final class UnbannerTest extends MonkeyTestCase {
 
 		$this->assertSame( array(), BanList::ips() );
 	}
+
+	public function test_an_address_that_was_not_banned_is_reported_as_such(): void {
+		$result = ( new Unbanner( new AutoBanner( $this->storage ) ) )->lift( array( '203.0.113.9' ) )[0];
+
+		$this->assertSame( array( true, 'This address was not banned. Its counters were cleared anyway.' ), array( $result['ok'], $result['message'] ) );
+	}
 }

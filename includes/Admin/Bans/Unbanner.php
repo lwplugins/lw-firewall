@@ -68,8 +68,14 @@ final class Unbanner {
 			return self::result( $target, false, __( 'That is not a valid IP address.', 'lw-firewall' ) );
 		}
 
+		$was_banned = $this->banner->is_banned( $target );
+
 		if ( ! $this->banner->unban( $target ) ) {
 			return self::result( $target, false, __( 'The ban could not be lifted — the storage backend refused the delete. Check the Status tab for the active backend.', 'lw-firewall' ) );
+		}
+
+		if ( ! $was_banned ) {
+			return self::result( $target, true, __( 'This address was not banned. Its counters were cleared anyway.', 'lw-firewall' ) );
 		}
 
 		return self::result( $target, true, __( 'Unblocked. Its rate-limit, login, registration and password-reset counters were cleared too, so the next request starts from zero.', 'lw-firewall' ) );

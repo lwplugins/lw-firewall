@@ -69,6 +69,9 @@ final class TransferController {
 
 		$report = SettingsTransfer::import( $data );
 
+		// An empty per-key error map must still be a JSON object.
+		$report['invalid'] = (object) $report['invalid'];
+
 		return new WP_REST_Response( array_merge( SettingsController::shape(), [ 'report' => $report ] ) );
 	}
 }
