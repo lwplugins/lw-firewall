@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # release.yml calls this workflow and releases only when every job passes.
+  workflow_call:
 
 jobs:
   phpcs:

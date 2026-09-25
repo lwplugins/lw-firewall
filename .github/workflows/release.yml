@@ -10,7 +10,13 @@ on:
       - 'worker/lw-firewall-worker.php'
 
 jobs:
+  # The same checks as CI (PHPCS, PHPStan, PHPUnit on every supported PHP).
+  # A release, and the tag it creates, only happen when all of them pass.
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   release:
+    needs: ci
     runs-on: ubuntu-latest
     permissions:
       contents: write
