@@ -186,29 +186,35 @@ function lw_firewall_parse_uri( string $uri ): array {
  * Action Scheduler) from cron rate limiting, while a bare "GET /wp-cron.php" —
  * the usual DoS trigger — stays throttled.
  *
- * The marker is only honoured on the cron path itself. Accepting it anywhere
- * let any request opt out of classification entirely by appending it.
+ * The marker is only honoured on the cron path itself (wherever the install
+ * lives, e.g. "/blog/wp-cron.php"). Accepting it anywhere let any request opt
+ * out of classification entirely by appending it.
  *
  * @param array{path: string, args: array<string, string>} $request Parsed request.
  * @return bool
  */
 function lw_firewall_is_cron_loopback( array $request ): bool {
-	return '/wp-cron.php' === $request['path'] && isset( $request['args']['doing_wp_cron'] );
+	return lw_firewall_path_is( $request['path'], '/wp-cron.php' ) && isset( $request['args']['doing_wp_cron'] );
 }
 
 /**
- * Whether a request path is (or sits under) a given WordPress endpoint.
+ * Whether a request path addresses a given WordPress endpoint script.
  *
- * Matches the endpoint itself and anything beneath it, so a subdirectory
- * install's "/blog/wp-login.php" is recognised while a query argument that
- * merely mentions the filename is not.
+ * The endpoint must appear as a whole path segment — right after a "/" and
+ * followed by the end of the path or another "/" — compared case-insensitively.
+ * That covers:
+ * - a subdirectory install's "/blog/wp-login.php";
+ * - PATH_INFO ("/wp-login.php/x"), where the web server still runs the script;
+ * - case variants ("/XMLRPC.php") that case-insensitive filesystems serve.
+ * A look-alike file ("/foo-wp-login.php", "/wp-login.php.bak") or a query
+ * argument that merely mentions the filename does not match.
  *
  * @param string $path     Decoded request path.
  * @param string $endpoint Endpoint path, e.g. "/wp-login.php".
  * @return bool
  */
 function lw_firewall_path_is( string $path, string $endpoint ): bool {
-	return $path === $endpoint || str_ends_with( $path, $endpoint );
+	return 1 === preg_match( '#' . preg_quote( $endpoint, '#' ) . '(?:/|$)#i', $path );
 }
 
 /**
