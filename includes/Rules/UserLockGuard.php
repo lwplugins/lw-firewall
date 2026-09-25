@@ -12,6 +12,7 @@ namespace LightweightPlugins\Firewall\Rules;
 use LightweightPlugins\Firewall\IpDetector;
 use LightweightPlugins\Firewall\Logger;
 use LightweightPlugins\Firewall\Options;
+use LightweightPlugins\Firewall\Storage\StorageInterface;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,13 +33,28 @@ final class UserLockGuard {
 	private const PRIORITY = 30;
 
 	/**
+	 * Error code of a refusal; LoginTracker skips failures carrying it.
+	 */
+	public const ERROR_CODE = 'lw_firewall_user_locked';
+
+	/**
+	 * Constructor.
+	 *
+	 * @param StorageInterface|null $storage Storage backend; the configured one when null.
+	 */
+	public function __construct( private ?StorageInterface $storage = null ) {
+	}
+
+	/**
 	 * Register the hooks.
 	 *
 	 * @return void
 	 */
 	public static function init(): void {
-		add_filter( 'authenticate', [ self::class, 'authenticate' ], self::PRIORITY, 2 );
-		add_action( 'wp_login_failed', [ self::class, 'on_failed' ], 10, 1 );
+		$guard = new self();
+
+		add_filter( 'authenticate', [ $guard, 'authenticate' ], self::PRIORITY, 2 );
+		add_action( 'wp_login_failed', [ $guard, 'on_failed' ], 10, 1 );
 	}
 
 	/**
@@ -48,15 +64,15 @@ final class UserLockGuard {
 	 * @param mixed $username Submitted login.
 	 * @return mixed
 	 */
-	public static function authenticate( $user, $username ) {
-		$login = self::resolve( is_string( $username ) ? $username : '' );
+	public function authenticate( $user, $username ) {
+		$login = LoginResolver::resolve( is_string( $username ) ? $username : '' );
 
-		if ( '' === $login || ! self::should_refuse( $login, self::lockout(), self::whitelisted() ) ) {
+		if ( '' === $login || ! self::should_refuse( $login, $this->lockout(), self::whitelisted() ) ) {
 			return $user;
 		}
 
 		return new WP_Error(
-			'lw_firewall_user_locked',
+			self::ERROR_CODE,
 			__( 'Too many failed login attempts for this account. Try again later.', 'lw-firewall' )
 		);
 	}
@@ -79,10 +95,10 @@ final class UserLockGuard {
 	 * @param mixed $username Submitted login.
 	 * @return void
 	 */
-	public static function on_failed( $username ): void {
-		$login = self::resolve( is_string( $username ) ? $username : '' );
+	public function on_failed( $username ): void {
+		$login = LoginResolver::resolve( is_string( $username ) ? $username : '' );
 
-		if ( '' === $login || self::whitelisted() || ! self::lockout()->record_failure( $login ) ) {
+		if ( '' === $login || self::whitelisted() || ! $this->lockout()->record_failure( $login ) ) {
 			return;
 		}
 
@@ -96,27 +112,6 @@ final class UserLockGuard {
 				]
 			);
 		}
-	}
-
-	/**
-	 * The account a login refers to: an email address that belongs to a user
-	 * resolves to that user's login, so both spellings share one counter.
-	 *
-	 * @param string $username Submitted login.
-	 * @return string
-	 */
-	private static function resolve( string $username ): string {
-		$username = trim( $username );
-
-		if ( '' !== $username && is_email( $username ) ) {
-			$user = get_user_by( 'email', $username );
-
-			if ( $user ) {
-				return (string) $user->user_login;
-			}
-		}
-
-		return $username;
 	}
 
 	/**
@@ -135,7 +130,7 @@ final class UserLockGuard {
 	 *
 	 * @return UserLockout
 	 */
-	private static function lockout(): UserLockout {
-		return new UserLockout( lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) ) );
+	private function lockout(): UserLockout {
+		return new UserLockout( $this->storage ?? lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) ) );
 	}
 }
