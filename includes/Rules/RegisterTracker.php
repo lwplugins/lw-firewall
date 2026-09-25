@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Rules;
 
 use LightweightPlugins\Firewall\IpDetector;
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Logger;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Storage\StorageInterface;
@@ -71,7 +72,7 @@ final class RegisterTracker {
 		$threshold = (int) Options::get( 'register_ban_threshold', 3 );
 		$duration  = (int) Options::get( 'register_ban_duration', 3600 );
 
-		$count = $this->storage->increment( 'register_reject_' . $ip, $duration );
+		$count = $this->storage->increment( 'register_reject_' . IpSubject::of( $ip ), $duration );
 
 		if ( $count < $threshold ) {
 			return;

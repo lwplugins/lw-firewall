@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Rules;
 
 use LightweightPlugins\Firewall\IpDetector;
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Logger;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Storage\StorageInterface;
@@ -46,7 +47,7 @@ final class NotFoundTracker {
 		$ip     = IpDetector::get_ip();
 		$window = (int) Options::get( 'rate_window', 60 );
 		$limit  = (int) Options::get( 'rate_limit', 30 );
-		$count  = $this->storage->increment( '404_' . $ip, $window );
+		$count  = $this->storage->increment( '404_' . IpSubject::of( $ip ), $window );
 
 		// Log only the request that first crosses the threshold. A 404 flood
 		// never escalates to a ban here, so `$count > $limit` would write a log
@@ -72,7 +73,7 @@ final class NotFoundTracker {
 	 */
 	public function is_flooding( string $ip ): bool {
 		$limit = (int) Options::get( 'rate_limit', 30 );
-		$count = $this->storage->get( '404_' . $ip );
+		$count = $this->storage->get( '404_' . IpSubject::of( $ip ) );
 
 		return null !== $count && (int) $count > $limit;
 	}

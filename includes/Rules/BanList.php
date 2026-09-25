@@ -90,6 +90,16 @@ final class BanList {
 	}
 
 	/**
+	 * The keys of the index (subjects, or legacy per-address entries), as
+	 * stored — no pruning, no storage lookup.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function ips(): array {
+		return array_map( 'strval', array_keys( self::raw() ) );
+	}
+
+	/**
 	 * Every tracked ban, newest first, reconciled against the storage backend.
 	 *
 	 * @param \LightweightPlugins\Firewall\Storage\StorageInterface|null $storage Backend to verify against.

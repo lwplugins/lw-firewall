@@ -85,7 +85,7 @@ final class Logger {
 
 		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
 
-		return $storage->increment( 'log_seen_' . md5( $ip . '|' . $reason ), self::DEDUPE_WINDOW ) > 1;
+		return $storage->increment( 'log_seen_' . md5( IpSubject::of( $ip ) . '|' . $reason ), self::DEDUPE_WINDOW ) > 1;
 	}
 
 	/**

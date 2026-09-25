@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Rules;
 
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Storage\StorageInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -81,7 +82,7 @@ final class ResetLimiter {
 	 * @return string One of the verdict constants; ALLOW ('') means proceed.
 	 */
 	public function record( string $ip, int $user_id ): string {
-		if ( '' !== $ip && $this->over( 'reset_ip_' . $ip, 'ip_max', 'ip_window' ) ) {
+		if ( '' !== $ip && $this->over( 'reset_ip_' . IpSubject::of( $ip ), 'ip_max', 'ip_window' ) ) {
 			return self::IP;
 		}
 
@@ -114,7 +115,7 @@ final class ResetLimiter {
 	 */
 	public function record_rejected( string $ip ): void {
 		if ( '' !== $ip ) {
-			$this->over( 'reset_ip_' . $ip, 'ip_max', 'ip_window' );
+			$this->over( 'reset_ip_' . IpSubject::of( $ip ), 'ip_max', 'ip_window' );
 		}
 	}
 

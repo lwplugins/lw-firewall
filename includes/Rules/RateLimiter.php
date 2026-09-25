@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Rules;
 
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Storage\StorageInterface;
 
@@ -44,7 +45,7 @@ final class RateLimiter {
 	 * @return bool
 	 */
 	public function is_allowed( string $ip ): bool {
-		return $this->is_allowed_key( 'rl_' . $ip );
+		return $this->is_allowed_key( 'rl_' . IpSubject::of( $ip ) );
 	}
 
 	/**

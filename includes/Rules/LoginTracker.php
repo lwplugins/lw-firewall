@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Rules;
 
 use LightweightPlugins\Firewall\IpDetector;
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Logger;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Storage\StorageInterface;
@@ -75,7 +76,7 @@ final class LoginTracker {
 		$window    = (int) Options::get( 'login_lockout_window', 600 );
 		$duration  = (int) Options::get( 'login_lockout_duration', 3600 );
 
-		$count = $this->storage->increment( 'login_fail_' . $ip, $window );
+		$count = $this->storage->increment( 'login_fail_' . IpSubject::of( $ip ), $window );
 
 		if ( $count < $threshold ) {
 			return;

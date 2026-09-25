@@ -56,6 +56,14 @@ final class ResetLimiterTest extends TestCase {
 		$this->assertSame( ResetLimiter::IP, $limiter->record( '1.2.3.4', 7 ) );
 	}
 
+	public function test_the_per_ip_limit_covers_the_whole_ipv6_slash_64(): void {
+		$limiter = new ResetLimiter( new ArrayStorage(), self::limits( [ 'ip_max' => 1 ] ) );
+
+		$limiter->record( '2001:db8:1:1::a', 7 );
+
+		$this->assertSame( ResetLimiter::IP, $limiter->record( '2001:db8:1:1::b', 7 ) );
+	}
+
 	public function test_the_per_ip_limit_is_per_address(): void {
 		$limiter = new ResetLimiter( new ArrayStorage(), self::limits( [ 'ip_max' => 1 ] ) );
 

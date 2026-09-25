@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\CLI;
 
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Rules\AutoBanner;
 use LightweightPlugins\Firewall\Rules\BanList;
@@ -92,7 +93,8 @@ final class BanCommand {
 	 * ## OPTIONS
 	 *
 	 * <ip>
-	 * : The IP address to check.
+	 * : The IP address to check, or an IPv6 /64 as `ban list` shows it.
+	 *   IPv6 bans cover the whole /64.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -127,7 +129,8 @@ final class BanCommand {
 	 * ## OPTIONS
 	 *
 	 * <ip>
-	 * : The IP address to unban.
+	 * : The IP address to unban, or an IPv6 /64 as `ban list` shows it.
+	 *   Any address inside a banned /64 lifts the ban on the whole /64.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -208,8 +211,8 @@ final class BanCommand {
 	private static function validate_ip( string $ip ): string {
 		$ip = trim( $ip );
 
-		if ( '' === $ip || ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-			WP_CLI::error( 'Please pass a valid IP address.' );
+		if ( '' === IpSubject::parse( $ip ) ) {
+			WP_CLI::error( 'Please pass a valid IP address or IPv6 /64.' );
 		}
 
 		return $ip;

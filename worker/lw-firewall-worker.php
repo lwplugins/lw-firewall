@@ -50,6 +50,7 @@ if ( PHP_VERSION_ID < 80200 ) {
 		$required = [
 			'Options.php',
 			'IpDetector.php',
+			'IpSubject.php',
 			'Logger.php',
 			'helpers.php',
 			'Rules/RateLimiter.php',
@@ -213,11 +214,15 @@ if ( PHP_VERSION_ID < 80200 ) {
 					// for auto-ban.
 					$logged_in = lw_firewall_login_exempt_reason( $reason ) && lw_firewall_has_login_cookie();
 
+					// Counted per subject: an IPv6 client's whole /64, so rotating
+					// addresses inside it does not reset the count.
+					$subject = \LightweightPlugins\Firewall\IpSubject::of( $ip );
+
 					if ( $logged_in ) {
-						$rl_key   = $reason . '_li_' . $ip;
+						$rl_key   = $reason . '_li_' . $subject;
 						$rl_limit = lw_firewall_loggedin_limit( $custom_limit, $options );
 					} else {
-						$rl_key   = $reason . '_' . $ip;
+						$rl_key   = $reason . '_' . $subject;
 						$rl_limit = $custom_limit;
 					}
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Rules;
 
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Storage\StorageInterface;
 
@@ -18,6 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Escalating ban: after N rate-limit violations an IP is banned for a longer period.
+ *
+ * Bans and counters are keyed by the client's subject (see IpSubject): the
+ * address itself for IPv4, the whole /64 for IPv6.
  */
 final class AutoBanner {
 
@@ -43,13 +47,23 @@ final class AutoBanner {
 	}
 
 	/**
-	 * Check if an IP is currently auto-banned.
+	 * Check if an IP (or the /64 it belongs to) is currently banned.
 	 *
-	 * @param string $ip Client IP.
+	 * 1.5.8 and earlier keyed IPv6 bans by the full address. Those keys are
+	 * still honoured until they expire, so an upgrade never silently releases
+	 * an address that was banned before it.
+	 *
+	 * @param string $ip Client IP, or a subject key.
 	 * @return bool
 	 */
 	public function is_banned( string $ip ): bool {
-		return (bool) $this->storage->get( 'ban_' . $ip );
+		$subject = IpSubject::of( $ip );
+
+		if ( $this->storage->get( 'ban_' . $subject ) ) {
+			return true;
+		}
+
+		return $subject !== $ip && (bool) $this->storage->get( 'ban_' . $ip );
 	}
 
 	/**
@@ -61,7 +75,7 @@ final class AutoBanner {
 		$threshold = (int) Options::get( 'auto_ban_threshold', 3 );
 		$duration  = (int) Options::get( 'auto_ban_duration', 3600 );
 
-		$key   = 'violations_' . $ip;
+		$key   = 'violations_' . IpSubject::of( $ip );
 		$count = $this->storage->increment( $key, $duration );
 
 		if ( $count >= $threshold ) {
@@ -85,9 +99,11 @@ final class AutoBanner {
 		// the blacklist is where permanent belongs.
 		$duration = max( self::MIN_DURATION, $duration );
 
-		$this->storage->set( 'ban_' . $ip, 1, $duration );
+		$subject = IpSubject::of( $ip );
 
-		BanList::record( $ip, $duration, $reason );
+		$this->storage->set( 'ban_' . $subject, 1, $duration );
+
+		BanList::record( $subject, $duration, $reason );
 	}
 
 	/**
@@ -99,23 +115,63 @@ final class AutoBanner {
 	 * ban for this address is cleared in one go — this is what makes "unblock
 	 * me" actually work when a user reports being locked out.
 	 *
-	 * @param string $ip Client IP.
+	 * Any address inside a banned /64, or the /64 key itself, lifts the ban.
+	 * Per-address keys written by 1.5.8 inside the same /64 are cleared too.
+	 *
+	 * @param string $target Client IP or IPv6 /64 subject key.
 	 * @return bool Whether the address is unbanned afterwards.
 	 */
-	public function unban( string $ip ): bool {
-		if ( '' === $ip ) {
+	public function unban( string $target ): bool {
+		$subject = IpSubject::parse( $target );
+
+		if ( '' === $subject ) {
 			return false;
 		}
 
-		$this->storage->delete( 'ban_' . $ip );
+		$identities = self::identities( trim( $target ), $subject );
 
-		foreach ( self::counter_keys( $ip ) as $key ) {
-			$this->storage->delete( $key );
+		foreach ( $identities as $identity ) {
+			$this->storage->delete( 'ban_' . $identity );
+
+			foreach ( self::counter_keys( $identity ) as $key ) {
+				$this->storage->delete( $key );
+			}
+
+			BanList::forget( $identity );
 		}
 
-		BanList::forget( $ip );
+		foreach ( $identities as $identity ) {
+			if ( $this->storage->get( 'ban_' . $identity ) ) {
+				return false;
+			}
+		}
 
-		return ! $this->is_banned( $ip );
+		return true;
+	}
+
+	/**
+	 * Every storage identity an unban has to clear: the subject, plus any
+	 * legacy per-address identity inside it (the target itself, and indexed
+	 * 1.5.8 bans that belong to the same /64).
+	 *
+	 * @param string $target  Operator input, trimmed.
+	 * @param string $subject Its subject key.
+	 * @return array<int, string>
+	 */
+	private static function identities( string $target, string $subject ): array {
+		$identities = [ $subject ];
+
+		if ( filter_var( $target, FILTER_VALIDATE_IP ) ) {
+			$identities[] = $target;
+		}
+
+		foreach ( BanList::ips() as $indexed ) {
+			if ( IpSubject::of( $indexed ) === $subject ) {
+				$identities[] = $indexed;
+			}
+		}
+
+		return array_values( array_unique( $identities ) );
 	}
 
 	/**

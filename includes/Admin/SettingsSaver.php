@@ -13,6 +13,7 @@ use LightweightPlugins\Firewall\Activator;
 use LightweightPlugins\Firewall\Alerts\AdminBaseline;
 use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Alerts\AlertMailer;
+use LightweightPlugins\Firewall\IpSubject;
 use LightweightPlugins\Firewall\Logger;
 use LightweightPlugins\Firewall\Rules\AutoBanner;
 use LightweightPlugins\Firewall\Rules\BanList;
@@ -224,7 +225,8 @@ final class SettingsSaver {
 			foreach ( $selected as $candidate ) {
 				$candidate = sanitize_text_field( (string) $candidate );
 
-				if ( filter_var( $candidate, FILTER_VALIDATE_IP ) && $banner->unban( $candidate ) ) {
+				// unban() validates: an address, or an IPv6 /64 as the list shows it.
+				if ( $banner->unban( $candidate ) ) {
 					++$lifted;
 				}
 			}
@@ -242,7 +244,7 @@ final class SettingsSaver {
 			return 'unban_all';
 		}
 
-		if ( ! filter_var( $target, FILTER_VALIDATE_IP ) ) {
+		if ( '' === IpSubject::parse( $target ) ) {
 			return 'unban_invalid';
 		}
 
