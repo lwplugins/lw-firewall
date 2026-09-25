@@ -92,7 +92,7 @@ final class WorkerNotice {
 			echo '<p>';
 			printf(
 				/* translators: %s: mu-plugins directory path */
-				esc_html__( 'Make %s writable by the web server, then re-save the firewall settings.', 'lw-firewall' ),
+				esc_html__( 'Make %s writable by the web server, then reload this page: the worker reinstalls itself.', 'lw-firewall' ),
 				'<code>' . esc_html( $mu_dir ) . '</code>'
 			);
 			echo '</p>';

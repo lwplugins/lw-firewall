@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Maps the reason codes recorded with a ban to what an administrator reads.
  *
- * Kept apart from BanTable because this list grows whenever a new rule can
+ * Kept apart from the ban list UI because this list grows whenever a rule can
  * issue a ban, which has nothing to do with how the table is laid out. A code
  * with no entry here still renders — bans issued before reasons were recorded
  * fall back to a neutral label rather than showing a raw slug.
