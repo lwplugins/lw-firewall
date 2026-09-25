@@ -2,20 +2,21 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.5.6\n"
+"Project-Id-Version: LW Firewall 1.5.10\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-28T06:18:18+00:00\n"
+"POT-Creation-Date: 2026-09-25T06:51:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lw-firewall\n"
 
 #. Plugin Name of the plugin
 #: lw-firewall.php
+#: includes/Admin/SettingsPage.php:136
 msgid "LW Firewall"
 msgstr ""
 
@@ -42,11 +43,225 @@ msgstr ""
 msgid "https://lwplugins.com"
 msgstr ""
 
+#: includes/Admin/Alerts/AlertOutcome.php:30
+msgid "Administrator alerts are switched off, so nothing was scanned. Turn them on and save first."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:40
+msgid "Scan finished: new or modified administrators were found, but the alert email could not be sent. It is queued and will be retried on the next scan."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:41
+#: build/index.js:2
+msgid "Scan finished: new or modified administrators were found and an alert email was sent."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:55
+msgid "There is no valid recipient: set a notification email, or a valid site admin email under Settings → General."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:57
+#: build/index.js:2
+msgid "The test alert could not be sent — wp_mail() refused it. Check your SMTP plugin or hosting mail limits."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:67
+#: build/index.js:2
+msgid "Test alert sent. If it does not arrive, the problem is your site mail configuration, not the firewall."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:80
+msgid "No snapshot existed yet, so the current administrators were recorded silently. Later changes will be reported."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:84
+msgid "Scan finished: no new or modified administrators. Earlier alerts still could not be sent and stay queued."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:88
+msgid "Scan finished: no new or modified administrators. Earlier queued alerts were sent."
+msgstr ""
+
+#: includes/Admin/Alerts/AlertOutcome.php:91
+#: build/index.js:2
+msgid "Scan finished: no new or modified administrators found."
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:34
+#: includes/Admin/Logs/LogReasons.php:39
+msgid "Too many failed logins"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:35
+msgid "brute-force lockout"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:38
+msgid "Password reset flood"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:39
+msgid "per-IP limit"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:42
+#: includes/Admin/Logs/LogReasons.php:45
+msgid "Password reset bot request"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:43
+msgid "proof-of-render failed"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:46
+#: includes/Admin/Logs/LogReasons.php:41
+msgid "Registration spam"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:47
+msgid "rejected sign-ups"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:50
+msgid "Rate limit exceeded"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:51
+msgid "auto-ban escalation"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:54
+msgid "Banned by an administrator"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:55
+msgid "manual ban"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:69
+#: build/index.js:12
+msgid "Unknown"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:81
+msgid "banned before reasons were recorded"
+msgstr ""
+
+#: includes/Admin/Bans/Unbanner.php:68
+#: includes/Rest/Admin/BansController.php:80
+msgid "That is not a valid IP address."
+msgstr ""
+
+#: includes/Admin/Bans/Unbanner.php:74
+msgid "The ban could not be lifted — the storage backend refused the delete. Check the Status tab for the active backend."
+msgstr ""
+
+#: includes/Admin/Bans/Unbanner.php:78
+msgid "This address was not banned. Its counters were cleared anyway."
+msgstr ""
+
+#: includes/Admin/Bans/Unbanner.php:81
+msgid "Unblocked. Its rate-limit, login, registration and password-reset counters were cleared too, so the next request starts from zero."
+msgstr ""
+
+#: includes/Admin/Bans/UserUnlocker.php:52
+msgid "That is not a username."
+msgstr ""
+
+#: includes/Admin/Bans/UserUnlocker.php:57
+msgid "This username is not locked."
+msgstr ""
+
+#: includes/Admin/Bans/UserUnlocker.php:62
+msgid "Username unlocked. Its failed-login count was cleared too."
+msgstr ""
+
+#: includes/Admin/Bans/UserUnlocker.php:63
+msgid "The lock could not be lifted — the storage backend refused the delete."
+msgstr ""
+
+#: includes/Admin/Geo/GeoUpdateReport.php:30
+msgid "IPv4 and IPv6 lists updated."
+msgstr ""
+
+#: includes/Admin/Geo/GeoUpdateReport.php:32
+msgid "IPv4 list updated; the IPv6 list could not be downloaded."
+msgstr ""
+
+#: includes/Admin/Geo/GeoUpdateReport.php:34
+msgid "IPv6 list updated; the IPv4 list could not be downloaded."
+msgstr ""
+
+#: includes/Admin/Geo/GeoUpdateReport.php:36
+msgid "The cache was written but holds no list."
+msgstr ""
+
+#: includes/Admin/Geo/GeoUpdateReport.php:38
+msgid "Update failed: the lists could not be downloaded, or the cache directory is not writable."
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:29
+msgid "Blacklisted IP"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:30
+msgid "Blocked country"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:31
+msgid "Banned IP"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:32
+msgid "Blocked bot"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:33
+msgid "404 flood"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:34
+msgid "Rate limit: wp-login.php"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:35
+msgid "Rate limit: xmlrpc.php"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:36
+msgid "Rate limit: wp-cron.php"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:37
+msgid "Rate limit: REST API"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:38
+msgid "Rate limit: filter parameters"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:40
+msgid "Username locked after failed logins"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:42
+msgid "Password reset flood (per IP)"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:43
+msgid "Password reset flood (per account)"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:44
+msgid "Password reset flood (site-wide cap)"
+msgstr ""
+
 #: includes/Admin/ParentPage.php:129
 msgid "Lightweight plugins for WordPress - minimal footprint, maximum impact."
 msgstr ""
 
 #: includes/Admin/ParentPage.php:193
+#: build/index.js:17
 msgid "Active"
 msgstr ""
 
@@ -58,1169 +273,153 @@ msgstr ""
 msgid "Get Plugin"
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:34
-msgid "Too many failed logins"
+#: includes/Admin/SettingsPage.php:67
+#: includes/Admin/SettingsPage.php:68
+#: includes/SiteManager/Integration.php:42
+msgid "Firewall"
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:35
-msgid "brute-force lockout"
+#: includes/Admin/SettingsPage.php:137
+msgid "The settings screen files are missing. Re-install the plugin from a release ZIP, or run \"npm install && npm run build\" in the plugin directory."
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:38
-msgid "Password reset flood"
+#: includes/Admin/Status/StatusWarnings.php:49
+msgid "LW_FIREWALL_DISABLE_WORKER is set in wp-config.php, so the worker performs no checks at all."
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:39
-msgid "per-IP limit"
+#: includes/Admin/Status/StatusWarnings.php:53
+msgid "The firewall is switched off (General → Enable Firewall). No request is filtered."
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:42
-msgid "Password reset bot request"
+#: includes/Admin/Status/StatusWarnings.php:57
+msgid "The MU-plugin worker is not installed, so runtime protection is off. Reinstall it below."
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:43
-msgid "proof-of-render failed"
+#: includes/Admin/Status/StatusWarnings.php:59
+msgid "The installed worker does not match this plugin version, so runtime protection is off until it is reinstalled."
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:46
-msgid "Registration spam"
+#: includes/Admin/Status/StatusWarnings.php:61
+msgid "The worker file is installed but has never reported in. If this stays after a few page loads, the worker cannot load the plugin — most often because the plugin directory was renamed. Reinstall it below."
 msgstr ""
 
-#: includes/Admin/Settings/BanReasons.php:47
-msgid "rejected sign-ups"
-msgstr ""
-
-#: includes/Admin/Settings/BanReasons.php:50
-msgid "Rate limit exceeded"
-msgstr ""
-
-#: includes/Admin/Settings/BanReasons.php:51
-msgid "auto-ban escalation"
-msgstr ""
-
-#: includes/Admin/Settings/BanReasons.php:65
-msgid "Unknown"
-msgstr ""
-
-#: includes/Admin/Settings/BanReasons.php:77
-msgid "banned before reasons were recorded"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:41
-msgid "Automatic Bans"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:43
-msgid "Addresses the firewall banned on its own — brute-force lockouts, registration spam, password-reset floods and rate-limit escalation. Unblocking also clears the counters behind the ban, so the address starts from zero instead of being banned again on its next request."
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:48
-msgid "No addresses are banned right now."
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:49
-msgid "Bans appear here as soon as the firewall issues one."
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:89
-msgid "Enforced now"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:90
-#: includes/Admin/Settings/BanTable.php:230
-msgid "Tracked only"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:91
-msgid "Expire within the hour"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:92
-msgid "Ban store"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:131
-msgid "All"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:144
-msgid "Not enforced"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:149
-msgid "Filter bans by reason"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:159
-msgid "Search banned IP addresses"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:160
-msgid "Search an IP address…"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:178
-msgid "Select all bans on this page"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:179
-msgid "IP address"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:180
-#: includes/Admin/Settings/TabLogs.php:96
-msgid "Reason"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:181
-msgid "Banned"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:182
-msgid "Expires"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:183
-#: includes/Admin/Settings/TabAlerts.php:180
-#: includes/Admin/Settings/TabStatus.php:34
-#: includes/Alerts/AdminDetector.php:136
-msgid "Status"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:193
-msgid "No banned address matches that search."
-msgstr ""
-
-#. translators: %s: IP address.
-#: includes/Admin/Settings/BanTable.php:209
+#. translators: %s: reason the install failed
+#: includes/Admin/Status/StatusWarnings.php:68
 #, php-format
-msgid "Select %s"
+msgid "The last worker install attempt failed: %s"
 msgstr ""
 
-#: includes/Admin/Settings/BanTable.php:228
-msgid "Enforced"
+#: includes/Admin/Status/StatusWarnings.php:72
+msgid "The mu-plugins directory is not writable, so the worker cannot be installed or updated automatically."
 msgstr ""
 
-#: includes/Admin/Settings/BanTable.php:230
-msgid "Tracked but no longer enforced — the storage backend was cleared."
+#: includes/Admin/Status/StatusWarnings.php:92
+msgid "The file storage directory is not writable, so rate limits, bans and counters cannot be stored."
 msgstr ""
 
-#: includes/Admin/Settings/BanTable.php:235
-msgid "Unblock"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:252
-msgid "Unblock selected"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:261
-msgid "Unblock every banned address"
-msgstr ""
-
-#: includes/Admin/Settings/BanTable.php:275
-msgid "unknown"
-msgstr ""
-
-#. translators: %s: human-readable time difference, e.g. "12 mins".
-#. translators: %s: human-readable time difference
-#: includes/Admin/Settings/BanTable.php:279
-#: includes/Admin/Settings/TabStatus.php:184
+#. translators: %s: detected IP address
+#: includes/Admin/Status/StatusWarnings.php:113
 #, php-format
-msgid "%s ago"
+msgid "Your request reaches the firewall as %s, which is not routable on the internet. If visitors arrive the same way, they all share one rate-limit bucket, one ban and one country — list the proxy or load balancer under IP Rules → Reverse Proxy. If you are browsing from a LAN or VPN, only your own request may be affected."
 msgstr ""
 
-#: includes/Admin/Settings/BanTable.php:290
-msgid "expired"
-msgstr ""
-
-#. translators: %s: human-readable time difference, e.g. "24 mins".
-#: includes/Admin/Settings/BanTable.php:294
+#. translators: 1: header names, 2: REMOTE_ADDR
+#: includes/Admin/Status/StatusWarnings.php:127
 #, php-format
-msgid "in %s"
+msgid "The request carries %1$s, but REMOTE_ADDR %2$s is not a trusted proxy, so the header is ignored. If a proxy you control sets it, add %2$s under IP Rules → Trusted Proxies."
 msgstr ""
 
-#: includes/Admin/Settings/ProtectionFields.php:30
-msgid "Rate-limit wp-cron.php requests"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:31
-msgid "Protects against DDoS attacks targeting wp-cron.php."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:34
-msgid "Rate-limit xmlrpc.php requests"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:35
-msgid "Protects against brute-force and DDoS via xmlrpc.php."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:38
-msgid "Rate-limit wp-login.php requests"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:39
-msgid "Rate-limits wp-login.php requests per IP."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:42
-msgid "Rate-limit REST API requests"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:43
-msgid "Rate-limits /wp-json/ requests per IP."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:46
-msgid "Block 404 flood"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:47
-msgid "Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:60
-msgid "Enable Login Protection"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:61
-msgid "Ban IPs after repeated failed logins"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:62
-msgid "Counts failed password attempts per IP via wp_login_failed."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:66
-msgid "Failed Attempts"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:69
-msgid "Number of failed login attempts before the IP is banned."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:73
-msgid "Detection Window"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:76
-msgid "Seconds within which failed attempts are counted (600 = 10 minutes)."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:80
-#: includes/Admin/Settings/ProtectionFields.php:109
-#: includes/Admin/Settings/ResetFields.php:111
-#: includes/Admin/Settings/SpamFields.php:77
-msgid "Ban Duration"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:83
-#: includes/Admin/Settings/ProtectionFields.php:112
-#: includes/Admin/Settings/ResetFields.php:114
-#: includes/Admin/Settings/SpamFields.php:80
-msgid "How long the ban lasts in seconds (3600 = 1 hour)."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:96
-msgid "Enable Auto-Ban"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:97
-msgid "Ban IPs after repeated violations"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:98
-msgid "After the threshold is reached, the IP is banned for the configured duration."
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:102
-#: includes/Admin/Settings/SpamFields.php:70
-msgid "Ban Threshold"
-msgstr ""
-
-#: includes/Admin/Settings/ProtectionFields.php:105
-msgid "Number of rate-limit violations before an IP is banned."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:31
-msgid "Enable Reset Protection"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:32
-msgid "Rate limit password reset requests"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:33
-msgid "Covers wp-login.php?action=lostpassword and the WooCommerce \"Lost your password?\" form — both go through the same WordPress hook. Requests started by an administrator or by WP-CLI are never limited."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:37
-msgid "Requests per IP"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:40
-msgid "How many reset requests one IP address may make per window. 0 disables this limit."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:44
-msgid "Per-IP Window"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:47
-msgid "Length of the per-IP window in seconds (900 = 15 minutes)."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:51
-msgid "Requests per Account"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:54
-msgid "How many reset emails one account may receive per window, no matter how many different IPs ask. This is the only limit that stops a distributed flood of one person's inbox. 0 disables it."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:58
-msgid "Per-Account Window"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:61
-msgid "Length of the per-account window in seconds (3600 = 1 hour)."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:65
-msgid "Site-Wide Hourly Cap"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:68
-msgid "Total reset emails the site will send in an hour. Protects your hosting mail quota and stops your domain being flagged as a spam source. 0 disables it."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:81
-msgid "Proof of Render"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:82
-msgid "Require a signed token and honeypot on the wp-login form"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:83
-msgid "Rejects direct POSTs that never loaded the form. Only enforced on wp-login.php, since other lost-password forms (WooCommerce, custom login pages) do not render the token. Turn this off if a login plugin replaces the wp-login form."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:87
-#: includes/Admin/Settings/SpamFields.php:46
-msgid "Minimum Fill Time"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:90
-msgid "Reject submissions faster than this many seconds after the form loaded. Separate from the registration setting, so the two forms can be tuned independently."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:94
-#: includes/Admin/Settings/SpamFields.php:53
-msgid "Token Lifetime"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:97
-msgid "How long a rendered lost-password form stays valid, in seconds (3600 = 1 hour)."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:100
-#: includes/Admin/Settings/SpamFields.php:40
-msgid "Single-Use Token"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:101
-#: includes/Admin/Settings/SpamFields.php:41
-msgid "Reject reused tokens"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:102
-msgid "Each rendered form may submit one reset request. Without this, a bot can load the form once and replay that token for the whole token lifetime."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:105
-#: includes/Admin/Settings/TabProtection.php:57
-msgid "Auto-Ban"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:106
-msgid "Ban IPs that trip the per-IP limit or fail the token check"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:107
-msgid "A banned IP is blocked from the whole site by the MU-plugin worker. Account and site-wide limits never ban: they say nothing about who happened to ask last."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:117
-msgid "Email Alert"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:118
-msgid "Email me when a reset limit is reached"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:119
-msgid "Sends at most one message per limit per hour, to the recipients configured on the Alerts tab."
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:122
-msgid "Block Admin Resets"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:123
-msgid "Never allow password reset for administrator accounts"
-msgstr ""
-
-#: includes/Admin/Settings/ResetFields.php:124
-msgid "Closes the \"flood the admin inbox, then phish the reset link\" path entirely. A locked-out administrator can then only be recovered by WP-CLI or by another administrator, so leave this off unless you have that access."
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:30
-msgid "Enable Registration Protection"
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:31
-msgid "Block bot registrations on wp-login.php?action=register"
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:32
-msgid "Adds a signed proof-of-render token and honeypot to the registration form. Only active when \"Anyone can register\" is enabled."
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:35
-msgid "Honeypot"
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:36
-msgid "Add a hidden honeypot field"
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:37
-msgid "Catches generic bots that fill every field. Invisible to real users."
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:42
-msgid "Stores used tokens in the firewall storage backend so each rendered form can register only once."
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:49
-msgid "Reject submissions faster than this many seconds after the form loaded (catches instant bot POSTs)."
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:56
-msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
-msgstr ""
-
-#: includes/Admin/Settings/SpamFields.php:73
-msgid "Number of rejected registrations from one IP before it is banned."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:37
-msgid "Alerts"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:52
-msgid "New Administrator Alert"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:54
-msgid "Send an email whenever an account gains administrator privileges, or an existing administrator account is modified — no matter how it happened: the admin screens, a plugin, the REST API, WP-CLI, or a direct write into the database."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:59
-msgid "Enable Alerts"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:65
-msgid "Email me when a new administrator appears"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:66
-msgid "Works independently of the main firewall switch."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:73
-msgid "Notification Email"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:79
-msgid "Account Takeover"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:85
-msgid "Also alert when an existing administrator is modified"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:86
-msgid "Watches the username, email address and password of every administrator. Rewriting an admin's email address is how an account is seized — it hands over the password reset flow while the user ID stays the same, so watching for new accounts alone would never see it."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:93
-msgid "Database Scan"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:99
-msgid "Hourly scan for administrators created outside WordPress"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:100
-msgid "Compares the live administrator list against a stored snapshot. This is what catches accounts inserted straight into the database, created by code that bypasses the WordPress user API, or added while this plugin was inactive."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:106
-msgid "Save &amp; run scan now"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:109
-msgid "Save &amp; send test email"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:118
-msgid "How detection works"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:122
-msgid "WordPress hooks"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:124
-msgid "Immediate. Catches every account creation or role change that goes through the WordPress user API — the Users screen, user registration, the REST API, WP-CLI, and any plugin or theme calling wp_insert_user() or set_role(). The alert names the acting user and their IP address."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:128
-msgid "Database scan"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:130
-msgid "Within the hour. A snapshot of every administrator user ID is stored, and the scheduled scan diffs it against the live list. Anything that appears without a hook firing — a direct SQL INSERT, a modified wp_capabilities meta row, an account added while the plugin was off — shows up here and is flagged as created outside the normal WordPress flow."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:134
-msgid "What the snapshot stores"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:136
-msgid "Per administrator: the user ID, the username, the email address, and a digest of the stored password hash. The digest only ever answers \"did this change?\" — the password itself is never stored, never compared and never printed in an alert."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:140
-msgid "No duplicate alerts"
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:142
-msgid "Both paths write to the same snapshot, so each event is reported exactly once. Existing administrators are recorded silently when the feature is turned on — you are only told about what happens afterwards. Removing an administrator is not reported; the account simply leaves the snapshot."
-msgstr ""
-
-#: includes/Admin/Settings/TabAlerts.php:166
-msgid "Separate multiple addresses with commas. Leave empty to use the site admin email."
-msgstr ""
-
-#. translators: %d: number of undelivered alerts.
-#: includes/Admin/Settings/TabAlerts.php:190
+#. translators: %s: comma-separated country codes
+#: includes/Admin/Status/StatusWarnings.php:157
 #, php-format
+msgid "No current CIDR list for: %s. Geo blocking lets these visitors through until the lists are updated (Geo Blocking → Update CIDR lists)."
+msgstr ""
+
+#. translators: %d: number of alerts
+#. translators: %d: number of queued alerts.
+#: includes/Admin/Status/StatusWarnings.php:174
+#: build/index.js:3
+#, php-format,js-format
 msgid "%d alert could not be sent yet and will be retried on the next scan."
 msgid_plural "%d alerts could not be sent yet and will be retried on the next scan."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Admin/Settings/TabAlerts.php:205
+#: includes/Admin/Status/StatusWarnings.php:178
+#: build/index.js:3
 msgid "The last alert email could not be sent. Check your site mail configuration (SMTP plugin, hosting mail limits) — an alert that never arrives is no alert at all."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:213
-msgid "Administrators tracked"
+#: includes/Admin/Status/StorageProbe.php:36
+msgid "The storage backend refused a write. Rate limits, bans and counters are not being recorded."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:219
-msgid "Alerts go to"
+#: includes/Admin/Status/StorageProbe.php:41
+msgid "A value written to the storage backend could not be read back. Rate limits, bans and counters are not being enforced."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:225
-msgid "Snapshot taken"
+#: includes/Admin/Status/StorageProbe.php:47
+msgid "The storage backend refused a delete. Unblocking an address may not take effect."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:226
-msgid "never — taken on the first scan"
+#: includes/Admin/Status/StorageProbe.php:50
+msgid "Write, read and delete all succeeded."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:231
-msgid "Next scan"
+#: includes/Admin/Status/WorkerState.php:68
+msgid "The worker was installed."
 msgstr ""
 
-#: includes/Admin/Settings/TabAlerts.php:232
-msgid "not scheduled"
-msgstr ""
-
-#: includes/Admin/Settings/TabBots.php:30
-#: includes/Admin/Settings/TabBots.php:45
-msgid "Blocked Bots"
-msgstr ""
-
-#: includes/Admin/Settings/TabBots.php:47
-msgid "User-Agent strings to block (one per line, case-insensitive substring match)."
-msgstr ""
-
-#: includes/Admin/Settings/TabBots.php:52
-msgid "Blocked User-Agents"
-msgstr ""
-
-#: includes/Admin/Settings/TabBots.php:59
-msgid "User-Agent substrings (case-insensitive, one per line). Any request whose User-Agent contains one of these is blocked with 403."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:30
-msgid "General"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:45
-msgid "General Settings"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:47
-msgid "Core firewall settings — enable/disable, storage backend, rate limits and filter parameters."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:52
-msgid "Enable Firewall"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:58
-msgid "Enable firewall protection"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:59
-msgid "Master switch — when off, the MU-plugin worker performs no checks (rate-limit, bot blocking, IP/geo blocking, auto-ban all skipped)."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:66
-msgid "Storage Backend"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:73
-msgid "Auto-detect"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:76
-msgid "File"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:78
-msgid "Storage backend for rate-limit counters. Auto-detect tries APCu, then Redis, then file."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:85
-msgid "Rate Limit"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:93
-msgid "Maximum number of rate-limited requests per IP within the time window. Applies to filter parameters, login, REST, XML-RPC and any other protected endpoint."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:100
-msgid "Time Window"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:108
-msgid "Time window in seconds for rate limiting."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:115
-msgid "Rate Limit Action"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:122
-msgid "302 Redirect (strip filters)"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:123
-msgid "429 Too Many Requests"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:125
-msgid "Response when the rate limit is exceeded. 302 strips query parameters and redirects to the same path; 429 returns a Retry-After header."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:132
-msgid "Filter Parameters"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeneral.php:139
-msgid "URL parameter substrings to rate-limit, one per line. Append |N for a stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, query_type_|30."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:32
-#: includes/Admin/Settings/TabGeo.php:47
-msgid "Geo Blocking"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:49
-msgid "Block visitors from specific countries. Behind Cloudflare, the CF-IPCountry header is used (instant). Without Cloudflare, CIDR-based lookup is used (updated weekly)."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:67
-msgid "Enable"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:73
-msgid "Enable Geo Blocking"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:88
-msgid "Blocked Countries"
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:95
-msgid "ISO 3166-1 alpha-2 country codes, one per line (e.g. IN, CN, RU)."
-msgstr ""
-
-#: includes/Admin/Settings/TabGeo.php:112
-msgid "Update CIDR Lists Now"
-msgstr ""
-
-#. translators: %s: human-readable time difference
-#: includes/Admin/Settings/TabGeo.php:118
-#, php-format
-msgid "Next automatic update: %s"
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:28
-msgid "Import / Export"
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:53
-#: includes/Admin/Settings/TabImportExport.php:59
-msgid "Export Settings"
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:55
-msgid "Download your current firewall settings as a JSON file. You can use this file to import settings on another site."
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:73
-#: includes/Admin/Settings/TabImportExport.php:92
-msgid "Import Settings"
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:75
-msgid "Upload a previously exported JSON file to restore firewall settings. This will overwrite all current settings."
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:83
-msgid "Settings File"
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:107
-msgid "Settings imported successfully."
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:116
-msgid "No file was uploaded."
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:117
-msgid "Could not read the uploaded file."
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:118
-msgid "The file does not contain valid JSON."
-msgstr ""
-
-#: includes/Admin/Settings/TabImportExport.php:121
-msgid "Import failed."
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:30
-#: includes/Admin/Settings/TabIpRules.php:45
-msgid "IP Rules"
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:47
-msgid "Manually allow or block IP addresses. Supports individual IPs and CIDR ranges (e.g. 192.168.1.0/24)."
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:52
-msgid "IP Whitelist"
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:59
-msgid "IPs or CIDR ranges that bypass all firewall checks (one per line). Supports IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32)."
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:66
-msgid "IP Blacklist"
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:73
-msgid "IPs or CIDR ranges blocked with 403 Forbidden before any other check (one per line). Supports IPv4, IPv6, and CIDR notation."
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:81
-msgid "Reverse Proxy"
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:83
-msgid "Leave this empty unless the site sits behind a proxy or load balancer. A forwarded-for header is written by the client until the hop that set it is known, so trusting one without listing the proxies would let any visitor choose their own IP — and with it their own rate-limit bucket, ban status and country. Cloudflare is handled automatically and needs nothing here."
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:88
-msgid "Trusted Proxies"
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:95
-msgid "IPs or CIDR ranges of your own proxies, one per line. On the common \"nginx in front of Apache on the same host\" layout this is 127.0.0.1 — without it every visitor arrives as 127.0.0.1 and shares a single bucket."
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:102
-msgid "Forwarded Header"
-msgstr ""
-
-#: includes/Admin/Settings/TabIpRules.php:116
-msgid "Read right to left, skipping hops that are themselves listed above. Only used when a trusted proxy is configured."
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:32
-msgid "Logs"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:47
-msgid "Request Logging"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:51
-msgid "Enable Logging"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:57
-msgid "Log blocked requests"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:58
-msgid "Stores the last 100 blocked requests in the database."
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:71
-msgid "Clear all log entries on save"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:86
-msgid "No log entries yet."
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:94
-msgid "Time"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:95
-msgid "IP"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:97
-msgid "User-Agent"
-msgstr ""
-
-#: includes/Admin/Settings/TabLogs.php:98
-msgid "URL"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:30
-msgid "Protection"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:45
-msgid "Endpoint Protection"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:46
-msgid "Enable rate limiting on specific WordPress endpoints."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:51
-msgid "Brute-Force Login Protection"
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:52
-msgid "Ban IPs that submit too many failed login attempts (fail2ban style). A banned IP is blocked from the whole site, not just wp-login.php."
-msgstr ""
-
-#: includes/Admin/Settings/TabProtection.php:58
-msgid "Automatically ban IPs that repeatedly exceed rate limits."
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:30
-msgid "Security"
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:45
-msgid "Security Headers"
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:47
-msgid "Add security-related HTTP response headers to every page."
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:52
-msgid "Enable Security Headers"
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:58
-msgid "Add security headers to all responses"
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:65
-msgid "Headers added:"
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:78
-msgid "What do these headers do?"
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:84
-msgid "Prevents browsers from MIME-sniffing the content type. Without this, a browser might interpret a file differently than intended — for example, treating a text file as JavaScript — which can lead to XSS attacks."
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:90
-msgid "Prevents your site from being embedded in an iframe on another domain. This protects against clickjacking attacks, where a malicious site overlays your page with invisible elements to trick users into clicking."
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:96
-msgid "Controls how much referrer information is sent when navigating away from your site. The \"strict-origin-when-cross-origin\" value sends the full URL for same-origin requests but only the origin (domain) for cross-origin requests, preventing sensitive URL paths from leaking to third parties."
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:102
-msgid "Disables browser features that your site does not use — camera, microphone, and geolocation. This prevents malicious scripts (e.g. from compromised third-party libraries) from silently accessing these sensitive APIs."
-msgstr ""
-
-#: includes/Admin/Settings/TabSecurity.php:108
-msgid "Enables the built-in XSS filter in older browsers (IE, older Chrome). When a reflected XSS attack is detected, the browser blocks the page instead of rendering it. Modern browsers use Content-Security-Policy instead, but this header provides a safety net for legacy browsers."
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:31
-msgid "Spam"
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:46
-msgid "Registration Protection"
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:47
-msgid "Block bot sign-ups on wp-login.php?action=register without a captcha. Active only when \"Anyone can register\" is enabled in Settings → General."
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:52
-msgid "Registration Auto-Ban"
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:53
-msgid "Ban IPs that repeatedly submit spam registrations. A banned IP is blocked from the whole site, not just the registration form."
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:58
-msgid "Password Reset Flood Protection"
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:59
-msgid "A reset flood has three shapes, and each needs its own limit: one IP hammering the form, many IPs targeting one person's inbox, and sheer volume burning your hosting mail quota."
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:64
-msgid "Password Reset Hardening"
-msgstr ""
-
-#: includes/Admin/Settings/TabSpam.php:65
-msgid "Filter out direct bot POSTs, escalate repeat offenders to a site-wide ban, and optionally take administrator accounts out of the reset flow entirely."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:63
-msgid "The firewall cannot see real visitor addresses."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:64
-msgid "Every request reaches it as the address below, which is not routable on the internet — so all visitors share one rate-limit bucket, one ban and one country. If this site is behind a proxy or load balancer, list it under IP Rules → Reverse Proxy."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:86
-msgid "The worker file is installed but has never reported in."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:87
-msgid "It records a heartbeat the first time it runs. If this notice stays after a few page loads, the worker cannot load the plugin — most often because the plugin directory was renamed. Reinstall it below."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:105
-msgid "Firewall Status"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:112
-msgid "MU-Plugin Worker"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:116
-msgid "Installed"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:120
-msgid "Not installed"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:124
-msgid "The MU-plugin worker intercepts requests early, before themes and plugins load."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:129
-msgid "Worker Version"
-msgstr ""
-
-#. translators: %s: expected plugin version
-#: includes/Admin/Settings/TabStatus.php:140
-#, php-format
-msgid "Mismatch — expected %s (will auto-update on next page load)"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:149
-msgid "mu-plugins writable"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:152
-msgid "Yes"
-msgstr ""
-
-#. translators: %s: mu-plugins directory path
-#: includes/Admin/Settings/TabStatus.php:159
-#, php-format
-msgid "No — make %s writable by the web server."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:169
-msgid "Last install attempt"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:172
-msgid "Succeeded"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:194
-msgid "Active Storage"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:198
-msgid "Storage backend used for rate-limit counters."
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:203
-msgid "Reinstall Worker"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:207
-msgid "Reinstall MU-plugin worker on save"
-msgstr ""
-
-#: includes/Admin/Settings/TabStatus.php:210
-msgid "Check this and save to reinstall the worker file."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:77
-#: includes/Admin/SettingsPage.php:78
-#: includes/SiteManager/Integration.php:42
-msgid "Firewall"
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:131
-msgid "Lightweight Firewall"
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:137
-msgid "Settings saved."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:153
-msgid "Save Changes"
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:178
-msgid "These settings are pinned by a constant in wp-config.php. Editing them here has no effect until the constant is removed:"
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:193
-msgid "Test alert sent. If it does not arrive, the problem is your site mail configuration, not the firewall."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:194
-msgid "The test alert could not be sent — wp_mail() refused it. Check your SMTP plugin or hosting mail limits."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:195
-msgid "Scan finished: no new or modified administrators found."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:196
-msgid "Scan finished: new or modified administrators were found and an alert email was sent."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:197
-msgid "IP unblocked. Its rate-limit, login, registration and password-reset counters were cleared too, so the next request starts from zero."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:198
-msgid "All tracked bans lifted and their counters cleared."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:199
-msgid "The ban could not be lifted — the storage backend refused the delete. Check the Status tab for the active backend."
-msgstr ""
-
-#: includes/Admin/SettingsPage.php:200
-msgid "That is not a valid IP address."
-msgstr ""
-
-#: includes/Admin/WorkerNotice.php:29
+#: includes/Admin/WorkerInstallReasons.php:30
 msgid "The worker source file inside the plugin is missing."
 msgstr ""
 
-#: includes/Admin/WorkerNotice.php:30
+#: includes/Admin/WorkerInstallReasons.php:31
 msgid "The mu-plugins directory could not be created."
 msgstr ""
 
-#: includes/Admin/WorkerNotice.php:31
+#: includes/Admin/WorkerInstallReasons.php:32
 msgid "The mu-plugins directory is not writable."
 msgstr ""
 
-#: includes/Admin/WorkerNotice.php:32
+#: includes/Admin/WorkerInstallReasons.php:33
 msgid "Copying the worker file failed (disk full or permission denied)."
 msgstr ""
 
-#: includes/Admin/WorkerNotice.php:53
-msgid "LW Firewall — protection is OFF"
-msgstr ""
-
-#: includes/Admin/WorkerNotice.php:58
-msgid "The MU-plugin worker is installed but its version does not match this plugin. Runtime protection is disabled until it is reinstalled."
-msgstr ""
-
-#: includes/Admin/WorkerNotice.php:59
-msgid "The MU-plugin worker file is missing from mu-plugins/. Runtime protection is disabled until it is reinstalled."
-msgstr ""
-
-#: includes/Admin/WorkerNotice.php:67
-msgid "Open Status tab"
-msgstr ""
-
-#: includes/Admin/WorkerNotice.php:86
+#: includes/Admin/WorkerInstallReasons.php:44
+#: build/index.js:18
 msgid "Unknown install error."
 msgstr ""
 
+#: includes/Admin/WorkerNotice.php:39
+msgid "LW Firewall — protection is OFF"
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:44
+msgid "The MU-plugin worker is installed but its version does not match this plugin. Runtime protection is disabled until it is reinstalled."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:45
+msgid "The MU-plugin worker file is missing from mu-plugins/. Runtime protection is disabled until it is reinstalled."
+msgstr ""
+
+#: includes/Admin/WorkerNotice.php:53
+msgid "Open Status tab"
+msgstr ""
+
 #. translators: 1: reason text, 2: human-readable time difference
-#: includes/Admin/WorkerNotice.php:91
+#: includes/Admin/WorkerNotice.php:76
 #, php-format
 msgid "Last install attempt failed: %1$s (%2$s ago)"
 msgstr ""
 
 #. translators: %s: mu-plugins directory path
-#: includes/Admin/WorkerNotice.php:110
+#: includes/Admin/WorkerNotice.php:95
 #, php-format
-msgid "Make %s writable by the web server, then re-save the firewall settings."
+msgid "Make %s writable by the web server, then reload this page: the worker reinstalls itself."
 msgstr ""
 
-#: includes/Admin/WorkerNotice.php:118
+#: includes/Admin/WorkerNotice.php:103
 msgid "A security plugin or hosting cleanup may be removing the worker. Check the Status tab for the last install attempt and reinstall from there."
 msgstr ""
 
@@ -1230,10 +429,19 @@ msgid "User ID"
 msgstr ""
 
 #: includes/Alerts/AdminDetector.php:136
+#: build/index.js:1
+#: build/index.js:3
+#: build/index.js:13
+#: build/index.js:17
+msgid "Status"
+msgstr ""
+
+#: includes/Alerts/AdminDetector.php:136
 msgid "account no longer exists"
 msgstr ""
 
 #: includes/Alerts/AdminDetector.php:143
+#: build/index.js:13
 msgid "Username"
 msgstr ""
 
@@ -1495,6 +703,68 @@ msgstr ""
 msgid "password reset rate limit"
 msgstr ""
 
+#: includes/Rest/Admin/BansController.php:91
+msgid "This address is on the IP whitelist, which bypasses every check — a ban would have no effect. Remove it from the whitelist first."
+msgstr ""
+
+#: includes/Rest/Admin/BansController.php:95
+msgid "This is the address you are using right now. Banning it would lock you out of the whole site, the admin included."
+msgstr ""
+
+#: includes/Rest/Admin/BansController.php:102
+msgid "This address cannot be banned: it is private, shared or a trusted proxy (banning it would lock out every visitor behind it), or the storage backend refused the write."
+msgstr ""
+
+#: includes/Rest/Admin/BansController.php:109
+msgid "Address banned."
+msgstr ""
+
+#: includes/Rest/Admin/BansController.php:138
+msgid "Send \"ips\" (addresses), \"users\" (username lock keys) or \"all\": true."
+msgstr ""
+
+#: includes/Rest/Admin/LogsController.php:76
+msgid "All log entries were deleted."
+msgstr ""
+
+#: includes/Rest/Admin/MaintenanceController.php:56
+msgid "The worker was reinstalled. The version check updates on the next page load."
+msgstr ""
+
+#: includes/Rest/Admin/MaintenanceController.php:85
+msgid "There are no blocked countries to update."
+msgstr ""
+
+#. translators: 1: countries updated, 2: countries requested
+#: includes/Rest/Admin/MaintenanceController.php:102
+#, php-format
+msgid "%1$d of %2$d countries updated."
+msgstr ""
+
+#: includes/Rest/Admin/SettingsController.php:66
+msgid "The request is too large (at most 256 KB)."
+msgstr ""
+
+#: includes/Rest/Admin/SettingsController.php:80
+msgid "Some settings are not valid. Nothing was saved."
+msgstr ""
+
+#: includes/Rest/Admin/SettingsMeta.php:92
+msgid "Auto-detect"
+msgstr ""
+
+#: includes/Rest/Admin/SettingsMeta.php:107
+msgid "File"
+msgstr ""
+
+#: includes/Rest/Admin/TransferController.php:61
+msgid "Send the exported file contents as \"json\" (at most 256 KB)."
+msgstr ""
+
+#: includes/Rest/Admin/TransferController.php:67
+msgid "The file is not an LW Firewall settings export: it is not valid JSON, or it holds no known setting."
+msgstr ""
+
 #: includes/Rules/PasswordResetGuard.php:84
 #: includes/Rules/RegisterGuard.php:54
 msgid "Leave this field empty"
@@ -1510,6 +780,83 @@ msgstr ""
 
 #: includes/Rules/ResetPenalty.php:63
 msgid "<strong>Error:</strong> Too many password reset requests. Please try again later."
+msgstr ""
+
+#: includes/Rules/UserLockGuard.php:76
+msgid "Too many failed login attempts for this account. Try again later."
+msgstr ""
+
+#: includes/Settings/Input/BoolParser.php:52
+msgid "Must be on or off (true or false)."
+msgstr ""
+
+#. translators: %d: maximum number of characters
+#: includes/Settings/Input/BotListParser.php:49
+#, php-format
+msgid "An entry is longer than %d characters."
+msgstr ""
+
+#. translators: %s: the rejected entry
+#: includes/Settings/Input/CountryListParser.php:50
+#, php-format
+msgid "\"%s\" is not a two-letter ISO 3166-1 country code."
+msgstr ""
+
+#. translators: %s: the rejected entry
+#: includes/Settings/Input/EmailListParser.php:42
+#, php-format
+msgid "\"%s\" is not a valid email address."
+msgstr ""
+
+#. translators: %s: comma-separated list of allowed values
+#: includes/Settings/Input/EnumParser.php:38
+#, php-format
+msgid "Must be one of: %s."
+msgstr ""
+
+#. translators: %s: the rejected entry
+#: includes/Settings/Input/FilterParamsParser.php:52
+#, php-format
+msgid "\"%s\" is not valid. Use a parameter prefix, optionally followed by |N with N a positive whole number (e.g. add-to-cart|10)."
+msgstr ""
+
+#: includes/Settings/Input/IntParser.php:34
+msgid "Must be a whole number."
+msgstr ""
+
+#. translators: 1: lowest allowed number, 2: highest allowed number
+#: includes/Settings/Input/IntParser.php:41
+#, php-format
+msgid "Must be between %1$d and %2$d."
+msgstr ""
+
+#. translators: %s: the rejected entry
+#: includes/Settings/Input/IpListParser.php:41
+#, php-format
+msgid "\"%s\" is not a valid IP address or CIDR range."
+msgstr ""
+
+#: includes/Settings/Input/ListSplitter.php:73
+msgid "Must be a list: one entry per line, or an array of strings."
+msgstr ""
+
+#. translators: %d: maximum number of entries
+#: includes/Settings/Input/OptionInput.php:102
+#, php-format
+msgid "Too many entries: at most %d are allowed."
+msgstr ""
+
+#. translators: %s: setting key
+#: includes/Settings/Input/OptionInput.php:123
+#: includes/Settings/SettingsWriter.php:51
+#, php-format
+msgid "Unknown setting: %s."
+msgstr ""
+
+#. translators: %s: constant name
+#: includes/Settings/SettingsWriter.php:58
+#, php-format
+msgid "This setting is pinned by %s in wp-config.php. Remove the constant to change it."
 msgstr ""
 
 #: includes/SiteManager/FirewallAbilities.php:45
@@ -1574,7 +921,7 @@ msgid "The provided value is not a valid IP address or CIDR range."
 msgstr ""
 
 #. translators: %s: IP address
-#: includes/SiteManager/FirewallService.php:104
+#: includes/SiteManager/FirewallService.php:106
 #, php-format
 msgid "%s is already on the blacklist."
 msgstr ""
@@ -1592,11 +939,1622 @@ msgid "%s was not found on the blacklist."
 msgstr ""
 
 #. translators: %s: IP address
-#: includes/SiteManager/FirewallService.php:165
+#: includes/SiteManager/FirewallService.php:163
 #, php-format
 msgid "%s has been removed from the blacklist."
 msgstr ""
 
 #: includes/SiteManager/Integration.php:43
 msgid "Firewall management abilities: rate limiting, IP blocking, bot control and logs."
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:10
+msgid "Loading…"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:17
+msgid "Try again"
+msgstr ""
+
+#: build/index.js:1
+msgid "Settings saved."
+msgstr ""
+
+#: build/index.js:1
+msgid "Nothing was saved. Fix the highlighted fields and save again."
+msgstr ""
+
+#: build/index.js:1
+msgid "LW Plugins (opens in a new tab)"
+msgstr ""
+
+#: build/index.js:1
+msgid "General"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:19
+msgid "General Settings"
+msgstr ""
+
+#: build/index.js:1
+msgid "Protection"
+msgstr ""
+
+#: build/index.js:1
+msgid "Spam"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:20
+msgid "Blocked Bots"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:20
+msgid "IP Rules"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:17
+#: build/index.js:20
+msgid "Geo Blocking"
+msgstr ""
+
+#: build/index.js:1
+msgid "Security"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:21
+msgid "Security Headers"
+msgstr ""
+
+#: build/index.js:1
+msgid "Alerts"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:23
+msgid "New Administrator Alert"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:23
+msgid "Firewall Status"
+msgstr ""
+
+#: build/index.js:1
+msgid "Logs"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:23
+msgid "Request Logging"
+msgstr ""
+
+#: build/index.js:1
+msgid "Import / Export"
+msgstr ""
+
+#: build/index.js:1
+msgid "Has invalid fields"
+msgstr ""
+
+#. translators: %d: number of status warnings.
+#: build/index.js:2
+#, js-format
+msgid "%d warning"
+msgid_plural "%d warnings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:2
+msgid "LW Firewall home"
+msgstr ""
+
+#: build/index.js:2
+msgid "LW Firewall sections"
+msgstr ""
+
+#: build/index.js:2
+msgid "Documentation"
+msgstr ""
+
+#: build/index.js:2
+msgid "(opens in a new tab)"
+msgstr ""
+
+#: build/index.js:2
+msgid "Unsaved changes"
+msgstr ""
+
+#: build/index.js:2
+msgid "Discard"
+msgstr ""
+
+#: build/index.js:2
+msgid "Save changes"
+msgstr ""
+
+#: build/index.js:2
+msgid "Set in wp-config.php"
+msgstr ""
+
+#: build/index.js:2
+msgid "seconds"
+msgstr ""
+
+#: build/index.js:2
+msgid "Alerts are turned off, so nothing was scanned. Enable alerts and save first."
+msgstr ""
+
+#: build/index.js:2
+msgid "Scan finished: new or modified administrators were found, but the alert email could not be sent yet. It is queued and retried on the next scan."
+msgstr ""
+
+#: build/index.js:2
+msgid "Check it now"
+msgstr ""
+
+#: build/index.js:2
+msgid "Run the database scan immediately, or send a test message to the saved recipients."
+msgstr ""
+
+#: build/index.js:2
+msgid "Run scan now"
+msgstr ""
+
+#: build/index.js:2
+msgid "Send test email"
+msgstr ""
+
+#: build/index.js:2
+msgid "You have unsaved alert changes. The scan and the test email use the saved settings, so save first."
+msgstr ""
+
+#: build/index.js:2
+msgid "unknown"
+msgstr ""
+
+#: build/index.js:2
+msgid "expired"
+msgstr ""
+
+#: build/index.js:3
+msgid "Administrators tracked"
+msgstr ""
+
+#: build/index.js:3
+msgid "Alerts go to"
+msgstr ""
+
+#: build/index.js:3
+msgid "Snapshot taken"
+msgstr ""
+
+#: build/index.js:3
+msgid "never — taken on the first scan"
+msgstr ""
+
+#: build/index.js:3
+msgid "Next scan"
+msgstr ""
+
+#: build/index.js:3
+#: build/index.js:17
+msgid "not scheduled"
+msgstr ""
+
+#. translators: %d: number of list entries.
+#. translators: %d: number of rows.
+#: build/index.js:4
+#: build/index.js:10
+#, js-format
+msgid "%d entry"
+msgid_plural "%d entries"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:4
+#: build/index.js:17
+msgid "No country selected."
+msgstr ""
+
+#: build/index.js:4
+msgid "Not an ISO 3166–1 alpha-2 country code."
+msgstr ""
+
+#. translators: %s: country name or code.
+#: build/index.js:5
+#, js-format
+msgid "Remove %s"
+msgstr ""
+
+#: build/index.js:5
+msgid "Search countries"
+msgstr ""
+
+#: build/index.js:5
+msgid "Search a country or code…"
+msgstr ""
+
+#: build/index.js:5
+msgid "No country matches that search."
+msgstr ""
+
+#. translators: %d: number of blocked countries.
+#: build/index.js:6
+#, js-format
+msgid "%d country blocked"
+msgid_plural "%d countries blocked"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:6
+msgid "List freshness"
+msgstr ""
+
+#: build/index.js:6
+#: build/index.js:17
+msgid "Stale"
+msgstr ""
+
+#: build/index.js:6
+#: build/index.js:17
+msgid "Current"
+msgstr ""
+
+#: build/index.js:6
+msgid "Updated"
+msgstr ""
+
+#: build/index.js:6
+#: build/index.js:17
+#: build/index.js:19
+msgid "Failed"
+msgstr ""
+
+#: build/index.js:6
+msgid "Country IP lists"
+msgstr ""
+
+#. translators: %s: relative time of the next automatic update.
+#: build/index.js:7
+#, js-format
+msgid "Next automatic update: %s"
+msgstr ""
+
+#: build/index.js:7
+msgid "Without Cloudflare, visitors are matched against downloaded IPv4 and IPv6 lists per country."
+msgstr ""
+
+#: build/index.js:7
+msgid "Cloudflare detected: the CF-IPCountry header decides, so these lists are only a fallback."
+msgstr ""
+
+#: build/index.js:7
+msgid "Update CIDR Lists Now"
+msgstr ""
+
+#. translators: 1: current country number, 2: number of countries.
+#: build/index.js:8
+#, js-format
+msgid "Updating %1$d of %2$d…"
+msgstr ""
+
+#: build/index.js:8
+msgid "Save your changes first: the update downloads the lists of the saved countries."
+msgstr ""
+
+#: build/index.js:8
+msgid "Some lists could not be downloaded. The previous list is kept for those."
+msgstr ""
+
+#: build/index.js:8
+msgid "All country lists are up to date."
+msgstr ""
+
+#: build/index.js:8
+msgid "Country"
+msgstr ""
+
+#: build/index.js:8
+msgid "Details"
+msgstr ""
+
+#. translators: %d: number of imported settings.
+#: build/index.js:9
+#, js-format
+msgid "%d setting imported."
+msgid_plural "%d settings imported."
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:9
+msgid "Settings missing from the file kept their current values."
+msgstr ""
+
+#: build/index.js:9
+msgid "Imported keys"
+msgstr ""
+
+#: build/index.js:9
+msgid "Skipped, pinned in wp-config.php:"
+msgstr ""
+
+#: build/index.js:9
+msgid "Unknown keys ignored:"
+msgstr ""
+
+#. translators: %d: number of rejected settings.
+#: build/index.js:10
+#, js-format
+msgid "%d value was invalid and not imported; that setting kept its current value:"
+msgid_plural "%d values were invalid and not imported; those settings kept their current values:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:10
+msgid "Search"
+msgstr ""
+
+#: build/index.js:10
+msgid "Filter"
+msgstr ""
+
+#: build/index.js:10
+msgid "Clear"
+msgstr ""
+
+#: build/index.js:10
+msgid "Clear all filters"
+msgstr ""
+
+#: build/index.js:10
+msgid "All"
+msgstr ""
+
+#: build/index.js:10
+msgid "No entries match these filters."
+msgstr ""
+
+#: build/index.js:10
+msgid "Nothing here yet."
+msgstr ""
+
+#: build/index.js:10
+msgid "Previous page"
+msgstr ""
+
+#: build/index.js:10
+msgid "Next page"
+msgstr ""
+
+#: build/index.js:10
+msgid "Rows per page"
+msgstr ""
+
+#: build/index.js:10
+msgid "Select all rows on this page"
+msgstr ""
+
+#: build/index.js:10
+msgid "Clear selection"
+msgstr ""
+
+#: build/index.js:10
+msgid "Bulk actions"
+msgstr ""
+
+#. translators: %d: number of results.
+#: build/index.js:10
+#, js-format
+msgid "%d result"
+msgid_plural "%d results"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: current page, 2: total pages.
+#: build/index.js:10
+#, js-format
+msgid "Page %1$d of %2$d"
+msgstr ""
+
+#. translators: %s: row name.
+#: build/index.js:10
+#, js-format
+msgid "Select: %s"
+msgstr ""
+
+#. translators: %d: number of selected rows.
+#: build/index.js:11
+#, js-format
+msgid "%d selected"
+msgid_plural "%d selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: selected rows, 2: of those, on this page.
+#: build/index.js:12
+#, js-format
+msgid "%1$d selected, %2$d on this page"
+msgstr ""
+
+#. translators: 1: rows the action applies to, 2: selected rows on this page.
+#: build/index.js:12
+#, js-format
+msgid "applies to %1$d of %2$d"
+msgstr ""
+
+#: build/index.js:12
+msgid "IPv6 /64"
+msgstr ""
+
+#: build/index.js:12
+msgid "Legacy entry"
+msgstr ""
+
+#. translators: %s: IP address.
+#: build/index.js:13
+#, js-format
+msgid "%s banned."
+msgstr ""
+
+#: build/index.js:13
+#: build/index.js:17
+msgid "IP address"
+msgstr ""
+
+#: build/index.js:13
+msgid "Duration (seconds)"
+msgstr ""
+
+#: build/index.js:13
+msgid "Ban address"
+msgstr ""
+
+#: build/index.js:13
+msgid "Locked usernames"
+msgstr ""
+
+#: build/index.js:13
+msgid "Unlock all usernames"
+msgstr ""
+
+#: build/index.js:13
+msgid "Locked"
+msgstr ""
+
+#: build/index.js:13
+#: build/index.js:17
+msgid "Expires"
+msgstr ""
+
+#: build/index.js:13
+#: build/index.js:17
+msgid "Actions"
+msgstr ""
+
+#: build/index.js:13
+#: build/index.js:17
+msgid "Enforced"
+msgstr ""
+
+#: build/index.js:13
+#: build/index.js:17
+msgid "Tracked only"
+msgstr ""
+
+#: build/index.js:13
+msgid "Unlock"
+msgstr ""
+
+#. translators: %d: number of lifted bans or username locks.
+#: build/index.js:14
+#, js-format
+msgid "%d ban lifted. Its counters were cleared too, so the next request starts from zero."
+msgid_plural "%d bans lifted. Their counters were cleared too, so the next request starts from zero."
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:14
+msgid "All tracked bans lifted and their counters cleared."
+msgstr ""
+
+#. translators: %d: number of bans that could not be lifted.
+#: build/index.js:15
+#, js-format
+msgid "%d ban could not be lifted:"
+msgid_plural "%d bans could not be lifted:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:15
+msgid "Lift every ban and username lock, and clear the counters behind them? Addresses that keep attacking will be banned again by the rules."
+msgstr ""
+
+#. translators: %d: number of locked usernames.
+#: build/index.js:16
+#, js-format
+msgid "Unlock %d username?"
+msgid_plural "Unlock %d usernames?"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of selected bans.
+#: build/index.js:17
+#, js-format
+msgid "Unblock %d selected address and clear its counters?"
+msgid_plural "Unblock %d selected addresses and clear their counters?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/index.js:17
+msgid "Reason"
+msgstr ""
+
+#: build/index.js:17
+msgid "Banned"
+msgstr ""
+
+#: build/index.js:17
+msgid "Tracked but no longer enforced — the storage backend was cleared."
+msgstr ""
+
+#: build/index.js:17
+msgid "Unblock"
+msgstr ""
+
+#: build/index.js:17
+msgid "Automatic Bans"
+msgstr ""
+
+#: build/index.js:17
+msgid "Addresses the firewall banned on its own — brute-force lockouts, registration spam, password-reset floods and rate-limit escalation. Unblocking also clears the counters behind the ban, so the address starts from zero instead of being banned again on its next request."
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:23
+msgid "Refresh"
+msgstr ""
+
+#: build/index.js:17
+msgid "Enforced now"
+msgstr ""
+
+#: build/index.js:17
+msgid "Expire within the hour"
+msgstr ""
+
+#: build/index.js:17
+msgid "Ban store"
+msgstr ""
+
+#: build/index.js:17
+msgid "Not enforced"
+msgstr ""
+
+#: build/index.js:17
+msgid "Search banned IP addresses"
+msgstr ""
+
+#: build/index.js:17
+msgid "No banned address matches that search."
+msgstr ""
+
+#: build/index.js:17
+msgid "No addresses are banned right now."
+msgstr ""
+
+#: build/index.js:17
+msgid "Bans appear here as soon as the firewall issues one."
+msgstr ""
+
+#: build/index.js:17
+msgid "Select all bans on this page"
+msgstr ""
+
+#: build/index.js:17
+msgid "Unblock selected"
+msgstr ""
+
+#: build/index.js:17
+msgid "Unblock every banned address"
+msgstr ""
+
+#: build/index.js:17
+msgid "Blocked requests"
+msgstr ""
+
+#: build/index.js:17
+msgid "Clear log"
+msgstr ""
+
+#: build/index.js:17
+msgid "Logging is off, so no new blocked requests are recorded. Turn on \"Log blocked requests\" above and save."
+msgstr ""
+
+#: build/index.js:17
+msgid "Time"
+msgstr ""
+
+#: build/index.js:17
+msgid "IP"
+msgstr ""
+
+#: build/index.js:17
+msgid "User-Agent"
+msgstr ""
+
+#: build/index.js:17
+msgid "URL"
+msgstr ""
+
+#: build/index.js:17
+msgid "Search IP, URL or User-Agent"
+msgstr ""
+
+#: build/index.js:17
+msgid "No log entries yet."
+msgstr ""
+
+#: build/index.js:17
+msgid "Log cleared."
+msgstr ""
+
+#: build/index.js:17
+msgid "Delete every log entry? This cannot be undone."
+msgstr ""
+
+#: build/index.js:17
+msgid "How long the ban lasts in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: build/index.js:17
+msgid "Username Lockout"
+msgstr ""
+
+#: build/index.js:17
+msgid "Also counts failed logins per username, from every IP together, so an attacker rotating addresses is still stopped. A locked username cannot log in from anywhere until the lock expires; whitelisted IPs bypass it. Clear a lock from the Automatic Bans list on the IP Rules tab or with WP-CLI."
+msgstr ""
+
+#: build/index.js:17
+msgid "Lock usernames after repeated failed logins"
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:19
+#: build/index.js:20
+#: build/index.js:21
+#: build/index.js:23
+msgid "Off"
+msgstr ""
+
+#: build/index.js:17
+msgid "Failed Attempts per Username"
+msgstr ""
+
+#: build/index.js:17
+msgid "Number of failed logins for one username, from any IP, within the detection window above before that username is locked."
+msgstr ""
+
+#: build/index.js:17
+msgid "Username Lock Duration"
+msgstr ""
+
+#: build/index.js:17
+msgid "How long the username stays locked, in seconds (900 = 15 minutes)."
+msgstr ""
+
+#: build/index.js:17
+msgid "Registration Protection"
+msgstr ""
+
+#: build/index.js:17
+msgid "Block bot sign-ups on wp-login.php?action=register without a captcha. Active only when \"Anyone can register\" is enabled in Settings → General."
+msgstr ""
+
+#: build/index.js:17
+msgid "\"Anyone can register\" is off on this site, so registration protection is idle until it is turned on."
+msgstr ""
+
+#: build/index.js:17
+msgid "Enable Registration Protection"
+msgstr ""
+
+#: build/index.js:17
+msgid "Adds a signed proof-of-render token and honeypot to the registration form. Only active when \"Anyone can register\" is enabled."
+msgstr ""
+
+#: build/index.js:17
+msgid "Block bot registrations on wp-login.php?action=register"
+msgstr ""
+
+#: build/index.js:17
+msgid "Honeypot"
+msgstr ""
+
+#: build/index.js:17
+msgid "Catches generic bots that fill every field. Invisible to real users."
+msgstr ""
+
+#: build/index.js:17
+msgid "Add a hidden honeypot field"
+msgstr ""
+
+#: build/index.js:17
+msgid "Single-Use Token"
+msgstr ""
+
+#: build/index.js:17
+msgid "Stores used tokens in the firewall storage backend so each rendered form can register only once."
+msgstr ""
+
+#: build/index.js:17
+msgid "Reject reused tokens"
+msgstr ""
+
+#: build/index.js:17
+msgid "Minimum Fill Time"
+msgstr ""
+
+#: build/index.js:17
+msgid "Reject submissions faster than this many seconds after the form loaded (catches instant bot POSTs)."
+msgstr ""
+
+#: build/index.js:17
+msgid "Token Lifetime"
+msgstr ""
+
+#: build/index.js:17
+msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: build/index.js:17
+msgid "Registration Auto-Ban"
+msgstr ""
+
+#: build/index.js:17
+msgid "Ban IPs that repeatedly submit spam registrations. A banned IP is blocked from the whole site, not just the registration form."
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:20
+msgid "Ban Threshold"
+msgstr ""
+
+#: build/index.js:17
+msgid "Number of rejected registrations from one IP before it is banned."
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:20
+msgid "Ban Duration"
+msgstr ""
+
+#: build/index.js:17
+msgid "Password Reset Flood Protection"
+msgstr ""
+
+#: build/index.js:17
+msgid "A reset flood has three shapes, and each needs its own limit: one IP hammering the form, many IPs targeting one person's inbox, and sheer volume burning your hosting mail quota."
+msgstr ""
+
+#: build/index.js:17
+msgid "Enable Reset Protection"
+msgstr ""
+
+#: build/index.js:17
+msgid "Covers wp-login.php?action=lostpassword and the WooCommerce \"Lost your password?\" form — both go through the same WordPress hook. Requests started by an administrator or by WP-CLI are never limited."
+msgstr ""
+
+#: build/index.js:17
+msgid "Rate limit password reset requests"
+msgstr ""
+
+#: build/index.js:17
+msgid "Requests per IP"
+msgstr ""
+
+#: build/index.js:17
+msgid "How many reset requests one IP address may make per window. 0 disables this limit."
+msgstr ""
+
+#: build/index.js:17
+msgid "Per-IP Window"
+msgstr ""
+
+#: build/index.js:17
+msgid "Length of the per-IP window in seconds (900 = 15 minutes)."
+msgstr ""
+
+#: build/index.js:17
+msgid "Requests per Account"
+msgstr ""
+
+#: build/index.js:17
+msgid "How many reset emails one account may receive per window, no matter how many different IPs ask. This is the only limit that stops a distributed flood of one person's inbox. 0 disables it."
+msgstr ""
+
+#: build/index.js:17
+msgid "Per-Account Window"
+msgstr ""
+
+#: build/index.js:17
+msgid "Length of the per-account window in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: build/index.js:17
+msgid "Site-Wide Hourly Cap"
+msgstr ""
+
+#: build/index.js:17
+msgid "Total reset emails the site will send in an hour. Protects your hosting mail quota and stops your domain being flagged as a spam source. 0 disables it."
+msgstr ""
+
+#: build/index.js:17
+msgid "Password Reset Hardening"
+msgstr ""
+
+#: build/index.js:17
+msgid "Filter out direct bot POSTs, escalate repeat offenders to a site-wide ban, and optionally take administrator accounts out of the reset flow entirely."
+msgstr ""
+
+#: build/index.js:17
+msgid "Proof of Render"
+msgstr ""
+
+#: build/index.js:17
+msgid "Rejects direct POSTs that never loaded the form. Only enforced on wp-login.php, since other lost-password forms (WooCommerce, custom login pages) do not render the token. Turn this off if a login plugin replaces the wp-login form."
+msgstr ""
+
+#: build/index.js:17
+msgid "Require a signed token and honeypot on the wp-login form"
+msgstr ""
+
+#: build/index.js:17
+msgid "Reject submissions faster than this many seconds after the form loaded. Separate from the registration setting, so the two forms can be tuned independently."
+msgstr ""
+
+#: build/index.js:17
+msgid "How long a rendered lost-password form stays valid, in seconds (3600 = 1 hour)."
+msgstr ""
+
+#: build/index.js:17
+msgid "Each rendered form may submit one reset request. Without this, a bot can load the form once and replay that token for the whole token lifetime."
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:20
+msgid "Auto-Ban"
+msgstr ""
+
+#: build/index.js:17
+msgid "A banned IP is blocked from the whole site by the MU-plugin worker. Account and site-wide limits never ban: they say nothing about who happened to ask last."
+msgstr ""
+
+#: build/index.js:17
+msgid "Ban IPs that trip the per-IP limit or fail the token check"
+msgstr ""
+
+#: build/index.js:17
+msgid "Email Alert"
+msgstr ""
+
+#: build/index.js:17
+msgid "Sends at most one message per limit per hour, to the recipients configured on the Alerts tab."
+msgstr ""
+
+#: build/index.js:17
+msgid "Email me when a reset limit is reached"
+msgstr ""
+
+#: build/index.js:17
+msgid "Block Admin Resets"
+msgstr ""
+
+#: build/index.js:17
+msgid "Closes the \"flood the admin inbox, then phish the reset link\" path entirely. A locked-out administrator can then only be recovered by WP-CLI or by another administrator, so leave this off unless you have that access."
+msgstr ""
+
+#: build/index.js:17
+msgid "Never allow password reset for administrator accounts"
+msgstr ""
+
+#: build/index.js:17
+msgid "Yes"
+msgstr ""
+
+#: build/index.js:17
+msgid "No"
+msgstr ""
+
+#: build/index.js:17
+msgid "Inactive"
+msgstr ""
+
+#: build/index.js:17
+msgid "Country lists"
+msgstr ""
+
+#: build/index.js:17
+msgid "Stale: no list younger than 7 days, so CIDR matching lets those visitors through."
+msgstr ""
+
+#: build/index.js:17
+msgid "Next automatic update"
+msgstr ""
+
+#: build/index.js:17
+msgid "Cache directory writable"
+msgstr ""
+
+#: build/index.js:17
+msgid ".htaccess country block"
+msgstr ""
+
+#: build/index.js:17
+msgid "Blocks by the Cloudflare CF-IPCountry header before WordPress loads."
+msgstr ""
+
+#: build/index.js:17
+msgid "No .htaccess file"
+msgstr ""
+
+#: build/index.js:17
+msgid "Client IP detection"
+msgstr ""
+
+#: build/index.js:17
+msgid "How the firewall sees your own request right now. Every visitor is identified the same way, so a wrong address here means shared rate-limit buckets and bans."
+msgstr ""
+
+#: build/index.js:17
+msgid "This address is not counted or banned: it is private, shared or one of your trusted proxies. Blacklist, whitelist, geo and bot checks still apply to it."
+msgstr ""
+
+#: build/index.js:17
+msgid "Detected IP"
+msgstr ""
+
+#: build/index.js:17
+msgid "Taken from"
+msgstr ""
+
+#: build/index.js:17
+msgid "Cloudflare header (CF-Connecting-IP)"
+msgstr ""
+
+#: build/index.js:17
+msgid "Forwarded header from a trusted proxy"
+msgstr ""
+
+#: build/index.js:17
+msgid "The connection itself (REMOTE_ADDR)"
+msgstr ""
+
+#: build/index.js:17
+msgid "Forwarded headers"
+msgstr ""
+
+#: build/index.js:17
+msgid "none"
+msgstr ""
+
+#: build/index.js:17
+msgid "Trusted proxies configured"
+msgstr ""
+
+#: build/index.js:17
+msgid "Trusted proxy match"
+msgstr ""
+
+#: build/index.js:17
+msgid "Whether REMOTE_ADDR is one of the Trusted Proxies on the IP Rules tab."
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:20
+msgid "Forwarded Header"
+msgstr ""
+
+#: build/index.js:17
+msgid "Cloudflare detected"
+msgstr ""
+
+#: build/index.js:17
+msgid "Routable"
+msgstr ""
+
+#: build/index.js:17
+msgid "A private or reserved address means all visitors share one bucket."
+msgstr ""
+
+#: build/index.js:17
+msgid "Counted and bannable"
+msgstr ""
+
+#: build/index.js:17
+msgid "Active Storage"
+msgstr ""
+
+#: build/index.js:17
+msgid "Storage backend used for rate-limit counters."
+msgstr ""
+
+#: build/index.js:17
+msgid "Backend"
+msgstr ""
+
+#: build/index.js:17
+msgid "Resolved backend"
+msgstr ""
+
+#: build/index.js:17
+msgid "Configured"
+msgstr ""
+
+#: build/index.js:17
+msgid "Round-trip test"
+msgstr ""
+
+#: build/index.js:17
+msgid "Writes, reads and deletes a test value."
+msgstr ""
+
+#: build/index.js:17
+msgid "Working"
+msgstr ""
+
+#: build/index.js:17
+msgid "Used by the File backend."
+msgstr ""
+
+#: build/index.js:17
+msgid "Versions"
+msgstr ""
+
+#: build/index.js:17
+msgid "Plugin"
+msgstr ""
+
+#: build/index.js:17
+msgid "Worker"
+msgstr ""
+
+#: build/index.js:17
+msgid "Matches the plugin"
+msgstr ""
+
+#. translators: %s: expected worker version.
+#: build/index.js:18
+#, js-format
+msgid "Mismatch — expected %s (will auto-update on next page load)"
+msgstr ""
+
+#: build/index.js:18
+msgid "MU-Plugin Worker"
+msgstr ""
+
+#: build/index.js:18
+msgid "The MU-plugin worker intercepts requests early, before themes and plugins load."
+msgstr ""
+
+#: build/index.js:18
+msgid "The worker was reinstalled."
+msgstr ""
+
+#: build/index.js:18
+msgid "Reinstall worker"
+msgstr ""
+
+#: build/index.js:18
+msgid "Worker file"
+msgstr ""
+
+#: build/index.js:18
+msgid "Installed"
+msgstr ""
+
+#: build/index.js:18
+msgid "Not installed"
+msgstr ""
+
+#: build/index.js:18
+msgid "Worker Version"
+msgstr ""
+
+#: build/index.js:18
+msgid "mu-plugins writable"
+msgstr ""
+
+#. translators: %s: mu-plugins directory.
+#: build/index.js:19
+#, js-format
+msgid "No — make %s writable by the web server."
+msgstr ""
+
+#: build/index.js:19
+msgid "Last heartbeat"
+msgstr ""
+
+#: build/index.js:19
+msgid "never"
+msgstr ""
+
+#: build/index.js:19
+msgid "Kill switch"
+msgstr ""
+
+#: build/index.js:19
+msgid "Last install attempt"
+msgstr ""
+
+#: build/index.js:19
+msgid "Succeeded"
+msgstr ""
+
+#: build/index.js:19
+msgid "Core firewall settings — enable/disable, storage backend, rate limits and filter parameters."
+msgstr ""
+
+#: build/index.js:19
+msgid "Enable Firewall"
+msgstr ""
+
+#: build/index.js:19
+msgid "Master switch — when off, the MU-plugin worker performs no checks (rate-limit, bot blocking, IP/geo blocking, auto-ban all skipped)."
+msgstr ""
+
+#: build/index.js:19
+msgid "Enable firewall protection"
+msgstr ""
+
+#: build/index.js:19
+msgid "Storage Backend"
+msgstr ""
+
+#: build/index.js:19
+msgid "Storage backend for rate-limit counters. Auto-detect tries APCu, then Redis, then file."
+msgstr ""
+
+#. translators: %s: storage backend name.
+#: build/index.js:20
+#, js-format
+msgid "%s (not available on this server)"
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate Limit"
+msgstr ""
+
+#: build/index.js:20
+msgid "Maximum number of rate-limited requests per IP within the time window. Applies to filter parameters, login, REST, XML-RPC and any other protected endpoint."
+msgstr ""
+
+#: build/index.js:20
+msgid "Time Window"
+msgstr ""
+
+#: build/index.js:20
+msgid "Time window in seconds for rate limiting."
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate Limit Action"
+msgstr ""
+
+#: build/index.js:20
+msgid "Response when the rate limit is exceeded. 302 strips query parameters and redirects to the same path; 429 returns a Retry-After header."
+msgstr ""
+
+#: build/index.js:20
+msgid "302 Redirect (strip filters)"
+msgstr ""
+
+#: build/index.js:20
+msgid "429 Too Many Requests"
+msgstr ""
+
+#: build/index.js:20
+msgid "Filter Parameters"
+msgstr ""
+
+#: build/index.js:20
+msgid "URL parameter substrings to rate-limit, one per line. Append |N for a stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, query_type_|30."
+msgstr ""
+
+#: build/index.js:20
+msgid "Restore defaults"
+msgstr ""
+
+#: build/index.js:20
+msgid "Endpoint Protection"
+msgstr ""
+
+#: build/index.js:20
+msgid "Enable rate limiting on specific WordPress endpoints."
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate-limit wp-cron.php requests"
+msgstr ""
+
+#: build/index.js:20
+msgid "Protects against DDoS attacks targeting wp-cron.php."
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate-limit xmlrpc.php requests"
+msgstr ""
+
+#: build/index.js:20
+msgid "Protects against brute-force and DDoS via xmlrpc.php."
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate-limit wp-login.php requests"
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate-limits wp-login.php requests per IP."
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate-limit REST API requests"
+msgstr ""
+
+#: build/index.js:20
+msgid "Rate-limits /wp-json/ requests per IP."
+msgstr ""
+
+#: build/index.js:20
+msgid "Block 404 flood"
+msgstr ""
+
+#: build/index.js:20
+msgid "Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
+msgstr ""
+
+#: build/index.js:20
+msgid "Brute-Force Login Protection"
+msgstr ""
+
+#: build/index.js:20
+msgid "Ban IPs that submit too many failed login attempts (fail2ban style). A banned IP is blocked from the whole site, not just wp-login.php."
+msgstr ""
+
+#: build/index.js:20
+msgid "Enable Login Protection"
+msgstr ""
+
+#: build/index.js:20
+msgid "Counts failed password attempts per IP via wp_login_failed."
+msgstr ""
+
+#: build/index.js:20
+msgid "Ban IPs after repeated failed logins"
+msgstr ""
+
+#: build/index.js:20
+msgid "Failed Attempts"
+msgstr ""
+
+#: build/index.js:20
+msgid "Number of failed login attempts before the IP is banned."
+msgstr ""
+
+#: build/index.js:20
+msgid "Detection Window"
+msgstr ""
+
+#: build/index.js:20
+msgid "Seconds within which failed attempts are counted (600 = 10 minutes)."
+msgstr ""
+
+#: build/index.js:20
+msgid "Automatically ban IPs that repeatedly exceed rate limits."
+msgstr ""
+
+#: build/index.js:20
+msgid "Enable Auto-Ban"
+msgstr ""
+
+#: build/index.js:20
+msgid "After the threshold is reached, the IP is banned for the configured duration."
+msgstr ""
+
+#: build/index.js:20
+msgid "Ban IPs after repeated violations"
+msgstr ""
+
+#: build/index.js:20
+msgid "Number of rate-limit violations before an IP is banned."
+msgstr ""
+
+#: build/index.js:20
+msgid "User-Agent strings to block (one per line, case-insensitive substring match)."
+msgstr ""
+
+#: build/index.js:20
+msgid "Blocked User-Agents"
+msgstr ""
+
+#: build/index.js:20
+msgid "User-Agent substrings (case-insensitive, one per line). Any request whose User-Agent contains one of these is blocked with 403."
+msgstr ""
+
+#: build/index.js:20
+msgid "Manually allow or block IP addresses. Supports individual IPs and CIDR ranges (e.g. 192.168.1.0/24)."
+msgstr ""
+
+#: build/index.js:20
+msgid "IP Whitelist"
+msgstr ""
+
+#: build/index.js:20
+msgid "IPs or CIDR ranges that bypass all firewall checks (one per line). Supports IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32)."
+msgstr ""
+
+#: build/index.js:20
+msgid "IP Blacklist"
+msgstr ""
+
+#: build/index.js:20
+msgid "IPs or CIDR ranges blocked with 403 Forbidden before any other check (one per line). Supports IPv4, IPv6, and CIDR notation."
+msgstr ""
+
+#: build/index.js:20
+msgid "Reverse Proxy"
+msgstr ""
+
+#: build/index.js:20
+msgid "Leave this empty unless the site sits behind a proxy or load balancer. A forwarded-for header is written by the client until the hop that set it is known, so trusting one without listing the proxies would let any visitor choose their own IP — and with it their own rate-limit bucket, ban status and country. Cloudflare is handled automatically and needs nothing here."
+msgstr ""
+
+#: build/index.js:20
+msgid "Trusted Proxies"
+msgstr ""
+
+#: build/index.js:20
+msgid "IPs or CIDR ranges of your own proxies, one per line. On the common \"nginx in front of Apache on the same host\" layout this is 127.0.0.1 — without it every visitor arrives as 127.0.0.1 and shares a single bucket."
+msgstr ""
+
+#: build/index.js:20
+msgid "Read right to left, skipping hops that are themselves listed above. Only used when a trusted proxy is configured."
+msgstr ""
+
+#: build/index.js:20
+msgid "Block visitors from specific countries. Behind Cloudflare, the CF-IPCountry header is used (instant). Without Cloudflare, CIDR-based lookup is used (updated weekly)."
+msgstr ""
+
+#: build/index.js:20
+msgid "Enable"
+msgstr ""
+
+#: build/index.js:20
+msgid "Enable Geo Blocking"
+msgstr ""
+
+#: build/index.js:20
+msgid "Blocked Countries"
+msgstr ""
+
+#: build/index.js:20
+msgid "Visitors from the selected countries are blocked with 403."
+msgstr ""
+
+#: build/index.js:20
+msgid "ISO 3166–1 alpha-2 country codes, one per line (e.g. IN, CN, RU)."
+msgstr ""
+
+#: build/index.js:20
+msgid "Against MIME sniffing"
+msgstr ""
+
+#: build/index.js:20
+msgid "The browser does not guess a file’s type, so a text file can never run as JavaScript."
+msgstr ""
+
+#: build/index.js:20
+msgid "Against clickjacking"
+msgstr ""
+
+#: build/index.js:20
+msgid "Other domains cannot embed your site in an iframe, so visitors cannot be tricked into clicking hidden elements."
+msgstr ""
+
+#: build/index.js:20
+msgid "Against URL leaks"
+msgstr ""
+
+#: build/index.js:20
+msgid "Other sites only see your domain; the full URL, which may contain sensitive paths, stays on your site."
+msgstr ""
+
+#: build/index.js:20
+msgid "Against device access"
+msgstr ""
+
+#: build/index.js:20
+msgid "Turns off the camera, microphone and geolocation, so even a compromised third-party script cannot ask for them."
+msgstr ""
+
+#. translators: %d: number of security headers sent.
+#: build/index.js:21
+#, js-format
+msgid "All %d sent"
+msgstr ""
+
+#: build/index.js:21
+msgid "Not sent"
+msgstr ""
+
+#: build/index.js:21
+msgid "On"
+msgstr ""
+
+#. translators: %d: number of security headers.
+#: build/index.js:22
+#, js-format
+msgid "%d HTTP response headers the firewall adds to every page."
+msgstr ""
+
+#. translators: %s: PHP constant name.
+#: build/index.js:23
+#, js-format
+msgid "Set in wp-config.php (%s)."
+msgstr ""
+
+#: build/index.js:23
+msgid "Send an email whenever an account gains administrator privileges, or an existing administrator account is modified — no matter how it happened: the admin screens, a plugin, the REST API, WP-CLI, or a direct write into the database."
+msgstr ""
+
+#: build/index.js:23
+msgid "Enable Alerts"
+msgstr ""
+
+#: build/index.js:23
+msgid "Works independently of the main firewall switch."
+msgstr ""
+
+#: build/index.js:23
+msgid "Email me when a new administrator appears"
+msgstr ""
+
+#: build/index.js:23
+msgid "Notification Email"
+msgstr ""
+
+#: build/index.js:23
+msgid "Separate multiple addresses with commas. Leave empty to use the site admin email."
+msgstr ""
+
+#: build/index.js:23
+msgid "Account Takeover"
+msgstr ""
+
+#: build/index.js:23
+msgid "Watches the username, email address and password of every administrator. Rewriting an admin's email address is how an account is seized — it hands over the password reset flow while the user ID stays the same, so watching for new accounts alone would never see it."
+msgstr ""
+
+#: build/index.js:23
+msgid "Also alert when an existing administrator is modified"
+msgstr ""
+
+#: build/index.js:23
+msgid "Database Scan"
+msgstr ""
+
+#: build/index.js:23
+msgid "Compares the live administrator list against a stored snapshot. This is what catches accounts inserted straight into the database, created by code that bypasses the WordPress user API, or added while this plugin was inactive."
+msgstr ""
+
+#: build/index.js:23
+msgid "Hourly scan for administrators created outside WordPress"
+msgstr ""
+
+#: build/index.js:23
+msgid "How detection works"
+msgstr ""
+
+#: build/index.js:23
+msgid "WordPress hooks"
+msgstr ""
+
+#: build/index.js:23
+msgid "Immediate. Catches every account creation or role change that goes through the WordPress user API — the Users screen, user registration, the REST API, WP-CLI, and any plugin or theme calling wp_insert_user() or set_role(). The alert names the acting user and their IP address."
+msgstr ""
+
+#: build/index.js:23
+msgid "Database scan"
+msgstr ""
+
+#: build/index.js:23
+msgid "Within the hour. A snapshot of every administrator user ID is stored, and the scheduled scan diffs it against the live list. Anything that appears without a hook firing — a direct SQL INSERT, a modified wp_capabilities meta row, an account added while the plugin was off — shows up here and is flagged as created outside the normal WordPress flow."
+msgstr ""
+
+#: build/index.js:23
+msgid "What the snapshot stores"
+msgstr ""
+
+#: build/index.js:23
+msgid "Per administrator: the user ID, the username, the email address, and a digest of the stored password hash. The digest only ever answers \"did this change?\" — the password itself is never stored, never compared and never printed in an alert."
+msgstr ""
+
+#: build/index.js:23
+msgid "No duplicate alerts"
+msgstr ""
+
+#: build/index.js:23
+msgid "Both paths write to the same snapshot, so each event is reported exactly once. Existing administrators are recorded silently when the feature is turned on — you are only told about what happens afterwards. Removing an administrator is not reported; the account simply leaves the snapshot."
+msgstr ""
+
+#: build/index.js:23
+msgid "Firewall off"
+msgstr ""
+
+#: build/index.js:23
+msgid "No problems found. The worker, storage and client IP detection all look healthy."
+msgstr ""
+
+#: build/index.js:23
+msgid "Enable Logging"
+msgstr ""
+
+#: build/index.js:23
+msgid "Stores the last 100 blocked requests in the database."
+msgstr ""
+
+#: build/index.js:23
+msgid "Log blocked requests"
+msgstr ""
+
+#: build/index.js:23
+msgid "Export Settings"
+msgstr ""
+
+#: build/index.js:23
+msgid "Download your current firewall settings as a JSON file. You can use this file to import settings on another site."
+msgstr ""
+
+#: build/index.js:23
+msgid "Import Settings"
+msgstr ""
+
+#: build/index.js:23
+msgid "Upload a previously exported JSON file. Valid settings in the file replace the current ones, invalid values are skipped and reported, and settings missing from the file keep their current values."
+msgstr ""
+
+#: build/index.js:23
+msgid "The file is larger than 256 KB, the most an import accepts."
+msgstr ""
+
+#: build/index.js:23
+msgid "The file does not contain valid JSON."
+msgstr ""
+
+#: build/index.js:23
+msgid "Settings imported, but some values were rejected."
+msgstr ""
+
+#: build/index.js:23
+msgid "Settings imported successfully."
+msgstr ""
+
+#: build/index.js:23
+msgid "Import"
+msgstr ""
+
+#. translators: %s: file name.
+#: build/index.js:24
+#, js-format
+msgid "Import the settings from %s? Every valid setting in the file replaces the current value right away; invalid ones are skipped and listed afterwards."
+msgstr ""
+
+#: build/index.js:24
+msgid "Your unsaved changes on the other tabs will be discarded."
 msgstr ""
