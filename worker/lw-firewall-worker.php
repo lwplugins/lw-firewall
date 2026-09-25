@@ -27,6 +27,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'LW_FIREWALL_WORKER_VERSION', '1.5.8' );
 
+// The plugin's directory under WP_PLUGIN_DIR. Activator::install_worker()
+// writes the real name into the installed copy (see WorkerTemplate), so a
+// renamed plugin directory still works; this default is the fallback.
+define( 'LW_FIREWALL_WORKER_DIR', 'lw-firewall' );
+
 // Emergency kill-switch — wp-config.php may neutralize the worker.
 if ( defined( 'LW_FIREWALL_DISABLE_WORKER' ) && LW_FIREWALL_DISABLE_WORKER ) {
 	return;
@@ -43,8 +48,9 @@ if ( PHP_VERSION_ID < 80200 ) {
 
 ( static function (): void {
 	try {
-		$autoload    = WP_PLUGIN_DIR . '/lw-firewall/includes/';
-		$plugin_main = WP_PLUGIN_DIR . '/lw-firewall/lw-firewall.php';
+		$plugin_root = WP_PLUGIN_DIR . '/' . LW_FIREWALL_WORKER_DIR . '/';
+		$autoload    = $plugin_root . 'includes/';
+		$plugin_main = $plugin_root . 'lw-firewall.php';
 
 		// Required files manifest — every class the worker may instantiate.
 		$required = [

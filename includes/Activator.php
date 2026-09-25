@@ -68,7 +68,12 @@ final class Activator {
 	}
 
 	/**
-	 * Copy worker file to mu-plugins directory.
+	 * Install the worker file into the mu-plugins directory.
+	 *
+	 * The copy is rendered for this installation — the real plugin directory
+	 * name is written into it (WorkerTemplate) — and written through a
+	 * temporary file plus rename, so a request never includes a half-written
+	 * MU-plugin.
 	 *
 	 * Records the attempt outcome in a transient so the admin UI / notices
 	 * can show actionable feedback when permissions, disk space, or a
@@ -94,7 +99,9 @@ final class Activator {
 			return false;
 		}
 
-		$copied = @copy( $source, $target ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
+		$code   = (string) file_get_contents( $source );
+		$copied = '' !== $code && self::write_atomic( $target, WorkerTemplate::render( $code, self::plugin_dir() ) );
 
 		if ( ! $copied || ! file_exists( $target ) ) {
 			self::record_attempt( false, 'copy_failed' );
@@ -152,6 +159,12 @@ final class Activator {
 			return true;
 		}
 
+		// The plugin directory was renamed since the worker was installed: the
+		// installed copy looks for the old one and would silently do nothing.
+		if ( ! defined( 'LW_FIREWALL_WORKER_DIR' ) || LW_FIREWALL_WORKER_DIR !== self::plugin_dir() ) {
+			return true;
+		}
+
 		// The two constants are defined in separate files — the installed
 		// MU-worker vs the current plugin — and legitimately differ at runtime
 		// after an update. Static analysis sees only one build, so it reads them
@@ -195,6 +208,39 @@ final class Activator {
 		$data = get_transient( self::ATTEMPT_TRANSIENT );
 
 		return is_array( $data ) ? $data : null;
+	}
+
+	/**
+	 * The plugin's directory name under WP_PLUGIN_DIR.
+	 *
+	 * @return string
+	 */
+	private static function plugin_dir(): string {
+		return WorkerTemplate::dir_from_basename( plugin_basename( LW_FIREWALL_FILE ) );
+	}
+
+	/**
+	 * Write a file through a temporary sibling and rename().
+	 *
+	 * @param string $path     Destination.
+	 * @param string $contents File body.
+	 * @return bool
+	 */
+	private static function write_atomic( string $path, string $contents ): bool {
+		$tmp = $path . '.tmp';
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents, WordPress.PHP.NoSilencedErrors.Discouraged -- Must not warn on the front end; failure is reported.
+		if ( false === @file_put_contents( $tmp, $contents, LOCK_EX ) ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename, WordPress.PHP.NoSilencedErrors.Discouraged -- Atomic replace is the point.
+		if ( ! @rename( $tmp, $path ) ) {
+			wp_delete_file( $tmp );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
