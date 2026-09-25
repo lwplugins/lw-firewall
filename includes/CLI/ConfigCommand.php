@@ -12,6 +12,7 @@ namespace LightweightPlugins\Firewall\CLI;
 use LightweightPlugins\Firewall\CLI\Support\ConfigOpsTrait;
 use LightweightPlugins\Firewall\CLI\Support\ValueCaster;
 use LightweightPlugins\Firewall\Options;
+use LightweightPlugins\Firewall\Settings\SettingsWriter;
 use WP_CLI;
 use WP_CLI\Utils;
 
@@ -116,8 +117,9 @@ final class ConfigCommand {
 	 * Set a configuration value.
 	 *
 	 * Lists (filter_params, blocked_bots, ip_whitelist, ip_blacklist,
-	 * blocked_countries) accept comma- or newline-separated entries.
-	 * Booleans accept true/false/1/0/yes/no/on/off.
+	 * trusted_proxies, blocked_countries) accept comma- or newline-separated
+	 * entries. Booleans accept true/false/1/0/yes/no/on/off. Every value is
+	 * validated; an invalid one is refused with the reason.
 	 *
 	 * ## OPTIONS
 	 *
@@ -143,19 +145,14 @@ final class ConfigCommand {
 		$defaults = Options::get_defaults();
 		self::assert_known_key( $key, $defaults );
 
-		$value           = ValueCaster::cast( (string) $raw_value, $defaults[ $key ] );
-		$current         = Options::get_stored();
-		$current[ $key ] = $value;
+		self::assert_not_pinned( $key );
 
-		if ( ! Options::save( $current ) ) {
-			WP_CLI::error( "Failed to update '{$key}'." );
-		}
+		// The same input layer as the admin and the import: a typo is an
+		// error here too, never a silently clamped or dropped value. The write
+		// path resyncs the .htaccess geo block afterwards.
+		self::save_value( $key, (string) $raw_value );
 
-		// Geo rules live in .htaccess too; without a resync the Apache layer
-		// keeps enforcing the previous country list after a CLI change.
-		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
-
-		WP_CLI::success( sprintf( "Set '%s' to %s.", $key, ValueCaster::stringify( $value ) ) );
+		WP_CLI::success( sprintf( "Set '%s' to %s.", $key, ValueCaster::stringify( Options::get_stored()[ $key ] ) ) );
 	}
 
 	/**
@@ -177,13 +174,15 @@ final class ConfigCommand {
 		unset( $args );
 		WP_CLI::confirm( 'Reset all firewall settings to defaults?', $assoc_args );
 
-		if ( ! Options::save( Options::get_defaults() ) ) {
-			WP_CLI::error( 'Failed to reset settings.' );
-		}
+		// Pinned keys keep their stored value; the shared write path resyncs
+		// the .htaccess geo block and the geo cron like `config set` does.
+		SettingsWriter::reset();
 
-		// Same resync as `config set`: the defaults change the geo settings,
-		// and the Apache layer would otherwise keep the previous rules.
-		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
+		$pinned = Options::overridden();
+
+		if ( [] !== $pinned ) {
+			WP_CLI::warning( 'Pinned in wp-config.php and left unchanged: ' . implode( ', ', $pinned ) );
+		}
 
 		WP_CLI::success( 'All settings reset to defaults.' );
 	}

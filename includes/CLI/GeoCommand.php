@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\CLI;
 
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
-use LightweightPlugins\Firewall\Geo\HtaccessWriter;
+use LightweightPlugins\Firewall\CLI\Support\ConfigOpsTrait;
 use LightweightPlugins\Firewall\Options;
 use WP_CLI;
 use WP_CLI\Utils;
@@ -23,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Manage geo blocking (blocked countries).
  */
 final class GeoCommand {
+
+	use ConfigOpsTrait;
 
 	/**
 	 * List blocked country codes.
@@ -92,29 +94,24 @@ final class GeoCommand {
 	 * @param array $assoc_args Associative arguments.
 	 */
 	public function add( array $args, array $assoc_args ): void {
-		$cc = strtoupper( $args[0] );
-
-		if ( ! preg_match( '/^[A-Z]{2}$/', $cc ) ) {
-			WP_CLI::error( "Invalid country code: '{$cc}'. Use 2-letter ISO code." );
-		}
-
-		$countries = (array) Options::get( 'blocked_countries', [] );
+		$cc        = strtoupper( trim( (string) $args[0] ) );
+		$countries = self::resolve_list_or_fail( 'blocked_countries' );
 
 		if ( in_array( $cc, $countries, true ) ) {
 			WP_CLI::error( "'{$cc}' is already in the blocked list." );
 		}
 
-		$countries[]                  = $cc;
-		$current                      = Options::get_stored();
-		$current['blocked_countries'] = $countries;
-		$current['geo_enabled']       = true;
+		// The input layer rejects anything that is not an assigned ISO code.
+		$countries[] = $cc;
+		self::save_list( 'blocked_countries', $countries );
 
-		if ( Options::save( $current ) ) {
-			HtaccessWriter::sync();
-			WP_CLI::success( "Added '{$cc}' to blocked countries. Geo blocking enabled." );
-		} else {
-			WP_CLI::error( 'Failed to update blocked countries.' );
+		if ( in_array( 'geo_enabled', Options::overridden(), true ) ) {
+			WP_CLI::success( "Added '{$cc}' to blocked countries. Geo blocking is pinned in wp-config.php and was left as is." );
+			return;
 		}
+
+		self::save_value( 'geo_enabled', true );
+		WP_CLI::success( "Added '{$cc}' to blocked countries. Geo blocking enabled." );
 	}
 
 	/**
@@ -133,23 +130,17 @@ final class GeoCommand {
 	 * @param array $assoc_args Associative arguments.
 	 */
 	public function remove( array $args, array $assoc_args ): void {
-		$cc        = strtoupper( $args[0] );
-		$countries = (array) Options::get( 'blocked_countries', [] );
-		$filtered  = array_values( array_filter( $countries, static fn( $c ) => $c !== $cc ) );
+		$cc        = strtoupper( trim( (string) $args[0] ) );
+		$countries = self::resolve_list_or_fail( 'blocked_countries' );
+		$filtered  = array_values( array_filter( $countries, static fn ( string $c ): bool => $c !== $cc ) );
 
 		if ( count( $filtered ) === count( $countries ) ) {
 			WP_CLI::error( "'{$cc}' was not found in the blocked list." );
 		}
 
-		$current                      = Options::get_stored();
-		$current['blocked_countries'] = $filtered;
+		self::save_list( 'blocked_countries', $filtered );
 
-		if ( Options::save( $current ) ) {
-			HtaccessWriter::sync();
-			WP_CLI::success( "Removed '{$cc}' from blocked countries." );
-		} else {
-			WP_CLI::error( 'Failed to update blocked countries.' );
-		}
+		WP_CLI::success( "Removed '{$cc}' from blocked countries." );
 	}
 
 	/**

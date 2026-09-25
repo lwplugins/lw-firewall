@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\CLI\Support;
 
 use LightweightPlugins\Firewall\Options;
+use LightweightPlugins\Firewall\Settings\SettingsWriter;
 use WP_CLI;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +38,10 @@ trait ConfigOpsTrait {
 	}
 
 	/**
-	 * Resolve a list-option key to its current array value, or fail.
+	 * Resolve a list-option key to its STORED array value, or fail.
+	 *
+	 * The stored list, never the effective one: editing a list that is pinned
+	 * in wp-config.php used to copy the pinned entries into the database.
 	 *
 	 * @param string $key Setting key.
 	 * @return array<int, string>
@@ -50,9 +54,27 @@ trait ConfigOpsTrait {
 			WP_CLI::error( "Setting '{$key}' is not a list option. Use 'config set' instead." );
 		}
 
-		$value = Options::get( $key );
+		self::assert_not_pinned( $key );
 
-		return is_array( $value ) ? array_values( $value ) : [];
+		return SettingsWriter::stored_list( $key );
+	}
+
+	/**
+	 * Validate and persist a setting (list or scalar), or fail with the
+	 * input layer's messages.
+	 *
+	 * The shared write path also resyncs the .htaccess geo block and the geo
+	 * cron, so a blocked_countries change reaches the Apache layer.
+	 *
+	 * @param string $key   Setting key.
+	 * @param mixed  $value New value.
+	 */
+	private static function save_value( string $key, mixed $value ): void {
+		$errors = SettingsWriter::write_one( $key, $value );
+
+		if ( [] !== $errors ) {
+			WP_CLI::error( "Invalid value for '{$key}': " . implode( ' ', $errors ) );
+		}
 	}
 
 	/**
@@ -62,15 +84,18 @@ trait ConfigOpsTrait {
 	 * @param array<int, string> $list New list value.
 	 */
 	private static function save_list( string $key, array $list ): void {
-		$current         = Options::get_stored();
-		$current[ $key ] = array_values( $list );
+		self::save_value( $key, array_values( $list ) );
+	}
 
-		if ( ! Options::save( $current ) ) {
-			WP_CLI::error( "Failed to update '{$key}'." );
+	/**
+	 * Bail when a wp-config.php constant pins the key.
+	 *
+	 * @param string $key Setting key.
+	 */
+	private static function assert_not_pinned( string $key ): void {
+		if ( in_array( $key, Options::overridden(), true ) ) {
+			$constant = Options::CONST_PREFIX . strtoupper( $key );
+			WP_CLI::error( "'{$key}' is pinned by {$constant} in wp-config.php. Remove the constant to change it." );
 		}
-
-		// Geo rules live in .htaccess too; a list change here (blocked_countries)
-		// must reach the Apache layer as well.
-		\LightweightPlugins\Firewall\Geo\HtaccessWriter::sync();
 	}
 }

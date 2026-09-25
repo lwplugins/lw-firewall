@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\CLI;
 
+use LightweightPlugins\Firewall\CLI\Support\ConfigOpsTrait;
 use LightweightPlugins\Firewall\Options;
 use WP_CLI;
 use WP_CLI\Utils;
@@ -21,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Manage blocked bot User-Agents.
  */
 final class BotsCommand {
+
+	use ConfigOpsTrait;
 
 	/**
 	 * List blocked bot User-Agent strings.
@@ -83,26 +86,21 @@ final class BotsCommand {
 	 * @param array $assoc_args Associative arguments.
 	 */
 	public function add( array $args, array $assoc_args ): void {
-		$ua   = $args[0];
-		$bots = (array) Options::get( 'blocked_bots', [] );
+		$ua   = trim( (string) $args[0] );
+		$bots = self::resolve_list_or_fail( 'blocked_bots' );
 
 		// Check for duplicates (case-insensitive).
 		$ua_lower = strtolower( $ua );
 		foreach ( $bots as $existing ) {
-			if ( strtolower( (string) $existing ) === $ua_lower ) {
+			if ( strtolower( $existing ) === $ua_lower ) {
 				WP_CLI::error( "'{$ua}' is already in the block list." );
 			}
 		}
 
-		$bots[]                  = $ua;
-		$current                 = Options::get_stored();
-		$current['blocked_bots'] = $bots;
+		$bots[] = $ua;
+		self::save_list( 'blocked_bots', $bots );
 
-		if ( Options::save( $current ) ) {
-			WP_CLI::success( "Added '{$ua}' to the blocked bots list." );
-		} else {
-			WP_CLI::error( 'Failed to update blocked bots list.' );
-		}
+		WP_CLI::success( "Added '{$ua}' to the blocked bots list." );
 	}
 
 	/**
@@ -121,36 +119,16 @@ final class BotsCommand {
 	 * @param array $assoc_args Associative arguments.
 	 */
 	public function remove( array $args, array $assoc_args ): void {
-		$ua   = $args[0];
-		$bots = (array) Options::get( 'blocked_bots', [] );
+		$ua_lower  = strtolower( trim( (string) $args[0] ) );
+		$bots      = self::resolve_list_or_fail( 'blocked_bots' );
+		$remaining = array_values( array_filter( $bots, static fn ( string $existing ): bool => strtolower( $existing ) !== $ua_lower ) );
 
-		$ua_lower = strtolower( $ua );
-		$found    = false;
-
-		$bots = array_values(
-			array_filter(
-				$bots,
-				static function ( $existing ) use ( $ua_lower, &$found ): bool {
-					if ( strtolower( (string) $existing ) === $ua_lower ) {
-						$found = true;
-						return false;
-					}
-					return true;
-				}
-			)
-		);
-
-		if ( ! $found ) {
-			WP_CLI::error( "'{$ua}' was not found in the block list." );
+		if ( count( $remaining ) === count( $bots ) ) {
+			WP_CLI::error( "'{$args[0]}' was not found in the block list." );
 		}
 
-		$current                 = Options::get_stored();
-		$current['blocked_bots'] = $bots;
+		self::save_list( 'blocked_bots', $remaining );
 
-		if ( Options::save( $current ) ) {
-			WP_CLI::success( "Removed '{$ua}' from the blocked bots list." );
-		} else {
-			WP_CLI::error( 'Failed to update blocked bots list.' );
-		}
+		WP_CLI::success( "Removed '{$args[0]}' from the blocked bots list." );
 	}
 }

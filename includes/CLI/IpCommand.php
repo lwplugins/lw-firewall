@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\CLI;
 
+use LightweightPlugins\Firewall\CLI\Support\ConfigOpsTrait;
 use LightweightPlugins\Firewall\Options;
 use WP_CLI;
 use WP_CLI\Utils;
@@ -21,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Manage IP whitelist and blacklist.
  */
 final class IpCommand {
+
+	use ConfigOpsTrait;
 
 	/**
 	 * List IPs in a whitelist or blacklist.
@@ -105,21 +108,17 @@ final class IpCommand {
 	public function add( array $args, array $assoc_args ): void {
 		[ $type, $ip ] = $args;
 		$key           = 'ip_' . $type;
-		$ips           = (array) Options::get( $key, [] );
+		$ip            = trim( (string) $ip );
+		$ips           = self::resolve_list_or_fail( $key );
 
 		if ( in_array( $ip, $ips, true ) ) {
 			WP_CLI::error( "'{$ip}' is already in the {$type}." );
 		}
 
-		$ips[]           = $ip;
-		$current         = Options::get_stored();
-		$current[ $key ] = $ips;
+		$ips[] = $ip;
+		self::save_list( $key, $ips );
 
-		if ( Options::save( $current ) ) {
-			WP_CLI::success( "Added '{$ip}' to {$type}." );
-		} else {
-			WP_CLI::error( "Failed to update {$type}." );
-		}
+		WP_CLI::success( "Added '{$ip}' to {$type}." );
 	}
 
 	/**
@@ -149,33 +148,15 @@ final class IpCommand {
 	public function remove( array $args, array $assoc_args ): void {
 		[ $type, $ip ] = $args;
 		$key           = 'ip_' . $type;
-		$ips           = (array) Options::get( $key, [] );
-		$found         = false;
+		$ips           = self::resolve_list_or_fail( $key );
+		$remaining     = array_values( array_filter( $ips, static fn ( string $existing ): bool => $existing !== $ip ) );
 
-		$ips = array_values(
-			array_filter(
-				$ips,
-				static function ( $existing ) use ( $ip, &$found ): bool {
-					if ( (string) $existing === $ip ) {
-						$found = true;
-						return false;
-					}
-					return true;
-				}
-			)
-		);
-
-		if ( ! $found ) {
+		if ( count( $remaining ) === count( $ips ) ) {
 			WP_CLI::error( "'{$ip}' was not found in {$type}." );
 		}
 
-		$current         = Options::get_stored();
-		$current[ $key ] = $ips;
+		self::save_list( $key, $remaining );
 
-		if ( Options::save( $current ) ) {
-			WP_CLI::success( "Removed '{$ip}' from {$type}." );
-		} else {
-			WP_CLI::error( "Failed to update {$type}." );
-		}
+		WP_CLI::success( "Removed '{$ip}' from {$type}." );
 	}
 }
