@@ -36,15 +36,15 @@ final class AutoBannerTest extends MonkeyTestCase {
 	}
 
 	public function test_a_ban_covers_every_address_in_the_slash_64(): void {
-		( new AutoBanner( $this->storage ) )->ban( '2001:db8:1:1::1', 600, 'login_lockout' );
+		( new AutoBanner( $this->storage ) )->ban( '2a01:4f8:1:1::1', 600, 'login_lockout' );
 
-		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2001:db8:1:1:ffff:ffff:ffff:fffe' ) );
+		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2a01:4f8:1:1:ffff:ffff:ffff:fffe' ) );
 	}
 
 	public function test_a_ban_does_not_spill_into_the_next_slash_64(): void {
-		( new AutoBanner( $this->storage ) )->ban( '2001:db8:1:1::1', 600 );
+		( new AutoBanner( $this->storage ) )->ban( '2a01:4f8:1:1::1', 600 );
 
-		$this->assertFalse( ( new AutoBanner( $this->storage ) )->is_banned( '2001:db8:1:2::1' ) );
+		$this->assertFalse( ( new AutoBanner( $this->storage ) )->is_banned( '2a01:4f8:1:2::1' ) );
 	}
 
 	public function test_an_ipv4_ban_stays_per_address(): void {
@@ -61,17 +61,17 @@ final class AutoBannerTest extends MonkeyTestCase {
 	public function test_violations_from_rotating_addresses_in_one_slash_64_add_up(): void {
 		$banner = new AutoBanner( $this->storage );
 
-		foreach ( [ '2001:db8:1:1::a', '2001:db8:1:1::b', '2001:db8:1:1::c' ] as $ip ) {
+		foreach ( [ '2a01:4f8:1:1::a', '2a01:4f8:1:1::b', '2a01:4f8:1:1::c' ] as $ip ) {
 			$banner->record_violation( $ip );
 		}
 
-		$this->assertTrue( $banner->is_banned( '2001:db8:1:1::d' ) );
+		$this->assertTrue( $banner->is_banned( '2a01:4f8:1:1::d' ) );
 	}
 
 	public function test_the_ban_index_lists_the_slash_64(): void {
-		( new AutoBanner( $this->storage ) )->ban( '2001:db8:1:1::1', 600 );
+		( new AutoBanner( $this->storage ) )->ban( '2a01:4f8:1:1::1', 600 );
 
-		$this->assertSame( [ '2001:db8:1:1::/64' ], array_column( BanList::all(), 'ip' ) );
+		$this->assertSame( [ '2a01:4f8:1:1::/64' ], array_column( BanList::all(), 'ip' ) );
 	}
 
 	/**
@@ -81,11 +81,11 @@ final class AutoBannerTest extends MonkeyTestCase {
 	 */
 	public function test_unbanning_any_address_in_the_slash_64_lifts_the_ban( string $target ): void {
 		$banner = new AutoBanner( $this->storage );
-		$banner->ban( '2001:db8:1:1::1', 600 );
+		$banner->ban( '2a01:4f8:1:1::1', 600 );
 
 		$banner->unban( $target );
 
-		$this->assertFalse( $banner->is_banned( '2001:db8:1:1::1' ) );
+		$this->assertFalse( $banner->is_banned( '2a01:4f8:1:1::1' ) );
 	}
 
 	/**
@@ -93,21 +93,21 @@ final class AutoBannerTest extends MonkeyTestCase {
 	 */
 	public static function provide_unban_targets(): array {
 		return [
-			'the banned address'        => [ '2001:db8:1:1::1' ],
-			'another address in the 64' => [ '2001:db8:1:1::beef' ],
-			'the /64 key'               => [ '2001:db8:1:1::/64' ],
+			'the banned address'        => [ '2a01:4f8:1:1::1' ],
+			'another address in the 64' => [ '2a01:4f8:1:1::beef' ],
+			'the /64 key'               => [ '2a01:4f8:1:1::/64' ],
 		];
 	}
 
 	public function test_unban_clears_the_shared_counters(): void {
 		$banner = new AutoBanner( $this->storage );
-		$banner->record_violation( '2001:db8:1:1::a' );
-		$banner->record_violation( '2001:db8:1:1::b' );
+		$banner->record_violation( '2a01:4f8:1:1::a' );
+		$banner->record_violation( '2a01:4f8:1:1::b' );
 
-		$banner->unban( '2001:db8:1:1::c' );
-		$banner->record_violation( '2001:db8:1:1::d' );
+		$banner->unban( '2a01:4f8:1:1::c' );
+		$banner->record_violation( '2a01:4f8:1:1::d' );
 
-		$this->assertFalse( $banner->is_banned( '2001:db8:1:1::d' ) );
+		$this->assertFalse( $banner->is_banned( '2a01:4f8:1:1::d' ) );
 	}
 
 	/**
@@ -119,20 +119,20 @@ final class AutoBannerTest extends MonkeyTestCase {
 	 * @param string $target What the operator passes to unban.
 	 */
 	public function test_a_legacy_per_address_ban_can_still_be_lifted( string $target ): void {
-		$this->storage->set( 'ban_2001:db8:1:1::1', 1, 600 );
-		BanList::record( '2001:db8:1:1::1', 600, 'login_lockout' );
+		$this->storage->set( 'ban_2a01:4f8:1:1::1', 1, 600 );
+		BanList::record( '2a01:4f8:1:1::1', 600, 'login_lockout' );
 		$banner = new AutoBanner( $this->storage );
 
 		$banner->unban( $target );
 
-		$this->assertFalse( $banner->is_banned( '2001:db8:1:1::1' ) );
+		$this->assertFalse( $banner->is_banned( '2a01:4f8:1:1::1' ) );
 		$this->assertSame( [], BanList::all() );
 	}
 
 	public function test_a_legacy_per_address_ban_is_still_enforced(): void {
-		$this->storage->set( 'ban_2001:db8:1:1::1', 1, 600 );
+		$this->storage->set( 'ban_2a01:4f8:1:1::1', 1, 600 );
 
-		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2001:db8:1:1::1' ) );
+		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2a01:4f8:1:1::1' ) );
 	}
 
 	public function test_unban_rejects_an_invalid_target(): void {

@@ -67,19 +67,19 @@ final class TrackerSubjectTest extends MonkeyTestCase {
 	public function test_failed_logins_from_one_slash_64_add_up_to_a_ban(): void {
 		$tracker = new LoginTracker( $this->storage );
 
-		self::from( '2001:db8:1:1::a', [ $tracker, 'record_failure' ] );
-		self::from( '2001:db8:1:1::b', [ $tracker, 'record_failure' ] );
+		self::from( '2a01:4f8:1:1::a', [ $tracker, 'record_failure' ] );
+		self::from( '2a01:4f8:1:1::b', [ $tracker, 'record_failure' ] );
 
-		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2001:db8:1:1::c' ) );
+		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2a01:4f8:1:1::c' ) );
 	}
 
 	public function test_failed_logins_from_different_slash_64s_are_counted_apart(): void {
 		$tracker = new LoginTracker( $this->storage );
 
-		self::from( '2001:db8:1:1::a', [ $tracker, 'record_failure' ] );
-		self::from( '2001:db8:1:2::a', [ $tracker, 'record_failure' ] );
+		self::from( '2a01:4f8:1:1::a', [ $tracker, 'record_failure' ] );
+		self::from( '2a01:4f8:1:2::a', [ $tracker, 'record_failure' ] );
 
-		$this->assertFalse( ( new AutoBanner( $this->storage ) )->is_banned( '2001:db8:1:2::a' ) );
+		$this->assertFalse( ( new AutoBanner( $this->storage ) )->is_banned( '2a01:4f8:1:2::a' ) );
 	}
 
 	public function test_failed_logins_from_neighbouring_ipv4_addresses_are_counted_apart(): void {
@@ -94,18 +94,18 @@ final class TrackerSubjectTest extends MonkeyTestCase {
 	public function test_rejected_registrations_from_one_slash_64_add_up_to_a_ban(): void {
 		$tracker = new RegisterTracker( $this->storage );
 
-		self::from( '2001:db8:1:1::a', [ $tracker, 'record' ] );
-		self::from( '2001:db8:1:1::b', [ $tracker, 'record' ] );
+		self::from( '2a01:4f8:1:1::a', [ $tracker, 'record' ] );
+		self::from( '2a01:4f8:1:1::b', [ $tracker, 'record' ] );
 
-		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2001:db8:1:1::c' ) );
+		$this->assertTrue( ( new AutoBanner( $this->storage ) )->is_banned( '2a01:4f8:1:1::c' ) );
 	}
 
 	public function test_404s_from_one_slash_64_add_up_to_a_flood(): void {
 		$tracker = new NotFoundTracker( $this->storage );
 
-		self::from( '2001:db8:1:1::a', [ $tracker, 'record' ] );
-		self::from( '2001:db8:1:1::b', [ $tracker, 'record' ] );
+		self::from( '2a01:4f8:1:1::a', [ $tracker, 'record' ] );
+		self::from( '2a01:4f8:1:1::b', [ $tracker, 'record' ] );
 
-		$this->assertTrue( $tracker->is_flooding( '2001:db8:1:1::c' ) );
+		$this->assertTrue( $tracker->is_flooding( '2a01:4f8:1:1::c' ) );
 	}
 }
