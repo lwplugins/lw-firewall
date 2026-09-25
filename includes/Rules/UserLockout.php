@@ -61,6 +61,16 @@ final class UserLockout {
 	}
 
 	/**
+	 * Whether the lock with this key is in force.
+	 *
+	 * @param string $key UsernameKey::hash() of the login.
+	 * @return bool
+	 */
+	public function is_key_locked( string $key ): bool {
+		return UsernameKey::is_hash( $key ) && (bool) $this->storage->get( self::LOCK_PREFIX . $key );
+	}
+
+	/**
 	 * Count one failed login; lock the username when the limit is reached.
 	 *
 	 * An attempt against an already locked username is not counted, so the

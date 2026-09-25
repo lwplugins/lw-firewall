@@ -33,6 +33,12 @@ final class UserLockGuardTest extends MonkeyTestCase {
 		}
 
 		Functions\stubTranslationFunctions();
+		Functions\when( 'is_email' )->alias( static fn ( string $e ) => false !== filter_var( $e, FILTER_VALIDATE_EMAIL ) ? $e : false );
+		Functions\when( 'get_user_by' )->alias(
+			static fn ( string $field, string $value ) => ( 'email' === $field && 'admin@example.com' === $value ) || ( 'login' === $field && 'admin' === strtolower( $value ) )
+				? (object) array( 'user_login' => 'admin' )
+				: false
+		);
 		OptionStore::install( array( 'lw_firewall' => array( 'login_user_max_attempts' => 1 ) ) );
 		$this->lockout = new UserLockout( new ArrayStorage() );
 		$this->lockout->record_failure( 'admin' );
@@ -63,5 +69,23 @@ final class UserLockGuardTest extends MonkeyTestCase {
 		( new UserUnlocker( $this->lockout ) )->unlock_all();
 
 		$this->assertFalse( $this->lockout->is_locked( 'admin' ) );
+	}
+
+	/**
+	 * Regression: unlocking by email reported success while the lock stayed.
+	 */
+	public function test_unlocking_by_email_lifts_the_accounts_lock(): void {
+		( new UserUnlocker( $this->lockout ) )->unlock( array( 'admin@example.com' ) );
+
+		$this->assertFalse( $this->lockout->is_locked( 'admin' ) );
+	}
+
+	/**
+	 * Regression: a typo reported "Username unlocked" although nothing was.
+	 */
+	public function test_unlocking_a_username_that_is_not_locked_says_so(): void {
+		$result = ( new UserUnlocker( $this->lockout ) )->unlock( array( 'admn' ) )[0];
+
+		$this->assertSame( array( false, 'This username is not locked.' ), array( $result['ok'], $result['message'] ) );
 	}
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Admin\Bans;
 
+use LightweightPlugins\Firewall\Rules\LoginResolver;
 use LightweightPlugins\Firewall\Rules\UserLockList;
 use LightweightPlugins\Firewall\Rules\UserLockout;
 use LightweightPlugins\Firewall\Rules\UsernameKey;
@@ -41,12 +42,19 @@ final class UserUnlocker {
 		$results = [];
 
 		foreach ( $targets as $target ) {
+			// The same resolver as the lockout: an email or a Unicode variant
+			// unlocks the account it logs into.
 			$target = is_scalar( $target ) ? trim( (string) $target ) : '';
-			$key    = UsernameKey::is_hash( $target ) ? $target : UsernameKey::hash( $target );
+			$key    = UsernameKey::is_hash( $target ) ? $target : UsernameKey::hash( LoginResolver::resolve( $target ) );
 			$user   = $names[ $key ] ?? $target;
 
 			if ( '' === $key ) {
 				$results[] = self::result( $key, $user, false, __( 'That is not a username.', 'lw-firewall' ) );
+				continue;
+			}
+
+			if ( ! isset( $names[ $key ] ) && ! $this->lockout->is_key_locked( $key ) ) {
+				$results[] = self::result( $key, $user, false, __( 'This username is not locked.', 'lw-firewall' ) );
 				continue;
 			}
 
