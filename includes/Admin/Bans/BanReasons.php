@@ -50,6 +50,10 @@ final class BanReasons {
 				__( 'Rate limit exceeded', 'lw-firewall' ),
 				__( 'auto-ban escalation', 'lw-firewall' ),
 			],
+			'manual'        => [
+				__( 'Banned by an administrator', 'lw-firewall' ),
+				__( 'manual ban', 'lw-firewall' ),
+			],
 		];
 	}
 
@@ -75,5 +79,24 @@ final class BanReasons {
 		$all = self::all();
 
 		return $all[ $reason ][1] ?? __( 'banned before reasons were recorded', 'lw-firewall' );
+	}
+
+	/**
+	 * The subsystem that issued a ban with this reason.
+	 *
+	 * @param string $reason Reason code.
+	 * @return string One of login, password_reset, registration, rate_limit, admin, unknown.
+	 */
+	public static function source( string $reason ): string {
+		$sources = [
+			'login_lockout' => 'login',
+			'reset_ip'      => 'password_reset',
+			'reset_spam'    => 'password_reset',
+			'register_spam' => 'registration',
+			'rate_limit'    => 'rate_limit',
+			'manual'        => 'admin',
+		];
+
+		return $sources[ $reason ] ?? 'unknown';
 	}
 }

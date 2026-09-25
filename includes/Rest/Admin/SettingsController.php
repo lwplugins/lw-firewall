@@ -57,8 +57,13 @@ final class SettingsController {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function save_settings( WP_REST_Request $request ) {
-		$body   = $request->get_json_params();
-		$errors = SettingsStore::save( is_array( $body ) ? $body : $request->get_body_params() );
+		$body = $request->get_json_params();
+
+		if ( empty( $body ) ) {
+			$body = $request->get_body_params();
+		}
+
+		$errors = SettingsStore::save( $body );
 
 		if ( [] !== $errors ) {
 			return Routes::error(

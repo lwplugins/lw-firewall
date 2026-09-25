@@ -21,6 +21,11 @@ interface StorageInterface {
 	/**
 	 * Get a value by key.
 	 *
+	 * Impure: the value changes with every set/increment/delete, whoever
+	 * makes them, so two reads of the same key may differ.
+	 *
+	 * @phpstan-impure
+	 *
 	 * @param string $key Cache key.
 	 * @return mixed
 	 */

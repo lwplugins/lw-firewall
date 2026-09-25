@@ -43,6 +43,12 @@ final class Routes {
 	 */
 	public function register_routes(): void {
 		( new SettingsController() )->register_routes();
+		( new BansController() )->register_routes();
+		( new LogsController() )->register_routes();
+		( new MaintenanceController() )->register_routes();
+		( new AlertsController() )->register_routes();
+		( new TransferController() )->register_routes();
+		( new StatusController() )->register_routes();
 	}
 
 	/**
