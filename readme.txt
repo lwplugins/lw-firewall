@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.5.8
+Stable tag: 1.5.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,13 +79,23 @@ APCu is fastest (in-memory, per-process). Redis is fast and shared across proces
 
 = Will it block legitimate users? =
 
-Rate limits are per-IP. Casual users won't trigger them. Only bots and attackers sending many requests in a short window get blocked. You can whitelist trusted IPs.
+Rate limits are per-IP (IPv6 clients per /64 network, the block a single connection is normally given). Casual users won't trigger them. Private and trusted-proxy addresses are never counted or banned, so a misconfigured proxy cannot lock out the whole site. Only bots and attackers sending many requests in a short window get blocked. You can whitelist trusted IPs.
 
 = Does it support Cloudflare? =
 
 Yes. It automatically detects the real visitor IP via the CF-Connecting-IP header with Cloudflare IP range validation to prevent spoofing.
 
 == Changelog ==
+
+= 1.5.9 =
+* Fix: IPv6 clients were counted and banned per address, so an attacker rotating addresses inside one /64 was never limited. Counters and bans now cover the whole /64; unblocking any address in it (or the /64 itself) lifts the ban, including bans created by 1.5.8
+* Fix: /wp-login.php/x, /xmlrpc.php/x, /wp-cron.php/x and case variants such as /XMLRPC.php escaped the login, XML-RPC and cron limits. They are now matched like the plain path, and a subdirectory install's own WP-Cron loopback is no longer throttled
+* Fix: Without Cloudflare, IPv6 visitors from blocked countries were never geo-blocked because only the IPv4 country lists were downloaded. The IPv6 lists are now downloaded too, and a failed download of one list no longer affects the other
+* Fix: When every visitor appeared as one proxy or private address, a few failed logins banned the whole site, administrators included. Private, reserved and trusted-proxy addresses are no longer counted or banned
+* Fix: With Redis, a counter could be left without an expiry and a dropped Redis connection could cause a fatal error during login or page requests. Counters now always expire and Redis errors fail open
+* Fix: The .htaccess country block stayed active with the firewall switched off, and `wp lw-firewall config reset` did not update it. The weekly country-list download is now removed when geo blocking is off
+* Fix: Settings pinned in wp-config.php were written into the database by the LW Site Manager block/unblock IP actions and by the bot-list field
+* Fix: A renamed plugin directory produced a worker that installed but never ran. The worker now uses the actual directory
 
 = 1.5.8 =
 * Change: The default bot list no longer blocks ChatGPT-User, ClaudeBot, PerplexityBot or Meta-ExternalFetcher — these fetch pages for a real visitor or cite your site with a link, so blocking them cost referral traffic
@@ -286,3 +296,8 @@ Yes. It automatically detects the real visitor IP via the CF-Connecting-IP heade
 
 = 1.0.0 =
 * Initial release
+
+== Upgrade Notice ==
+
+= 1.5.9 =
+Security update: IPv6 attackers could evade rate limits and bans by rotating addresses, and some login/XML-RPC URLs escaped the limits. Update recommended.

@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.9] - 2026-09-25
+
+### Security
+- **IPv6 clients were counted and banned per address, so an attacker rotating addresses inside one /64 was never limited.** Every rate, login, 404, registration and password-reset counter, and every ban, now covers the whole /64. The ban list shows the /64; unblocking any address inside it, or the /64 itself, lifts the ban (admin and `wp lw-firewall ban remove`/`check`). Bans created by 1.5.8 are still enforced until they expire and can still be lifted. IP whitelist and blacklist entries match exactly as written, as before
+- **`/wp-login.php/x`, `/xmlrpc.php/x`, `/wp-cron.php/x` and case variants such as `/XMLRPC.php` escaped the login, XML-RPC and cron limits**, although the server still runs the script. The endpoint is now matched as a whole path segment, ignoring case. Subdirectory installs (`/blog/wp-login.php`) still match; look-alike files (`/foo-wp-login.php`) do not
+- **Without Cloudflare, IPv6 visitors from blocked countries were never geo-blocked**, because only the IPv4 country lists were downloaded. The IPv6 lists are downloaded too and searched as a sorted index. If one of the two downloads fails, the other is still saved and the previous list for the failed one is kept
+- **When every visitor resolved to one proxy or private address, a few failed logins banned the whole site, administrators included.** This happened behind an unconfigured reverse proxy, or behind a configured one whose forwarded header was missing. Private, reserved, loopback, link-local and carrier-grade NAT addresses, and configured trusted proxies, are no longer counted or banned. Blacklist, whitelist, geo and bot checks still apply to them
+
+### Fixed
+- With Redis, a crash between the two commands of an increment could leave a counter that never expired. Increments are now a single atomic step, and counters already left without an expiry get one. A dropped Redis connection no longer causes a fatal error during login or page requests; the backend fails open like the others
+- The `.htaccess` country block was written even with the firewall's master switch off, so those visitors stayed blocked. It is now written only while the firewall, geo blocking and at least one country are all on. `wp lw-firewall config reset` now updates `.htaccess` like `config set`, and the weekly country-list download is removed when geo blocking is off
+- Settings pinned in `wp-config.php` were written into the database by the LW Site Manager block/unblock IP actions and by the bot-list form field, and stayed there after the constant was removed. Only stored values are saved now
+- A renamed plugin directory produced an MU-plugin worker that installed but never ran. The installed worker now points at the actual plugin directory and is reinstalled if the directory changes
+
 ## [1.5.8] - 2026-09-17
 
 ### Changed
