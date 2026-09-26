@@ -92,6 +92,7 @@ The per-username lockout locks an account after repeated failed logins from any 
 
 = 1.6.2 =
 * Change: the LW Plugins overview page is now a searchable table showing each LW plugin's status and version, with one-click activation for installed plugins; it always uses the newest version shipped by any active LW plugin.
+* Fix: LW Site Manager's MCP server now lists this plugin's abilities (they were only reachable through REST).
 
 = 1.6.1 =
 * Fix: "Requires at least" raised to WordPress 6.6 - the React settings screen needs the react-jsx-runtime script core registers from 6.6; on older versions the page stayed blank.
