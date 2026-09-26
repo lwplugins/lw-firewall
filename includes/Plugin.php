@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall;
 
+use LightweightPlugins\Firewall\Admin\Hub\Hub;
 use LightweightPlugins\Firewall\Admin\NoticeManager;
 use LightweightPlugins\Firewall\Admin\SettingsPage;
 use LightweightPlugins\Firewall\Admin\WorkerNotice;
@@ -38,6 +39,7 @@ final class Plugin {
 		BotDefaultsMigration::maybe_apply();
 		$this->init_alerts();
 		$this->bootstrap_worker();
+		Hub::init( LW_FIREWALL_FILE );
 		$this->init_admin();
 		$this->init_rest();
 		$this->init_site_manager();
