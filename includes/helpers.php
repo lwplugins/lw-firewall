@@ -106,9 +106,10 @@ function lw_firewall_has_login_cookie(): bool {
 /**
  * Whether a rate-limit reason may use the logged-in (higher-limit) bucket.
  *
- * Only REST and WooCommerce-filter requests suffer logged-in false positives —
- * admin dashboards (wc-admin, Gutenberg, media) fire request bursts against
- * /wp-json/ and filtered archive URLs. The login, xmlrpc and cron throttles are
+ * Only REST and WooCommerce filter / add-to-cart requests suffer logged-in
+ * false positives — admin dashboards (wc-admin, Gutenberg, media) fire request
+ * bursts against /wp-json/ and filtered archive URLs, and a shopper may add
+ * many items. The login, xmlrpc and cron throttles are
  * abuse surfaces where a signed-in user has no legitimate burst, so they stay
  * fully throttled regardless of any cookie.
  *
@@ -116,7 +117,7 @@ function lw_firewall_has_login_cookie(): bool {
  * @return bool
  */
 function lw_firewall_login_exempt_reason( string $reason ): bool {
-	return 'rest' === $reason || 'filter' === $reason;
+	return 'rest' === $reason || 'filter' === $reason || 'cart' === $reason;
 }
 
 /**
@@ -275,6 +276,15 @@ function lw_firewall_detect_type( string $uri, array $options, bool $woo_filters
 		&& \LightweightPlugins\Firewall\Rules\WooFilterParams::matches( $request['args'] )
 	) {
 		return [ 'filter', null ];
+	}
+
+	// ?add-to-cart= links (GET): each one creates a cart and a WooCommerce
+	// session. Classified only when that protection is switched on, so a site
+	// that does not use it keeps these requests unthrottled as before.
+	if ( $woo_filters && ! empty( $options['add_to_cart_require_cookie'] )
+		&& isset( $request['args']['add-to-cart'] ) && ! str_contains( $path . '/', '/wp-admin/' )
+	) {
+		return [ 'cart', null ];
 	}
 
 	return [ null, null ];

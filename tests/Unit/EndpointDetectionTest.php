@@ -76,6 +76,22 @@ final class EndpointDetectionTest extends TestCase {
 		];
 	}
 
+	public function test_add_to_cart_link_is_classified_when_protected(): void {
+		$options = self::OPTIONS + [ 'add_to_cart_require_cookie' => true ];
+
+		$this->assertSame( 'cart', \lw_firewall_detect_type( '/termek-cimke/dn20/?add-to-cart=22853', $options )[0] );
+	}
+
+	public function test_add_to_cart_link_is_not_classified_when_unprotected(): void {
+		$this->assertNull( \lw_firewall_detect_type( '/termek/x/?add-to-cart=5332', self::OPTIONS )[0] );
+	}
+
+	public function test_add_to_cart_link_is_not_classified_without_woocommerce(): void {
+		$options = self::OPTIONS + [ 'add_to_cart_require_cookie' => true ];
+
+		$this->assertNull( \lw_firewall_detect_type( '/termek/x/?add-to-cart=5332', $options, false )[0] );
+	}
+
 	public function test_filters_are_not_classified_without_woocommerce(): void {
 		$this->assertNull( \lw_firewall_detect_type( '/shop/?filter_color=red', self::OPTIONS, false )[0] );
 	}

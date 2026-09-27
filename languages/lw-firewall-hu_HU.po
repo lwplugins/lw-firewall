@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-09-27T19:01:27+00:00\n"
+"POT-Creation-Date: 2026-09-27T19:17:16+00:00\n"
 "PO-Revision-Date: 2026-09-25 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Scan finished: no new or modified administrators found."
 msgstr "Ellenőrzés kész: nem található új vagy módosított adminisztrátor."
 
-#: includes/Admin/Bans/BanReasons.php:34 includes/Admin/Logs/LogReasons.php:40
+#: includes/Admin/Bans/BanReasons.php:34 includes/Admin/Logs/LogReasons.php:42
 msgid "Too many failed logins"
 msgstr "Túl sok hibás bejelentkezés"
 
@@ -140,7 +140,7 @@ msgstr "Jelszó-visszaállítási árasztás"
 msgid "per-IP limit"
 msgstr "IP-nkénti korlát"
 
-#: includes/Admin/Bans/BanReasons.php:42 includes/Admin/Logs/LogReasons.php:47
+#: includes/Admin/Bans/BanReasons.php:42 includes/Admin/Logs/LogReasons.php:49
 msgid "Password reset bot request"
 msgstr "Jelszó-visszaállítási bot-kérés"
 
@@ -148,7 +148,7 @@ msgstr "Jelszó-visszaállítási bot-kérés"
 msgid "proof-of-render failed"
 msgstr "proof-of-render megbukott"
 
-#: includes/Admin/Bans/BanReasons.php:46 includes/Admin/Logs/LogReasons.php:42
+#: includes/Admin/Bans/BanReasons.php:46 includes/Admin/Logs/LogReasons.php:44
 msgid "Registration spam"
 msgstr "Regisztrációs spam"
 
@@ -402,23 +402,31 @@ msgstr "Kéréskorlát: WooCommerce-szűrők"
 msgid "Filter request without visitor cookie (challenged)"
 msgstr "Szűrőkérés látogatói süti nélkül (ellenőrző oldal)"
 
+#: includes/Admin/Logs/LogReasons.php:40
+msgid "Rate limit: add-to-cart links"
+msgstr "Kéréskorlát: kosárba tevő linkek"
+
 #: includes/Admin/Logs/LogReasons.php:41
+msgid "Add-to-cart link without visitor cookie (challenged)"
+msgstr "Kosárba tevő link látogatói süti nélkül (ellenőrző oldal)"
+
+#: includes/Admin/Logs/LogReasons.php:43
 msgid "Username locked after failed logins"
 msgstr "Felhasználónév zárolva sikertelen bejelentkezések miatt"
 
-#: includes/Admin/Logs/LogReasons.php:43
+#: includes/Admin/Logs/LogReasons.php:45
 msgid "Comment or review spam"
 msgstr "Hozzászólás- vagy értékelés-spam"
 
-#: includes/Admin/Logs/LogReasons.php:44
+#: includes/Admin/Logs/LogReasons.php:46
 msgid "Password reset flood (per IP)"
 msgstr "Jelszó-visszaállítási árasztás (IP-nként)"
 
-#: includes/Admin/Logs/LogReasons.php:45
+#: includes/Admin/Logs/LogReasons.php:47
 msgid "Password reset flood (per account)"
 msgstr "Jelszó-visszaállítási árasztás (fiókonként)"
 
-#: includes/Admin/Logs/LogReasons.php:46
+#: includes/Admin/Logs/LogReasons.php:48
 msgid "Password reset flood (site-wide cap)"
 msgstr "Jelszó-visszaállítási árasztás (oldalszintű korlát)"
 
@@ -1102,6 +1110,30 @@ msgstr ""
 "A fájl nem LW Firewall beállításexport: nem érvényes JSON, vagy nem "
 "tartalmaz ismert beállítást."
 
+#: includes/Rules/ChallengeText.php:75
+msgid "Adding to the cart needs cookies enabled."
+msgstr "A kosárba tételhez engedélyezni kell a sütiket."
+
+#: includes/Rules/ChallengeText.php:76
+msgid "Adding to the cart needs JavaScript."
+msgstr "A kosárba tételhez JavaScript szükséges."
+
+#: includes/Rules/ChallengeText.php:77
+msgid "Continue without adding to the cart"
+msgstr "Tovább kosárba tétel nélkül"
+
+#: includes/Rules/ChallengeText.php:81
+msgid "Filtering needs cookies enabled."
+msgstr "A szűréshez engedélyezni kell a sütiket."
+
+#: includes/Rules/ChallengeText.php:82
+msgid "Filtering needs JavaScript."
+msgstr "A szűréshez JavaScript szükséges."
+
+#: includes/Rules/ChallengeText.php:83
+msgid "Continue without filters"
+msgstr "Tovább szűrők nélkül"
+
 #: includes/Rules/CommentFields.php:81 includes/Rules/PasswordResetGuard.php:84
 #: includes/Rules/RegisterGuard.php:54
 msgid "Leave this field empty"
@@ -1114,18 +1146,6 @@ msgid ""
 msgstr ""
 "<strong>Hiba:</strong> A hozzászólásodat nem sikerült elküldeni. Töltsd újra "
 "az oldalt, és próbáld újra."
-
-#: includes/Rules/FilterCookie.php:148
-msgid "Filtering needs cookies enabled."
-msgstr "A szűréshez engedélyezni kell a sütiket."
-
-#: includes/Rules/FilterCookie.php:149
-msgid "Filtering needs JavaScript."
-msgstr "A szűréshez JavaScript szükséges."
-
-#: includes/Rules/FilterCookie.php:150
-msgid "Continue without filters"
-msgstr "Tovább szűrők nélkül"
 
 #: includes/Rules/RegisterGuard.php:79
 msgid "Registration failed, please try again."
@@ -2959,6 +2979,27 @@ msgstr ""
 #: build/index.js:20
 msgid "Skip the check for verified Googlebot"
 msgstr "Az ellenőrzött Googlebot kihagyása az ellenőrzésből"
+
+#: build/index.js:20
+msgid "Add-to-Cart Links"
+msgstr "Kosárba tevő linkek"
+
+#: build/index.js:20
+msgid ""
+"Apply the same visitor-cookie check to GET links with ?add-to-cart= (each "
+"one creates a cart and a WooCommerce session). Real visitors get the product "
+"added after one quick reload. Add-to-cart forms and AJAX (POST) are never "
+"affected. The per-IP rate limit also applies while this is on."
+msgstr ""
+"Ugyanez a látogatói süti ellenőrzés a ?add-to-cart= paraméteres GET-linkekre "
+"is (ezek mindegyike kosarat és WooCommerce-munkamenetet hoz létre). A valódi "
+"látogató kosarába egy gyors újratöltés után bekerül a termék. A kosárba tevő "
+"űrlapokat és az AJAX-kéréseket (POST) ez soha nem érinti. Bekapcsolva az IP-"
+"nkénti kéréskorlát is vonatkozik ezekre a kérésekre."
+
+#: build/index.js:20
+msgid "Require the visitor cookie for add-to-cart links"
+msgstr "Látogatói süti megkövetelése a kosárba tevő linkeknél"
 
 #: build/index.js:20
 msgid "Endpoint Protection"

@@ -16,7 +16,7 @@
  * wp-config.php to neutralize the worker completely.
  *
  * @package LightweightPlugins\Firewall
- * @version 1.8.0-beta.2
+ * @version 1.8.0-beta.3
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_WORKER_VERSION', '1.8.0-beta.2' );
+define( 'LW_FIREWALL_WORKER_VERSION', '1.8.0-beta.3' );
 
 // The plugin's directory under WP_PLUGIN_DIR. Activator::install_worker()
 // writes the real name into the installed copy (see WorkerTemplate), so a
@@ -67,6 +67,7 @@ if ( PHP_VERSION_ID < 80200 ) {
 			'Rules/NotFoundTracker.php',
 			'Rules/WooFilterParams.php',
 			'Rules/FilterCookie.php',
+			'Rules/ChallengeText.php',
 			'Rules/GooglebotVerifier.php',
 			'Geo/GeoDetector.php',
 			'Geo/RangeIndex.php',
@@ -222,22 +223,25 @@ if ( PHP_VERSION_ID < 80200 ) {
 						return;
 					}
 
-					// --- WooCommerce filters: visitor cookie required ---
+					// --- WooCommerce filters / add-to-cart links: visitor cookie required ---
 					// Before the per-IP limit, and regardless of $countable: a
 					// distributed flood sends one request per address, which no
 					// counter catches, but its clients do not run the page script
-					// that sets the cookie. Signed-in users (by cookie shape) and
-					// optionally a DNS-verified Googlebot pass through.
-					if ( 'filter' === $reason && ! empty( $options['filter_require_cookie'] )
+					// that sets the cookie. Signed-in users (by cookie shape) and,
+					// for filters, optionally a DNS-verified Googlebot pass through.
+					// 'cart' is only classified while its option is on.
+					$cookie_rule = 'cart' === $reason || ( 'filter' === $reason && ! empty( $options['filter_require_cookie'] ) );
+
+					if ( $cookie_rule
 						// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 						&& \LightweightPlugins\Firewall\Rules\FilterCookie::applies_to_method( (string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) )
 						&& ! \LightweightPlugins\Firewall\Rules\FilterCookie::has_cookie()
 						&& ! lw_firewall_has_login_cookie()
-						&& ! ( ! empty( $options['filter_cookie_allow_googlebot'] )
+						&& ! ( 'filter' === $reason && ! empty( $options['filter_cookie_allow_googlebot'] )
 							&& ( new \LightweightPlugins\Firewall\Rules\GooglebotVerifier( $storage ) )->is_verified( $ip, (string) $user_agent ) )
 					) {
-						lw_firewall_log( $options, $ip, 'filter_no_cookie' );
-						\LightweightPlugins\Firewall\Rules\FilterCookie::challenge( (string) $request_uri );
+						lw_firewall_log( $options, $ip, 'cart' === $reason ? 'add_to_cart_no_cookie' : 'filter_no_cookie' );
+						\LightweightPlugins\Firewall\Rules\FilterCookie::challenge( (string) $request_uri, $reason );
 					}
 
 					if ( ! $countable ) {
@@ -277,8 +281,9 @@ if ( PHP_VERSION_ID < 80200 ) {
 							$banner->record_violation( $ip );
 						}
 
-						// Filter uses configured action; everything else gets 429.
-						if ( 'filter' === $reason ) {
+						// Filter and add-to-cart use the configured action (302 strips
+						// the query); everything else gets 429.
+						if ( 'filter' === $reason || 'cart' === $reason ) {
 							\LightweightPlugins\Firewall\Rules\RateLimiter::limit();
 						} else {
 							\LightweightPlugins\Firewall\Rules\RateLimiter::too_many();

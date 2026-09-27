@@ -127,6 +127,20 @@ export default function GeneralTab( { store } ) {
 				) }
 				offText={ __( 'Off', 'lw-firewall' ) }
 			/>
+			<SwitchRow
+				title={ __( 'Add-to-Cart Links', 'lw-firewall' ) }
+				help={ __(
+					'Apply the same visitor-cookie check to GET links with ?add-to-cart= (each one creates a cart and a WooCommerce session). Real visitors get the product added after one quick reload. Add-to-cart forms and AJAX (POST) are never affected. The per-IP rate limit also applies while this is on.',
+					'lw-firewall'
+				) }
+				store={ store }
+				name="add_to_cart_require_cookie"
+				onText={ __(
+					'Require the visitor cookie for add-to-cart links',
+					'lw-firewall'
+				) }
+				offText={ __( 'Off', 'lw-firewall' ) }
+			/>
 		</Section>
 	);
 }

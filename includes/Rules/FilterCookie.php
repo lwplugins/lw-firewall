@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * A filter URL is only served to a client that carries the visitor cookie.
+ * A filter URL (and, optionally, an ?add-to-cart= link) is only served to a
+ * client that carries the visitor cookie.
  *
  * A distributed filter flood comes from thousands of addresses sending one
  * or two requests each, so no per-IP counter ever trips. What those clients
@@ -87,7 +88,7 @@ final class FilterCookie {
 	public static function challenge_html( string $fallback, array $text = [] ): string {
 		$text = array_map(
 			static fn ( string $t ): string => htmlspecialchars( $t, ENT_QUOTES, 'UTF-8' ),
-			array_merge( self::default_text(), $text )
+			array_merge( ChallengeText::defaults( ChallengeText::FILTER ), $text )
 		);
 		$href = htmlspecialchars( $fallback, ENT_QUOTES, 'UTF-8' );
 		$js   = '(function(){var d=document,a="; path=/; SameSite=Lax"+(location.protocol==="https:"?"; Secure":""),'
@@ -107,52 +108,6 @@ final class FilterCookie {
 	}
 
 	/**
-	 * The untranslated page text.
-	 *
-	 * @return array<string, string>
-	 */
-	private static function default_text(): array {
-		return [
-			'cookies'    => 'Filtering needs cookies enabled.',
-			'javascript' => 'Filtering needs JavaScript.',
-			'link'       => 'Continue without filters',
-			'lang'       => 'en',
-		];
-	}
-
-	/**
-	 * The page text in the site's language.
-	 *
-	 * The worker answers at muplugins_loaded, before WordPress loads any
-	 * plugin translation, so the plugin's own .mo (or the one in
-	 * WP_LANG_DIR/plugins) is loaded here, only for a challenged request.
-	 *
-	 * @return array<string, string>
-	 */
-	private static function translated_text(): array {
-		if ( ! function_exists( '__' ) || ! function_exists( 'determine_locale' ) ) {
-			return self::default_text();
-		}
-
-		$locale = determine_locale();
-
-		if ( ! is_textdomain_loaded( 'lw-firewall' ) ) {
-			$global = defined( 'WP_LANG_DIR' ) ? WP_LANG_DIR . '/plugins/lw-firewall-' . $locale . '.mo' : '';
-
-			if ( '' === $global || ! load_textdomain( 'lw-firewall', $global, $locale ) ) {
-				load_textdomain( 'lw-firewall', dirname( __DIR__, 2 ) . '/languages/lw-firewall-' . $locale . '.mo', $locale );
-			}
-		}
-
-		return [
-			'cookies'    => __( 'Filtering needs cookies enabled.', 'lw-firewall' ),
-			'javascript' => __( 'Filtering needs JavaScript.', 'lw-firewall' ),
-			'link'       => __( 'Continue without filters', 'lw-firewall' ),
-			'lang'       => str_replace( '_', '-', $locale ),
-		];
-	}
-
-	/**
 	 * Send the challenge and stop.
 	 *
 	 * 403, not 429: search engines read 429 as server overload and slow down
@@ -160,9 +115,10 @@ final class FilterCookie {
 	 * that caches 200s. no-store keeps any other cache out as well.
 	 *
 	 * @param string $request_uri Raw REQUEST_URI.
+	 * @param string $kind        ChallengeText::FILTER or ChallengeText::CART.
 	 * @return void
 	 */
-	public static function challenge( string $request_uri ): void {
+	public static function challenge( string $request_uri, string $kind = ChallengeText::FILTER ): void {
 		if ( ! headers_sent() ) {
 			header( 'HTTP/1.1 403 Forbidden' );
 			header( 'Content-Type: text/html; charset=utf-8' );
@@ -171,7 +127,7 @@ final class FilterCookie {
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static page; the only variable part is escaped in challenge_html().
-		echo self::challenge_html( RateLimiter::safe_redirect_path( $request_uri ), self::translated_text() );
+		echo self::challenge_html( RateLimiter::safe_redirect_path( $request_uri ), ChallengeText::translated( $kind ) );
 		exit;
 	}
 }

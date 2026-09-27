@@ -37,6 +37,7 @@ export const TABS = [
 			'action',
 			'filter_require_cookie',
 			'filter_cookie_allow_googlebot',
+			'add_to_cart_require_cookie',
 		],
 	},
 	{

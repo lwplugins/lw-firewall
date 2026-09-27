@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.8.0-beta.3] - 2026-09-27
+
+### Added
+- Optional visitor-cookie check for GET/HEAD `?add-to-cart=` links (`add_to_cart_require_cookie`, off by default; admin UI and `wp lw-firewall config set add_to_cart_require_cookie true`). A link without the `lwfw_v` cookie, without a signed-in cookie and from a non-whitelisted IP gets the same 403 challenge page (with cart wording), which sets the cookie and reloads the URL so the product is still added. POST add-to-cart forms and `?wc-ajax=add_to_cart` are never affected. While the option is on, these links are also covered by the per-IP rate limit (configured action, higher bucket for signed-in users). Log reasons: `add_to_cart_no_cookie`, `rate_limited_cart`.
+
+### Changed
+- `filter_require_cookie` defaults to on for existing installs as well (no longer a legacy default); a stored `false` is kept across updates.
+- The challenge page text moved to `ChallengeText`, with separate wording for filter and add-to-cart requests; Hungarian translations added.
+
 ## [1.8.0-beta.2] - 2026-09-27
 
 ### Fixed
