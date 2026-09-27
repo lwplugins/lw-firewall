@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.6.2
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,7 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 * MU-plugin worker for early request interception
 * Import/Export — transfer firewall settings between sites via JSON
 * Password reset flood protection — per-IP, per-account and site-wide limits covering wp-login.php and WooCommerce
+* Comment and WooCommerce product review spam protection — honeypot field and optional signed form token, safe with full-page caching
 * New administrator alert — email notification when any account gains admin rights or an existing admin is modified, including changes written straight into the database
 * Tabbed admin settings page under LW Plugins menu (11 tabs)
 * Optional request logging with viewer
@@ -89,6 +90,10 @@ Yes. It automatically detects the real visitor IP via the CF-Connecting-IP heade
 The per-username lockout locks an account after repeated failed logins from any IP, so anyone who knows a username can keep that account locked by retrying every lock period (15 minutes by default). Whitelisted IPs are never counted or refused: whitelist your own address under IP Rules. Lift an active lock from the Bans list or with `wp lw-firewall user-lock clear`. You can shorten the lock (Username Lock Duration) or turn the feature off.
 
 == Changelog ==
+
+= 1.7.0 =
+* New: spam protection for comments and WooCommerce product reviews — a honeypot field and an optional signed form token reject bot submissions before they are stored (Spam settings).
+* Change: the Spam tab's auto-ban section is now "Spam Auto-Ban" and applies to registrations, comments and reviews alike.
 
 = 1.6.2 =
 * Change: the LW Plugins overview page is now a searchable table showing each LW plugin's status and version, with one-click activation for installed plugins; it always uses the newest version shipped by any active LW plugin.

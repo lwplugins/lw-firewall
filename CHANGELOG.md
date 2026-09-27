@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.0] - 2026-09-27
+
+### Added
+- Spam protection for comments and WooCommerce product reviews — a honeypot field and an optional signed form token reject bot submissions before they are stored (Spam settings). Every form built by `comment_form()` is covered: classic theme comment templates, the block theme Comments form block and both WooCommerce review forms. A direct POST to `wp-comments-post.php` without the token, with the honeypot filled or faster than the minimum fill time is refused with a 403 and logged as `comment_spam`; refusals count toward the shared spam auto-ban threshold (now counted together with rejected registrations). Users who can moderate comments or edit the post, whitelisted IPs, and comments added through REST, XML-RPC or the admin are never checked. Full-page caching is safe: the token is never single-use, lives one day by default, and a stale token is refreshed in the background when a visitor starts typing. On by default for new installs; existing sites keep it off until it is enabled. New options: `comment_protect_enabled`, `comment_honeypot`, `comment_token_enabled`, `comment_min_fill_time`, `comment_token_max_age` (#5)
+
+### Changed
+- The Spam tab's auto-ban section is now "Spam Auto-Ban" and applies to registrations, comments and reviews alike.
+
 ## [1.6.2] - 2026-09-26
 
 ### Changed
