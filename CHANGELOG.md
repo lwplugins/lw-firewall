@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.8.0-beta.1] - 2026-09-27
+
+### Added
+- Visitor cookie required for WooCommerce filter requests (`filter_require_cookie`). Every front-end page sets the `lwfw_v` cookie from an inline `wp_head` script, so it survives full-page caching. A filter request without it (and without a signed-in cookie, from a non-whitelisted IP, GET/HEAD only) is answered by the MU-worker before WooCommerce loads, with a small `403` page (`Cache-Control: no-store, private`, `X-Robots-Tag: noindex`) that sets the cookie and reloads the same URL. A short-lived `lwfw_c` marker stops a reload loop and shows a link to the unfiltered page instead; `<noscript>` shows the same link. Logged as `filter_no_cookie`. On by default for new installs; existing sites keep it off until enabled.
+- Optional Googlebot exemption for the cookie check (`filter_cookie_allow_googlebot`, off by default), verified by reverse + forward DNS and cached for a day.
+
+### Changed
+- WooCommerce filter requests are recognised built in by WooCommerce's own argument names (checked against WooCommerce 11.1.2): `filter_*`, `query_type_*`, `min_price`, `max_price`, `rating_filter`, and the Product Filters block's `categories`, `tags`, `brands`; only when WooCommerce is active, never on REST or wp-admin paths. The per-IP rate limit runs after the cookie check with the global `rate_limit` / `rate_window` / `action`.
+
+### Removed
+- The Filter Parameters setting (`filter_params`) from the options, admin UI and WP-CLI. An upgrade step removes the stored key; entries not covered by the built-in recognition (e.g. `add-to-cart|10`) lose their rate limit and are listed once in a dismissible admin notice.
+
+### Fixed
+- REST requests with filter-like arguments are no longer classified as filter requests when REST protection is off.
+
 ## [1.7.0] - 2026-09-27
 
 ### Added

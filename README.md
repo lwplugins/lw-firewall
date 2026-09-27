@@ -247,7 +247,7 @@ wp lw-firewall config-items remove <key> <entry>
 wp lw-firewall config set rate_limit 50
 wp lw-firewall config set storage redis
 wp lw-firewall config set protect_login true
-wp lw-firewall config set filter_params "filter_|30,add-to-cart|10"
+wp lw-firewall config set filter_require_cookie true
 wp lw-firewall config-items add blocked_countries KP
 wp lw-firewall config-items remove ip_blacklist 203.0.113.42
 ```
@@ -414,7 +414,7 @@ define( 'LW_FIREWALL_GEO_ENABLED', true );
 define( 'LW_FIREWALL_DISABLE_WORKER', true );
 ```
 
-The list settings (`ip_whitelist`, `ip_blacklist`, `blocked_bots`, `filter_params`, `blocked_countries`) accept constants too, as arrays — but they are usually easier to manage with `wp lw-firewall config-items` or the admin UI:
+The list settings (`ip_whitelist`, `ip_blacklist`, `blocked_bots`, `blocked_countries`) accept constants too, as arrays — but they are usually easier to manage with `wp lw-firewall config-items` or the admin UI:
 
 ```php
 define( 'LW_FIREWALL_IP_WHITELIST', [ '192.168.1.100', '10.0.0.0/8' ] );

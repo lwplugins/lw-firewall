@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall;
 
+use LightweightPlugins\Firewall\Admin\FilterParamsNotice;
 use LightweightPlugins\Firewall\Admin\Hub\Hub;
 use LightweightPlugins\Firewall\Admin\NoticeManager;
 use LightweightPlugins\Firewall\Admin\SettingsPage;
@@ -19,6 +20,7 @@ use LightweightPlugins\Firewall\Geo\GeoActivation;
 use LightweightPlugins\Firewall\Geo\HtaccessWriter;
 use LightweightPlugins\Firewall\Rest\Admin\Routes as AdminRoutes;
 use LightweightPlugins\Firewall\Rules\CommentGuard;
+use LightweightPlugins\Firewall\Rules\FilterCookie;
 use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\PasswordResetGuard;
@@ -27,6 +29,7 @@ use LightweightPlugins\Firewall\Rules\SecurityHeaders;
 use LightweightPlugins\Firewall\Rules\UserLockGuard;
 use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
 use LightweightPlugins\Firewall\Upgrade\BotDefaultsMigration;
+use LightweightPlugins\Firewall\Upgrade\FilterParamsMigration;
 
 /**
  * Main plugin class.
@@ -38,6 +41,7 @@ final class Plugin {
 	 */
 	public function __construct() {
 		BotDefaultsMigration::maybe_apply();
+		FilterParamsMigration::maybe_apply();
 		$this->init_alerts();
 		$this->bootstrap_worker();
 		Hub::init( LW_FIREWALL_FILE );
@@ -134,6 +138,11 @@ final class Plugin {
 			CommentGuard::init();
 		}
 
+		// Visitor cookie for WooCommerce filter requests (checked by the worker).
+		if ( ! empty( $options['filter_require_cookie'] ) ) {
+			add_action( 'wp_head', [ $this, 'print_filter_cookie_script' ], 1 );
+		}
+
 		// Security headers.
 		if ( ! empty( $options['security_headers'] ) ) {
 			add_action( 'send_headers', [ SecurityHeaders::class, 'send' ] );
@@ -143,6 +152,18 @@ final class Plugin {
 		if ( GeoActivation::is_active( $options ) ) {
 			add_action( CidrUpdater::CRON_HOOK, [ $this, 'update_geo_cidrs' ] );
 		}
+	}
+
+	/**
+	 * Print the script that sets the filter visitor cookie (wp_head).
+	 *
+	 * Inline and in the HTML on purpose, so a full-page cache serves it to
+	 * every visitor; see FilterCookie.
+	 *
+	 * @return void
+	 */
+	public function print_filter_cookie_script(): void {
+		wp_print_inline_script_tag( FilterCookie::page_script() );
 	}
 
 	/**
@@ -226,6 +247,7 @@ final class Plugin {
 	private function init_admin(): void {
 		if ( is_admin() ) {
 			NoticeManager::register();
+			FilterParamsNotice::register();
 			new SettingsPage();
 		}
 	}

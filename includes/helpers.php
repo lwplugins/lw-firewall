@@ -220,14 +220,16 @@ function lw_firewall_path_is( string $path, string $endpoint ): bool {
 /**
  * Detect request type from URI.
  *
- * Returns an array of [reason, custom_limit]. The custom_limit is null unless
- * a filter param entry specifies one (e.g. "filter_|30").
+ * Returns an array of [reason, custom_limit]. The custom_limit is always null
+ * now that filter requests are recognised by WooCommerce's own argument names
+ * instead of a configurable list; the slot is kept for the callers' shape.
  *
- * @param string               $uri     Request URI.
- * @param array<string, mixed> $options Plugin options.
+ * @param string               $uri         Request URI.
+ * @param array<string, mixed> $options     Plugin options.
+ * @param bool                 $woo_filters Whether WooCommerce filter URLs are classified.
  * @return array{0: string|null, 1: int|null}
  */
-function lw_firewall_detect_type( string $uri, array $options ): array {
+function lw_firewall_detect_type( string $uri, array $options, bool $woo_filters = true ): array {
 	$request = lw_firewall_parse_uri( $uri );
 	$path    = $request['path'];
 
@@ -261,37 +263,47 @@ function lw_firewall_detect_type( string $uri, array $options ): array {
 		return [ 'rest', null ];
 	}
 
-	// WooCommerce filter parameter detection.
-	// Entries may include a custom rate limit: "filter_|30".
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-	$query_string  = $_SERVER['QUERY_STRING'] ?? '';
-	$filter_params = (array) ( $options['filter_params'] ?? [ 'filter_|30', 'query_type_|30' ] );
+	// A REST request is never a shop-filter request, even with filter-like
+	// arguments (wp/v2/posts?categories=5): with REST protection off it must
+	// stay unclassified rather than be challenged or throttled as a filter.
+	if ( str_contains( $path . '/', '/wp-json/' ) || isset( $request['args']['rest_route'] ) ) {
+		return [ null, null ];
+	}
 
-	if ( '' !== $query_string ) {
-		$matched      = false;
-		$custom_limit = null;
-
-		foreach ( $filter_params as $entry ) {
-			$parts  = explode( '|', (string) $entry, 2 );
-			$prefix = $parts[0];
-
-			if ( str_contains( $query_string, $prefix ) ) {
-				$matched = true;
-
-				// Use the lowest custom limit if multiple params match.
-				if ( isset( $parts[1] ) && is_numeric( $parts[1] ) ) {
-					$limit        = (int) $parts[1];
-					$custom_limit = ( null === $custom_limit ) ? $limit : min( $custom_limit, $limit );
-				}
-			}
-		}
-
-		if ( $matched ) {
-			return [ 'filter', $custom_limit ];
-		}
+	// WooCommerce product filters, recognised by their built-in argument names.
+	if ( $woo_filters && ! str_contains( $path . '/', '/wp-admin/' )
+		&& \LightweightPlugins\Firewall\Rules\WooFilterParams::matches( $request['args'] )
+	) {
+		return [ 'filter', null ];
 	}
 
 	return [ null, null ];
+}
+
+/**
+ * Whether WooCommerce is active on this site (or network-activated).
+ *
+ * Read from the plugin lists, because the worker runs before any regular
+ * plugin has loaded. Filter-URL recognition is limited to WooCommerce sites so
+ * that generic argument names it uses (categories, tags) do not challenge
+ * visitors of a site that has no shop.
+ *
+ * @return bool
+ */
+function lw_firewall_woocommerce_active(): bool {
+	$active = (array) get_option( 'active_plugins', [] );
+
+	if ( is_multisite() ) {
+		$active = array_merge( $active, array_keys( (array) get_site_option( 'active_sitewide_plugins', [] ) ) );
+	}
+
+	foreach ( $active as $plugin ) {
+		if ( str_ends_with( (string) $plugin, '/woocommerce.php' ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**

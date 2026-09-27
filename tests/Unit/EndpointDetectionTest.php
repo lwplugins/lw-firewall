@@ -62,7 +62,22 @@ final class EndpointDetectionTest extends TestCase {
 			'look-alike filename suffix'   => [ '/wp-login.php.bak', null ],
 			'look-alike xmlrpc'            => [ '/notxmlrpc.php/x', null ],
 			'endpoint named in the query'  => [ '/page?next=/wp-login.php', null ],
+			'woo attribute filter'         => [ '/?filter_hossz-mm=10&query_type_hossz-mm=or', 'filter' ],
+			'woo attribute on shop path'   => [ '/shop/?filter_atmero=20', 'filter' ],
+			'woo price filter'             => [ '/shop/?min_price=10&max_price=90', 'filter' ],
+			'woo rating filter'            => [ '/shop/?rating_filter=4', 'filter' ],
+			'woo block stock filter'       => [ '/shop/?filter_stock_status=instock', 'filter' ],
+			'woo block category filter'    => [ '/shop/?categories=shoes', 'filter' ],
+			'plain query is not a filter'  => [ '/shop/?orderby=price', null ],
+			'bare prefix is not a filter'  => [ '/?filter_=1', null ],
+			'REST with filter-like args'   => [ '/wp-json/wp/v2/posts?categories=5', null ],
+			'rest_route with filter args'  => [ '/?rest_route=/wc/store/products&min_price=1', null ],
+			'admin list filter action'     => [ '/wp-admin/edit.php?filter_action=Filter', null ],
 		];
+	}
+
+	public function test_filters_are_not_classified_without_woocommerce(): void {
+		$this->assertNull( \lw_firewall_detect_type( '/shop/?filter_color=red', self::OPTIONS, false )[0] );
 	}
 
 	public function test_a_subdirectory_cron_loopback_is_recognised(): void {

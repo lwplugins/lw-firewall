@@ -35,7 +35,6 @@ final class Options {
 	 */
 	private const LIST_KEYS = [
 		'trusted_proxies',
-		'filter_params',
 		'blocked_bots',
 		'ip_whitelist',
 		'ip_blacklist',
@@ -55,6 +54,7 @@ final class Options {
 	private const LEGACY_DEFAULTS = [
 		'protect_xmlrpc'          => false, // Default on for new installs since 1.6.0.
 		'comment_protect_enabled' => false, // Default on for new installs since 1.7.0.
+		'filter_require_cookie'   => false, // Default on for new installs since 1.8.0.
 	];
 
 	/**
@@ -64,67 +64,67 @@ final class Options {
 	 */
 	public static function get_defaults(): array {
 		return [
-			'enabled'                     => true,
-			'storage'                     => 'auto', // 'auto' | 'apcu' | 'redis' | 'file'.
-			'rate_limit'                  => 30,
-			'rate_window'                 => 60,
-			'action'                      => 'redirect', // 'redirect' | '429'.
-			'protect_cron'                => false,
-			'protect_xmlrpc'              => true,
-			'protect_login'               => true,
-			'protect_rest_api'            => false,
-			'protect_404'                 => false,
-			'trusted_proxies'             => [],
-			'proxy_header'                => 'x-forwarded-for',
-			'ip_whitelist'                => [],
-			'ip_blacklist'                => [],
-			'auto_ban_enabled'            => false,
-			'auto_ban_threshold'          => 3,
-			'auto_ban_duration'           => 3600,
-			'login_limit_enabled'         => false,
-			'login_max_attempts'          => 5,
-			'login_lockout_window'        => 600,
-			'login_lockout_duration'      => 3600,
+			'enabled'                       => true,
+			'storage'                       => 'auto', // 'auto' | 'apcu' | 'redis' | 'file'.
+			'rate_limit'                    => 30,
+			'rate_window'                   => 60,
+			'action'                        => 'redirect', // 'redirect' | '429'.
+			'protect_cron'                  => false,
+			'protect_xmlrpc'                => true,
+			'protect_login'                 => true,
+			'protect_rest_api'              => false,
+			'protect_404'                   => false,
+			'trusted_proxies'               => [],
+			'proxy_header'                  => 'x-forwarded-for',
+			'ip_whitelist'                  => [],
+			'ip_blacklist'                  => [],
+			'auto_ban_enabled'              => false,
+			'auto_ban_threshold'            => 3,
+			'auto_ban_duration'             => 3600,
+			'login_limit_enabled'           => false,
+			'login_max_attempts'            => 5,
+			'login_lockout_window'          => 600,
+			'login_lockout_duration'        => 3600,
 			// Per-username lockout: active together with login_limit_enabled,
 			// counted over login_lockout_window. Shorter than the IP ban on
 			// purpose — anyone who knows a username can trigger it.
-			'login_user_limit_enabled'    => true,
-			'login_user_max_attempts'     => 10,
-			'login_user_lockout_duration' => 900,
-			'register_protect_enabled'    => true,
-			'register_min_fill_time'      => 2,
-			'register_token_max_age'      => 3600,
-			'register_honeypot'           => true,
-			'register_single_use'         => true,
-			'register_ban_threshold'      => 3,
-			'register_ban_duration'       => 3600,
-			'reset_protect_enabled'       => true,
-			'reset_ip_max'                => 5,
-			'reset_ip_window'             => 900,
-			'reset_user_max'              => 3,
-			'reset_user_window'           => 3600,
-			'reset_global_max'            => 30,
-			'reset_proof_enabled'         => true,
-			'reset_min_fill_time'         => 2,
-			'reset_token_max_age'         => 3600,
-			'reset_single_use'            => true,
-			'reset_auto_ban'              => false,
-			'reset_ban_duration'          => 3600,
-			'reset_block_admins'          => false,
-			'reset_alert_enabled'         => false,
+			'login_user_limit_enabled'      => true,
+			'login_user_max_attempts'       => 10,
+			'login_user_lockout_duration'   => 900,
+			'register_protect_enabled'      => true,
+			'register_min_fill_time'        => 2,
+			'register_token_max_age'        => 3600,
+			'register_honeypot'             => true,
+			'register_single_use'           => true,
+			'register_ban_threshold'        => 3,
+			'register_ban_duration'         => 3600,
+			'reset_protect_enabled'         => true,
+			'reset_ip_max'                  => 5,
+			'reset_ip_window'               => 900,
+			'reset_user_max'                => 3,
+			'reset_user_window'             => 3600,
+			'reset_global_max'              => 30,
+			'reset_proof_enabled'           => true,
+			'reset_min_fill_time'           => 2,
+			'reset_token_max_age'           => 3600,
+			'reset_single_use'              => true,
+			'reset_auto_ban'                => false,
+			'reset_ban_duration'            => 3600,
+			'reset_block_admins'            => false,
+			'reset_alert_enabled'           => false,
 			// Comment and product review spam (comment_form() + wp-comments-post.php).
 			// The token lifetime is long and the token is never single-use, because
 			// full-page caches serve one rendered token to every visitor.
-			'comment_protect_enabled'     => true,
-			'comment_honeypot'            => true,
-			'comment_token_enabled'       => true,
-			'comment_min_fill_time'       => 2,
-			'comment_token_max_age'       => 86400,
-			'security_headers'            => false,
-			'admin_alert_enabled'         => false,
-			'admin_alert_email'           => '',
-			'admin_alert_scan_enabled'    => true,
-			'admin_alert_changes'         => true,
+			'comment_protect_enabled'       => true,
+			'comment_honeypot'              => true,
+			'comment_token_enabled'         => true,
+			'comment_min_fill_time'         => 2,
+			'comment_token_max_age'         => 86400,
+			'security_headers'              => false,
+			'admin_alert_enabled'           => false,
+			'admin_alert_email'             => '',
+			'admin_alert_scan_enabled'      => true,
+			'admin_alert_changes'           => true,
 
 			/*
 			 * Shipped defaults. Deliberately absent: the AI agents that fetch
@@ -137,7 +137,7 @@ final class Options {
 			 * neither agent exists any more, so the entries only matched
 			 * unrelated User-Agents by accident.
 			 */
-			'blocked_bots'                => [
+			'blocked_bots'                  => [
 				'meta-externalagent',
 				'gptbot',
 				'bytespider',
@@ -153,10 +153,14 @@ final class Options {
 				'barkrowler',
 				'dataforseobot',
 			],
-			'log_enabled'                 => false,
-			'filter_params'               => [ 'filter_|30', 'query_type_|30' ],
-			'geo_enabled'                 => true,
-			'blocked_countries'           => [ 'CN', 'RU', 'IN', 'VN', 'ID', 'BD' ],
+			'log_enabled'                   => false,
+			// WooCommerce filter URLs (recognised built in, see WooFilterParams)
+			// are served only to clients carrying the visitor cookie set by
+			// the page script; the per-IP rate limit still applies after it.
+			'filter_require_cookie'         => true,
+			'filter_cookie_allow_googlebot' => false,
+			'geo_enabled'                   => true,
+			'blocked_countries'             => [ 'CN', 'RU', 'IN', 'VN', 'ID', 'BD' ],
 		];
 	}
 

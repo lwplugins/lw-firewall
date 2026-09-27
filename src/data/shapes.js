@@ -70,7 +70,6 @@ export function toSettings( data ) {
 				} ) )
 				.sort( ( a, b ) => a.name.localeCompare( b.name ) ),
 			botsDefaults: list( meta.bots_defaults ),
-			filterParamsDefaults: list( meta.filter_params_defaults ),
 			adminEmail: server.admin_email || '',
 			usersCanRegister: !! server.users_can_register,
 			muPluginsDir: server.mu_plugins_dir || '',

@@ -35,7 +35,8 @@ export const TABS = [
 			'rate_limit',
 			'rate_window',
 			'action',
-			'filter_params',
+			'filter_require_cookie',
+			'filter_cookie_allow_googlebot',
 		],
 	},
 	{

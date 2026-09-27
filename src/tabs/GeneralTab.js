@@ -1,14 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { NumberRow, SelectRow, SwitchRow } from '../components/Fields';
-import ListRow from '../components/ListRow';
 import Section from '../components/Section';
 
 /**
@@ -31,14 +29,11 @@ const storageOptions = ( backends ) =>
 	} ) );
 
 export default function GeneralTab( { store } ) {
-	const locked = store.isLocked( 'filter_params' );
-	const filterDefaults = store.data.meta.filterParamsDefaults;
-
 	return (
 		<Section
 			title={ __( 'General Settings', 'lw-firewall' ) }
 			description={ __(
-				'Core firewall settings — enable/disable, storage backend, rate limits and filter parameters.',
+				'Core firewall settings — enable/disable, storage backend, rate limits and WooCommerce filter protection.',
 				'lw-firewall'
 			) }
 		>
@@ -66,7 +61,7 @@ export default function GeneralTab( { store } ) {
 			<NumberRow
 				title={ __( 'Rate Limit', 'lw-firewall' ) }
 				help={ __(
-					'Maximum number of rate-limited requests per IP within the time window. Applies to filter parameters, login, REST, XML-RPC and any other protected endpoint.',
+					'Maximum number of rate-limited requests per IP within the time window. Applies to WooCommerce filters, login, REST, XML-RPC and any other protected endpoint.',
 					'lw-firewall'
 				) }
 				store={ store }
@@ -104,31 +99,33 @@ export default function GeneralTab( { store } ) {
 					},
 				] }
 			/>
-			<ListRow
-				title={ __( 'Filter Parameters', 'lw-firewall' ) }
+			<SwitchRow
+				title={ __( 'WooCommerce Filters', 'lw-firewall' ) }
 				help={ __(
-					'URL parameter substrings to rate-limit, one per line. Append |N for a stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, query_type_|30.',
+					'WooCommerce product-filter URLs (filter_*, query_type_*, min_price, max_price, rating_filter and the Product Filters block arguments) are served only to visitors carrying a cookie that every page sets from JavaScript. Without it, a tiny page sets the cookie and reloads the same URL, so real visitors barely notice, while bot networks sending one request per IP never reach WooCommerce. Signed-in users and whitelisted IPs are not challenged. The per-IP rate limit above still applies to filter requests.',
 					'lw-firewall'
 				) }
 				store={ store }
-				name="filter_params"
-				rows={ 4 }
-				placeholder={ filterDefaults.join( '\n' ) }
-				actions={
-					filterDefaults.length > 0 && (
-						<Button
-							variant="link"
-							disabled={ locked }
-							onClick={ () =>
-								store.set( 'filter_params', [
-									...filterDefaults,
-								] )
-							}
-						>
-							{ __( 'Restore defaults', 'lw-firewall' ) }
-						</Button>
-					)
-				}
+				name="filter_require_cookie"
+				onText={ __(
+					'Require the visitor cookie for filter requests',
+					'lw-firewall'
+				) }
+				offText={ __( 'Off', 'lw-firewall' ) }
+			/>
+			<SwitchRow
+				title={ __( 'Allow Googlebot', 'lw-firewall' ) }
+				help={ __(
+					'Let a genuine Googlebot (verified by reverse and forward DNS, cached for a day) request filter URLs without the cookie. Usually best left off: indexing filter combinations wastes crawl budget.',
+					'lw-firewall'
+				) }
+				store={ store }
+				name="filter_cookie_allow_googlebot"
+				onText={ __(
+					'Skip the check for verified Googlebot',
+					'lw-firewall'
+				) }
+				offText={ __( 'Off', 'lw-firewall' ) }
 			/>
 		</Section>
 	);

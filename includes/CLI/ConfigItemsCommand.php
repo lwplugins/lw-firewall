@@ -18,8 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Edit list-typed firewall settings (filter_params, blocked_bots,
- * ip_whitelist, ip_blacklist, blocked_countries) one entry at a time.
+ * Edit list-typed firewall settings (blocked_bots, ip_whitelist,
+ * , ip_blacklist, blocked_countries) one entry at a time.
  *
  * Use `wp lw-firewall config get <key>` to see the current list, and
  * `wp lw-firewall config set <key> "..."` to replace the whole list.
@@ -43,7 +43,7 @@ final class ConfigItemsCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp lw-firewall config-items add filter_params "add-to-cart|10"
+	 *     $ wp lw-firewall config-items add blocked_bots "examplebot"
 	 *     $ wp lw-firewall config-items add blocked_countries KP
 	 *     $ wp lw-firewall config-items add ip_blacklist 203.0.113.42
 	 *
@@ -85,7 +85,7 @@ final class ConfigItemsCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp lw-firewall config-items remove filter_params "add-to-cart|10"
+	 *     $ wp lw-firewall config-items remove blocked_bots "examplebot"
 	 *     $ wp lw-firewall config-items remove blocked_countries KP
 	 *
 	 * @param array<int, string>   $args       Positional arguments.

@@ -93,7 +93,7 @@ final class ConfigCommand {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp lw-firewall config get filter_params --format=json
+	 *     $ wp lw-firewall config get blocked_bots --format=json
 	 *
 	 * @param array<int, string>   $args       Positional arguments.
 	 * @param array<string, mixed> $assoc_args Associative arguments.
@@ -116,7 +116,7 @@ final class ConfigCommand {
 	/**
 	 * Set a configuration value.
 	 *
-	 * Lists (filter_params, blocked_bots, ip_whitelist, ip_blacklist,
+	 * Lists (blocked_bots, ip_whitelist, ip_blacklist,
 	 * trusted_proxies, blocked_countries) accept comma- or newline-separated
 	 * entries. Booleans accept true/false/1/0/yes/no/on/off. Every value is
 	 * validated; an invalid one is refused with the reason.
@@ -132,7 +132,7 @@ final class ConfigCommand {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp lw-firewall config set rate_limit 50
-	 *     $ wp lw-firewall config set filter_params "filter_|30,add-to-cart|10"
+	 *     $ wp lw-firewall config set filter_require_cookie true
 	 *     $ wp lw-firewall config set blocked_countries "CN,RU,KP"
 	 *
 	 * @param array<int, string>   $args       Positional arguments.

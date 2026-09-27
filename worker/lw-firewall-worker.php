@@ -16,7 +16,7 @@
  * wp-config.php to neutralize the worker completely.
  *
  * @package LightweightPlugins\Firewall
- * @version 1.7.0
+ * @version 1.8.0-beta.1
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_WORKER_VERSION', '1.7.0' );
+define( 'LW_FIREWALL_WORKER_VERSION', '1.8.0-beta.1' );
 
 // The plugin's directory under WP_PLUGIN_DIR. Activator::install_worker()
 // writes the real name into the installed copy (see WorkerTemplate), so a
@@ -65,6 +65,9 @@ if ( PHP_VERSION_ID < 80200 ) {
 			'Rules/AutoBanner.php',
 			'Rules/CountGuard.php',
 			'Rules/NotFoundTracker.php',
+			'Rules/WooFilterParams.php',
+			'Rules/FilterCookie.php',
+			'Rules/GooglebotVerifier.php',
 			'Geo/GeoDetector.php',
 			'Geo/RangeIndex.php',
 			'Geo/RangeIndex6.php',
@@ -213,9 +216,31 @@ if ( PHP_VERSION_ID < 80200 ) {
 					// --- Detect request type ---
 					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 					$request_uri               = $_SERVER['REQUEST_URI'] ?? '';
-					[ $reason, $custom_limit ] = lw_firewall_detect_type( $request_uri, $options );
+					[ $reason, $custom_limit ] = lw_firewall_detect_type( $request_uri, $options, lw_firewall_woocommerce_active() );
 
-					if ( null === $reason || ! $countable ) {
+					if ( null === $reason ) {
+						return;
+					}
+
+					// --- WooCommerce filters: visitor cookie required ---
+					// Before the per-IP limit, and regardless of $countable: a
+					// distributed flood sends one request per address, which no
+					// counter catches, but its clients do not run the page script
+					// that sets the cookie. Signed-in users (by cookie shape) and
+					// optionally a DNS-verified Googlebot pass through.
+					if ( 'filter' === $reason && ! empty( $options['filter_require_cookie'] )
+						// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+						&& \LightweightPlugins\Firewall\Rules\FilterCookie::applies_to_method( (string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) )
+						&& ! \LightweightPlugins\Firewall\Rules\FilterCookie::has_cookie()
+						&& ! lw_firewall_has_login_cookie()
+						&& ! ( ! empty( $options['filter_cookie_allow_googlebot'] )
+							&& ( new \LightweightPlugins\Firewall\Rules\GooglebotVerifier( $storage ) )->is_verified( $ip, (string) $user_agent ) )
+					) {
+						lw_firewall_log( $options, $ip, 'filter_no_cookie' );
+						\LightweightPlugins\Firewall\Rules\FilterCookie::challenge( (string) $request_uri );
+					}
+
+					if ( ! $countable ) {
 						return;
 					}
 

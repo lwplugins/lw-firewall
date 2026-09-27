@@ -21,6 +21,7 @@ delete_option( 'lw_firewall_admin_baseline' );
 delete_option( 'lw_firewall_bans' );
 delete_option( 'lw_firewall_user_locks' );
 delete_option( 'lw_firewall_alert_queue' );
+delete_option( 'lw_firewall_dropped_filter_params' );
 delete_transient( 'lw_firewall_admin_alert_mail_error' );
 
 // Remove the administrator scan cron event.

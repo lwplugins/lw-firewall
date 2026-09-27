@@ -45,20 +45,19 @@ final class SettingsMeta {
 		$locked   = Options::overridden();
 
 		return [
-			'locked'                 => $locked,
-			'locked_constants'       => (object) array_combine(
+			'locked'           => $locked,
+			'locked_constants' => (object) array_combine(
 				$locked,
 				array_map( static fn ( string $key ): string => Options::CONST_PREFIX . strtoupper( $key ), $locked )
 			),
-			'defaults'               => SettingsStore::typed( $defaults, $defaults ),
-			'ranges'                 => (object) self::ranges(),
-			'enums'                  => (object) OptionSchema::enums(),
-			'storage_backends'       => self::storage_backends(),
-			'countries'              => (object) Countries::all(),
-			'bots_defaults'          => $defaults['blocked_bots'],
-			'filter_params_defaults' => $defaults['filter_params'],
-			'server'                 => self::server(),
-			'docs_url'               => self::DOCS_URL,
+			'defaults'         => SettingsStore::typed( $defaults, $defaults ),
+			'ranges'           => (object) self::ranges(),
+			'enums'            => (object) OptionSchema::enums(),
+			'storage_backends' => self::storage_backends(),
+			'countries'        => (object) Countries::all(),
+			'bots_defaults'    => $defaults['blocked_bots'],
+			'server'           => self::server(),
+			'docs_url'         => self::DOCS_URL,
 		];
 	}
 

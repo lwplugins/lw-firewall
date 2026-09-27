@@ -42,7 +42,6 @@ final class OptionInput {
 		'ip_blacklist'      => IpListParser::class,
 		'trusted_proxies'   => IpListParser::class,
 		'blocked_countries' => CountryListParser::class,
-		'filter_params'     => FilterParamsParser::class,
 		'blocked_bots'      => BotListParser::class,
 		'admin_alert_email' => EmailListParser::class,
 	];
