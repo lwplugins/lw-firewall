@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-09-27T09:50:03+00:00\n"
+"POT-Creation-Date: 2026-09-27T19:01:27+00:00\n"
 "PO-Revision-Date: 2026-09-25 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Scan finished: no new or modified administrators found."
 msgstr "Ellenőrzés kész: nem található új vagy módosított adminisztrátor."
 
-#: includes/Admin/Bans/BanReasons.php:34 includes/Admin/Logs/LogReasons.php:39
+#: includes/Admin/Bans/BanReasons.php:34 includes/Admin/Logs/LogReasons.php:40
 msgid "Too many failed logins"
 msgstr "Túl sok hibás bejelentkezés"
 
@@ -140,7 +140,7 @@ msgstr "Jelszó-visszaállítási árasztás"
 msgid "per-IP limit"
 msgstr "IP-nkénti korlát"
 
-#: includes/Admin/Bans/BanReasons.php:42 includes/Admin/Logs/LogReasons.php:46
+#: includes/Admin/Bans/BanReasons.php:42 includes/Admin/Logs/LogReasons.php:47
 msgid "Password reset bot request"
 msgstr "Jelszó-visszaállítási bot-kérés"
 
@@ -148,7 +148,7 @@ msgstr "Jelszó-visszaállítási bot-kérés"
 msgid "proof-of-render failed"
 msgstr "proof-of-render megbukott"
 
-#: includes/Admin/Bans/BanReasons.php:46 includes/Admin/Logs/LogReasons.php:41
+#: includes/Admin/Bans/BanReasons.php:46 includes/Admin/Logs/LogReasons.php:42
 msgid "Registration spam"
 msgstr "Regisztrációs spam"
 
@@ -230,6 +230,29 @@ msgstr ""
 msgid "The lock could not be lifted — the storage backend refused the delete."
 msgstr ""
 "A zárolást nem sikerült feloldani — a tárolóréteg elutasította a törlést."
+
+#: includes/Admin/FilterParamsNotice.php:55
+msgid "LW Firewall — Filter Parameters setting removed"
+msgstr "LW Firewall — a Szűrő paraméterek beállítás megszűnt"
+
+#: includes/Admin/FilterParamsNotice.php:56
+msgid ""
+"WooCommerce filter requests are now recognised automatically and protected "
+"by the visitor-cookie check plus the per-IP rate limit. These custom entries "
+"have no replacement and are no longer rate-limited:"
+msgstr ""
+"A WooCommerce-szűrőkéréseket a bővítmény mostantól automatikusan felismeri, "
+"és a látogatói süti ellenőrzésével, valamint az IP-nkénti kéréskorláttal "
+"védi. Az alábbi egyéni bejegyzéseknek nincs megfelelője, ezekre már nem "
+"vonatkozik kéréskorlát:"
+
+#: includes/Admin/FilterParamsNotice.php:58
+msgid "Dismiss"
+msgstr "Elrejtés"
+
+#: includes/Admin/FilterParamsNotice.php:70
+msgid "You are not allowed to do this."
+msgstr "Ehhez nincs jogosultságod."
 
 #: includes/Admin/Geo/GeoUpdateReport.php:30
 msgid "IPv4 and IPv6 lists updated."
@@ -372,26 +395,30 @@ msgid "Rate limit: REST API"
 msgstr "Rate limit: REST API"
 
 #: includes/Admin/Logs/LogReasons.php:38
-msgid "Rate limit: filter parameters"
-msgstr "Rate limit: filter paraméterek"
+msgid "Rate limit: WooCommerce filters"
+msgstr "Kéréskorlát: WooCommerce-szűrők"
 
-#: includes/Admin/Logs/LogReasons.php:40
+#: includes/Admin/Logs/LogReasons.php:39
+msgid "Filter request without visitor cookie (challenged)"
+msgstr "Szűrőkérés látogatói süti nélkül (ellenőrző oldal)"
+
+#: includes/Admin/Logs/LogReasons.php:41
 msgid "Username locked after failed logins"
 msgstr "Felhasználónév zárolva sikertelen bejelentkezések miatt"
 
-#: includes/Admin/Logs/LogReasons.php:42
+#: includes/Admin/Logs/LogReasons.php:43
 msgid "Comment or review spam"
 msgstr "Hozzászólás- vagy értékelés-spam"
 
-#: includes/Admin/Logs/LogReasons.php:43
+#: includes/Admin/Logs/LogReasons.php:44
 msgid "Password reset flood (per IP)"
 msgstr "Jelszó-visszaállítási árasztás (IP-nként)"
 
-#: includes/Admin/Logs/LogReasons.php:44
+#: includes/Admin/Logs/LogReasons.php:45
 msgid "Password reset flood (per account)"
 msgstr "Jelszó-visszaállítási árasztás (fiókonként)"
 
-#: includes/Admin/Logs/LogReasons.php:45
+#: includes/Admin/Logs/LogReasons.php:46
 msgid "Password reset flood (site-wide cap)"
 msgstr "Jelszó-visszaállítási árasztás (oldalszintű korlát)"
 
@@ -1054,11 +1081,11 @@ msgstr "A kérés túl nagy (legfeljebb 256 KB lehet)."
 msgid "Some settings are not valid. Nothing was saved."
 msgstr "Néhány beállítás érvénytelen. Semmi sem lett elmentve."
 
-#: includes/Rest/Admin/SettingsMeta.php:92
+#: includes/Rest/Admin/SettingsMeta.php:91
 msgid "Auto-detect"
 msgstr "Automatikus felismerés"
 
-#: includes/Rest/Admin/SettingsMeta.php:107
+#: includes/Rest/Admin/SettingsMeta.php:106
 msgid "File"
 msgstr "Fájl"
 
@@ -1087,6 +1114,18 @@ msgid ""
 msgstr ""
 "<strong>Hiba:</strong> A hozzászólásodat nem sikerült elküldeni. Töltsd újra "
 "az oldalt, és próbáld újra."
+
+#: includes/Rules/FilterCookie.php:148
+msgid "Filtering needs cookies enabled."
+msgstr "A szűréshez engedélyezni kell a sütiket."
+
+#: includes/Rules/FilterCookie.php:149
+msgid "Filtering needs JavaScript."
+msgstr "A szűréshez JavaScript szükséges."
+
+#: includes/Rules/FilterCookie.php:150
+msgid "Continue without filters"
+msgstr "Tovább szűrők nélkül"
 
 #: includes/Rules/RegisterGuard.php:79
 msgid "Registration failed, please try again."
@@ -1140,16 +1179,6 @@ msgstr "A(z) „%s” nem érvényes e-mail cím."
 msgid "Must be one of: %s."
 msgstr "A következők egyike lehet: %s."
 
-#. translators: %s: the rejected entry
-#: includes/Settings/Input/FilterParamsParser.php:52
-#, php-format
-msgid ""
-"\"%s\" is not valid. Use a parameter prefix, optionally followed by |N with "
-"N a positive whole number (e.g. add-to-cart|10)."
-msgstr ""
-"A(z) „%s” érvénytelen. Paraméterprefixet adj meg, opcionálisan |N utótaggal, "
-"ahol N pozitív egész szám (pl. add-to-cart|10)."
-
 #: includes/Settings/Input/IntParser.php:34
 msgid "Must be a whole number."
 msgstr "Egész számnak kell lennie."
@@ -1171,13 +1200,13 @@ msgid "Must be a list: one entry per line, or an array of strings."
 msgstr "Listának kell lennie: soronként egy tétel, vagy stringek tömbje."
 
 #. translators: %d: maximum number of entries
-#: includes/Settings/Input/OptionInput.php:102
+#: includes/Settings/Input/OptionInput.php:101
 #, php-format
 msgid "Too many entries: at most %d are allowed."
 msgstr "Túl sok tétel: legfeljebb %d engedélyezett."
 
 #. translators: %s: setting key
-#: includes/Settings/Input/OptionInput.php:123
+#: includes/Settings/Input/OptionInput.php:122
 #: includes/Settings/SettingsWriter.php:51
 #, php-format
 msgid "Unknown setting: %s."
@@ -2803,10 +2832,10 @@ msgstr "Sikeres"
 #: build/index.js:19
 msgid ""
 "Core firewall settings — enable/disable, storage backend, rate limits and "
-"filter parameters."
+"WooCommerce filter protection."
 msgstr ""
-"Alapvető tűzfalbeállítások — engedélyezés/letiltás, tárolási backend, rate "
-"limit-ek és szűrőparaméterek."
+"Alapvető tűzfalbeállítások — be- és kikapcsolás, tárolási háttér, "
+"kéréskorlátok és WooCommerce-szűrővédelem."
 
 #: build/index.js:19
 msgid "Enable Firewall"
@@ -2849,12 +2878,12 @@ msgstr "Rate limit"
 #: build/index.js:20
 msgid ""
 "Maximum number of rate-limited requests per IP within the time window. "
-"Applies to filter parameters, login, REST, XML-RPC and any other protected "
+"Applies to WooCommerce filters, login, REST, XML-RPC and any other protected "
 "endpoint."
 msgstr ""
-"Az IP-nként engedélyezett rate limitelt kérések maximális száma az "
-"időablakon belül. Vonatkozik a filter paraméterekre, a bejelentkezésre, a "
-"REST-re, az XML-RPC-re és minden más védett végpontra."
+"Az IP-nként engedélyezett kérések legnagyobb száma az időablakon belül. "
+"Vonatkozik a WooCommerce-szűrőkre, a bejelentkezésre, a REST-re, az XML-RPC-"
+"re és minden más védett végpontra."
 
 #: build/index.js:20
 msgid "Time Window"
@@ -2885,22 +2914,51 @@ msgid "429 Too Many Requests"
 msgstr "429 Túl sok kérés"
 
 #: build/index.js:20
-msgid "Filter Parameters"
-msgstr "Filter paraméterek"
+msgid "WooCommerce Filters"
+msgstr "WooCommerce-szűrők"
 
 #: build/index.js:20
 msgid ""
-"URL parameter substrings to rate-limit, one per line. Append |N for a "
-"stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, "
-"query_type_|30."
+"WooCommerce product-filter URLs (filter_*, query_type_*, min_price, "
+"max_price, rating_filter and the Product Filters block arguments) are served "
+"only to visitors carrying a cookie that every page sets from JavaScript. "
+"Without it, a tiny page sets the cookie and reloads the same URL, so real "
+"visitors barely notice, while bot networks sending one request per IP never "
+"reach WooCommerce. Signed-in users and whitelisted IPs are not challenged. "
+"The per-IP rate limit above still applies to filter requests."
 msgstr ""
-"Rate limitelendő URL-paraméter részsztringek, soronként egy. Fűzz hozzá |N-t "
-"szigorúbb, prefixenkénti limithez (pl. add-to-cart|10). Alapértelmezések: "
-"filter_|30, query_type_|30."
+"A WooCommerce termékszűrő-URL-jeit (filter_*, query_type_*, min_price, "
+"max_price, rating_filter és a Product Filters blokk paraméterei) csak olyan "
+"látogató kapja meg, akinél megvan a süti, amelyet minden oldal JavaScriptből "
+"beállít. Ha hiányzik, egy apró oldal beállítja, és újratölti ugyanazt az URL-"
+"t: a valódi látogató ebből szinte semmit sem vesz észre, az IP-nként egy-egy "
+"kérést küldő botnetek viszont el sem jutnak a WooCommerce-ig. A "
+"bejelentkezett felhasználók és az engedélyezett IP-k ellenőrzés nélkül "
+"mennek át. A fenti IP-nkénti kéréskorlát a szűrőkérésekre továbbra is "
+"érvényes."
 
 #: build/index.js:20
-msgid "Restore defaults"
-msgstr "Alapértékek visszaállítása"
+msgid "Require the visitor cookie for filter requests"
+msgstr "Látogatói süti megkövetelése a szűrőkéréseknél"
+
+#: build/index.js:20
+msgid "Allow Googlebot"
+msgstr "Googlebot engedélyezése"
+
+#: build/index.js:20
+msgid ""
+"Let a genuine Googlebot (verified by reverse and forward DNS, cached for a "
+"day) request filter URLs without the cookie. Usually best left off: indexing "
+"filter combinations wastes crawl budget."
+msgstr ""
+"A valódi Googlebot (fordított és normál DNS-sel ellenőrizve, egy napig "
+"gyorsítótárazva) süti nélkül is lekérheti a szűrő-URL-eket. Általában jobb "
+"kikapcsolva hagyni: a szűrőkombinációk indexelése feleslegesen fogyasztja a "
+"feltérképezési keretet."
+
+#: build/index.js:20
+msgid "Skip the check for verified Googlebot"
+msgstr "Az ellenőrzött Googlebot kihagyása az ellenőrzésből"
 
 #: build/index.js:20
 msgid "Endpoint Protection"
@@ -3037,6 +3095,10 @@ msgid ""
 msgstr ""
 "User-Agent részsztringek (kis-/nagybetű érzéketlen, soronként egy). Minden "
 "kérés, amelynek User-Agentje tartalmazza valamelyiket, 403-mal blokkolódik."
+
+#: build/index.js:20
+msgid "Restore defaults"
+msgstr "Alapértékek visszaállítása"
 
 #: build/index.js:20
 msgid ""
@@ -3447,3 +3509,42 @@ msgstr ""
 #: build/index.js:24
 msgid "Your unsaved changes on the other tabs will be discarded."
 msgstr "A többi fülön lévő nem mentett változásaid elvesznek."
+
+#~ msgid "Rate limit: filter parameters"
+#~ msgstr "Rate limit: filter paraméterek"
+
+#, php-format
+#~ msgid ""
+#~ "\"%s\" is not valid. Use a parameter prefix, optionally followed by |N "
+#~ "with N a positive whole number (e.g. add-to-cart|10)."
+#~ msgstr ""
+#~ "A(z) „%s” érvénytelen. Paraméterprefixet adj meg, opcionálisan |N "
+#~ "utótaggal, ahol N pozitív egész szám (pl. add-to-cart|10)."
+
+#~ msgid ""
+#~ "Core firewall settings — enable/disable, storage backend, rate limits and "
+#~ "filter parameters."
+#~ msgstr ""
+#~ "Alapvető tűzfalbeállítások — engedélyezés/letiltás, tárolási backend, "
+#~ "rate limit-ek és szűrőparaméterek."
+
+#~ msgid ""
+#~ "Maximum number of rate-limited requests per IP within the time window. "
+#~ "Applies to filter parameters, login, REST, XML-RPC and any other "
+#~ "protected endpoint."
+#~ msgstr ""
+#~ "Az IP-nként engedélyezett rate limitelt kérések maximális száma az "
+#~ "időablakon belül. Vonatkozik a filter paraméterekre, a bejelentkezésre, a "
+#~ "REST-re, az XML-RPC-re és minden más védett végpontra."
+
+#~ msgid "Filter Parameters"
+#~ msgstr "Filter paraméterek"
+
+#~ msgid ""
+#~ "URL parameter substrings to rate-limit, one per line. Append |N for a "
+#~ "stricter per-prefix limit (e.g. add-to-cart|10). Defaults: filter_|30, "
+#~ "query_type_|30."
+#~ msgstr ""
+#~ "Rate limitelendő URL-paraméter részsztringek, soronként egy. Fűzz hozzá |"
+#~ "N-t szigorúbb, prefixenkénti limithez (pl. add-to-cart|10). "
+#~ "Alapértelmezések: filter_|30, query_type_|30."

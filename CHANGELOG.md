@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0-beta.2] - 2026-09-27
+
+### Fixed
+- The filter challenge page text is translatable (`lw-firewall` text domain, loaded on demand because the worker answers before plugin translations load) and follows the site locale, including `<html lang>`.
+
+### Changed
+- Hungarian translations for the new filter settings, the retired-setting notice and the log reasons.
+
 ## [1.8.0-beta.1] - 2026-09-27
 
 ### Added

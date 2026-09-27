@@ -80,10 +80,15 @@ final class FilterCookie {
 	/**
 	 * The challenge page.
 	 *
-	 * @param string $fallback Local path of the same page without the filters.
+	 * @param string                $fallback Local path of the same page without the filters.
+	 * @param array<string, string> $text     Visible text: 'cookies', 'javascript', 'link', 'lang'.
 	 * @return string
 	 */
-	public static function challenge_html( string $fallback ): string {
+	public static function challenge_html( string $fallback, array $text = [] ): string {
+		$text = array_map(
+			static fn ( string $t ): string => htmlspecialchars( $t, ENT_QUOTES, 'UTF-8' ),
+			array_merge( self::default_text(), $text )
+		);
 		$href = htmlspecialchars( $fallback, ENT_QUOTES, 'UTF-8' );
 		$js   = '(function(){var d=document,a="; path=/; SameSite=Lax"+(location.protocol==="https:"?"; Secure":""),'
 			. 'f=function(){d.getElementById("lwfw-f").hidden=false;};'
@@ -93,12 +98,58 @@ final class FilterCookie {
 			. 'if(!/(?:^|;\\s*)' . self::COOKIE . '=1/.test(d.cookie)){f();return;}'
 			. 'location.replace(location.href);})();';
 
-		return '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">'
+		return '<!DOCTYPE html><html lang="' . $text['lang'] . '"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">'
 			. '<meta name="viewport" content="width=device-width,initial-scale=1"><title>&#8230;</title></head>'
 			. '<body style="font:16px/1.5 sans-serif;margin:2em">'
-			. '<p id="lwfw-f" hidden>Filtering needs cookies enabled. <a href="' . $href . '">Continue without filters</a></p>'
-			. '<noscript><p>Filtering needs JavaScript. <a href="' . $href . '">Continue without filters</a></p></noscript>'
+			. '<p id="lwfw-f" hidden>' . $text['cookies'] . ' <a href="' . $href . '">' . $text['link'] . '</a></p>'
+			. '<noscript><p>' . $text['javascript'] . ' <a href="' . $href . '">' . $text['link'] . '</a></p></noscript>'
 			. '<script>' . $js . '</script></body></html>';
+	}
+
+	/**
+	 * The untranslated page text.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function default_text(): array {
+		return [
+			'cookies'    => 'Filtering needs cookies enabled.',
+			'javascript' => 'Filtering needs JavaScript.',
+			'link'       => 'Continue without filters',
+			'lang'       => 'en',
+		];
+	}
+
+	/**
+	 * The page text in the site's language.
+	 *
+	 * The worker answers at muplugins_loaded, before WordPress loads any
+	 * plugin translation, so the plugin's own .mo (or the one in
+	 * WP_LANG_DIR/plugins) is loaded here, only for a challenged request.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function translated_text(): array {
+		if ( ! function_exists( '__' ) || ! function_exists( 'determine_locale' ) ) {
+			return self::default_text();
+		}
+
+		$locale = determine_locale();
+
+		if ( ! is_textdomain_loaded( 'lw-firewall' ) ) {
+			$global = defined( 'WP_LANG_DIR' ) ? WP_LANG_DIR . '/plugins/lw-firewall-' . $locale . '.mo' : '';
+
+			if ( '' === $global || ! load_textdomain( 'lw-firewall', $global, $locale ) ) {
+				load_textdomain( 'lw-firewall', dirname( __DIR__, 2 ) . '/languages/lw-firewall-' . $locale . '.mo', $locale );
+			}
+		}
+
+		return [
+			'cookies'    => __( 'Filtering needs cookies enabled.', 'lw-firewall' ),
+			'javascript' => __( 'Filtering needs JavaScript.', 'lw-firewall' ),
+			'link'       => __( 'Continue without filters', 'lw-firewall' ),
+			'lang'       => str_replace( '_', '-', $locale ),
+		];
 	}
 
 	/**
@@ -120,7 +171,7 @@ final class FilterCookie {
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static page; the only variable part is escaped in challenge_html().
-		echo self::challenge_html( RateLimiter::safe_redirect_path( $request_uri ) );
+		echo self::challenge_html( RateLimiter::safe_redirect_path( $request_uri ), self::translated_text() );
 		exit;
 	}
 }

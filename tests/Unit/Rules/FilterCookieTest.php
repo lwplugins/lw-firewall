@@ -76,6 +76,18 @@ final class FilterCookieTest extends TestCase {
 		$this->assertMatchesRegularExpression( '/lwfw_c=1\/\.test\(d\.cookie\)\)\{f\(\);return;\}/', $html );
 	}
 
+	public function test_challenge_uses_the_given_text(): void {
+		$html = FilterCookie::challenge_html( '/shop/', [ 'link' => 'Tovább szűrők nélkül', 'lang' => 'hu-HU' ] );
+
+		$this->assertStringContainsString( '<a href="/shop/">Tovább szűrők nélkül</a>', $html );
+	}
+
+	public function test_challenge_escapes_translated_text(): void {
+		$html = FilterCookie::challenge_html( '/shop/', [ 'cookies' => '<b>x</b>' ] );
+
+		$this->assertStringNotContainsString( '<b>x</b>', $html );
+	}
+
 	public function test_page_script_renews_the_visitor_cookie(): void {
 		$this->assertStringContainsString( 'lwfw_v=1; max-age=2592000', FilterCookie::page_script() );
 	}
