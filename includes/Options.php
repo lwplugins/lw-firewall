@@ -52,8 +52,9 @@ final class Options {
 	 * @var array<string, mixed>
 	 */
 	private const LEGACY_DEFAULTS = [
-		'protect_xmlrpc'          => false, // Default on for new installs since 1.6.0.
-		'comment_protect_enabled' => false, // Default on for new installs since 1.7.0.
+		'protect_xmlrpc'             => false, // Default on for new installs since 1.6.0.
+		'comment_protect_enabled'    => false, // Default on for new installs since 1.7.0.
+		'add_to_cart_require_cookie' => false, // Default on for new installs since 1.8.0.
 	];
 
 	/**
@@ -159,7 +160,7 @@ final class Options {
 			'filter_require_cookie'         => true,
 			'filter_cookie_allow_googlebot' => false,
 			// The same cookie check for GET ?add-to-cart= links (never POST).
-			'add_to_cart_require_cookie'    => false,
+			'add_to_cart_require_cookie'    => true,
 			'geo_enabled'                   => true,
 			'blocked_countries'             => [ 'CN', 'RU', 'IN', 'VN', 'ID', 'BD' ],
 		];

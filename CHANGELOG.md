@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.0-beta.4] - 2026-09-27
+
+### Changed
+- `add_to_cart_require_cookie` defaults to on for new installs; existing installs keep it off (legacy default) until enabled. A saved value is never overwritten. `filter_require_cookie` stays on for new and existing installs.
+
 ## [1.8.0-beta.3] - 2026-09-27
 
 ### Added
