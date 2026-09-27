@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.8.0-beta.4
+Stable tag: 1.8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,23 +91,14 @@ The per-username lockout locks an account after repeated failed logins from any 
 
 == Changelog ==
 
-= 1.8.0-beta.4 =
-* Change: the add-to-cart link cookie check (`add_to_cart_require_cookie`) is now on by default for new installs. Existing sites keep it off until enabled; a saved value is never overwritten.
-
-= 1.8.0-beta.3 =
-* New: optional visitor-cookie check for GET `?add-to-cart=` links (`add_to_cart_require_cookie`, off by default): a link without the cookie gets the same challenge page, and the product is added after one reload. POST add-to-cart forms and AJAX are never affected. While on, these links are also covered by the per-IP rate limit. Logged as `add_to_cart_no_cookie` / `rate_limited_cart`.
-* Change: the WooCommerce filter cookie check (`filter_require_cookie`) is now on for existing installs too, not only new ones. A value saved as off is kept.
-
-= 1.8.0-beta.2 =
-* Fix: the filter challenge page is translatable and shown in the site's language (Hungarian included); `<html lang>` follows the site locale.
-* Update: Hungarian translations for the new filter settings, the admin notice and the log reasons.
-
-= 1.8.0-beta.1 =
-* New: WooCommerce filter requests need a visitor cookie. Every front-end page sets it from a small inline script (so it works with full-page caching); a filter URL requested without it gets a tiny 403 page that sets the cookie and reloads the same URL, so real visitors barely notice while proxy networks sending one request per IP never reach WooCommerce. Signed-in users and whitelisted IPs are not challenged; a reload loop is prevented. Logged as `filter_no_cookie`. On by default for new installs, off on existing sites until enabled: `wp lw-firewall config set filter_require_cookie true`.
-* New: optional exemption for a genuine Googlebot (reverse + forward DNS, cached for a day): `filter_cookie_allow_googlebot`, off by default.
-* Change: WooCommerce filter requests are recognised by WooCommerce's own argument names (filter_*, query_type_*, min_price, max_price, rating_filter, and the Product Filters block's categories, tags and brands), and only when WooCommerce is active. The per-IP rate limit still applies to them, now with the global rate limit.
+= 1.8.0 =
+* New: WooCommerce filter requests need a visitor cookie. Every front-end page sets it from a small inline script (works with full-page caching); a filter URL requested without it gets a tiny 403 page that sets the cookie and reloads the same URL, so real visitors barely notice while proxy networks sending one request per IP never reach WooCommerce. Signed-in users and whitelisted IPs are not challenged; reload loops are prevented. On by default (`filter_require_cookie`).
+* New: the same check for `?add-to-cart=` links (GET only; forms and AJAX are never affected), with the product still added after the reload. On for new installs, off on existing sites until enabled: `wp lw-firewall config set add_to_cart_require_cookie true`.
+* New: optional exemption for a genuine Googlebot (reverse + forward DNS): `filter_cookie_allow_googlebot`, off by default.
+* New: the challenge page is shown in the site's language; Hungarian translations included.
+* Change: WooCommerce filter requests are recognised by WooCommerce's own argument names (filter_*, query_type_*, min_price, max_price, rating_filter, and the Product Filters block's categories, tags and brands), only when WooCommerce is active. The per-IP rate limit still applies after the cookie check.
 * Removed: the Filter Parameters setting (`filter_params`). Entries WooCommerce filtering covers keep their protection; any other entries (e.g. `add-to-cart|10`) are no longer rate-limited and are listed once in an admin notice.
-* Fix: REST requests with filter-like arguments (e.g. `/wp-json/wp/v2/posts?categories=5`) are no longer rate-limited as filter requests when REST protection is off.
+* Fix: REST requests with filter-like arguments are no longer rate-limited as filter requests when REST protection is off.
 
 = 1.7.0 =
 * New: spam protection for comments and WooCommerce product reviews — a honeypot field and an optional signed form token reject bot submissions before they are stored (Spam settings).

@@ -1,32 +1,12 @@
 # Changelog
 
-## [1.8.0-beta.4] - 2026-09-27
-
-### Changed
-- `add_to_cart_require_cookie` defaults to on for new installs; existing installs keep it off (legacy default) until enabled. A saved value is never overwritten. `filter_require_cookie` stays on for new and existing installs.
-
-## [1.8.0-beta.3] - 2026-09-27
+## [1.8.0] - 2026-09-27
 
 ### Added
-- Optional visitor-cookie check for GET/HEAD `?add-to-cart=` links (`add_to_cart_require_cookie`, off by default; admin UI and `wp lw-firewall config set add_to_cart_require_cookie true`). A link without the `lwfw_v` cookie, without a signed-in cookie and from a non-whitelisted IP gets the same 403 challenge page (with cart wording), which sets the cookie and reloads the URL so the product is still added. POST add-to-cart forms and `?wc-ajax=add_to_cart` are never affected. While the option is on, these links are also covered by the per-IP rate limit (configured action, higher bucket for signed-in users). Log reasons: `add_to_cart_no_cookie`, `rate_limited_cart`.
-
-### Changed
-- `filter_require_cookie` defaults to on for existing installs as well (no longer a legacy default); a stored `false` is kept across updates.
-- The challenge page text moved to `ChallengeText`, with separate wording for filter and add-to-cart requests; Hungarian translations added.
-
-## [1.8.0-beta.2] - 2026-09-27
-
-### Fixed
-- The filter challenge page text is translatable (`lw-firewall` text domain, loaded on demand because the worker answers before plugin translations load) and follows the site locale, including `<html lang>`.
-
-### Changed
-- Hungarian translations for the new filter settings, the retired-setting notice and the log reasons.
-
-## [1.8.0-beta.1] - 2026-09-27
-
-### Added
-- Visitor cookie required for WooCommerce filter requests (`filter_require_cookie`). Every front-end page sets the `lwfw_v` cookie from an inline `wp_head` script, so it survives full-page caching. A filter request without it (and without a signed-in cookie, from a non-whitelisted IP, GET/HEAD only) is answered by the MU-worker before WooCommerce loads, with a small `403` page (`Cache-Control: no-store, private`, `X-Robots-Tag: noindex`) that sets the cookie and reloads the same URL. A short-lived `lwfw_c` marker stops a reload loop and shows a link to the unfiltered page instead; `<noscript>` shows the same link. Logged as `filter_no_cookie`. On by default for new installs; existing sites keep it off until enabled.
-- Optional Googlebot exemption for the cookie check (`filter_cookie_allow_googlebot`, off by default), verified by reverse + forward DNS and cached for a day.
+- Visitor cookie required for WooCommerce filter requests (`filter_require_cookie`). Every front-end page sets the `lwfw_v` cookie from an inline `wp_head` script, so it survives full-page caching. A filter request without it (GET/HEAD, no signed-in cookie, non-whitelisted IP) is answered by the MU-worker before WooCommerce loads with a small `403` page (`Cache-Control: no-store, private`, `X-Robots-Tag: noindex`) that sets the cookie and reloads the same URL. A short-lived `lwfw_c` marker and a cookie check stop a reload loop and show a link to the unfiltered page instead; `<noscript>` shows the same link. Logged as `filter_no_cookie`. On by default for new and existing installs; a saved value is kept.
+- The same cookie check for GET/HEAD `?add-to-cart=` links (`add_to_cart_require_cookie`): the challenge uses cart wording and the reload still adds the product. POST add-to-cart forms and `?wc-ajax=add_to_cart` are never affected. While on, these links are also covered by the per-IP rate limit. Log reasons: `add_to_cart_no_cookie`, `rate_limited_cart`. On by default for new installs; existing sites keep it off until enabled.
+- Optional Googlebot exemption for the filter cookie check (`filter_cookie_allow_googlebot`, off by default), verified by reverse + forward DNS and cached for a day.
+- The challenge page is translatable and follows the site locale (text domain loaded on demand, since the worker answers before plugin translations load); Hungarian translations for all new strings.
 
 ### Changed
 - WooCommerce filter requests are recognised built in by WooCommerce's own argument names (checked against WooCommerce 11.1.2): `filter_*`, `query_type_*`, `min_price`, `max_price`, `rating_filter`, and the Product Filters block's `categories`, `tags`, `brands`; only when WooCommerce is active, never on REST or wp-admin paths. The per-IP rate limit runs after the cookie check with the global `rate_limit` / `rate_window` / `action`.
@@ -35,7 +15,7 @@
 - The Filter Parameters setting (`filter_params`) from the options, admin UI and WP-CLI. An upgrade step removes the stored key; entries not covered by the built-in recognition (e.g. `add-to-cart|10`) lose their rate limit and are listed once in a dismissible admin notice.
 
 ### Fixed
-- REST requests with filter-like arguments are no longer classified as filter requests when REST protection is off.
+- REST requests with filter-like arguments (e.g. `/wp-json/wp/v2/posts?categories=5`) are no longer classified as filter requests when REST protection is off.
 
 ## [1.7.0] - 2026-09-27
 
