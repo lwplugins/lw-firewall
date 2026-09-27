@@ -52,7 +52,7 @@ export const TABS = [
 		title: __( 'Spam', 'lw-firewall' ),
 		icon: people,
 		save: true,
-		prefixes: [ 'register_', 'reset_' ],
+		prefixes: [ 'register_', 'reset_', 'comment_' ],
 	},
 	{
 		id: 'bots',

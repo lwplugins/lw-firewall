@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-09-26T13:52:50+00:00\n"
+"POT-Creation-Date: 2026-09-27T09:50:03+00:00\n"
 "PO-Revision-Date: 2026-09-25 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
@@ -140,7 +140,7 @@ msgstr "Jelszó-visszaállítási árasztás"
 msgid "per-IP limit"
 msgstr "IP-nkénti korlát"
 
-#: includes/Admin/Bans/BanReasons.php:42 includes/Admin/Logs/LogReasons.php:45
+#: includes/Admin/Bans/BanReasons.php:42 includes/Admin/Logs/LogReasons.php:46
 msgid "Password reset bot request"
 msgstr "Jelszó-visszaállítási bot-kérés"
 
@@ -157,26 +157,34 @@ msgid "rejected sign-ups"
 msgstr "elutasított regisztrációk"
 
 #: includes/Admin/Bans/BanReasons.php:50
+msgid "Comment spam"
+msgstr "Hozzászólás-spam"
+
+#: includes/Admin/Bans/BanReasons.php:51
+msgid "rejected comments or reviews"
+msgstr "elutasított hozzászólások vagy értékelések"
+
+#: includes/Admin/Bans/BanReasons.php:54
 msgid "Rate limit exceeded"
 msgstr "Rate limit túllépve"
 
-#: includes/Admin/Bans/BanReasons.php:51
+#: includes/Admin/Bans/BanReasons.php:55
 msgid "auto-ban escalation"
 msgstr "auto-ban eszkaláció"
 
-#: includes/Admin/Bans/BanReasons.php:54
+#: includes/Admin/Bans/BanReasons.php:58
 msgid "Banned by an administrator"
 msgstr "Adminisztrátor tiltotta ki"
 
-#: includes/Admin/Bans/BanReasons.php:55
+#: includes/Admin/Bans/BanReasons.php:59
 msgid "manual ban"
 msgstr "kézi kitiltás"
 
-#: includes/Admin/Bans/BanReasons.php:69 build/index.js:12
+#: includes/Admin/Bans/BanReasons.php:73 build/index.js:12
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: includes/Admin/Bans/BanReasons.php:81
+#: includes/Admin/Bans/BanReasons.php:85
 msgid "banned before reasons were recorded"
 msgstr "még az okok rögzítése előtt kitiltva"
 
@@ -372,14 +380,18 @@ msgid "Username locked after failed logins"
 msgstr "Felhasználónév zárolva sikertelen bejelentkezések miatt"
 
 #: includes/Admin/Logs/LogReasons.php:42
+msgid "Comment or review spam"
+msgstr "Hozzászólás- vagy értékelés-spam"
+
+#: includes/Admin/Logs/LogReasons.php:43
 msgid "Password reset flood (per IP)"
 msgstr "Jelszó-visszaállítási árasztás (IP-nként)"
 
-#: includes/Admin/Logs/LogReasons.php:43
+#: includes/Admin/Logs/LogReasons.php:44
 msgid "Password reset flood (per account)"
 msgstr "Jelszó-visszaállítási árasztás (fiókonként)"
 
-#: includes/Admin/Logs/LogReasons.php:44
+#: includes/Admin/Logs/LogReasons.php:45
 msgid "Password reset flood (site-wide cap)"
 msgstr "Jelszó-visszaállítási árasztás (oldalszintű korlát)"
 
@@ -1063,9 +1075,18 @@ msgstr ""
 "A fájl nem LW Firewall beállításexport: nem érvényes JSON, vagy nem "
 "tartalmaz ismert beállítást."
 
-#: includes/Rules/PasswordResetGuard.php:84 includes/Rules/RegisterGuard.php:54
+#: includes/Rules/CommentFields.php:81 includes/Rules/PasswordResetGuard.php:84
+#: includes/Rules/RegisterGuard.php:54
 msgid "Leave this field empty"
 msgstr "Hagyd üresen ezt a mezőt"
+
+#: includes/Rules/CommentGuard.php:99
+msgid ""
+"<strong>Error:</strong> Your comment could not be submitted. Please reload "
+"the page and try again."
+msgstr ""
+"<strong>Hiba:</strong> A hozzászólásodat nem sikerült elküldeni. Töltsd újra "
+"az oldalt, és próbáld újra."
 
 #: includes/Rules/RegisterGuard.php:79
 msgid "Registration failed, please try again."
@@ -1172,11 +1193,11 @@ msgstr ""
 "Ezt a beállítást a wp-config.php-ban a(z) %s rögzíti. A módosításhoz "
 "távolítsd el a konstanst."
 
-#: includes/SiteManager/FirewallAbilities.php:45
+#: includes/SiteManager/FirewallAbilities.php:56
 msgid "Get Firewall Options"
 msgstr "Tűzfal beállítások lekérése"
 
-#: includes/SiteManager/FirewallAbilities.php:46
+#: includes/SiteManager/FirewallAbilities.php:57
 msgid ""
 "Get all LW Firewall settings including rate limits, bot blocking and geo "
 "rules."
@@ -1184,49 +1205,49 @@ msgstr ""
 "Az összes LW Firewall beállítás lekérése, beleértve a rate limiteket, a bot-"
 "blokkolást és a geo szabályokat."
 
-#: includes/SiteManager/FirewallAbilities.php:76
+#: includes/SiteManager/FirewallAbilities.php:87
 msgid "Get Firewall Log"
 msgstr "Tűzfal napló lekérése"
 
-#: includes/SiteManager/FirewallAbilities.php:77
+#: includes/SiteManager/FirewallAbilities.php:88
 msgid "Get recent firewall log entries (up to 100 blocked requests)."
 msgstr ""
 "Legutóbbi tűzfal naplóbejegyzések lekérése (legfeljebb 100 blokkolt kérés)."
 
-#: includes/SiteManager/FirewallAbilities.php:87
+#: includes/SiteManager/FirewallAbilities.php:98
 msgid "Number of log entries to return. Defaults to 25, max 100."
 msgstr ""
 "A visszaadandó naplóbejegyzések száma. Alapértelmezett 25, maximum 100."
 
-#: includes/SiteManager/FirewallAbilities.php:120
+#: includes/SiteManager/FirewallAbilities.php:131
 msgid "List Blocked IPs"
 msgstr "Blokkolt IP-k listázása"
 
-#: includes/SiteManager/FirewallAbilities.php:121
+#: includes/SiteManager/FirewallAbilities.php:132
 msgid "List all manually blocked (blacklisted) IP addresses."
 msgstr "Az összes manuálisan blokkolt (feketelistás) IP-cím listázása."
 
-#: includes/SiteManager/FirewallAbilities.php:155
+#: includes/SiteManager/FirewallAbilities.php:166
 msgid "Block IP Address"
 msgstr "IP-cím blokkolása"
 
-#: includes/SiteManager/FirewallAbilities.php:156
+#: includes/SiteManager/FirewallAbilities.php:167
 msgid "Add an IP address or CIDR range to the blacklist."
 msgstr "IP-cím vagy CIDR tartomány hozzáadása a feketelistához."
 
-#: includes/SiteManager/FirewallAbilities.php:166
+#: includes/SiteManager/FirewallAbilities.php:177
 msgid "IP address or CIDR range to block (e.g. 1.2.3.4 or 10.0.0.0/8)."
 msgstr "Blokkolandó IP-cím vagy CIDR tartomány (pl. 1.2.3.4 vagy 10.0.0.0/8)."
 
-#: includes/SiteManager/FirewallAbilities.php:192
+#: includes/SiteManager/FirewallAbilities.php:203
 msgid "Unblock IP Address"
 msgstr "IP-cím feloldása"
 
-#: includes/SiteManager/FirewallAbilities.php:193
+#: includes/SiteManager/FirewallAbilities.php:204
 msgid "Remove an IP address or CIDR range from the blacklist."
 msgstr "IP-cím vagy CIDR tartomány eltávolítása a feketelistáról."
 
-#: includes/SiteManager/FirewallAbilities.php:203
+#: includes/SiteManager/FirewallAbilities.php:214
 msgid "IP address or CIDR range to unblock."
 msgstr "Feloldandó IP-cím vagy CIDR tartomány."
 
@@ -2128,6 +2149,138 @@ msgstr ""
 "Mennyi ideig marad zárolva a felhasználónév, másodpercben (900 = 15 perc)."
 
 #: build/index.js:17
+msgid "Spam Auto-Ban"
+msgstr "Spam automatikus tiltása"
+
+#: build/index.js:17
+msgid ""
+"Ban IPs that repeatedly send spam registrations, comments or reviews. A "
+"banned IP is blocked from the whole site, not just the form."
+msgstr ""
+"Tiltsd ki azokat az IP-ket, amelyek ismételten spam regisztrációt, "
+"hozzászólást vagy értékelést küldenek. A tiltott IP az egész oldalról ki van "
+"zárva, nem csak az űrlapról."
+
+#: build/index.js:17 build/index.js:20
+msgid "Ban Threshold"
+msgstr "Tiltási küszöb"
+
+#: build/index.js:17
+msgid ""
+"Number of rejected registrations, comments and reviews (counted together) "
+"from one IP before it is banned. A comment refused only because its form was "
+"too old is not counted."
+msgstr ""
+"Hány elutasított regisztráció, hozzászólás és értékelés (együtt számolva) "
+"után tiltódik egy IP. Az a hozzászólás, amelyet csak azért utasítottunk el, "
+"mert az űrlapja túl régi volt, nem számít bele."
+
+#: build/index.js:17 build/index.js:20
+msgid "Ban Duration"
+msgstr "Tiltás időtartama"
+
+#: build/index.js:17
+msgid "Comment & Review Protection"
+msgstr "Hozzászólás- és értékelésvédelem"
+
+#: build/index.js:17
+msgid ""
+"Stops bot comments and WooCommerce product reviews before they are stored, "
+"without a captcha. Works with every form built by comment_form(): classic "
+"and block themes, and both WooCommerce review forms. Administrators, editors "
+"of the post and whitelisted IPs are never checked."
+msgstr ""
+"Captcha nélkül megállítja a botok hozzászólásait és WooCommerce "
+"termékértékeléseit, még mielőtt elmentődnének. Minden comment_form()-mal "
+"készült űrlappal működik: klasszikus és blokktémákkal, valamint mindkét "
+"WooCommerce értékelési űrlappal. Az adminisztrátorokat, a bejegyzés "
+"szerkesztőit és az engedélyezett IP-ket sosem ellenőrzi."
+
+#: build/index.js:17
+msgid "Enable Comment Protection"
+msgstr "Hozzászólás-védelem engedélyezése"
+
+#: build/index.js:17
+msgid ""
+"Checks every comment and review sent through the comment form (wp-comments-"
+"post.php). Comments added through the REST API, XML-RPC or the admin are not "
+"affected."
+msgstr ""
+"Minden, a hozzászólás-űrlapon (wp-comments-post.php) keresztül küldött "
+"hozzászólást és értékelést ellenőriz. A REST API-n, XML-RPC-n vagy az "
+"adminon keresztül hozzáadott hozzászólásokat nem érinti."
+
+#: build/index.js:17
+msgid "Block bot comments and product reviews"
+msgstr "Blokkolja a botok hozzászólásait és termékértékeléseit"
+
+#: build/index.js:17
+msgid "Honeypot"
+msgstr "Honeypot"
+
+#: build/index.js:17
+msgid ""
+"A hidden field that visitors and screen readers never see. Bots that fill "
+"every field are rejected. A form without the field (for example a hand-built "
+"theme form) is never rejected because of it."
+msgstr ""
+"Rejtett mező, amelyet sem a látogatók, sem a képernyőolvasók nem látnak. A "
+"minden mezőt kitöltő botokat elutasítja. A mező nélküli űrlapot (például egy "
+"kézzel épített téma-űrlapot) emiatt sosem utasítja el."
+
+#: build/index.js:17
+msgid "Add a hidden honeypot field"
+msgstr "Rejtett honeypot mező hozzáadása"
+
+#: build/index.js:17
+msgid "Signed Form Token"
+msgstr "Aláírt űrlap-token"
+
+#: build/index.js:17
+msgid ""
+"Rejects comments posted straight to wp-comments-post.php without loading the "
+"page. If your theme builds its comment form without comment_form(), every "
+"comment is rejected: test a comment after turning this on."
+msgstr ""
+"Elutasítja az oldal betöltése nélkül, közvetlenül a wp-comments-post.php-ra "
+"küldött hozzászólásokat. Ha a témád comment_form() nélkül építi fel a "
+"hozzászólás-űrlapot, minden hozzászólás elutasításra kerül: bekapcsolás után "
+"küldj egy teszt-hozzászólást."
+
+#: build/index.js:17
+msgid "Require a token from the rendered form"
+msgstr "Tokent vár el a megjelenített űrlapból"
+
+#: build/index.js:17
+msgid "Minimum Fill Time"
+msgstr "Minimális kitöltési idő"
+
+#: build/index.js:17
+msgid ""
+"Reject comments sent faster than this many seconds after the page was "
+"generated."
+msgstr ""
+"Elutasítja azokat a hozzászólásokat, amelyek az oldal generálása után ennyi "
+"másodpercnél gyorsabban érkeznek."
+
+#: build/index.js:17
+msgid "Token Lifetime"
+msgstr "Token élettartama"
+
+#: build/index.js:17
+msgid ""
+"How long a rendered comment form stays valid, in seconds (86400 = 1 day). "
+"Cached pages are safe: when a visitor starts typing into a form older than "
+"half this time, a fresh token is fetched in the background. Tokens are never "
+"single-use here, because a page cache shows the same form to everyone."
+msgstr ""
+"Meddig érvényes egy megjelenített hozzászólás-űrlap, másodpercben (86400 = 1 "
+"nap). A gyorsítótárazott oldalak biztonságosak: ha egy látogató elkezd "
+"gépelni egy ennél fele ekkora időnél régebbi űrlapba, a háttérben friss "
+"token érkezik. A token itt sosem egyszer használatos, mert az oldal-"
+"gyorsítótár mindenkinek ugyanazt az űrlapot mutatja."
+
+#: build/index.js:17
 msgid "Registration Protection"
 msgstr "Regisztráció-védelem"
 
@@ -2165,18 +2318,10 @@ msgid "Block bot registrations on wp-login.php?action=register"
 msgstr "Bot-regisztrációk blokkolása a wp-login.php?action=register oldalon"
 
 #: build/index.js:17
-msgid "Honeypot"
-msgstr "Honeypot"
-
-#: build/index.js:17
 msgid "Catches generic bots that fill every field. Invisible to real users."
 msgstr ""
 "Elkapja a minden mezőt kitöltő általános botokat. Valódi felhasználók "
 "számára láthatatlan."
-
-#: build/index.js:17
-msgid "Add a hidden honeypot field"
-msgstr "Rejtett honeypot mező hozzáadása"
 
 #: build/index.js:17
 msgid "Single-Use Token"
@@ -2195,10 +2340,6 @@ msgid "Reject reused tokens"
 msgstr "Újrahasznált tokenek elutasítása"
 
 #: build/index.js:17
-msgid "Minimum Fill Time"
-msgstr "Minimális kitöltési idő"
-
-#: build/index.js:17
 msgid ""
 "Reject submissions faster than this many seconds after the form loaded "
 "(catches instant bot POSTs)."
@@ -2207,37 +2348,9 @@ msgstr ""
 "űrlap betöltése után (elkapja az azonnali bot-POST-okat)."
 
 #: build/index.js:17
-msgid "Token Lifetime"
-msgstr "Token élettartama"
-
-#: build/index.js:17
 msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
 msgstr ""
 "Meddig érvényes egy megjelenített űrlap, másodpercekben (3600 = 1 óra)."
-
-#: build/index.js:17
-msgid "Registration Auto-Ban"
-msgstr "Regisztráció automatikus tiltása"
-
-#: build/index.js:17
-msgid ""
-"Ban IPs that repeatedly submit spam registrations. A banned IP is blocked "
-"from the whole site, not just the registration form."
-msgstr ""
-"Tiltsa azokat az IP-ket, amelyek ismételten spam regisztrációkat küldenek. A "
-"tiltott IP az egész oldalról ki van zárva, nem csak a regisztrációs űrlapról."
-
-#: build/index.js:17 build/index.js:20
-msgid "Ban Threshold"
-msgstr "Tiltási küszöb"
-
-#: build/index.js:17
-msgid "Number of rejected registrations from one IP before it is banned."
-msgstr "Hány elutasított regisztráció után tiltódik egy IP."
-
-#: build/index.js:17 build/index.js:20
-msgid "Ban Duration"
-msgstr "Tiltás időtartama"
 
 #: build/index.js:17
 msgid "Password Reset Flood Protection"

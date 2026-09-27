@@ -12,10 +12,16 @@ if ( ! class_exists( 'WP_Error' ) ) {
 	class WP_Error {
 		public string $code;
 		public string $message;
+		public mixed $data;
 
-		public function __construct( string $code = '', string $message = '' ) {
+		public function __construct( string $code = '', string $message = '', mixed $data = '' ) {
 			$this->code    = $code;
 			$this->message = $message;
+			$this->data    = $data;
+		}
+
+		public function get_error_data(): mixed {
+			return $this->data;
 		}
 
 		public function get_error_code(): string {

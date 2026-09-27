@@ -214,6 +214,41 @@ consume each other's — but two visitors loading the *same* form in the same
 second will see the second submission rejected as a replay. On a lost-password
 form that is rare enough to be the right trade.
 
+## Comment and Product Review Spam
+
+Covers every form built by `comment_form()` (classic themes, the block theme
+Comments form block, both WooCommerce review forms). Only comment-form POSTs
+(`wp-comments-post.php`, and AJAX comment plugins that reuse
+`wp_handle_comment_submission()`) are checked; REST, XML-RPC and admin replies
+are not. Users who can moderate comments or edit the post, and whitelisted IPs,
+are never checked.
+
+```bash
+wp lw-firewall config set comment_protect_enabled true
+wp lw-firewall config set comment_honeypot true        # hidden field; only a filled one rejects
+wp lw-firewall config set comment_token_enabled true   # signed token from the rendered form
+wp lw-firewall config set comment_min_fill_time 2      # seconds since the page was generated
+wp lw-firewall config set comment_token_max_age 86400  # how long a rendered form stays valid
+```
+
+The token is never single-use: a full-page cache shows one rendered form to
+every visitor. When a visitor focuses a form whose token is older than half the
+lifetime, a small script fetches a fresh one from
+`admin-ajax.php?action=lw_fw_comment_token`. Without JavaScript the rendered
+token is used, so keep the lifetime longer than the page cache TTL.
+
+If the theme builds its comment form by hand without `comment_form()`, the
+token is missing and every comment is refused — turn `comment_token_enabled`
+off there. The honeypot alone never refuses a form that lacks the field.
+
+Refusals are logged as `comment_spam (<verdict>)` — `honeypot`, `no_token`,
+`bad_token`, `too_fast` or `expired`. All but `expired` count toward the shared
+spam ban (`register_ban_threshold` / `register_ban_duration`, counted together
+with rejected registrations); the resulting ban has the reason `comment_spam`.
+
+`comment_protect_enabled` is on for new installs. Sites updated from 1.6.x keep
+it off until it is switched on.
+
 ## Automatic Bans
 
 ```bash

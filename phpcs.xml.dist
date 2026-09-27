@@ -13,6 +13,8 @@
     <exclude-pattern>/build/*</exclude-pattern>
     <!-- Shared LW Plugins hub assets: synced build from lwplugins/admin-hub. -->
     <exclude-pattern>/assets/hub/*</exclude-pattern>
+    <!-- Front-end scripts are linted by wp-scripts (npm run lint:js). -->
+    <exclude-pattern>/assets/js/*</exclude-pattern>
     <!-- Standalone CLI test harness, not shipped plugin runtime code -->
     <exclude-pattern>/tests/*</exclude-pattern>
 

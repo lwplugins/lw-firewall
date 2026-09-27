@@ -46,6 +46,10 @@ final class BanReasons {
 				__( 'Registration spam', 'lw-firewall' ),
 				__( 'rejected sign-ups', 'lw-firewall' ),
 			],
+			'comment_spam'  => [
+				__( 'Comment spam', 'lw-firewall' ),
+				__( 'rejected comments or reviews', 'lw-firewall' ),
+			],
 			'rate_limit'    => [
 				__( 'Rate limit exceeded', 'lw-firewall' ),
 				__( 'auto-ban escalation', 'lw-firewall' ),
@@ -85,7 +89,7 @@ final class BanReasons {
 	 * The subsystem that issued a ban with this reason.
 	 *
 	 * @param string $reason Reason code.
-	 * @return string One of login, password_reset, registration, rate_limit, admin, unknown.
+	 * @return string One of login, password_reset, registration, comments, rate_limit, admin, unknown.
 	 */
 	public static function source( string $reason ): string {
 		$sources = [
@@ -93,6 +97,7 @@ final class BanReasons {
 			'reset_ip'      => 'password_reset',
 			'reset_spam'    => 'password_reset',
 			'register_spam' => 'registration',
+			'comment_spam'  => 'comments',
 			'rate_limit'    => 'rate_limit',
 			'manual'        => 'admin',
 		];

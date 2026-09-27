@@ -53,6 +53,8 @@ final class OptionSchema {
 			'reset_min_fill_time'         => [ 1, 3600 ],
 			'reset_token_max_age'         => [ 60, 86400 ],
 			'reset_ban_duration'          => [ 60, 2592000 ],
+			'comment_min_fill_time'       => [ 1, 3600 ],
+			'comment_token_max_age'       => [ 600, 2592000 ],
 		];
 	}
 

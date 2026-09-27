@@ -140,4 +140,35 @@ final class RegisterTokenTest extends MonkeyTestCase {
 		$this->assertTrue( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage ) );
 		$this->assertFalse( RegisterToken::check( $token, self::NOW, self::MIN, self::MAX, $storage ) );
 	}
+
+	public function test_issued_at_returns_the_signed_time_even_when_expired(): void {
+		$token = RegisterToken::make( self::NOW - 999999, 'comment', 'nonce-one' );
+
+		$this->assertSame( self::NOW - 999999, RegisterToken::issued_at( $token, 'comment' ) );
+	}
+
+	/**
+	 * @dataProvider provide_foreign_tokens
+	 */
+	public function test_issued_at_is_null_for_a_token_that_is_not_ours( string $token ): void {
+		$this->assertNull( RegisterToken::issued_at( $token, 'comment' ) );
+	}
+
+	/**
+	 * @return array<string, array{0: string}>
+	 */
+	public static function provide_foreign_tokens(): array {
+		return array(
+			'empty'          => array( '' ),
+			'not base64'     => array( '%%%' ),
+			'forged hmac'    => array( base64_encode( 'v2.' . self::NOW . '.comment.x:deadbeef' ) ),
+			'wrong version'  => array( base64_encode( 'v1.' . self::NOW . '.comment.x:deadbeef' ) ),
+		);
+	}
+
+	public function test_issued_at_is_null_for_another_forms_token(): void {
+		$token = RegisterToken::make( self::NOW, 'reg', 'nonce-one' );
+
+		$this->assertNull( RegisterToken::issued_at( $token, 'comment' ) );
+	}
 }

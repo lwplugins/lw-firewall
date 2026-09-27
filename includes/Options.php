@@ -53,7 +53,8 @@ final class Options {
 	 * @var array<string, mixed>
 	 */
 	private const LEGACY_DEFAULTS = [
-		'protect_xmlrpc' => false, // Default on for new installs since 1.6.0.
+		'protect_xmlrpc'          => false, // Default on for new installs since 1.6.0.
+		'comment_protect_enabled' => false, // Default on for new installs since 1.7.0.
 	];
 
 	/**
@@ -111,6 +112,14 @@ final class Options {
 			'reset_ban_duration'          => 3600,
 			'reset_block_admins'          => false,
 			'reset_alert_enabled'         => false,
+			// Comment and product review spam (comment_form() + wp-comments-post.php).
+			// The token lifetime is long and the token is never single-use, because
+			// full-page caches serve one rendered token to every visitor.
+			'comment_protect_enabled'     => true,
+			'comment_honeypot'            => true,
+			'comment_token_enabled'       => true,
+			'comment_min_fill_time'       => 2,
+			'comment_token_max_age'       => 86400,
 			'security_headers'            => false,
 			'admin_alert_enabled'         => false,
 			'admin_alert_email'           => '',

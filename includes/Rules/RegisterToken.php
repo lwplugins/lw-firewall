@@ -102,46 +102,20 @@ final class RegisterToken {
 	 * @return bool
 	 */
 	public static function check( string $token, int $now, int $min_fill, int $max_age, ?StorageInterface $storage = null, string $scope = 'reg' ): bool {
-		if ( '' === $token ) {
+		$parsed = self::parse( $token, $scope );
+
+		if ( null === $parsed ) {
 			return false;
 		}
 
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Benign: decodes our own signed token, validated by HMAC below.
-		$decoded = base64_decode( $token, true );
-
-		if ( false === $decoded || ! str_contains( $decoded, ':' ) ) {
-			return false;
-		}
-
-		[ $payload, $hmac ] = explode( ':', $decoded, 2 );
-
-		$parts = explode( '.', $payload );
-
-		if ( 4 !== count( $parts ) || self::VERSION !== $parts[0] || ! ctype_digit( $parts[1] ) ) {
-			return false;
-		}
-
-		$expected = hash_hmac( 'sha256', $payload, self::secret() );
-
-		if ( ! hash_equals( $expected, $hmac ) ) {
-			return false;
-		}
-
-		// The scope is inside the signature, so a token issued for one form
-		// cannot be presented to another — previously it only namespaced the
-		// replay key, which a token never actually crossed.
-		if ( preg_replace( '/[^a-z0-9_-]/', '', strtolower( $scope ) ) !== $parts[2] ) {
-			return false;
-		}
-
-		$age = $now - (int) $parts[1];
+		$age = $now - $parsed['issued'];
 
 		if ( $age < $min_fill || $age > $max_age ) {
 			return false;
 		}
 
 		if ( null !== $storage ) {
-			$key = $scope . '_tok_' . hash( 'sha256', $payload );
+			$key = $scope . '_tok_' . hash( 'sha256', $parsed['payload'] );
 
 			// Atomic check-and-mark: the first use increments to 1 and passes;
 			// any replay (or concurrent double-submit) increments to > 1 and is
@@ -153,6 +127,66 @@ final class RegisterToken {
 		}
 
 		return true;
+	}
+
+	/**
+	 * The issue time of a genuine token, whatever its age.
+	 *
+	 * Lets a caller tell "this site signed it, but it is too old" (a real
+	 * visitor on a stale cached page) apart from a forged or foreign token.
+	 *
+	 * @param string $token Raw token from the form.
+	 * @param string $scope Form the token must belong to.
+	 * @return int|null UNIX timestamp, or null when the token is not ours.
+	 */
+	public static function issued_at( string $token, string $scope ): ?int {
+		$parsed = self::parse( $token, $scope );
+
+		return null === $parsed ? null : $parsed['issued'];
+	}
+
+	/**
+	 * Decode a token and check its format, signature and scope.
+	 *
+	 * @param string $token Raw token from the form.
+	 * @param string $scope Form the token must belong to.
+	 * @return array{issued: int, payload: string}|null Null when the token is not ours.
+	 */
+	private static function parse( string $token, string $scope ): ?array {
+		if ( '' === $token ) {
+			return null;
+		}
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Benign: decodes our own signed token, validated by HMAC below.
+		$decoded = base64_decode( $token, true );
+
+		if ( false === $decoded || ! str_contains( $decoded, ':' ) ) {
+			return null;
+		}
+
+		[ $payload, $hmac ] = explode( ':', $decoded, 2 );
+
+		$parts = explode( '.', $payload );
+
+		if ( 4 !== count( $parts ) || self::VERSION !== $parts[0] || ! ctype_digit( $parts[1] ) ) {
+			return null;
+		}
+
+		if ( ! hash_equals( hash_hmac( 'sha256', $payload, self::secret() ), $hmac ) ) {
+			return null;
+		}
+
+		// The scope is inside the signature, so a token issued for one form
+		// cannot be presented to another — previously it only namespaced the
+		// replay key, which a token never actually crossed.
+		if ( preg_replace( '/[^a-z0-9_-]/', '', strtolower( $scope ) ) !== $parts[2] ) {
+			return null;
+		}
+
+		return [
+			'issued'  => (int) $parts[1],
+			'payload' => $payload,
+		];
 	}
 
 	/**

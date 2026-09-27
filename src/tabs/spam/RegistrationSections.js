@@ -11,11 +11,9 @@ import { NumberRow, SwitchRow } from '../../components/Fields';
 import Section from '../../components/Section';
 
 const OFF = () => __( 'Off', 'lw-firewall' );
-const BAN_DURATION = () =>
-	__( 'How long the ban lasts in seconds (3600 = 1 hour).', 'lw-firewall' );
 
 /**
- * Registration protection + registration auto-ban.
+ * Registration protection (the shared spam auto-ban is AutoBanSection).
  *
  * @param {Object}       props
  * @param {Object}       props.store            Settings store.
@@ -99,30 +97,6 @@ export default function Registration( { store, registrationOpen } ) {
 					) }
 					store={ store }
 					name="register_token_max_age"
-					seconds
-				/>
-			</Section>
-			<Section
-				title={ __( 'Registration Auto-Ban', 'lw-firewall' ) }
-				description={ __(
-					'Ban IPs that repeatedly submit spam registrations. A banned IP is blocked from the whole site, not just the registration form.',
-					'lw-firewall'
-				) }
-			>
-				<NumberRow
-					title={ __( 'Ban Threshold', 'lw-firewall' ) }
-					help={ __(
-						'Number of rejected registrations from one IP before it is banned.',
-						'lw-firewall'
-					) }
-					store={ store }
-					name="register_ban_threshold"
-				/>
-				<NumberRow
-					title={ __( 'Ban Duration', 'lw-firewall' ) }
-					help={ BAN_DURATION() }
-					store={ store }
-					name="register_ban_duration"
 					seconds
 				/>
 			</Section>

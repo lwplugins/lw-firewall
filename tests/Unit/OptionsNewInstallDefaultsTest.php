@@ -80,4 +80,31 @@ final class OptionsNewInstallDefaultsTest extends MonkeyTestCase {
 	public function test_the_shipped_default_is_on(): void {
 		$this->assertTrue( Options::get_defaults()['protect_xmlrpc'] );
 	}
+
+	/**
+	 * Comment protection (1.7.0) follows the same rule: on for a new install,
+	 * off for a site whose stored settings predate it.
+	 *
+	 * @dataProvider provide_comment_protection_rows
+	 *
+	 * @param mixed $row      Stored option value.
+	 * @param bool  $expected Effective setting.
+	 */
+	public function test_comment_protection_is_on_only_for_new_installs( mixed $row, bool $expected ): void {
+		Functions\when( 'get_option' )->justReturn( $row );
+
+		$this->assertSame( $expected, Options::get_all()['comment_protect_enabled'] );
+	}
+
+	/**
+	 * @return array<string, array{0: mixed, 1: bool}>
+	 */
+	public static function provide_comment_protection_rows(): array {
+		return array(
+			'new install'            => array( Options::get_defaults(), true ),
+			'existing install'       => array( array( 'rate_limit' => 30 ), false ),
+			'no stored row'          => array( false, false ),
+			'existing, switched on'  => array( array( 'comment_protect_enabled' => true ), true ),
+		);
+	}
 }

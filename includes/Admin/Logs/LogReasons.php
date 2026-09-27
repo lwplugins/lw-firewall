@@ -39,6 +39,7 @@ final class LogReasons {
 			'login_lockout'       => __( 'Too many failed logins', 'lw-firewall' ),
 			'login_user_lockout'  => __( 'Username locked after failed logins', 'lw-firewall' ),
 			'register_spam'       => __( 'Registration spam', 'lw-firewall' ),
+			'comment_spam'        => __( 'Comment or review spam', 'lw-firewall' ),
 			'reset_ip'            => __( 'Password reset flood (per IP)', 'lw-firewall' ),
 			'reset_user'          => __( 'Password reset flood (per account)', 'lw-firewall' ),
 			'reset_global'        => __( 'Password reset flood (site-wide cap)', 'lw-firewall' ),

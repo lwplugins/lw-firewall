@@ -94,6 +94,17 @@ Blocks bot sign-ups on `wp-login.php?action=register` without a captcha:
 - Single-use tokens, so one rendered form can register only once
 - Auto-ban for IPs that repeatedly submit spam registrations
 
+### Comment and Product Review Spam Protection
+
+Rejects bot comments and WooCommerce product reviews before they are stored, without a captcha. Every form built by `comment_form()` is covered — classic theme comment templates, the block theme Comments form block, and both WooCommerce review forms (the classic template and the Product Review Form block):
+
+- Hidden honeypot field — visually hidden without `display:none`, `aria-hidden`, `tabindex="-1"`, `autocomplete="off"`. A missing field never rejects, only a filled one
+- Optional signed form token — a direct POST to `wp-comments-post.php` that never loaded the page is rejected, as is one sent faster than the minimum fill time
+- Works behind full-page caching: the token is never single-use, its lifetime defaults to one day, and when a visitor starts typing into a form older than half that lifetime a fresh token is fetched in the background (one request per commenter, not per page view)
+- Rejected comments count toward the same auto-ban threshold as rejected registrations; a comment refused only because its cached form was too old is not counted
+- Users who can moderate comments or edit the post, whitelisted IPs, and comments added through REST, XML-RPC or the admin are never checked
+- On by default for new installs; sites updating from an earlier version keep it off until it is enabled on the Spam tab
+
 ### Password Reset Flood Protection
 
 Hooked on `lostpassword_post` — the one chokepoint both WordPress core and WooCommerce's own my-account form pass through, so `wp-login.php?action=lostpassword` and the WooCommerce "Lost your password?" form are covered by the same rules.
@@ -199,7 +210,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | **Protection** | Endpoint toggles (cron, xmlrpc, login, REST API, 404) and auto-ban settings |
 | **Bots** | Manage blocked bot User-Agent patterns |
 | **IP Rules** | IP whitelist and blacklist (IPs and CIDR ranges), trusted reverse proxies, plus the automatic-ban table with per-row unblock |
-| **Spam** | Registration spam protection and password-reset flood protection |
+| **Spam** | Registration, comment and product review spam protection, and password-reset flood protection |
 | **Geo Blocking** | Country-based blocking with Cloudflare or CIDR fallback |
 | **Security** | HTTP security headers toggle |
 | **Alerts** | New-administrator and account-takeover email alerts, recipients, scan schedule |

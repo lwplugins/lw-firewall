@@ -20,8 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Counts rejected registration attempts per IP and bans the IP once the
- * configured threshold is reached within the ban-duration window. The ban is
+ * Counts rejected spam submissions (registrations, comments and product
+ * reviews) per IP and bans the IP once the configured threshold is reached
+ * within the ban-duration window. Every spam form shares one counter and one
+ * threshold: a bot hitting the comment form and the registration form is one
+ * offender, not two half-offenders. The ban is
  * written to the shared firewall ban store (via AutoBanner) so the MU-plugin
  * worker blocks every subsequent request from that IP before WordPress loads.
  */
@@ -47,9 +50,10 @@ final class RegisterTracker {
 	 * Hook-friendly entry point: skip whitelisted IPs, resolve storage and
 	 * record the rejection.
 	 *
+	 * @param string $reason Ban reason code recorded when the threshold is hit.
 	 * @return void
 	 */
-	public static function record_reject(): void {
+	public static function record_reject( string $reason = 'register_spam' ): void {
 		$ip        = IpDetector::get_ip();
 		$whitelist = (array) Options::get( 'ip_whitelist', [] );
 
@@ -58,16 +62,17 @@ final class RegisterTracker {
 		}
 
 		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
-		( new self( $storage ) )->record();
+		( new self( $storage ) )->record( $reason );
 	}
 
 	/**
-	 * Record a rejected registration for the current IP and ban it once the
+	 * Record a rejected spam submission for the current IP and ban it once the
 	 * threshold is reached.
 	 *
+	 * @param string $reason Ban reason code recorded when the threshold is hit.
 	 * @return void
 	 */
-	public function record(): void {
+	public function record( string $reason = 'register_spam' ): void {
 		$ip = IpDetector::get_ip();
 
 		if ( ! CountGuard::allows( $ip ) ) {
@@ -83,13 +88,13 @@ final class RegisterTracker {
 			return;
 		}
 
-		( new AutoBanner( $this->storage ) )->ban( $ip, $duration, 'register_spam' );
+		( new AutoBanner( $this->storage ) )->ban( $ip, $duration, $reason );
 
 		if ( ! empty( Options::get( 'log_enabled' ) ) ) {
 			Logger::log(
 				[
 					'ip'     => $ip,
-					'reason' => 'register_spam',
+					'reason' => $reason,
 					'ua'     => substr( sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 0, 200 ),
 					'url'    => sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ),
 				]

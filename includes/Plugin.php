@@ -18,6 +18,7 @@ use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Geo\GeoActivation;
 use LightweightPlugins\Firewall\Geo\HtaccessWriter;
 use LightweightPlugins\Firewall\Rest\Admin\Routes as AdminRoutes;
+use LightweightPlugins\Firewall\Rules\CommentGuard;
 use LightweightPlugins\Firewall\Rules\LoginTracker;
 use LightweightPlugins\Firewall\Rules\NotFoundTracker;
 use LightweightPlugins\Firewall\Rules\PasswordResetGuard;
@@ -126,6 +127,11 @@ final class Plugin {
 		// Password-reset flood protection (wp-login.php and WooCommerce alike).
 		if ( ! empty( $options['reset_protect_enabled'] ) ) {
 			PasswordResetGuard::init();
+		}
+
+		// Comment and WooCommerce review spam protection (every comment_form()).
+		if ( ! empty( $options['comment_protect_enabled'] ) ) {
+			CommentGuard::init();
 		}
 
 		// Security headers.

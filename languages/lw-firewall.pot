@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.6.1\n"
+"Project-Id-Version: LW Firewall 1.6.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-26T13:52:50+00:00\n"
+"POT-Creation-Date: 2026-09-27T09:50:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lw-firewall\n"
@@ -106,7 +106,7 @@ msgid "per-IP limit"
 msgstr ""
 
 #: includes/Admin/Bans/BanReasons.php:42
-#: includes/Admin/Logs/LogReasons.php:45
+#: includes/Admin/Logs/LogReasons.php:46
 msgid "Password reset bot request"
 msgstr ""
 
@@ -124,27 +124,35 @@ msgid "rejected sign-ups"
 msgstr ""
 
 #: includes/Admin/Bans/BanReasons.php:50
-msgid "Rate limit exceeded"
+msgid "Comment spam"
 msgstr ""
 
 #: includes/Admin/Bans/BanReasons.php:51
-msgid "auto-ban escalation"
+msgid "rejected comments or reviews"
 msgstr ""
 
 #: includes/Admin/Bans/BanReasons.php:54
-msgid "Banned by an administrator"
+msgid "Rate limit exceeded"
 msgstr ""
 
 #: includes/Admin/Bans/BanReasons.php:55
+msgid "auto-ban escalation"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:58
+msgid "Banned by an administrator"
+msgstr ""
+
+#: includes/Admin/Bans/BanReasons.php:59
 msgid "manual ban"
 msgstr ""
 
-#: includes/Admin/Bans/BanReasons.php:69
+#: includes/Admin/Bans/BanReasons.php:73
 #: build/index.js:12
 msgid "Unknown"
 msgstr ""
 
-#: includes/Admin/Bans/BanReasons.php:81
+#: includes/Admin/Bans/BanReasons.php:85
 msgid "banned before reasons were recorded"
 msgstr ""
 
@@ -310,14 +318,18 @@ msgid "Username locked after failed logins"
 msgstr ""
 
 #: includes/Admin/Logs/LogReasons.php:42
-msgid "Password reset flood (per IP)"
+msgid "Comment or review spam"
 msgstr ""
 
 #: includes/Admin/Logs/LogReasons.php:43
-msgid "Password reset flood (per account)"
+msgid "Password reset flood (per IP)"
 msgstr ""
 
 #: includes/Admin/Logs/LogReasons.php:44
+msgid "Password reset flood (per account)"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:45
 msgid "Password reset flood (site-wide cap)"
 msgstr ""
 
@@ -814,9 +826,14 @@ msgstr ""
 msgid "The file is not an LW Firewall settings export: it is not valid JSON, or it holds no known setting."
 msgstr ""
 
+#: includes/Rules/CommentFields.php:81
 #: includes/Rules/PasswordResetGuard.php:84
 #: includes/Rules/RegisterGuard.php:54
 msgid "Leave this field empty"
+msgstr ""
+
+#: includes/Rules/CommentGuard.php:99
+msgid "<strong>Error:</strong> Your comment could not be submitted. Please reload the page and try again."
 msgstr ""
 
 #: includes/Rules/RegisterGuard.php:79
@@ -908,55 +925,55 @@ msgstr ""
 msgid "This setting is pinned by %s in wp-config.php. Remove the constant to change it."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:45
+#: includes/SiteManager/FirewallAbilities.php:56
 msgid "Get Firewall Options"
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:46
+#: includes/SiteManager/FirewallAbilities.php:57
 msgid "Get all LW Firewall settings including rate limits, bot blocking and geo rules."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:76
+#: includes/SiteManager/FirewallAbilities.php:87
 msgid "Get Firewall Log"
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:77
+#: includes/SiteManager/FirewallAbilities.php:88
 msgid "Get recent firewall log entries (up to 100 blocked requests)."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:87
+#: includes/SiteManager/FirewallAbilities.php:98
 msgid "Number of log entries to return. Defaults to 25, max 100."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:120
+#: includes/SiteManager/FirewallAbilities.php:131
 msgid "List Blocked IPs"
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:121
+#: includes/SiteManager/FirewallAbilities.php:132
 msgid "List all manually blocked (blacklisted) IP addresses."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:155
+#: includes/SiteManager/FirewallAbilities.php:166
 msgid "Block IP Address"
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:156
+#: includes/SiteManager/FirewallAbilities.php:167
 msgid "Add an IP address or CIDR range to the blacklist."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:166
+#: includes/SiteManager/FirewallAbilities.php:177
 msgid "IP address or CIDR range to block (e.g. 1.2.3.4 or 10.0.0.0/8)."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:192
+#: includes/SiteManager/FirewallAbilities.php:203
 msgid "Unblock IP Address"
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:193
+#: includes/SiteManager/FirewallAbilities.php:204
 msgid "Remove an IP address or CIDR range from the blacklist."
 msgstr ""
 
-#: includes/SiteManager/FirewallAbilities.php:203
+#: includes/SiteManager/FirewallAbilities.php:214
 msgid "IP address or CIDR range to unblock."
 msgstr ""
 
@@ -1840,6 +1857,88 @@ msgid "How long the username stays locked, in seconds (900 = 15 minutes)."
 msgstr ""
 
 #: build/index.js:17
+msgid "Spam Auto-Ban"
+msgstr ""
+
+#: build/index.js:17
+msgid "Ban IPs that repeatedly send spam registrations, comments or reviews. A banned IP is blocked from the whole site, not just the form."
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:20
+msgid "Ban Threshold"
+msgstr ""
+
+#: build/index.js:17
+msgid "Number of rejected registrations, comments and reviews (counted together) from one IP before it is banned. A comment refused only because its form was too old is not counted."
+msgstr ""
+
+#: build/index.js:17
+#: build/index.js:20
+msgid "Ban Duration"
+msgstr ""
+
+#: build/index.js:17
+msgid "Comment & Review Protection"
+msgstr ""
+
+#: build/index.js:17
+msgid "Stops bot comments and WooCommerce product reviews before they are stored, without a captcha. Works with every form built by comment_form(): classic and block themes, and both WooCommerce review forms. Administrators, editors of the post and whitelisted IPs are never checked."
+msgstr ""
+
+#: build/index.js:17
+msgid "Enable Comment Protection"
+msgstr ""
+
+#: build/index.js:17
+msgid "Checks every comment and review sent through the comment form (wp-comments-post.php). Comments added through the REST API, XML-RPC or the admin are not affected."
+msgstr ""
+
+#: build/index.js:17
+msgid "Block bot comments and product reviews"
+msgstr ""
+
+#: build/index.js:17
+msgid "Honeypot"
+msgstr ""
+
+#: build/index.js:17
+msgid "A hidden field that visitors and screen readers never see. Bots that fill every field are rejected. A form without the field (for example a hand-built theme form) is never rejected because of it."
+msgstr ""
+
+#: build/index.js:17
+msgid "Add a hidden honeypot field"
+msgstr ""
+
+#: build/index.js:17
+msgid "Signed Form Token"
+msgstr ""
+
+#: build/index.js:17
+msgid "Rejects comments posted straight to wp-comments-post.php without loading the page. If your theme builds its comment form without comment_form(), every comment is rejected: test a comment after turning this on."
+msgstr ""
+
+#: build/index.js:17
+msgid "Require a token from the rendered form"
+msgstr ""
+
+#: build/index.js:17
+msgid "Minimum Fill Time"
+msgstr ""
+
+#: build/index.js:17
+msgid "Reject comments sent faster than this many seconds after the page was generated."
+msgstr ""
+
+#: build/index.js:17
+msgid "Token Lifetime"
+msgstr ""
+
+#: build/index.js:17
+msgid "How long a rendered comment form stays valid, in seconds (86400 = 1 day). Cached pages are safe: when a visitor starts typing into a form older than half this time, a fresh token is fetched in the background. Tokens are never single-use here, because a page cache shows the same form to everyone."
+msgstr ""
+
+#: build/index.js:17
 msgid "Registration Protection"
 msgstr ""
 
@@ -1864,15 +1963,7 @@ msgid "Block bot registrations on wp-login.php?action=register"
 msgstr ""
 
 #: build/index.js:17
-msgid "Honeypot"
-msgstr ""
-
-#: build/index.js:17
 msgid "Catches generic bots that fill every field. Invisible to real users."
-msgstr ""
-
-#: build/index.js:17
-msgid "Add a hidden honeypot field"
 msgstr ""
 
 #: build/index.js:17
@@ -1888,41 +1979,11 @@ msgid "Reject reused tokens"
 msgstr ""
 
 #: build/index.js:17
-msgid "Minimum Fill Time"
-msgstr ""
-
-#: build/index.js:17
 msgid "Reject submissions faster than this many seconds after the form loaded (catches instant bot POSTs)."
 msgstr ""
 
 #: build/index.js:17
-msgid "Token Lifetime"
-msgstr ""
-
-#: build/index.js:17
 msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
-msgstr ""
-
-#: build/index.js:17
-msgid "Registration Auto-Ban"
-msgstr ""
-
-#: build/index.js:17
-msgid "Ban IPs that repeatedly submit spam registrations. A banned IP is blocked from the whole site, not just the registration form."
-msgstr ""
-
-#: build/index.js:17
-#: build/index.js:20
-msgid "Ban Threshold"
-msgstr ""
-
-#: build/index.js:17
-msgid "Number of rejected registrations from one IP before it is banned."
-msgstr ""
-
-#: build/index.js:17
-#: build/index.js:20
-msgid "Ban Duration"
 msgstr ""
 
 #: build/index.js:17
