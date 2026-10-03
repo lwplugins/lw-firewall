@@ -31,9 +31,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SettingsMeta {
 
 	/**
-	 * Documentation URL.
+	 * Plugin page on docs.lwplugins.com, in the admin user's language.
+	 *
+	 * @return string
 	 */
-	public const DOCS_URL = 'https://lwplugins.com/docs/lw-firewall/';
+	public static function docs_url(): string {
+		$lang = str_starts_with( get_user_locale(), 'hu' ) ? 'hu' : 'en';
+
+		return 'https://docs.lwplugins.com/' . $lang . '/plugins/lw-firewall';
+	}
 
 	/**
 	 * Build the meta block.
@@ -57,7 +63,7 @@ final class SettingsMeta {
 			'countries'        => (object) Countries::all(),
 			'bots_defaults'    => $defaults['blocked_bots'],
 			'server'           => self::server(),
-			'docs_url'         => self::DOCS_URL,
+			'docs_url'         => self::docs_url(),
 		];
 	}
 

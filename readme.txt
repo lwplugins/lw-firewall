@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.8.0
+Stable tag: 1.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Yes. It automatically detects the real visitor IP via the CF-Connecting-IP heade
 The per-username lockout locks an account after repeated failed logins from any IP, so anyone who knows a username can keep that account locked by retrying every lock period (15 minutes by default). Whitelisted IPs are never counted or refused: whitelist your own address under IP Rules. Lift an active lock from the Bans list or with `wp lw-firewall user-lock clear`. You can shorten the lock (Username Lock Duration) or turn the feature off.
 
 == Changelog ==
+
+= 1.8.1 =
+* Fix: The admin Docs link now opens the plugin's page on docs.lwplugins.com, in Hungarian for Hungarian admin users.
 
 = 1.8.0 =
 * New: WooCommerce filter requests need a visitor cookie. Every front-end page sets it from a small inline script (works with full-page caching); a filter URL requested without it gets a tiny 403 page that sets the cookie and reloads the same URL, so real visitors barely notice while proxy networks sending one request per IP never reach WooCommerce. Signed-in users and whitelisted IPs are not challenged; reload loops are prevented. On by default (`filter_require_cookie`).
