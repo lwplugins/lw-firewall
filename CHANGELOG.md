@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.2] - 2026-10-05
+
+### Fixed
+- Registrations through forms that apply `registration_errors` themselves (LearnDash 5.x) were all refused as spam with single-use tokens on, and the visitor was banned after three tries: the filter runs twice in one request and the second run saw the first one's spent token. The verdict is now reached once per request.
+- A single-use registration token is spent only when no other plugin refused the form (terms box, password confirmation, taken username), so resending the same page works. The check now runs late on `registration_errors` to see those errors.
+- Only bot evidence counts toward the spam auto-ban: a missing or forged token and a filled honeypot. An expired, already spent or too-fast token is still refused but no longer bans.
+- The page rendering the registration form asks page caches not to store it (`DONOTCACHEPAGE`; `Cache-Control` and `X-Accel-Expires: 0` while headers can still be sent), so visitors do not share one single-use token.
+
 ## [1.8.1] - 2026-10-03
 
 ### Fixed

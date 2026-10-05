@@ -125,7 +125,7 @@ final class Plugin {
 		// Registration spam protection (default WP register form only).
 		if ( ! empty( $options['register_protect_enabled'] ) && get_option( 'users_can_register' ) ) {
 			add_action( 'register_form', [ RegisterGuard::class, 'render_fields' ] );
-			add_filter( 'registration_errors', [ RegisterGuard::class, 'validate' ], 10, 3 );
+			add_filter( 'registration_errors', [ RegisterGuard::class, 'validate' ], RegisterGuard::PRIORITY, 3 );
 		}
 
 		// Password-reset flood protection (wp-login.php and WooCommerce alike).

@@ -115,18 +115,44 @@ final class RegisterToken {
 		}
 
 		if ( null !== $storage ) {
-			$key = $scope . '_tok_' . hash( 'sha256', $parsed['payload'] );
-
-			// Atomic check-and-mark: the first use increments to 1 and passes;
-			// any replay (or concurrent double-submit) increments to > 1 and is
-			// rejected. A get()-then-set() had a TOCTOU window that let the same
-			// token register several accounts.
-			if ( $storage->increment( $key, $max_age ) > 1 ) {
-				return false;
-			}
+			return self::spend( $parsed['payload'], $max_age, $storage, $scope );
 		}
 
 		return true;
+	}
+
+	/**
+	 * Spend a genuine token once; false when it was already spent.
+	 *
+	 * Separate from check() so a caller can verify a token early and spend it
+	 * only once the submission is otherwise accepted.
+	 *
+	 * @param string           $token   Raw token from the form.
+	 * @param int              $max_age Token lifetime in seconds (replay-key TTL).
+	 * @param StorageInterface $storage Single-use store.
+	 * @param string           $scope   Single-use namespace.
+	 * @return bool
+	 */
+	public static function consume( string $token, int $max_age, StorageInterface $storage, string $scope = 'reg' ): bool {
+		$parsed = self::parse( $token, $scope );
+
+		return null !== $parsed && self::spend( $parsed['payload'], $max_age, $storage, $scope );
+	}
+
+	/**
+	 * Atomic check-and-mark: the first use increments to 1 and passes; any
+	 * replay (or concurrent double-submit) increments to > 1 and is rejected.
+	 * A get()-then-set() had a TOCTOU window that let the same token register
+	 * several accounts.
+	 *
+	 * @param string           $payload Signed payload of a parsed token.
+	 * @param int              $max_age Replay-key TTL in seconds.
+	 * @param StorageInterface $storage Single-use store.
+	 * @param string           $scope   Single-use namespace.
+	 * @return bool
+	 */
+	private static function spend( string $payload, int $max_age, StorageInterface $storage, string $scope ): bool {
+		return $storage->increment( $scope . '_tok_' . hash( 'sha256', $payload ), $max_age ) <= 1;
 	}
 
 	/**

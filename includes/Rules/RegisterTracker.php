@@ -50,10 +50,11 @@ final class RegisterTracker {
 	 * Hook-friendly entry point: skip whitelisted IPs, resolve storage and
 	 * record the rejection.
 	 *
-	 * @param string $reason Ban reason code recorded when the threshold is hit.
+	 * @param string                $reason  Ban reason code recorded when the threshold is hit.
+	 * @param StorageInterface|null $storage Storage to use; null resolves the configured backend.
 	 * @return void
 	 */
-	public static function record_reject( string $reason = 'register_spam' ): void {
+	public static function record_reject( string $reason = 'register_spam', ?StorageInterface $storage = null ): void {
 		$ip        = IpDetector::get_ip();
 		$whitelist = (array) Options::get( 'ip_whitelist', [] );
 
@@ -61,7 +62,7 @@ final class RegisterTracker {
 			return;
 		}
 
-		$storage = lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
+		$storage ??= lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
 		( new self( $storage ) )->record( $reason );
 	}
 

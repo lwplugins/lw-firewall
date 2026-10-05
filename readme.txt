@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,12 @@ Yes. It automatically detects the real visitor IP via the CF-Connecting-IP heade
 The per-username lockout locks an account after repeated failed logins from any IP, so anyone who knows a username can keep that account locked by retrying every lock period (15 minutes by default). Whitelisted IPs are never counted or refused: whitelist your own address under IP Rules. Lift an active lock from the Bans list or with `wp lw-firewall user-lock clear`. You can shorten the lock (Username Lock Duration) or turn the feature off.
 
 == Changelog ==
+
+= 1.8.2 =
+* Fix: Registrations through forms that apply `registration_errors` themselves (LearnDash 5.x) were all refused as spam with single-use tokens on, and the visitor was banned after three tries: the filter runs twice in one request and the second run saw the first one's spent token. The verdict is now reached once per request.
+* Fix: A single-use registration token is spent only when no other plugin refused the form (terms box, password confirmation, taken username), so resending the same page works. The check now runs late on `registration_errors` to see those errors.
+* Fix: Only bot evidence counts toward the spam auto-ban: a missing or forged token and a filled honeypot. An expired, already spent or too-fast token is still refused but no longer bans.
+* Fix: The page rendering the registration form asks page caches not to store it (`DONOTCACHEPAGE`; `Cache-Control` and `X-Accel-Expires: 0` while headers can still be sent), so visitors do not share one single-use token.
 
 = 1.8.1 =
 * Fix: The admin Docs link now opens the plugin's page on docs.lwplugins.com, in Hungarian for Hungarian admin users.
