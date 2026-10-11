@@ -11,6 +11,7 @@ namespace LightweightPlugins\Firewall\SiteManager;
 
 use LightweightPlugins\Firewall\Logger;
 use LightweightPlugins\Firewall\Options;
+use LightweightPlugins\Firewall\Settings\Input\IpListParser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -86,7 +87,7 @@ final class FirewallService {
 			);
 		}
 
-		if ( ! self::is_valid_ip_or_cidr( $ip ) ) {
+		if ( ! IpListParser::is_valid( $ip ) ) {
 			return new \WP_Error(
 				'invalid_ip',
 				__( 'The provided value is not a valid IP address or CIDR range.', 'lw-firewall' ),
@@ -176,31 +177,5 @@ final class FirewallService {
 	 */
 	private static function stored_blacklist(): array {
 		return array_values( (array) ( Options::get_stored()['ip_blacklist'] ?? [] ) );
-	}
-
-	/**
-	 * Validate that a string is a valid IP address or CIDR range.
-	 *
-	 * @param string $value IP or CIDR to validate.
-	 * @return bool
-	 */
-	private static function is_valid_ip_or_cidr( string $value ): bool {
-		if ( str_contains( $value, '/' ) ) {
-			[ $ip, $prefix ] = explode( '/', $value, 2 );
-
-			if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-				return false;
-			}
-
-			$prefix = (int) $prefix;
-
-			if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
-				return $prefix >= 0 && $prefix <= 32;
-			}
-
-			return $prefix >= 0 && $prefix <= 128;
-		}
-
-		return (bool) filter_var( $value, FILTER_VALIDATE_IP );
 	}
 }

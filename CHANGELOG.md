@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.3] - 2026-10-11
+
+### Fixed
+- The block-ip ability rejects a malformed CIDR range instead of saving a rule that never matches.
+
 ## [1.8.2] - 2026-10-05
 
 ### Fixed
