@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-09-27T19:17:16+00:00\n"
+"POT-Creation-Date: 2026-10-21T12:13:17+00:00\n"
 "PO-Revision-Date: 2026-09-25 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
@@ -1023,6 +1023,30 @@ msgstr "ütemezett adatbázis-ellenőrzés"
 msgid "password reset rate limit"
 msgstr "jelszó-visszaállítási rate limit"
 
+#: includes/Integrations/CookieDeclaration.php:35
+msgid ""
+"Shows the site that the visitor's browser runs JavaScript, so product "
+"filters work during a bot flood."
+msgstr ""
+"Jelzi az oldalnak, hogy a látogató böngészője futtat JavaScriptet, így a "
+"termékszűrők botáradat közben is működnek."
+
+#: includes/Integrations/CookieDeclaration.php:36
+msgid "30 days"
+msgstr "30 nap"
+
+#: includes/Integrations/CookieDeclaration.php:43
+msgid ""
+"Set for a moment while the bot check reloads the page, so the check never "
+"loops."
+msgstr ""
+"Rövid időre beáll, amíg a botellenőrzés újratölti az oldalt, így az "
+"ellenőrzés sosem pörög körbe."
+
+#: includes/Integrations/CookieDeclaration.php:44
+msgid "1 minute"
+msgstr "1 perc"
+
 #: includes/Rest/Admin/BansController.php:91
 msgid ""
 "This address is on the IP whitelist, which bypasses every check — a ban "
@@ -1089,11 +1113,11 @@ msgstr "A kérés túl nagy (legfeljebb 256 KB lehet)."
 msgid "Some settings are not valid. Nothing was saved."
 msgstr "Néhány beállítás érvénytelen. Semmi sem lett elmentve."
 
-#: includes/Rest/Admin/SettingsMeta.php:91
+#: includes/Rest/Admin/SettingsMeta.php:97
 msgid "Auto-detect"
 msgstr "Automatikus felismerés"
 
-#: includes/Rest/Admin/SettingsMeta.php:106
+#: includes/Rest/Admin/SettingsMeta.php:112
 msgid "File"
 msgstr "Fájl"
 
@@ -1135,7 +1159,7 @@ msgid "Continue without filters"
 msgstr "Tovább szűrők nélkül"
 
 #: includes/Rules/CommentFields.php:81 includes/Rules/PasswordResetGuard.php:84
-#: includes/Rules/RegisterGuard.php:54
+#: includes/Rules/RegisterGuard.php:83
 msgid "Leave this field empty"
 msgstr "Hagyd üresen ezt a mezőt"
 
@@ -1147,7 +1171,7 @@ msgstr ""
 "<strong>Hiba:</strong> A hozzászólásodat nem sikerült elküldeni. Töltsd újra "
 "az oldalt, és próbáld újra."
 
-#: includes/Rules/RegisterGuard.php:79
+#: includes/Rules/RegisterGuard.php:134
 msgid "Registration failed, please try again."
 msgstr "A regisztráció sikertelen, kérjük, próbáld újra."
 
@@ -1300,35 +1324,35 @@ msgstr "IP-cím vagy CIDR tartomány eltávolítása a feketelistáról."
 msgid "IP address or CIDR range to unblock."
 msgstr "Feloldandó IP-cím vagy CIDR tartomány."
 
-#: includes/SiteManager/FirewallService.php:84
-#: includes/SiteManager/FirewallService.php:137
+#: includes/SiteManager/FirewallService.php:85
+#: includes/SiteManager/FirewallService.php:138
 msgid "Provide an ip address or CIDR range."
 msgstr "Adj meg egy IP-címet vagy CIDR tartományt."
 
-#: includes/SiteManager/FirewallService.php:92
+#: includes/SiteManager/FirewallService.php:93
 msgid "The provided value is not a valid IP address or CIDR range."
 msgstr "A megadott érték nem érvényes IP-cím vagy CIDR tartomány."
 
 #. translators: %s: IP address
-#: includes/SiteManager/FirewallService.php:106
+#: includes/SiteManager/FirewallService.php:107
 #, php-format
 msgid "%s is already on the blacklist."
 msgstr "%s már a feketelistán van."
 
 #. translators: %s: IP address
-#: includes/SiteManager/FirewallService.php:119
+#: includes/SiteManager/FirewallService.php:120
 #, php-format
 msgid "%s has been added to the blacklist."
 msgstr "%s hozzáadva a feketelistához."
 
 #. translators: %s: IP address
-#: includes/SiteManager/FirewallService.php:150
+#: includes/SiteManager/FirewallService.php:151
 #, php-format
 msgid "%s was not found on the blacklist."
 msgstr "%s nem található a feketelistán."
 
 #. translators: %s: IP address
-#: includes/SiteManager/FirewallService.php:163
+#: includes/SiteManager/FirewallService.php:164
 #, php-format
 msgid "%s has been removed from the blacklist."
 msgstr "%s eltávolítva a feketelistáról."

@@ -18,6 +18,7 @@ use LightweightPlugins\Firewall\Alerts\AdminMonitor;
 use LightweightPlugins\Firewall\Geo\CidrUpdater;
 use LightweightPlugins\Firewall\Geo\GeoActivation;
 use LightweightPlugins\Firewall\Geo\HtaccessWriter;
+use LightweightPlugins\Firewall\Integrations\CookieDeclaration;
 use LightweightPlugins\Firewall\Rest\Admin\Routes as AdminRoutes;
 use LightweightPlugins\Firewall\Rules\CommentGuard;
 use LightweightPlugins\Firewall\Rules\FilterCookie;
@@ -141,6 +142,7 @@ final class Plugin {
 		// Visitor cookie for WooCommerce filter requests (checked by the worker).
 		if ( ! empty( $options['filter_require_cookie'] ) ) {
 			add_action( 'wp_head', [ $this, 'print_filter_cookie_script' ], 1 );
+			add_filter( 'lw_cookie_known_cookies', [ CookieDeclaration::class, 'register' ] );
 		}
 
 		// Security headers.
