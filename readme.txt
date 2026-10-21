@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Yes. It automatically detects the real visitor IP via the CF-Connecting-IP heade
 The per-username lockout locks an account after repeated failed logins from any IP, so anyone who knows a username can keep that account locked by retrying every lock period (15 minutes by default). Whitelisted IPs are never counted or refused: whitelist your own address under IP Rules. Lift an active lock from the Bans list or with `wp lw-firewall user-lock clear`. You can shorten the lock (Username Lock Duration) or turn the feature off.
 
 == Changelog ==
+
+= 1.8.4 =
+* New: LW Cookie lists the firewall's visitor cookies as strictly necessary and never blocks them (needs LW Cookie 1.9.7).
 
 = 1.8.3 =
 * Fix: The block-ip ability rejects a malformed CIDR range instead of saving a rule that never matches.

@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.4] - 2026-10-21
+
+### Added
+- LW Cookie lists the firewall's visitor cookies as strictly necessary and never blocks them (needs LW Cookie 1.9.7).
+
 ## [1.8.3] - 2026-10-11
 
 ### Fixed
