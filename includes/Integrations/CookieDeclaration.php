@@ -25,10 +25,14 @@ final class CookieDeclaration {
 	/**
 	 * Filter callback for `lw_cookie_known_cookies`.
 	 *
-	 * @param array<int, array<string, string>> $cookies Known cookies.
-	 * @return array<int, array<string, string>>
+	 * @param mixed $cookies Known cookies; an earlier callback may have returned something else.
+	 * @return array<int, mixed>
 	 */
-	public static function register( array $cookies ): array {
+	public static function register( $cookies ): array {
+		if ( ! is_array( $cookies ) ) {
+			$cookies = [];
+		}
+
 		$cookies[] = [
 			'name'     => FilterCookie::COOKIE,
 			'provider' => 'LW Firewall',

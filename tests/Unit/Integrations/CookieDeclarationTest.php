@@ -52,4 +52,26 @@ final class CookieDeclarationTest extends MonkeyTestCase {
 		$this->assertCount( 3, $result );
 		$this->assertSame( $existing, $result[0] );
 	}
+
+	/**
+	 * @dataProvider provide_non_array_values
+	 *
+	 * @param mixed $value What an earlier callback returned.
+	 */
+	public function test_a_non_array_filter_value_is_replaced_by_the_two_cookies( $value ): void {
+		$result = CookieDeclaration::register( $value );
+
+		$this->assertSame( [ FilterCookie::COOKIE, FilterCookie::MARKER ], array_column( $result, 'name' ) );
+	}
+
+	/**
+	 * @return array<string, array{mixed}>
+	 */
+	public static function provide_non_array_values(): array {
+		return [
+			'null'   => [ null ],
+			'string' => [ 'oops' ],
+			'false'  => [ false ],
+		];
+	}
 }

@@ -34,6 +34,8 @@ LW Firewall installs an MU-plugin worker that intercepts requests **before WordP
 * REST API (`/wp-json/`) — rate limiting
 * 404 flood — vulnerability scanner blocking
 
+WooCommerce filter protection sets a visitor cookie. With LW Cookie 1.9.7+ the visitor cookies are listed as strictly necessary and never blocked.
+
 **Features:**
 
 * Geo Blocking — block visitors by country (Cloudflare or CIDR fallback), enabled by default for CN, RU, IN, VN, ID, BD

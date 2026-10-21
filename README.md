@@ -40,6 +40,8 @@ That list is the worker's pre-WordPress path. Registration spam protection, pass
 | REST API (`/wp-json/`) | Rate limiting | 429 |
 | 404 flood | Vulnerability scanner blocking | 429 |
 
+WooCommerce filter protection sets a visitor cookie (`lwfw_v`, plus `lwfw_c` during the check). With LW Cookie 1.9.7+ both are listed as strictly necessary automatically and never blocked.
+
 ### Bot Blocking
 
 - Block requests by User-Agent substring matching (case-insensitive)
