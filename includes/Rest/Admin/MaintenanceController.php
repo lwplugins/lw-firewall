@@ -36,8 +36,8 @@ final class MaintenanceController {
 	 * @return void
 	 */
 	public function register_routes(): void {
-		Routes::add( '/admin/worker/reinstall', [ WP_REST_Server::CREATABLE => 'reinstall_worker' ], $this );
-		Routes::add( '/admin/geo/update', [ WP_REST_Server::CREATABLE => 'update_geo' ], $this );
+		Routes::add( '/admin/worker/reinstall', [ WP_REST_Server::CREATABLE => 'reinstall_worker' ], $this, [ WP_REST_Server::CREATABLE ] );
+		Routes::add( '/admin/geo/update', [ WP_REST_Server::CREATABLE => 'update_geo' ], $this, [ WP_REST_Server::CREATABLE ] );
 	}
 
 	/**

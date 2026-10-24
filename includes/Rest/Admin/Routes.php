@@ -19,6 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Registers the lw-firewall/v1/admin/* routes used by the React admin.
  *
  * Every route requires manage_options; REST cookie auth supplies the nonce.
+ * On multisite, the routes that write a resource every site shares (the ban
+ * store, the MU-plugin worker, the geo data files) require
+ * manage_network_options as well.
  */
 final class Routes {
 
@@ -61,21 +64,35 @@ final class Routes {
 	}
 
 	/**
+	 * Permission callback for routes that write a network-wide resource.
+	 *
+	 * @return bool
+	 */
+	public static function can_manage_network(): bool {
+		if ( ! self::can_manage() ) {
+			return false;
+		}
+
+		return ! is_multisite() || current_user_can( 'manage_network_options' );
+	}
+
+	/**
 	 * Register one route with a handler per HTTP method.
 	 *
 	 * @param string                $path     Route path under the namespace.
 	 * @param array<string, string> $handlers Method constant => public method name on $owner.
 	 * @param object                $owner    Controller instance.
+	 * @param array<int, string>    $network  Method constants that write a network-wide resource.
 	 * @return void
 	 */
-	public static function add( string $path, array $handlers, object $owner ): void {
+	public static function add( string $path, array $handlers, object $owner, array $network = [] ): void {
 		$endpoints = [];
 
 		foreach ( $handlers as $methods => $callback ) {
 			$endpoints[] = [
 				'methods'             => $methods,
 				'callback'            => [ $owner, $callback ],
-				'permission_callback' => [ self::class, 'can_manage' ],
+				'permission_callback' => [ self::class, in_array( $methods, $network, true ) ? 'can_manage_network' : 'can_manage' ],
 			];
 		}
 

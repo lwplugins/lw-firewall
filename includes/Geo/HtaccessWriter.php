@@ -64,6 +64,12 @@ final class HtaccessWriter {
 	 * @param array<int, string> $lines Rule lines.
 	 */
 	private static function write( array $lines ): void {
+		// On multisite every site shares one .htaccess; only the main site's
+		// settings may shape it.
+		if ( is_multisite() && ! is_main_site() ) {
+			return;
+		}
+
 		$path = self::get_htaccess_path();
 
 		if ( ! file_exists( $path ) ) {

@@ -53,9 +53,10 @@ final class BansController {
 				WP_REST_Server::READABLE  => 'list_bans',
 				WP_REST_Server::CREATABLE => 'add_ban',
 			],
-			$this
+			$this,
+			[ WP_REST_Server::CREATABLE ]
 		);
-		Routes::add( '/admin/bans/unban', [ WP_REST_Server::CREATABLE => 'unban' ], $this );
+		Routes::add( '/admin/bans/unban', [ WP_REST_Server::CREATABLE => 'unban' ], $this, [ WP_REST_Server::CREATABLE ] );
 	}
 
 	/**

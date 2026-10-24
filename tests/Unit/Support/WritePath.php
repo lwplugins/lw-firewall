@@ -13,8 +13,9 @@ use Brain\Monkey\Functions;
 
 /**
  * Installs the in-memory option store plus the handful of WordPress calls the
- * post-save side effects reach (translations, is_email, the geo cron). There
- * is no .htaccess next to the test ABSPATH, so the geo sync is a no-op.
+ * post-save side effects reach (translations, is_email, the geo cron, the
+ * .htaccess sync — insert_with_markers() is a no-op, the tests/.htaccess
+ * fixture is never written).
  */
 final class WritePath {
 
@@ -32,6 +33,8 @@ final class WritePath {
 		Functions\when( 'wp_next_scheduled' )->justReturn( false );
 		Functions\when( 'wp_schedule_event' )->justReturn( true );
 		Functions\when( 'wp_clear_scheduled_hook' )->justReturn( 0 );
+		Functions\when( 'is_multisite' )->justReturn( false );
+		Functions\when( 'insert_with_markers' )->justReturn( true );
 
 		// A seeded baseline keeps the alert side effect out of the way.
 		return OptionStore::install(

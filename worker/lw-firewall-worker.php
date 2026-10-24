@@ -16,7 +16,7 @@
  * wp-config.php to neutralize the worker completely.
  *
  * @package LightweightPlugins\Firewall
- * @version 1.8.4
+ * @version 1.8.5
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LW_FIREWALL_WORKER_VERSION', '1.8.4' );
+define( 'LW_FIREWALL_WORKER_VERSION', '1.8.5' );
 
 // The plugin's directory under WP_PLUGIN_DIR. Activator::install_worker()
 // writes the real name into the installed copy (see WorkerTemplate), so a
