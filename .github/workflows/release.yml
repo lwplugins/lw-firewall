@@ -117,7 +117,9 @@ jobs:
       - name: Scope bundled dependencies (Strauss)
         if: steps.check_release.outputs.exists == 'false'
         run: |
+          # Strauss version and checksum belong together: change both at once.
           curl -sSL -o strauss.phar https://github.com/BrianHenryIE/strauss/releases/download/0.27.3/strauss.phar
+          echo "9fcc3ab1d11106b9a68951a511e56d5a65466f7ce167f8783e27a2819e98eb1e  strauss.phar" | sha256sum -c -
           php strauss.phar
           composer dump-autoload --no-dev --optimize --no-interaction
           test -f vendor-prefixed/lbuchs/webauthn/src/WebAuthn.php || { echo "Strauss scoping failed: vendor-prefixed/lbuchs missing"; exit 1; }

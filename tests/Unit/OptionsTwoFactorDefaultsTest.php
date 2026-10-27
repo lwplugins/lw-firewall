@@ -100,4 +100,12 @@ final class OptionsTwoFactorDefaultsTest extends MonkeyTestCase {
 		$this->assertSame( [ 'twofa_grace_days' ], array_keys( $report->errors() ) );
 		$this->assertSame( 90, OptionSchema::apply( 'twofa_grace_days', 500 ) );
 	}
+
+	public function test_role_list_keeps_what_sanitize_key_keeps_and_is_capped(): void {
+		$ok = OptionInput::parse_value( 'twofa_required_roles', 'shop-manager, custom_role_2' );
+		$this->assertSame( [ 'shop-manager', 'custom_role_2' ], $ok->value() );
+
+		$many = OptionInput::parse_value( 'twofa_required_roles', array_map( static fn ( int $i ): string => 'role' . $i, range( 1, OptionInput::MAX_LIST_ENTRIES + 1 ) ) );
+		$this->assertFalse( $many->is_valid() );
+	}
 }
