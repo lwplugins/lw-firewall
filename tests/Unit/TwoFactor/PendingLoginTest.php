@@ -9,10 +9,14 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Tests\Unit\TwoFactor;
 
+use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
-use LightweightPlugins\Firewall\Tests\Unit\Support\ArrayStorage;
+use LightweightPlugins\Firewall\Tests\Unit\Support\FakeWpdb;
+use LightweightPlugins\Firewall\TwoFactor\AttemptCounter;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\PasskeyStubTrait;
 use LightweightPlugins\Firewall\TwoFactor\PendingLogin;
+
+require_once dirname( __DIR__ ) . '/Support/FakeWpdb.php';
 
 /**
  * @covers \LightweightPlugins\Firewall\TwoFactor\PendingLogin
@@ -23,12 +27,16 @@ final class PendingLoginTest extends MonkeyTestCase {
 
 	private int $now = 1000000;
 
-	private ArrayStorage $storage;
+	private AttemptCounter $storage;
+
+	private FakeWpdb $db;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->stub_passkey_wp();
-		$this->storage = new ArrayStorage();
+		$this->db      = new FakeWpdb();
+		$this->storage = new AttemptCounter( fn (): int => $this->now, $this->db );
+		Functions\when( 'wp_cache_delete' )->justReturn( true );
 	}
 
 	private function store( string $ip = '203.0.113.7' ): PendingLogin {
@@ -150,5 +158,34 @@ final class PendingLoginTest extends MonkeyTestCase {
 		$this->assertTrue( $store->attach_passkey( $token, str_repeat( 'b', 32 ) ) );
 		$this->assertSame( str_repeat( 'b', 32 ), $store->get( $token )['passkey_key'] ?? null );
 		$this->assertFalse( $store->attach_passkey( str_repeat( 'c', 32 ), 'x' ) );
+	}
+
+	public function test_a_database_failure_refuses_every_attempt(): void {
+		$store = $this->store();
+		$token = $store->create( 7, false, '' );
+
+		$this->db->fail = true;
+
+		$this->assertFalse( $store->begin_attempt( $token ) );
+		$this->assertNull( $store->get( $token ), 'Fail closed: the token is gone.' );
+	}
+
+	public function test_the_counter_row_lives_and_dies_with_the_token(): void {
+		$store = $this->store();
+		$token = $store->create( 7, false, '' );
+		$key   = PendingLogin::ATTEMPT_PREFIX . substr( hash( 'sha256', $token ), 0, 16 );
+
+		$this->assertSame( array( $key ), array_column( $this->db->rows(), 'meta_key' ) );
+		$store->begin_attempt( $token );
+		$store->consume( $token );
+		$this->assertSame( array(), $this->db->rows() );
+	}
+
+	public function test_expired_counters_of_the_account_are_purged_on_create(): void {
+		$this->store()->create( 7, false, '' );
+		$this->now += PendingLogin::TTL + 1;
+		$this->store()->create( 7, false, '' );
+
+		$this->assertCount( 1, $this->db->rows() );
 	}
 }

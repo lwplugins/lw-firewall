@@ -11,7 +11,8 @@ namespace LightweightPlugins\Firewall\Tests\Unit\TwoFactor;
 
 use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
-use LightweightPlugins\Firewall\Tests\Unit\Support\ArrayStorage;
+use LightweightPlugins\Firewall\Tests\Unit\Support\FakeWpdb;
+use LightweightPlugins\Firewall\TwoFactor\AttemptCounter;
 use LightweightPlugins\Firewall\Tests\Unit\Support\OptionStore;
 use LightweightPlugins\Firewall\TwoFactor\FailureThrottle;
 use LightweightPlugins\Firewall\TwoFactor\PasskeyRecord;
@@ -22,6 +23,8 @@ use LightweightPlugins\Firewall\TwoFactor\UserFactors;
 
 require_once dirname( __DIR__ ) . '/Support/WpError.php';
 require_once dirname( __DIR__ ) . '/Support/WpUser.php';
+
+require_once dirname( __DIR__ ) . '/Support/FakeWpdb.php';
 
 /**
  * @covers \LightweightPlugins\Firewall\TwoFactor\PasswordAuthGuard
@@ -49,6 +52,7 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 		Functions\when( 'sanitize_text_field' )->alias( static fn ( $v ) => trim( (string) $v ) );
 		Functions\when( 'sanitize_url' )->alias( static fn ( $v ) => (string) $v );
 		Functions\when( 'wp_unslash' )->alias( static fn ( $v ) => $v );
+		Functions\when( 'sanitize_user' )->alias( static fn ( $u ) => trim( strip_tags( (string) $u ) ) );
 		Functions\when( 'is_email' )->alias( static fn ( $s ) => str_contains( (string) $s, '@' ) );
 		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false ) ) );
 		$this->alice = new \WP_User( 5, 'alice' );
@@ -58,7 +62,8 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 		);
 		( new UserFactors( 5 ) )->add_passkey( new PasskeyRecord( hash( 'sha256', 'cred' ), 'cred', 'PEM', 0, 'Key', 1, 0 ) );
 		$this->signon   = new SignonTracker( static fn (): int => 0 );
-		$this->throttle = new FailureThrottle( new ArrayStorage() );
+		Functions\when( 'wp_cache_delete' )->justReturn( true );
+		$this->throttle = new FailureThrottle( new AttemptCounter( static fn (): int => 1700000000, new FakeWpdb() ) );
 	}
 
 	/**
@@ -204,5 +209,82 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 		Functions\when( 'wp_doing_cron' )->justReturn( true );
 
 		$this->assertFalse( ( new RequestContext() )->is_interactive() );
+	}
+
+	// ---- fix round 2 --------------------------------------------------------
+
+	public function test_the_password_result_must_match_the_tracked_username(): void {
+		$this->signon->start( 'bob', 'pw' );
+
+		$this->assert_refused( $this->guard()->filter( $this->alice, 'alice', 'pw' ) );
+		$this->assertSame( $this->bob, $this->guard()->filter( $this->bob, 'bob', 'pw' ) );
+	}
+
+	public function test_an_empty_credential_signon_is_not_a_password_signon(): void {
+		$this->signon->start( '', '' );
+
+		$this->assertFalse( $this->signon->accepts_password_for( '' ) );
+		$this->assert_refused( $this->guard()->filter( $this->alice, '', '' ) );
+	}
+
+	public function test_core_cookie_re_auth_of_the_same_user_passes(): void {
+		$tracker = new SignonTracker( static fn (): int => 5 );
+		$tracker->start( '', '' );
+		$guard = new PasswordAuthGuard( new RequestContext( array() ), $tracker, $this->throttle );
+
+		$this->assertSame( $this->alice, $guard->filter( $this->alice, '', '' ) );
+	}
+
+	public function test_the_window_closes_on_an_authenticate_error(): void {
+		foreach ( array( 'empty_username', 'empty_password', 'incorrect_password' ) as $code ) {
+			$this->signon->start( 'alice', 'pw' );
+			$error = new \WP_Error( $code );
+
+			$this->assertSame( $error, $this->signon->close_on_error( $error ) );
+			$this->assertFalse( $this->signon->in_progress(), $code );
+			$this->assert_refused( $this->guard()->filter( $this->alice, 'alice', 'pw' ) );
+		}
+
+		$this->signon->start( 'alice', 'pw' );
+		$this->signon->close_on_error( null );
+		$this->assertFalse( $this->signon->in_progress(), 'A null result closes too.' );
+
+		$this->signon->start( 'alice', 'pw' );
+		$this->assertSame( $this->alice, $this->signon->close_on_error( $this->alice ) );
+		$this->assertTrue( $this->signon->in_progress(), 'Success stays open until wp_login.' );
+	}
+
+	public function test_tracker_closes_at_the_end_of_authenticate(): void {
+		$this->signon->register();
+
+		$this->assertSame( PHP_INT_MAX, has_filter( 'authenticate', array( $this->signon, 'close_on_error' ) ) );
+		$this->assertSame( PHP_INT_MAX, has_action( 'wp_login', array( $this->signon, 'finish' ) ) );
+		$this->assertSame( PHP_INT_MAX, has_action( 'wp_login_failed', array( $this->signon, 'finish' ) ) );
+	}
+
+	public function test_a_throttled_account_keeps_its_xmlrpc_application_password(): void {
+		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->record_failure( 5 );
+		}
+		$guard = $this->guard( array( 'xmlrpc' => true ) );
+
+		$this->assert_refused( $guard->filter( $this->alice, 'alice', 'pw' ), PasswordAuthGuard::THROTTLED_CODE );
+
+		$guard->note_app_password( $this->alice );
+		$this->assertSame( $this->alice, $guard->filter( $this->alice, 'alice', 'xxxx xxxx' ) );
+	}
+
+	public function test_a_throttled_account_keeps_its_rest_application_password(): void {
+		// REST application passwords authenticate in determine_current_user, never
+		// through `authenticate`, and the availability filter ignores the throttle.
+		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->record_failure( 5 );
+		}
+		$guard = $this->guard( array( 'rest' => true ) );
+		$guard->register( false );
+
+		$this->assertFalse( has_filter( 'determine_current_user' ) );
+		$this->assertFalse( has_filter( 'wp_is_application_passwords_available_for_user' ) );
+		$this->assertTrue( $guard->filter_app_passwords( true, $this->bob ) );
 	}
 }

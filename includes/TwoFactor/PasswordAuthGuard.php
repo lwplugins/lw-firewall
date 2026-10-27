@@ -18,8 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Fail closed: for a user with a second factor, an `authenticate` result is
- * let through only when it happens inside an interactive core wp_signon()
- * (SignonTracker), where LoginInterceptor then asks for the second factor.
+ * let through only when it belongs to an interactive core wp_signon() for the
+ * same username (SignonTracker), where LoginInterceptor then asks for the
+ * second factor, or is core's cookie re-auth of the already signed-in user.
  * Everything else that reaches `authenticate` with the account password is
  * refused: XML-RPC, REST password-auth plugins, AJAX login handlers, cron, or
  * any custom wp_authenticate() call, whether or not REST_REQUEST /
@@ -28,9 +29,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Exempt: an application password (core fires
  * `application_password_did_authenticate` from wp_authenticate_application_password,
  * and REST application passwords never reach `authenticate` at all), and
- * WP-CLI. While FailureThrottle blocks an account, every `authenticate` for it
- * is refused with the same message, right password or not, so the block does
- * not reveal whether a password was right.
+ * WP-CLI. While FailureThrottle blocks an account, every password
+ * `authenticate` for it is refused with the same message, right password or
+ * not, so the block does not reveal whether a password was right; application
+ * passwords keep working (REST and XML-RPC alike).
  */
 final class PasswordAuthGuard {
 
@@ -97,16 +99,18 @@ final class PasswordAuthGuard {
 			return $user;
 		}
 
+		// Application passwords are separate secrets: never throttled or refused here.
+		if ( $user instanceof WP_User && isset( $this->app_password_users[ (int) $user->ID ] ) ) {
+			return $user;
+		}
+
 		$target = self::target( $user, $username );
 		if ( null !== $target && $this->throttle()->is_blocked( (int) $target->ID ) && self::has_factors( $target ) ) {
 			FailureLog::record( FailureLog::TWOFA_FAILED );
 			return new WP_Error( self::THROTTLED_CODE, ChallengePage::throttled_message() );
 		}
 
-		if ( ! $user instanceof WP_User || isset( $this->app_password_users[ (int) $user->ID ] ) ) {
-			return $user;
-		}
-		if ( ( null !== $this->signon && $this->signon->in_progress() && $context->is_interactive() ) || ! self::has_factors( $user ) ) {
+		if ( ! $user instanceof WP_User || ! self::has_factors( $user ) || $this->signed_on( $user, $username, $context ) ) {
 			return $user;
 		}
 
@@ -114,6 +118,23 @@ final class PasswordAuthGuard {
 			self::ERROR_CODE,
 			__( 'This account uses two-factor authentication, so its password alone cannot sign in here. Sign in on the login page, or use an application password where they are allowed.', 'lw-firewall' )
 		);
+	}
+
+	/**
+	 * Whether the result belongs to the running interactive wp_signon(): a
+	 * password sign-on for this very username, or core's cookie re-auth of
+	 * the user the browser is already signed in as.
+	 *
+	 * @param WP_User        $user     Result.
+	 * @param mixed          $username Username passed to `authenticate`.
+	 * @param RequestContext $context  Request kind.
+	 */
+	private function signed_on( WP_User $user, $username, RequestContext $context ): bool {
+		if ( null === $this->signon || ! $context->is_interactive() ) {
+			return false;
+		}
+
+		return $this->signon->accepts_password_for( $username ) || ( (int) $user->ID > 0 && $this->signon->cookie_user() === (int) $user->ID );
 	}
 
 	/**

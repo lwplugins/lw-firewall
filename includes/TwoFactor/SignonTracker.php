@@ -9,14 +9,19 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\TwoFactor;
 
+use WP_User;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Only wp_signon() fires `wp_authenticate`, and it ends in `wp_login` or
- * `wp_login_failed`. Between the two the tracker knows that a login is in
- * progress, which "remember me" and secure-cookie values it uses (from
+ * Only wp_signon() fires `wp_authenticate`. The window closes on `wp_login`,
+ * on `wp_login_failed`, and at `authenticate` (last priority) whenever the
+ * result is not a user, so it also closes on empty_username/empty_password,
+ * which core does not report as failed logins. While open, the tracker knows
+ * which username the sign-on is for (only a sign-on with both a login and a
+ * password counts as a password sign-on), which "remember me" and secure-cookie values it uses (from
  * `secure_signon_cookie`, which receives the credentials), and, for a sign-on
  * with empty credentials (core's cookie re-auth on every wp-login.php load),
  * which user the browser's logged-in cookie already belongs to.
@@ -29,6 +34,13 @@ final class SignonTracker {
 	 * @var bool
 	 */
 	private bool $active = false;
+
+	/**
+	 * Sanitized login of a password sign-on ('' = none, e.g. empty credentials).
+	 *
+	 * @var string
+	 */
+	private string $login = '';
 
 	/**
 	 * User of a valid logged-in cookie at an empty-credentials sign-on (0 = none).
@@ -63,6 +75,7 @@ final class SignonTracker {
 	 */
 	public function register(): void {
 		add_action( 'wp_authenticate', array( $this, 'start' ), 0, 2 );
+		add_filter( 'authenticate', array( $this, 'close_on_error' ), PHP_INT_MAX, 1 );
 		add_filter( 'secure_signon_cookie', array( $this, 'capture' ), PHP_INT_MAX, 2 );
 		add_action( 'wp_login', array( $this, 'finish' ), PHP_INT_MAX, 0 );
 		add_action( 'wp_login_failed', array( $this, 'finish' ), PHP_INT_MAX, 0 );
@@ -75,10 +88,38 @@ final class SignonTracker {
 	 * @param mixed $password   Submitted password.
 	 */
 	public function start( $user_login = '', $password = '' ): void {
+		$login    = is_string( $user_login ) ? sanitize_user( $user_login ) : '';
+		$has_pass = is_string( $password ) && '' !== trim( $password );
+
 		$this->active      = true;
 		$this->remember    = null;
 		$this->secure      = null;
+		$this->login       = '' !== $login && $has_pass ? $login : '';
 		$this->cookie_user = empty( $user_login ) && empty( $password ) ? $this->read_cookie_user() : 0;
+	}
+
+	/**
+	 * `authenticate` (last): close the window when the sign-on failed.
+	 *
+	 * @param mixed $user Result so far.
+	 * @return mixed
+	 */
+	public function close_on_error( $user ) {
+		if ( ! $user instanceof WP_User ) {
+			$this->finish();
+		}
+
+		return $user;
+	}
+
+	/**
+	 * Whether an `authenticate` result for this username belongs to the
+	 * running password sign-on.
+	 *
+	 * @param mixed $username Username passed to `authenticate` (core sanitizes it the same way).
+	 */
+	public function accepts_password_for( $username ): bool {
+		return $this->active && '' !== $this->login && is_string( $username ) && hash_equals( $this->login, $username );
 	}
 
 	/**
@@ -102,6 +143,7 @@ final class SignonTracker {
 	 */
 	public function finish(): void {
 		$this->active      = false;
+		$this->login       = '';
 		$this->cookie_user = 0;
 		$this->remember    = null;
 		$this->secure      = null;

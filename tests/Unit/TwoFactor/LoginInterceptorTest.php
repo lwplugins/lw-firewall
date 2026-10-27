@@ -12,7 +12,8 @@ namespace LightweightPlugins\Firewall\Tests\Unit\TwoFactor;
 use Brain\Monkey\Actions;
 use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
-use LightweightPlugins\Firewall\Tests\Unit\Support\ArrayStorage;
+use LightweightPlugins\Firewall\Tests\Unit\Support\FakeWpdb;
+use LightweightPlugins\Firewall\TwoFactor\AttemptCounter;
 use LightweightPlugins\Firewall\Tests\Unit\Support\OptionStore;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\FakeWebAuthn;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\PasskeyStubTrait;
@@ -33,6 +34,8 @@ use LightweightPlugins\Firewall\TwoFactor\UserFactors;
 require_once dirname( __DIR__ ) . '/Support/WpError.php';
 require_once dirname( __DIR__ ) . '/Support/WpUser.php';
 require_once dirname( __DIR__ ) . '/Support/WpSessionTokens.php';
+
+require_once dirname( __DIR__ ) . '/Support/FakeWpdb.php';
 
 /**
  * @covers \LightweightPlugins\Firewall\TwoFactor\LoginInterceptor
@@ -88,7 +91,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 
 	private FakeWebAuthn $lib;
 
-	private ArrayStorage $storage;
+	private AttemptCounter $storage;
 
 	private SignonTracker $signon;
 
@@ -107,7 +110,8 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false ) ) );
 
 		$this->lib      = new FakeWebAuthn();
-		$this->storage  = new ArrayStorage();
+		$this->storage  = new AttemptCounter( fn (): int => $this->now, new FakeWpdb() );
+		Functions\when( 'wp_cache_delete' )->justReturn( true );
 		$this->signon   = new SignonTracker( fn (): int => $this->cookie_user );
 		$this->throttle = new FailureThrottle( $this->storage );
 		$this->users = array(
@@ -164,6 +168,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 				++$this->cleared;
 			}
 		);
+		Functions\when( 'sanitize_user' )->alias( static fn ( $u ) => trim( strip_tags( (string) $u ) ) );
 		Functions\when( 'is_ssl' )->justReturn( false );
 		Functions\when( 'wp_set_auth_cookie' )->alias(
 			function ( $id, $remember = false, $secure = '' ) {
