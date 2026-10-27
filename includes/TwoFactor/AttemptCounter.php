@@ -115,12 +115,32 @@ final class AttemptCounter {
 	/**
 	 * Start a fresh window that already holds $count (e.g. a block begins now).
 	 *
+	 * One UPDATE on the existing rows: the counter never disappears, so a
+	 * failure leaves the previous (already high) count in place.
+	 *
 	 * @param int    $user_id Account.
 	 * @param string $key     Meta key.
 	 * @param int    $count   Count to hold.
+	 * @return bool False on a database error (the old value then stays).
 	 */
 	public function hold( int $user_id, string $key, int $count ): bool {
-		return $this->delete( $user_id, $key ) && $this->insert( $user_id, $key, $this->now() * self::SCALE + min( self::CAP, max( 0, $count ) ) );
+		if ( ! $this->ensure_row( $user_id, $key ) ) {
+			return false;
+		}
+
+		$db = $this->db();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Atomic counter; must bypass the meta cache.
+		$updated = $db->query(
+			$db->prepare(
+				"UPDATE {$db->usermeta} SET meta_value = %s WHERE user_id = %d AND meta_key = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Core table name from $wpdb.
+				(string) ( $this->now() * self::SCALE + min( self::CAP, max( 0, $count ) ) ),
+				$user_id,
+				$key
+			)
+		);
+		$this->flush( $user_id );
+
+		return false !== $updated && 0 !== $updated;
 	}
 
 	/**

@@ -638,6 +638,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$interceptor = $this->interceptor();
 		$token       = $this->login( 5, $interceptor );
 		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->claim( 5 );
 			$this->throttle->record_failure( 5 );
 		}
 
@@ -711,5 +712,47 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$this->assertNotFalse( has_action( 'set_logged_in_cookie', array( $interceptor, 'capture_cookie' ) ) );
 		$this->assertNotFalse( has_action( 'set_auth_cookie', array( $interceptor, 'capture_cookie' ) ) );
 		$this->assertSame( 1, has_action( 'wp_login', array( $interceptor, 'on_wp_login' ) ) );
+	}
+
+	// ---- fix round 3 --------------------------------------------------------
+
+	public function test_parallel_answers_over_many_tokens_share_the_account_budget(): void {
+		$tokens = array();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$tokens[] = $this->login( 5, $this->interceptor() );
+		}
+
+		// Ten answers already in flight (claimed, not yet failed) over these tokens.
+		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->assertTrue( $this->throttle->claim( 5 ) );
+		}
+
+		$html = $this->submit( $this->interceptor(), $tokens[2], array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+
+		$this->assertSame( array(), $this->cookies, 'The eleventh answer is not checked, even a right one.' );
+		$this->assertSame( 0, ( new UserFactors( 5 ) )->totp_last_step(), 'The code was never verified.' );
+		$this->assertStringNotContainsString( 'lwfw-2fa-form', $html );
+		$this->assertTrue( $this->throttle->is_blocked( 5 ) );
+	}
+
+	public function test_a_right_answer_resets_the_account_budget(): void {
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'recovery', 'lwfw_code' => 'nope-nope' ) );
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+
+		$this->assertCount( 1, $this->cookies );
+		$this->assertSame( 0, $this->storage->count( 5, FailureThrottle::META_KEY, FailureThrottle::WINDOW ) );
+	}
+
+	public function test_the_tracker_reads_the_final_username(): void {
+		$this->signon->register();
+
+		$this->assertSame( PHP_INT_MAX, has_action( 'wp_authenticate', array( $this->signon, 'start' ) ) );
+
+		// A plugin at a normal priority rewrote "alice@example.com" to "alice" before us.
+		$this->signon->start( 'alice', 'pw' );
+		$this->assertTrue( $this->signon->accepts_password_for( 'alice' ) );
+		$this->assertFalse( $this->signon->accepts_password_for( 'alice@example.com' ) );
 	}
 }

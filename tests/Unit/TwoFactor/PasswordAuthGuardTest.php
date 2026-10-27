@@ -136,6 +136,7 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 
 	public function test_a_throttled_account_is_refused_right_password_or_not(): void {
 		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->claim( 5 );
 			$this->throttle->record_failure( 5 );
 		}
 		$this->signon->start( 'alice', 'pw' );
@@ -147,10 +148,10 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 
 	public function test_throttle_blocks_after_ten_failures(): void {
 		for ( $i = 1; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
-			$this->assertFalse( $this->throttle->record_failure( 5 ) );
+			$this->assertFalse( ( $this->throttle->claim( 5 ) && $this->throttle->record_failure( 5 ) ) );
 		}
 		$this->assertFalse( $this->throttle->is_blocked( 5 ) );
-		$this->assertTrue( $this->throttle->record_failure( 5 ) );
+		$this->assertTrue( ( $this->throttle->claim( 5 ) && $this->throttle->record_failure( 5 ) ) );
 		$this->assertTrue( $this->throttle->is_blocked( 5 ) );
 		$this->assertFalse( $this->throttle->is_blocked( 6 ) );
 	}
@@ -264,6 +265,7 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 
 	public function test_a_throttled_account_keeps_its_xmlrpc_application_password(): void {
 		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->claim( 5 );
 			$this->throttle->record_failure( 5 );
 		}
 		$guard = $this->guard( array( 'xmlrpc' => true ) );
@@ -278,6 +280,7 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 		// REST application passwords authenticate in determine_current_user, never
 		// through `authenticate`, and the availability filter ignores the throttle.
 		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->claim( 5 );
 			$this->throttle->record_failure( 5 );
 		}
 		$guard = $this->guard( array( 'rest' => true ) );

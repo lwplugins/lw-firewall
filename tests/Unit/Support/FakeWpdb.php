@@ -28,6 +28,11 @@ namespace LightweightPlugins\Firewall\Tests\Unit\Support {
 
 		public bool $fail = false;
 
+		/**
+		 * Regex: only statements matching it fail ('' = none).
+		 */
+		public string $fail_matching = '';
+
 		public \PDO $pdo;
 
 		public function __construct() {
@@ -60,7 +65,7 @@ namespace LightweightPlugins\Firewall\Tests\Unit\Support {
 		 * @return int|false
 		 */
 		public function query( string $sql ) {
-			if ( $this->fail ) {
+			if ( $this->fail || ( '' !== $this->fail_matching && 1 === preg_match( $this->fail_matching, $sql ) ) ) {
 				$this->last_error = 'gone away';
 				return false;
 			}

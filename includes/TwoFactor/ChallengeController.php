@@ -88,9 +88,15 @@ final class ChallengeController {
 			return;
 		}
 
-		// Claimed atomically before the check: parallel requests share the five answers.
+		// Claimed atomically before the check: parallel requests share the five
+		// answers of the token and the ten answers of the account.
 		if ( ! $this->pending->begin_attempt( $token ) ) {
 			$this->stop_expired( true );
+			return;
+		}
+		if ( ! $this->throttle->claim( (int) $user->ID ) ) {
+			$this->page->render_throttled();
+			( $this->halt )();
 			return;
 		}
 
@@ -189,6 +195,7 @@ final class ChallengeController {
 			return;
 		}
 
+		$this->throttle->succeeded( (int) $user->ID );
 		$this->completing = true;
 		wp_set_auth_cookie( (int) $user->ID, $record['remember'], $record['secure'] );
 		wp_set_current_user( (int) $user->ID );

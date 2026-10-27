@@ -74,7 +74,8 @@ final class SignonTracker {
 	 * Register the hooks.
 	 */
 	public function register(): void {
-		add_action( 'wp_authenticate', array( $this, 'start' ), 0, 2 );
+		// Last: plugins may rewrite the login by reference (e.g. email to username) first.
+		add_action( 'wp_authenticate', array( $this, 'start' ), PHP_INT_MAX, 2 );
 		add_filter( 'authenticate', array( $this, 'close_on_error' ), PHP_INT_MAX, 1 );
 		add_filter( 'secure_signon_cookie', array( $this, 'capture' ), PHP_INT_MAX, 2 );
 		add_action( 'wp_login', array( $this, 'finish' ), PHP_INT_MAX, 0 );
