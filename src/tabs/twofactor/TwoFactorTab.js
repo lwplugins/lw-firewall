@@ -29,6 +29,7 @@ export default function TwoFactorTab( { store } ) {
 	const summary = useRemote( load );
 	const field = fieldOf( store, 'twofa_enabled' );
 	const on = !! store.data.options.twofa_enabled;
+	const scope = store.data.meta.networkScope;
 
 	const actions = (
 		<div className="lw-admin-inline lw-fw-headers__switch">
@@ -39,7 +40,7 @@ export default function TwoFactorTab( { store } ) {
 				__nextHasNoMarginBottom
 				label={ __( 'Two-factor login', 'lw-firewall' ) }
 				checked={ on }
-				disabled={ !! field.locked }
+				disabled={ field.disabled }
 				onChange={ ( value ) => store.set( 'twofa_enabled', value ) }
 			/>
 		</div>
@@ -62,6 +63,19 @@ export default function TwoFactorTab( { store } ) {
 							__( 'Set in wp-config.php (%s).', 'lw-firewall' ),
 							field.locked
 						) }
+					</p>
+				) }
+				{ scope && (
+					<p className="lw-fw-headers__locked">
+						{ 'subsite' === scope
+							? __(
+									'Set network-wide on the main site.',
+									'lw-firewall'
+								)
+							: __(
+									'These settings apply to the whole network: only a network administrator can change them.',
+									'lw-firewall'
+								) }
 					</p>
 				) }
 				<Callout>

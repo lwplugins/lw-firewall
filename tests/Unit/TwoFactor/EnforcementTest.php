@@ -51,6 +51,7 @@ final class EnforcementTest extends MonkeyTestCase {
 		Functions\when( 'wp_salt' )->justReturn( 'salt' );
 		Functions\when( 'wp_strip_all_tags' )->alias( static fn ( $s ) => strip_tags( (string) $s ) );
 		Functions\when( 'is_multisite' )->alias( fn () => $this->multisite );
+		Functions\when( 'is_main_site' )->justReturn( true );
 		Functions\when( 'is_super_admin' )->alias( fn ( $id = false ) => in_array( (int) $id, $this->supers, true ) );
 		Functions\when( 'admin_url' )->alias( static fn ( $path = '' ) => 'https://example.com/wp-admin/' . $path );
 		$this->options( array( 'editor' ), 7 );

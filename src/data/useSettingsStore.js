@@ -48,12 +48,15 @@ export default function useSettingsStore() {
 	}, [ reload ] );
 
 	const locked = server?.meta.locked || [];
+	// Network-wide keys on multisite (subsite, or not a network admin): read-only.
+	const network = server?.meta.networkLocked || [];
 	const patch = options
 		? Object.fromEntries(
 				Object.keys( options )
 					.filter(
 						( key ) =>
 							! locked.includes( key ) &&
+							! network.includes( key ) &&
 							! same( options[ key ], server.options[ key ] )
 					)
 					.map( ( key ) => [ key, options[ key ] ] )
@@ -108,6 +111,8 @@ export default function useSettingsStore() {
 		reload,
 		apply,
 		isLocked: ( key ) => locked.includes( key ),
+		isReadOnly: ( key ) =>
+			locked.includes( key ) || network.includes( key ),
 		isDirty: ( key ) => key in patch,
 		errors,
 		set,

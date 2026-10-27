@@ -315,6 +315,7 @@ final class PasskeyLoginControllerTest extends MonkeyTestCase {
 
 	public function test_spam_account_on_multisite_is_403(): void {
 		Functions\when( 'is_multisite' )->justReturn( true );
+		Functions\when( 'is_main_site' )->justReturn( true );
 		Functions\when( 'is_user_spammy' )->justReturn( true );
 
 		$this->assert_refused( 403, $this->verify( array( 'key' => $this->key(), 'credential' => $this->assertion() ) ) );

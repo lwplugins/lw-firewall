@@ -60,7 +60,7 @@ final class SettingsTransfer {
 	 * @return array{imported: array<int, string>, invalid: array<string, array<int, string>>, locked: array<int, string>, unknown: array<int, string>}
 	 */
 	public static function import( array $data ): array {
-		$report = OptionInput::parse( $data, Options::overridden() );
+		$report = OptionInput::parse( $data, array_merge( Options::overridden(), NetworkKeys::locked() ) );
 
 		if ( [] !== $report->values() ) {
 			SettingsWriter::save( $report->values() );

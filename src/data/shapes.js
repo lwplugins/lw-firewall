@@ -82,6 +82,8 @@ export function toSettings( data ) {
 			cloudflare: !! server.cloudflare,
 			storageActive: server.storage_active || '',
 			docsUrl: meta.docs_url || '',
+			networkLocked: list( meta.network_locked ),
+			networkScope: meta.network_scope || '',
 		},
 	};
 }

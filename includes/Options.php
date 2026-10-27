@@ -207,7 +207,8 @@ final class Options {
 	 * @return array<string, mixed>
 	 */
 	public static function get_all(): array {
-		$merged = self::get_stored();
+		// On a multisite subsite the network-wide keys come from the main site.
+		$merged = Settings\NetworkKeys::overlay( self::get_stored() );
 
 		foreach ( self::overridden() as $key ) {
 			$merged[ $key ] = constant( self::CONST_PREFIX . strtoupper( $key ) );

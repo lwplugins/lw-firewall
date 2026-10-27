@@ -61,6 +61,10 @@ final class SettingsWriter {
 			];
 		}
 
+		if ( in_array( $key, NetworkKeys::locked(), true ) ) {
+			return [ NetworkKeys::message() ];
+		}
+
 		$result = OptionInput::parse_value( $key, $raw );
 
 		if ( ! $result->is_valid() ) {
@@ -91,6 +95,6 @@ final class SettingsWriter {
 	 * @return void
 	 */
 	public static function reset(): void {
-		self::save( PinnedValues::keep( Options::get_defaults(), Options::get_stored(), Options::overridden() ) );
+		self::save( PinnedValues::keep( Options::get_defaults(), Options::get_stored(), array_merge( Options::overridden(), NetworkKeys::locked() ) ) );
 	}
 }

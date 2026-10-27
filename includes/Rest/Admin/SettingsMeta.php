@@ -15,6 +15,7 @@ use LightweightPlugins\Firewall\IpDetector;
 use LightweightPlugins\Firewall\OptionSchema;
 use LightweightPlugins\Firewall\Options;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
+use LightweightPlugins\Firewall\Settings\NetworkKeys;
 use LightweightPlugins\Firewall\Settings\SettingsStore;
 use LightweightPlugins\Firewall\Storage\ApcuStorage;
 use LightweightPlugins\Firewall\Storage\RedisStorage;
@@ -65,7 +66,24 @@ final class SettingsMeta {
 			'roles'            => self::roles(),
 			'server'           => self::server(),
 			'docs_url'         => self::docs_url(),
+			'network_locked'   => NetworkKeys::locked(),
+			'network_scope'    => self::network_scope(),
 		];
+	}
+
+	/**
+	 * Why the network-wide keys are read-only here: 'subsite' (they come from
+	 * the main site), 'main' (main site, but not a network administrator) or
+	 * '' (editable).
+	 *
+	 * @return string
+	 */
+	private static function network_scope(): string {
+		if ( [] === NetworkKeys::locked() ) {
+			return '';
+		}
+
+		return NetworkKeys::follows_main_site() ? 'subsite' : 'main';
 	}
 
 	/**

@@ -51,7 +51,7 @@ export default function RolesRow( { store } ) {
 						__nextHasNoMarginBottom
 						label={ label }
 						checked={ selected.includes( value ) }
-						disabled={ !! field.locked }
+						disabled={ field.disabled }
 						onChange={ ( on ) => toggle( value, on ) }
 					/>
 				) ) }

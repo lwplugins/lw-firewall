@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Rest\Admin;
 
+use LightweightPlugins\Firewall\Settings\NetworkKeys;
 use LightweightPlugins\Firewall\Settings\SettingsStore;
 use WP_Error;
 use WP_REST_Request;
@@ -70,6 +71,11 @@ final class SettingsController {
 
 		if ( empty( $body ) ) {
 			$body = $request->get_body_params();
+		}
+
+		// On multisite the two-factor keys are network-wide (NetworkKeys).
+		if ( [] !== NetworkKeys::refused( (array) $body ) ) {
+			return Routes::error( 'lw_firewall_network_setting', NetworkKeys::message(), 403 );
 		}
 
 		$errors = SettingsStore::save( $body );

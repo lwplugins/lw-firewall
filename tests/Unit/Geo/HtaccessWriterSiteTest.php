@@ -73,6 +73,8 @@ final class HtaccessWriterSiteTest extends MonkeyTestCase {
 	public function test_multisite_sub_site_never_writes(): void {
 		Functions\when( 'is_multisite' )->justReturn( true );
 		Functions\when( 'is_main_site' )->justReturn( false );
+		Functions\when( 'get_main_site_id' )->justReturn( 1 );
+		Functions\when( 'get_blog_option' )->justReturn( [] );
 
 		HtaccessWriter::sync();
 		HtaccessWriter::remove();

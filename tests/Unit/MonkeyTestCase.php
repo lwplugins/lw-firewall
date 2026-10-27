@@ -26,6 +26,9 @@ abstract class MonkeyTestCase extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		Monkey\setUp();
+		// Single site unless a test says otherwise (Options reads it on every call).
+		Monkey\Functions\when( 'is_multisite' )->justReturn( false );
+		\LightweightPlugins\Firewall\Settings\NetworkKeys::flush();
 	}
 
 	/**

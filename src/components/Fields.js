@@ -21,9 +21,12 @@ import ToggleRow from './ToggleRow';
  *
  * @param {Object} store Settings store.
  * @param {string} name  Option key.
- * @return {Object} { locked: constant name or '', errors }.
+ * @return {Object} { locked: constant name or '', disabled, errors }.
  */
 export const fieldOf = ( store, name ) => ( {
+	disabled: store.isReadOnly
+		? store.isReadOnly( name )
+		: store.isLocked( name ),
 	locked: store.isLocked( name )
 		? store.data.meta.lockedConstants[ name ] ||
 			`LW_FIREWALL_${ name.toUpperCase() }`
@@ -38,7 +41,7 @@ export function SwitchRow( { title, help, store, name, onText, offText } ) {
 			title={ title }
 			help={ help }
 			checked={ !! store.data.options[ name ] }
-			disabled={ !! field.locked }
+			disabled={ field.disabled }
 			onChange={ ( value ) => store.set( name, value ) }
 			onText={ onText }
 			offText={ offText }
@@ -56,7 +59,7 @@ export function SelectRow( { title, help, store, name, options } ) {
 				__nextHasNoMarginBottom
 				label={ title }
 				hideLabelFromVision
-				disabled={ !! field.locked }
+				disabled={ field.disabled }
 				value={ String( store.data.options[ name ] ?? '' ) }
 				options={ options }
 				onChange={ ( value ) => store.set( name, value ) }
@@ -75,7 +78,7 @@ export function TextRow( { title, help, store, name, placeholder, type } ) {
 				label={ title }
 				hideLabelFromVision
 				type={ type || 'text' }
-				disabled={ !! field.locked }
+				disabled={ field.disabled }
 				placeholder={ placeholder }
 				value={ store.data.options[ name ] ?? '' }
 				onChange={ ( value ) => store.set( name, value ) }
@@ -112,7 +115,7 @@ export function NumberRow( { title, help, store, name, seconds = false } ) {
 					min={ min }
 					max={ max }
 					step={ 1 }
-					disabled={ !! field.locked }
+					disabled={ field.disabled }
 					value={ String( current ?? '' ) }
 					onChange={ ( value ) =>
 						store.set( name, value === '' ? '' : Number( value ) )
