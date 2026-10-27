@@ -46,6 +46,23 @@ final class PasskeyLoginButtonTest extends MonkeyTestCase {
 		$this->assertStringContainsString( 'https://example.com/wp-json/lw-firewall/v1/passkey/login/options', $html );
 		$this->assertStringContainsString( 'https://example.com/wp-json/lw-firewall/v1/passkey/login/verify', $html );
 		$this->assertDoesNotMatchRegularExpression( '/[\x{1F300}-\x{1FAFF}\x{2713}\x{2714}]/u', $html, 'No emoji or check glyphs.' );
+		$this->assertStringNotContainsString( 'style=', $html, 'Layout lives in the login stylesheet.' );
+	}
+
+	public function test_layout_is_added_to_the_login_stylesheet(): void {
+		$this->stub_passkey_wp();
+		Functions\expect( 'wp_add_inline_style' )->once()->with( 'login', PasskeyLoginButton::CSS );
+
+		( new PasskeyLoginButton() )->enqueue_style();
+		$this->addToAssertionCount( 1 ); // The Mockery expectation is the assertion.
+	}
+
+	public function test_no_layout_when_passkeys_are_unavailable(): void {
+		$this->stub_passkey_wp( '' );
+		Functions\expect( 'wp_add_inline_style' )->never();
+
+		( new PasskeyLoginButton() )->enqueue_style();
+		$this->addToAssertionCount( 1 ); // The Mockery expectation is the assertion.
 	}
 
 	public function test_nothing_when_passkeys_are_unavailable(): void {
@@ -58,5 +75,6 @@ final class PasskeyLoginButtonTest extends MonkeyTestCase {
 		( new PasskeyLoginButton() )->register();
 
 		$this->assertNotFalse( has_action( 'login_form' ) );
+		$this->assertNotFalse( has_action( 'login_enqueue_scripts' ) );
 	}
 }
