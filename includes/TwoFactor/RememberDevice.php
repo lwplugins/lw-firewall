@@ -16,9 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Cookie value: `user_id|expires|hmac`, hmac = HMAC-SHA256 of `user_id|expires`
+ * Cookie value: `user_id|issued|expires|hmac`, hmac = HMAC-SHA256 of `user_id|issued|expires`
  * keyed with wp_salt('auth') plus the user's remember salt. Resetting the
- * user's factors rotates that salt, which kills every remembered device.
+ * user's factors rotates that salt (as does a factor or password change, see
+ * RememberRevoker), which kills every remembered device. The issue time is
+ * signed so that lowering the admin's lifetime also shortens old cookies.
  */
 final class RememberDevice {
 
@@ -77,8 +79,9 @@ final class RememberDevice {
 			return;
 		}
 
-		$expires = ( $this->clock )() + $days * DAY_IN_SECONDS;
-		$value   = $user_id . '|' . $expires . '|' . $this->sign( $user_id, $expires );
+		$issued  = ( $this->clock )();
+		$expires = $issued + $days * DAY_IN_SECONDS;
+		$value   = $user_id . '|' . $issued . '|' . $expires . '|' . $this->sign( $user_id, $issued, $expires );
 		$options = array(
 			'expires'  => $expires,
 			'path'     => defined( 'COOKIEPATH' ) && '' !== COOKIEPATH ? COOKIEPATH : '/',
@@ -115,28 +118,30 @@ final class RememberDevice {
 		}
 
 		$parts = explode( '|', $raw );
-		if ( 3 !== count( $parts ) || ! ctype_digit( $parts[0] ) || ! ctype_digit( $parts[1] ) ) {
+		if ( 4 !== count( $parts ) || ! ctype_digit( $parts[0] ) || ! ctype_digit( $parts[1] ) || ! ctype_digit( $parts[2] ) ) {
 			return false;
 		}
 
-		$cookie_user = (int) $parts[0];
-		$expires     = (int) $parts[1];
-		if ( $cookie_user !== $user_id || $expires <= ( $this->clock )() ) {
+		$issued  = (int) $parts[1];
+		$expires = (int) $parts[2];
+		$now     = ( $this->clock )();
+		if ( (int) $parts[0] !== $user_id || $expires <= $now || $issued > $now || $issued + self::days() * DAY_IN_SECONDS <= $now ) {
 			return false;
 		}
 
-		return hash_equals( $this->sign( $user_id, $expires ), $parts[2] );
+		return hash_equals( $this->sign( $user_id, $issued, $expires ), $parts[3] );
 	}
 
 	/**
 	 * The signature of a cookie payload.
 	 *
 	 * @param int $user_id User ID.
+	 * @param int $issued  Issue timestamp.
 	 * @param int $expires Expiry timestamp.
 	 */
-	private function sign( int $user_id, int $expires ): string {
+	private function sign( int $user_id, int $issued, int $expires ): string {
 		$salt = ( new UserFactors( $user_id ) )->remember_salt();
 
-		return hash_hmac( 'sha256', $user_id . '|' . $expires, wp_salt( 'auth' ) . $salt );
+		return hash_hmac( 'sha256', $user_id . '|' . $issued . '|' . $expires, wp_salt( 'auth' ) . $salt );
 	}
 }

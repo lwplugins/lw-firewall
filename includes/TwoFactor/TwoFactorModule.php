@@ -60,6 +60,7 @@ final class TwoFactorModule {
 		( new EnrollmentNotice() )->register();
 		( new MailFailureNotice() )->register();
 		( new FactorNotifier() )->register();
+		( new RememberRevoker() )->register();
 
 		return true;
 	}

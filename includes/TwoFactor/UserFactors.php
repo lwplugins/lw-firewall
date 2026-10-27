@@ -283,6 +283,13 @@ final class UserFactors {
 	}
 
 	/**
+	 * Invalidate every remembered device of the account (rotates the remember salt).
+	 */
+	public function forget_devices(): void {
+		update_user_meta( $this->user_id, self::META_SALT, bin2hex( random_bytes( 16 ) ) );
+	}
+
+	/**
 	 * Delete every factor and rotate the remember salt (invalidates remembered devices).
 	 *
 	 * The 2FA grace-period start (META_SINCE) is kept on purpose: a reset (e.g. a lost
@@ -293,7 +300,7 @@ final class UserFactors {
 		foreach ( array( self::META_TOTP, self::META_RECOVERY, self::META_PASSKEYS, self::META_LOOKUP, self::META_HANDLE, self::META_SALT ) as $meta ) {
 			delete_user_meta( $this->user_id, $meta );
 		}
-		update_user_meta( $this->user_id, self::META_SALT, bin2hex( random_bytes( 16 ) ) );
+		$this->forget_devices();
 		if ( $had ) {
 			$this->changed( 'removed', 'all' );
 		}

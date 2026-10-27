@@ -595,7 +595,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$this->assertSame( 14 * 86400 + $this->now, $sink[0][2]['expires'] );
 		$_COOKIE[ $sink[0][0] ] = $sink[0][1];
 		$this->assertFalse( $interceptor->should_challenge( $this->users[5] ) );
-		$this->assertTrue( $interceptor->should_challenge( $this->users[6] ) === false, 'No factors, no challenge.' );
+		$this->assertFalse( $interceptor->should_challenge( $this->users[6] ), 'No factors, no challenge.' );
 		unset( $_COOKIE[ $sink[0][0] ] );
 		$this->assertTrue( $interceptor->should_challenge( $this->users[5] ) );
 	}
@@ -612,5 +612,47 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$token = $this->login( 5, $interceptor );
 		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
 		$this->assertSame( array(), $sink, 'Box not ticked: nothing is issued.' );
+	}
+
+	public function test_no_remember_cookie_after_a_wrong_code(): void {
+		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false, 'twofa_remember_days' => 14 ) ) );
+		$sink        = array();
+		$interceptor = $this->interceptor( array(), $this->remember_device( $sink ) );
+		$token       = $this->login( 5, $interceptor );
+
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => '000000', 'lwfw_remember_device' => '1' ) );
+
+		$this->assertSame( array(), $sink );
+		$this->assertSame( array(), $this->cookies );
+	}
+
+	public function test_no_remember_cookie_with_an_expired_token(): void {
+		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false, 'twofa_remember_days' => 14 ) ) );
+		$sink        = array();
+		$interceptor = $this->interceptor( array(), $this->remember_device( $sink ) );
+		$token       = $this->login( 5, $interceptor );
+		$code        = $this->code();
+		$this->now  += 3600;
+
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $code, 'lwfw_remember_device' => '1' ) );
+
+		$this->assertSame( array(), $sink );
+		$this->assertSame( array(), $this->cookies );
+	}
+
+	public function test_no_remember_cookie_for_a_throttled_account(): void {
+		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false, 'twofa_remember_days' => 14 ) ) );
+		$sink        = array();
+		$interceptor = $this->interceptor( array(), $this->remember_device( $sink ) );
+		$token       = $this->login( 5, $interceptor );
+		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->claim( 5 );
+			$this->throttle->record_failure( 5 );
+		}
+
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code(), 'lwfw_remember_device' => '1' ) );
+
+		$this->assertSame( array(), $sink );
+		$this->assertSame( array(), $this->cookies );
 	}
 }

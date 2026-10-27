@@ -14,6 +14,7 @@ if ( ! class_exists( 'WP_User' ) ) {
 		public string $user_login;
 		public string $display_name;
 		public string $user_email = '';
+		public string $user_pass  = '';
 		/** @var string[] */
 		public array $roles = array();
 
