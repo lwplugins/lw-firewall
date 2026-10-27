@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\Tests\Unit\TwoFactor;
 
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
+use LightweightPlugins\Firewall\Tests\Unit\Support\ArrayStorage;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\PasskeyStubTrait;
 use LightweightPlugins\Firewall\TwoFactor\PendingLogin;
 
@@ -22,13 +23,16 @@ final class PendingLoginTest extends MonkeyTestCase {
 
 	private int $now = 1000000;
 
+	private ArrayStorage $storage;
+
 	protected function setUp(): void {
 		parent::setUp();
 		$this->stub_passkey_wp();
+		$this->storage = new ArrayStorage();
 	}
 
 	private function store( string $ip = '203.0.113.7' ): PendingLogin {
-		return new PendingLogin( $ip, fn (): int => $this->now );
+		return new PendingLogin( $ip, fn (): int => $this->now, $this->storage );
 	}
 
 	public function test_create_stores_only_the_hash_of_the_token(): void {
@@ -44,7 +48,8 @@ final class PendingLoginTest extends MonkeyTestCase {
 		$this->assertTrue( $record['remember'] );
 		$this->assertSame( 'https://example.com/wp-admin/', $record['redirect_to'] );
 		$this->assertSame( '203.0.113.7', $record['ip_key'] );
-		$this->assertSame( 0, $record['attempts'] );
+		$this->assertFalse( $record['secure'] );
+		$this->assertSame( 0, $this->store()->attempts( $token ) );
 	}
 
 	public function test_another_ip_gets_nothing(): void {
@@ -81,18 +86,49 @@ final class PendingLoginTest extends MonkeyTestCase {
 		$this->assertSame( array(), $this->transients );
 	}
 
+	public function test_secure_flag_is_kept(): void {
+		$token = $this->store()->create( 7, false, '', true );
+
+		$this->assertTrue( $this->store()->get( $token )['secure'] ?? null );
+	}
+
 	public function test_five_failures_delete_the_token(): void {
 		$store = $this->store();
 		$token = $store->create( 7, false, '' );
 
+		$this->assertTrue( $store->begin_attempt( $token ) );
 		$this->assertSame( 4, $store->fail( $token ) );
+		$store->begin_attempt( $token );
 		$this->assertSame( 3, $store->fail( $token ) );
+		$store->begin_attempt( $token );
 		$this->assertSame( 2, $store->fail( $token ) );
+		$store->begin_attempt( $token );
 		$this->assertSame( 1, $store->fail( $token ) );
+		$store->begin_attempt( $token );
 		$this->assertSame( 0, $store->fail( $token ) );
 		$this->assertNull( $store->get( $token ) );
 		$this->assertSame( array(), $this->transients );
 		$this->assertSame( 0, $store->fail( $token ) );
+	}
+
+	public function test_attempts_are_counted_before_the_check(): void {
+		$store = $this->store();
+		$token = $store->create( 7, false, '' );
+
+		// Five parallel requests claimed their attempt before any of them failed.
+		for ( $i = 0; $i < 5; $i++ ) {
+			$this->assertTrue( $store->begin_attempt( $token ) );
+		}
+
+		$this->assertFalse( $store->begin_attempt( $token ), 'The sixth attempt is refused.' );
+		$this->assertNull( $store->get( $token ), 'And the token is gone.' );
+	}
+
+	public function test_attempts_of_a_foreign_ip_are_refused(): void {
+		$token = $this->store()->create( 7, false, '' );
+
+		$this->assertFalse( $this->store( '198.51.100.1' )->begin_attempt( $token ) );
+		$this->assertSame( 0, $this->store()->attempts( $token ) );
 	}
 
 	public function test_a_failure_does_not_extend_the_lifetime(): void {
@@ -100,7 +136,7 @@ final class PendingLoginTest extends MonkeyTestCase {
 		$token = $store->create( 7, false, '' );
 
 		$this->now += 200;
-		$store->fail( $token );
+		$store->attach_passkey( $token, str_repeat( 'b', 32 ) );
 		$this->assertSame( 100, $this->transients[ 'lwfw_2fa_' . hash( 'sha256', $token ) ][1] );
 
 		$this->now += 101;

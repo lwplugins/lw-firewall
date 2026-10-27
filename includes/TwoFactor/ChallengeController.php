@@ -9,8 +9,6 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\TwoFactor;
 
-use LightweightPlugins\Firewall\IpDetector;
-use LightweightPlugins\Firewall\Logger;
 use WP_Error;
 use WP_User;
 
@@ -22,8 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Answers wp-login.php?action=lw_firewall_2fa for a pending login (see
  * LoginInterceptor for the whole flow). A right answer consumes the pending
  * record before the session cookie is set; a wrong one is counted by the
- * record (five per token) and reported as `wp_login_failed`, so the per-IP
- * and per-username lockouts count it like a wrong password.
+ * record (five per token, claimed atomically before the check), by the
+ * module's own per-account FailureThrottle, and reported as `wp_login_failed`,
+ * so the firewall's per-IP and per-username lockouts (when on) count it too.
  */
 final class ChallengeController {
 
@@ -41,12 +40,14 @@ final class ChallengeController {
 	 * @param SecondFactorVerifier $verifier Factor checks.
 	 * @param ChallengePage        $page     Screen.
 	 * @param \Closure             $halt     Ends the request.
+	 * @param FailureThrottle      $throttle Per-account failure cap.
 	 */
 	public function __construct(
 		private readonly PendingLogin $pending,
 		private readonly SecondFactorVerifier $verifier,
 		private readonly ChallengePage $page,
-		private readonly \Closure $halt
+		private readonly \Closure $halt,
+		private readonly FailureThrottle $throttle
 	) {}
 
 	/**
@@ -67,8 +68,7 @@ final class ChallengeController {
 		$user    = null === $pending ? false : get_userdata( $pending['user_id'] );
 
 		if ( null === $pending || ! $user instanceof WP_User ) {
-			$this->page->render_expired( false );
-			( $this->halt )();
+			$this->stop_expired( false );
 			return;
 		}
 
@@ -79,6 +79,18 @@ final class ChallengeController {
 
 		if ( ! LoginRequest::nonce_ok( $token ) ) {
 			$this->show( $token, $user, __( 'The form expired. Try again.', 'lw-firewall' ) );
+			return;
+		}
+
+		if ( $this->throttle->is_blocked( (int) $user->ID ) ) {
+			$this->page->render_throttled();
+			( $this->halt )();
+			return;
+		}
+
+		// Claimed atomically before the check: parallel requests share the five answers.
+		if ( ! $this->pending->begin_attempt( $token ) ) {
+			$this->stop_expired( true );
 			return;
 		}
 
@@ -138,8 +150,11 @@ final class ChallengeController {
 		if ( $totp ) {
 			return ChallengePage::MODE_TOTP;
 		}
+		if ( $passkey ) {
+			return ChallengePage::MODE_PASSKEY;
+		}
 
-		return $passkey ? ChallengePage::MODE_PASSKEY : ChallengePage::MODE_RECOVERY;
+		return $recovery ? ChallengePage::MODE_RECOVERY : ChallengePage::MODE_NONE;
 	}
 
 	/**
@@ -170,13 +185,12 @@ final class ChallengeController {
 	private function complete( string $token, WP_User $user, string $method ): void {
 		$record = $this->pending->consume( $token );
 		if ( null === $record ) {
-			$this->page->render_expired( false );
-			( $this->halt )();
+			$this->stop_expired( false );
 			return;
 		}
 
 		$this->completing = true;
-		wp_set_auth_cookie( (int) $user->ID, $record['remember'] );
+		wp_set_auth_cookie( (int) $user->ID, $record['remember'], $record['secure'] );
 		wp_set_current_user( (int) $user->ID );
 
 		/**
@@ -199,21 +213,14 @@ final class ChallengeController {
 	 */
 	private function reject( string $token, WP_User $user, string $method ): void {
 		$left = $this->pending->fail( $token );
+		$this->throttle->record_failure( (int) $user->ID );
 
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook: the brute-force counters (per IP and per username) count this attempt.
 		do_action( 'wp_login_failed', $user->user_login, new WP_Error( 'lwfw_2fa_invalid', __( 'Wrong second-factor answer.', 'lw-firewall' ) ) );
-		Logger::log(
-			array(
-				'ip'     => IpDetector::get_ip(),
-				'reason' => self::failure_reason( $method ),
-				'ua'     => LoginRequest::user_agent(),
-				'url'    => LoginRequest::uri(),
-			)
-		);
+		FailureLog::record( FailureLog::reason_for( $method ) );
 
 		if ( 0 === $left ) {
-			$this->page->render_expired( true );
-			( $this->halt )();
+			$this->stop_expired( true );
 			return;
 		}
 
@@ -224,12 +231,13 @@ final class ChallengeController {
 	}
 
 	/**
-	 * Log reason of a wrong answer.
+	 * Show the "start over" screen and halt.
 	 *
-	 * @param string $method Method tried.
+	 * @param bool $locked Whether the answers are used up.
 	 */
-	public static function failure_reason( string $method ): string {
-		return SecondFactorVerifier::PASSKEY === $method ? 'twofa_passkey_failed' : 'twofa_failed';
+	private function stop_expired( bool $locked ): void {
+		$this->page->render_expired( $locked );
+		( $this->halt )();
 	}
 
 	/**

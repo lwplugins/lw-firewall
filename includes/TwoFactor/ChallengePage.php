@@ -40,6 +40,7 @@ final class ChallengePage {
 	public const MODE_TOTP     = 'totp';
 	public const MODE_RECOVERY = 'recovery';
 	public const MODE_PASSKEY  = 'passkey';
+	public const MODE_NONE     = 'none';
 
 	/**
 	 * URL of the screen for a pending token.
@@ -72,6 +73,11 @@ final class ChallengePage {
 		$passkey = is_array( $view['passkey'] ?? null ) ? $view['passkey'] : null;
 		$field   = self::MODE_RECOVERY === $mode ? 'lwfw-2fa-recovery-code' : 'lwfw-2fa-code';
 
+		if ( self::MODE_NONE === $mode ) {
+			$this->render_message( __( 'None of the sign-in methods set up for your account can be used on this site right now. Ask an administrator to reset your two-factor login.', 'lw-firewall' ) );
+			return;
+		}
+
 		if ( null !== $passkey ) {
 			$this->enqueue_script();
 		}
@@ -88,10 +94,33 @@ final class ChallengePage {
 	 * @param bool $locked Whether it ended after too many wrong answers.
 	 */
 	public function render_expired( bool $locked ): void {
-		$message = $locked
-			? __( 'Too many wrong answers. Sign in again to get a new chance.', 'lw-firewall' )
-			: __( 'This sign-in has expired or was already used. Sign in again.', 'lw-firewall' );
+		$this->render_message(
+			$locked
+				? __( 'Too many wrong answers. Sign in again to get a new chance.', 'lw-firewall' )
+				: __( 'This sign-in has expired or was already used. Sign in again.', 'lw-firewall' )
+		);
+	}
 
+	/**
+	 * The screen of an account blocked after too many wrong answers.
+	 */
+	public function render_throttled(): void {
+		$this->render_message( self::throttled_message() );
+	}
+
+	/**
+	 * Text shown while an account's second-factor step is blocked.
+	 */
+	public static function throttled_message(): string {
+		return __( 'Sign-in for this account is paused for a while after too many failed attempts. Try again later.', 'lw-firewall' );
+	}
+
+	/**
+	 * A message screen with a "Start over" link.
+	 *
+	 * @param string $message Plain text message.
+	 */
+	private function render_message( string $message ): void {
 		login_header( __( 'Two-factor authentication', 'lw-firewall' ), '', self::errors( $message ) );
 		echo '<p id="nav"><a href="' . esc_url( wp_login_url() ) . '">' . esc_html__( 'Start over', 'lw-firewall' ) . '</a></p>';
 		login_footer();

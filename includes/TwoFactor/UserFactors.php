@@ -229,10 +229,23 @@ final class UserFactors {
 	}
 
 	/**
-	 * Whether the user has any second factor.
+	 * Whether a TOTP record is stored, readable or not.
+	 *
+	 * Differs from has_totp() after a salt change: the sealed secret can no
+	 * longer be opened, but the account still enrolled a second factor.
+	 */
+	public function has_totp_record(): bool {
+		$data = $this->totp_data();
+
+		return isset( $data['secret'] ) && is_string( $data['secret'] ) && '' !== $data['secret'];
+	}
+
+	/**
+	 * Whether the user enrolled any second factor (fail closed: an unreadable
+	 * TOTP record counts, so a salt change never turns 2FA off silently).
 	 */
 	public function has_any(): bool {
-		return $this->has_totp() || array() !== $this->passkeys();
+		return $this->has_totp_record() || array() !== $this->passkeys();
 	}
 
 	/**

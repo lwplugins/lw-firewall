@@ -12,11 +12,13 @@ namespace LightweightPlugins\Firewall\Tests\Unit\TwoFactor;
 use Brain\Monkey\Actions;
 use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
+use LightweightPlugins\Firewall\Tests\Unit\Support\ArrayStorage;
 use LightweightPlugins\Firewall\Tests\Unit\Support\OptionStore;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\FakeWebAuthn;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\PasskeyStubTrait;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\SoftAuthenticator;
-use LightweightPlugins\Firewall\TwoFactor\ChallengeController;
+use LightweightPlugins\Firewall\TwoFactor\FailureLog;
+use LightweightPlugins\Firewall\TwoFactor\FailureThrottle;
 use LightweightPlugins\Firewall\TwoFactor\ChallengePage;
 use LightweightPlugins\Firewall\TwoFactor\LoginInterceptor;
 use LightweightPlugins\Firewall\TwoFactor\Passkey\PasskeyService;
@@ -24,6 +26,7 @@ use LightweightPlugins\Firewall\TwoFactor\PasskeyRecord;
 use LightweightPlugins\Firewall\TwoFactor\PendingLogin;
 use LightweightPlugins\Firewall\TwoFactor\RequestContext;
 use LightweightPlugins\Firewall\TwoFactor\SecondFactorVerifier;
+use LightweightPlugins\Firewall\TwoFactor\SignonTracker;
 use LightweightPlugins\Firewall\TwoFactor\Totp;
 use LightweightPlugins\Firewall\TwoFactor\UserFactors;
 
@@ -37,6 +40,9 @@ require_once dirname( __DIR__ ) . '/Support/WpSessionTokens.php';
  * @covers \LightweightPlugins\Firewall\TwoFactor\SecondFactorVerifier
  * @covers \LightweightPlugins\Firewall\TwoFactor\ChallengePage
  * @covers \LightweightPlugins\Firewall\TwoFactor\ChallengeController
+ * @covers \LightweightPlugins\Firewall\TwoFactor\FailureLog
+ * @covers \LightweightPlugins\Firewall\TwoFactor\FailureThrottle
+ * @covers \LightweightPlugins\Firewall\TwoFactor\SignonTracker
  * @covers \LightweightPlugins\Firewall\TwoFactor\PendingLogin
  */
 final class LoginInterceptorTest extends MonkeyTestCase {
@@ -64,6 +70,13 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 
 	private int $cleared = 0;
 
+	/**
+	 * Secure flags passed to wp_set_auth_cookie.
+	 *
+	 * @var array<int, mixed>
+	 */
+	private array $secure = array();
+
 	private int $halts = 0;
 
 	/**
@@ -75,6 +88,17 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 
 	private FakeWebAuthn $lib;
 
+	private ArrayStorage $storage;
+
+	private SignonTracker $signon;
+
+	private FailureThrottle $throttle;
+
+	/**
+	 * User of the browser's valid logged-in cookie (0 = none).
+	 */
+	private int $cookie_user = 0;
+
 	protected function setUp(): void {
 		parent::setUp();
 		$this->stub_passkey_wp();
@@ -82,7 +106,10 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$this->stub_wp();
 		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false ) ) );
 
-		$this->lib   = new FakeWebAuthn();
+		$this->lib      = new FakeWebAuthn();
+		$this->storage  = new ArrayStorage();
+		$this->signon   = new SignonTracker( fn (): int => $this->cookie_user );
+		$this->throttle = new FailureThrottle( $this->storage );
 		$this->users = array(
 			5 => new \WP_User( 5, 'alice' ),
 			6 => new \WP_User( 6, 'bob' ),
@@ -137,9 +164,11 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 				++$this->cleared;
 			}
 		);
+		Functions\when( 'is_ssl' )->justReturn( false );
 		Functions\when( 'wp_set_auth_cookie' )->alias(
-			function ( $id, $remember = false ) {
+			function ( $id, $remember = false, $secure = '' ) {
 				$this->cookies[] = array( (int) $id, (bool) $remember );
+				$this->secure[]  = $secure;
 			}
 		);
 		Functions\when( 'wp_set_current_user' )->justReturn( null );
@@ -153,14 +182,16 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$clock = fn (): int => $this->now;
 
 		return new LoginInterceptor(
-			new PendingLogin( null, $clock ),
+			new PendingLogin( null, $clock, $this->storage ),
 			new SecondFactorVerifier( new PasskeyService( $this->lib ), $clock ),
 			new ChallengePage(),
 			new RequestContext( $flags ),
 			function (): void {
 				++$this->halts;
 				throw new \RuntimeException( 'halt' );
-			}
+			},
+			$this->signon,
+			$this->throttle
 		);
 	}
 
@@ -203,7 +234,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 	}
 
 	private function store(): PendingLogin {
-		return new PendingLogin( null, fn (): int => $this->now );
+		return new PendingLogin( null, fn (): int => $this->now, $this->storage );
 	}
 
 	private function open( LoginInterceptor $interceptor, string $token ): string {
@@ -251,14 +282,14 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 
 		$this->assertTrue( $interceptor->filter_send_cookies( true, 0, 0, 5, 'auth', 'tok-before' ), 'Outside wp_signon nothing is withheld.' );
 
-		$interceptor->on_signon_start();
+		$this->signon->start( 'alice', 'pw' );
 		$this->assertFalse( $interceptor->filter_send_cookies( true, 0, 0, 5, 'secure_auth', 'tok-1' ) );
 		$this->assertTrue( $interceptor->filter_send_cookies( true, 0, 0, 6, 'auth', 'tok-bob' ), 'A user without factors keeps the cookie.' );
 		$this->assertTrue( $interceptor->filter_send_cookies( true, 0, 0, 0, '', '' ), 'Clearing cookies is never blocked.' );
 
 		$this->login( 5, $interceptor );
 
-		$this->assertSame( array( 5 => array( 'tok-1' ) ), \WP_Session_Tokens::$destroyed );
+		$this->assertSame( array( 5 => array( 'tok-before', 'tok-1' ) ), \WP_Session_Tokens::$destroyed, 'Every token issued for the user in this request dies.' );
 	}
 
 	public function test_redirect_to_is_kept_and_validated(): void {
@@ -351,7 +382,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => '000000' === $this->code() ? '111111' : '000000' ) );
 
 		$this->assertSame( array(), $this->cookies );
-		$this->assertSame( 1, $this->store()->get( $token )['attempts'] ?? null );
+		$this->assertSame( 1, $this->store()->attempts( $token ) );
 	}
 
 	public function test_five_wrong_answers_end_the_pending_login(): void {
@@ -378,7 +409,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code(), 'lwfw_2fa_nonce' => 'forged' ) );
 
 		$this->assertSame( array(), $this->cookies );
-		$this->assertSame( 0, $this->store()->get( $token )['attempts'] ?? null );
+		$this->assertSame( 0, $this->store()->attempts( $token ) );
 	}
 
 	public function test_a_recovery_code_works_once(): void {
@@ -412,9 +443,9 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 	}
 
 	public function test_failure_reasons(): void {
-		$this->assertSame( 'twofa_failed', ChallengeController::failure_reason( 'totp' ) );
-		$this->assertSame( 'twofa_failed', ChallengeController::failure_reason( 'recovery' ) );
-		$this->assertSame( 'twofa_passkey_failed', ChallengeController::failure_reason( 'passkey' ) );
+		$this->assertSame( 'twofa_failed', FailureLog::reason_for( 'totp' ) );
+		$this->assertSame( 'twofa_failed', FailureLog::reason_for( 'recovery' ) );
+		$this->assertSame( 'twofa_passkey_failed', FailureLog::reason_for( 'passkey' ) );
 	}
 
 	public function test_completing_does_not_re_enter_the_interceptor(): void {
@@ -516,5 +547,164 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		);
 
 		$this->assertSame( array(), $this->cookies );
+	}
+
+	// ---- fix round 1 --------------------------------------------------------
+
+	public function test_a_login_outside_wp_signon_still_loses_its_session(): void {
+		$interceptor = $this->interceptor();
+
+		// A custom handler: wp_set_auth_cookie() (cookie already sent) + do_action( 'wp_login' ).
+		$interceptor->capture_cookie( 'cookie', 0, 0, 5, 'secure_auth', 'tok-custom' );
+		$interceptor->capture_cookie( 'cookie', 0, 0, 5, 'logged_in', 'tok-custom' );
+		$this->login( 5, $interceptor );
+
+		$this->assertSame( array( 5 => array( 'tok-custom' ) ), \WP_Session_Tokens::$destroyed );
+		$this->assertSame( 1, $this->cleared );
+	}
+
+	public function test_cookie_re_auth_of_a_signed_in_user_is_not_challenged(): void {
+		$this->cookie_user = 5;
+		$interceptor       = $this->interceptor();
+		$this->signon->start( '', '' );
+
+		$this->assertTrue( $interceptor->filter_send_cookies( true, 0, 0, 5, 'auth', 'tok-refresh' ) );
+		$interceptor->on_wp_login( 'alice', $this->users[5] );
+
+		$this->assertSame( 0, $this->cleared );
+		$this->assertSame( array(), $this->redirects );
+		$this->assertSame( array(), \WP_Session_Tokens::$destroyed );
+	}
+
+	public function test_empty_credentials_without_the_same_cookie_user_are_challenged(): void {
+		$this->cookie_user = 6;
+		$interceptor       = $this->interceptor();
+		$this->signon->start( '', '' );
+
+		$this->login( 5, $interceptor );
+
+		$this->assertSame( 1, $this->cleared, 'Only a cookie of the same user skips the challenge.' );
+	}
+
+	public function test_redirect_to_the_login_screen_does_not_loop(): void {
+		$_REQUEST['redirect_to'] = 'https://example.com/wp-login.php';
+		$interceptor             = $this->interceptor();
+		$token                   = $this->login( 5, $interceptor );
+
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+
+		$this->assertSame( 'https://example.com/wp-admin/', end( $this->redirects ) );
+	}
+
+	public function test_the_sixth_attempt_is_refused_even_with_the_right_code(): void {
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+
+		// Five parallel requests already claimed their attempts.
+		for ( $i = 0; $i < 5; $i++ ) {
+			$this->assertTrue( $this->store()->begin_attempt( $token ) );
+		}
+
+		$html = $this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+
+		$this->assertSame( array(), $this->cookies );
+		$this->assertStringNotContainsString( 'lwfw-2fa-form', $html );
+		$this->assertNull( $this->store()->get( $token ) );
+	}
+
+	public function test_ten_failures_throttle_the_account(): void {
+		for ( $round = 0; $round < 2; $round++ ) {
+			$interceptor = $this->interceptor();
+			$token       = $this->login( 5, $interceptor );
+			for ( $i = 0; $i < 5; $i++ ) {
+				$this->submit( $interceptor, $token, array( 'lwfw_method' => 'recovery', 'lwfw_code' => 'nope-nope' ) );
+			}
+		}
+		$this->assertTrue( $this->throttle->is_blocked( 5 ) );
+
+		// The password step no longer opens a pending login.
+		$redirects = count( $this->redirects );
+		$html      = $this->until_halt( fn () => $this->interceptor()->on_wp_login( 'alice', $this->users[5] ) );
+		$this->assertSame( $redirects, count( $this->redirects ) );
+		$this->assertStringContainsString( 'Start over', $html );
+	}
+
+	public function test_a_throttled_account_cannot_answer_an_existing_token(): void {
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
+			$this->throttle->record_failure( 5 );
+		}
+
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+
+		$this->assertSame( array(), $this->cookies );
+		$this->assertSame( 0, $this->store()->attempts( $token ), 'Not even checked.' );
+	}
+
+	public function test_an_unreadable_totp_secret_still_challenges_and_offers_recovery(): void {
+		( new UserFactors( 5 ) )->set_recovery( array( password_hash( 'abcd2345', PASSWORD_DEFAULT ) ) );
+		Functions\when( 'wp_salt' )->justReturn( 'rotated' );
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+
+		$this->assertSame( 1, $this->cleared, 'Fail closed.' );
+		$html = $this->open( $interceptor, $token );
+		$this->assertStringContainsString( 'lwfw-2fa-recovery-code', $html );
+		$this->assertStringNotContainsString( 'one-time-code', $html );
+	}
+
+	public function test_no_usable_method_says_so_instead_of_a_dead_field(): void {
+		Functions\when( 'wp_salt' )->justReturn( 'rotated' );
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+
+		$html = $this->open( $interceptor, $token );
+
+		$this->assertStringNotContainsString( 'lwfw-2fa-form', $html );
+		$this->assertStringContainsString( 'https://example.com/wp-login.php', $html );
+	}
+
+	public function test_no_recovery_link_without_recovery_codes(): void {
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+
+		$this->assertStringNotContainsString( 'mode=recovery', $this->open( $interceptor, $token ) );
+
+		$_GET['mode'] = 'recovery';
+		$this->assertStringContainsString( 'one-time-code', $this->until_halt( fn () => $interceptor->handle_action() ) );
+	}
+
+	public function test_wp_login_with_odd_arguments_is_ignored(): void {
+		$interceptor = $this->interceptor();
+		$interceptor->on_wp_login( 'alice' );
+		$interceptor->on_wp_login( 'alice', 'not-a-user' );
+
+		$this->assertSame( 0, $this->cleared );
+	}
+
+	public function test_remember_and_secure_come_from_the_signon(): void {
+		$interceptor = $this->interceptor();
+		$this->signon->start( 'alice', 'pw' );
+		$this->signon->capture( true, array( 'remember' => true ) );
+		$token = $this->login( 5, $interceptor );
+
+		$record = $this->store()->get( $token );
+		$this->assertTrue( $record['remember'] ?? null );
+		$this->assertTrue( $record['secure'] ?? null );
+
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+		$this->assertSame( array( array( 5, true ) ), $this->cookies );
+		$this->assertSame( array( true ), $this->secure );
+	}
+
+	public function test_hooks_are_registered_at_the_right_priorities(): void {
+		$interceptor = $this->interceptor();
+		$interceptor->register();
+
+		$this->assertSame( PHP_INT_MAX, has_filter( 'send_auth_cookies', array( $interceptor, 'filter_send_cookies' ) ) );
+		$this->assertNotFalse( has_action( 'set_logged_in_cookie', array( $interceptor, 'capture_cookie' ) ) );
+		$this->assertNotFalse( has_action( 'set_auth_cookie', array( $interceptor, 'capture_cookie' ) ) );
+		$this->assertSame( 1, has_action( 'wp_login', array( $interceptor, 'on_wp_login' ) ) );
 	}
 }

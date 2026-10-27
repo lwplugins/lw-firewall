@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Only an interactive login (wp-login.php, a front-end login form) can be
- * sent to the second-factor page. Every other context where a password can
- * reach the `authenticate` filter has no page to show, so PasswordAuthGuard
- * refuses a password-only sign-in there instead — except WP-CLI, whose
- * operator already has shell access.
+ * sent to the second-factor page; AJAX, cron, WP-CLI, XML-RPC and REST
+ * requests have no page to show. PasswordAuthGuard does not rely on these
+ * flags alone (REST_REQUEST may not be defined yet at `authenticate`): it
+ * also requires a tracked wp_signon().
  */
 final class RequestContext {
 
@@ -42,13 +42,6 @@ final class RequestContext {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Whether a password alone must be refused for a two-factor user here.
-	 */
-	public function refuses_passwords(): bool {
-		return ! $this->is_interactive() && ! $this->is( 'cli' );
 	}
 
 	/**

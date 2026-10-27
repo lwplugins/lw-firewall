@@ -66,6 +66,12 @@ final class LoginRequest {
 		/** This filter is documented in wp-login.php */
 		$target = (string) apply_filters( 'login_redirect', $target, $stored, $user ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
 
+		// Back to the login screen would only show the form again: go to the dashboard.
+		$path = wp_parse_url( $target, PHP_URL_PATH );
+		if ( is_string( $path ) && str_ends_with( $path, '/wp-login.php' ) ) {
+			$target = admin_url();
+		}
+
 		if ( '' === $target || admin_url() === $target ) {
 			if ( ! user_can( $user, 'edit_posts' ) ) {
 				$target = user_can( $user, 'read' ) ? admin_url( 'profile.php' ) : home_url();

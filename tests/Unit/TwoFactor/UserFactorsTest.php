@@ -61,6 +61,17 @@ final class UserFactorsTest extends MonkeyTestCase {
 		$this->assertFalse( $f->has_totp() );
 	}
 
+	public function test_an_unreadable_totp_record_still_counts_as_a_factor(): void {
+		$f = new UserFactors( 5 );
+		$this->assertFalse( $f->has_totp_record() );
+		$f->save_totp( 'JBSWY3DPEHPK3PXP' );
+		Functions\when( 'wp_salt' )->justReturn( 'rotated' );
+
+		$this->assertFalse( $f->has_totp(), 'Not usable.' );
+		$this->assertTrue( $f->has_totp_record() );
+		$this->assertTrue( $f->has_any(), 'Fail closed: a sealed secret the site cannot open still requires a second factor.' );
+	}
+
 	public function test_recovery_hashes(): void {
 		$f = new UserFactors( 5 );
 		$this->assertSame( array(), $f->recovery_hashes() );

@@ -11,6 +11,8 @@ namespace LightweightPlugins\Firewall\TwoFactor;
 
 use LightweightPlugins\Firewall\IpDetector;
 use LightweightPlugins\Firewall\IpSubject;
+use LightweightPlugins\Firewall\Options;
+use LightweightPlugins\Firewall\Storage\StorageInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -20,7 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The browser holds a random token; the store keeps only its SHA-256 as the
  * transient name, so a database read does not hand out usable tokens. A
  * record is bound to the client's IP subject (IPv6 by /64), lives five
- * minutes and allows five wrong answers.
+ * minutes and allows five answers. Attempts are counted with the firewall
+ * storage's atomic increment before an answer is checked, so parallel
+ * requests cannot spend more than five guesses on one token.
  */
 final class PendingLogin {
 
@@ -36,13 +40,20 @@ final class PendingLogin {
 
 	private const PREFIX = 'lwfw_2fa_';
 
+	private const ATTEMPT_PREFIX = 'twofa_try_';
+
 	/**
 	 * Constructor.
 	 *
-	 * @param string|null   $ip    Client address (tests); null = IpDetector.
-	 * @param \Closure|null $clock Returns the current Unix time (tests); null = time().
+	 * @param string|null           $ip      Client address (tests); null = IpDetector.
+	 * @param \Closure|null         $clock   Returns the current Unix time (tests); null = time().
+	 * @param StorageInterface|null $storage Attempt counters; null = the configured firewall storage.
 	 */
-	public function __construct( private readonly ?string $ip = null, private readonly ?\Closure $clock = null ) {}
+	public function __construct(
+		private readonly ?string $ip = null,
+		private readonly ?\Closure $clock = null,
+		private readonly ?StorageInterface $storage = null
+	) {}
 
 	/**
 	 * Start a pending login.
@@ -50,9 +61,10 @@ final class PendingLogin {
 	 * @param int    $user_id     User who passed the password check.
 	 * @param bool   $remember    "Remember me" of the login form.
 	 * @param string $redirect_to Validated redirect target ('' = default).
+	 * @param bool   $secure      Whether the session cookie must be secure-only.
 	 * @return string 32 char hex token.
 	 */
-	public function create( int $user_id, bool $remember, string $redirect_to ): string {
+	public function create( int $user_id, bool $remember, string $redirect_to, bool $secure = false ): string {
 		$token = bin2hex( random_bytes( 16 ) );
 
 		$this->save(
@@ -62,7 +74,7 @@ final class PendingLogin {
 				'remember'    => $remember,
 				'redirect_to' => $redirect_to,
 				'ip_key'      => $this->ip_key(),
-				'attempts'    => 0,
+				'secure'      => $secure,
 				'expires'     => $this->now() + self::TTL,
 				'passkey_key' => '',
 			)
@@ -75,7 +87,7 @@ final class PendingLogin {
 	 * The record of a token, when it exists, is unexpired and belongs to this IP.
 	 *
 	 * @param string $token Token from create().
-	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, attempts: int, expires: int, passkey_key: string}|null
+	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string}|null
 	 */
 	public function get( string $token ): ?array {
 		if ( 1 !== preg_match( '/^[0-9a-f]{32}$/D', $token ) ) {
@@ -94,26 +106,54 @@ final class PendingLogin {
 	}
 
 	/**
-	 * Count a wrong answer.
+	 * Claim one attempt, atomically, before the answer is checked.
+	 *
+	 * @param string $token Token.
+	 * @return bool False when the token is unknown or its attempts are used up
+	 *              (the token is then deleted).
+	 */
+	public function begin_attempt( string $token ): bool {
+		$record = $this->get( $token );
+		if ( null === $record ) {
+			return false;
+		}
+
+		$count = $this->counter()->increment( self::attempt_key( $token ), max( 1, $record['expires'] - $this->now() ) );
+		if ( $count > self::MAX_ATTEMPTS ) {
+			delete_transient( self::name( $token ) );
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Attempts claimed so far.
+	 *
+	 * @param string $token Token.
+	 */
+	public function attempts( string $token ): int {
+		return (int) $this->counter()->get( self::attempt_key( $token ) );
+	}
+
+	/**
+	 * After a wrong answer: how many are left (the token is deleted at 0).
 	 *
 	 * @param string $token Token.
 	 * @return int Answers left; 0 = the token is gone.
 	 */
 	public function fail( string $token ): int {
-		$record = $this->get( $token );
-		if ( null === $record ) {
+		if ( null === $this->get( $token ) ) {
 			return 0;
 		}
 
-		++$record['attempts'];
-		if ( $record['attempts'] >= self::MAX_ATTEMPTS ) {
+		$left = self::MAX_ATTEMPTS - $this->attempts( $token );
+		if ( $left <= 0 ) {
 			delete_transient( self::name( $token ) );
 			return 0;
 		}
 
-		$this->save( $token, $record );
-
-		return self::MAX_ATTEMPTS - $record['attempts'];
+		return $left;
 	}
 
 	/**
@@ -139,7 +179,7 @@ final class PendingLogin {
 	 * row gets the record, so two parallel correct answers yield one session.
 	 *
 	 * @param string $token Token.
-	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, attempts: int, expires: int, passkey_key: string}|null
+	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string}|null
 	 */
 	public function consume( string $token ): ?array {
 		$record = $this->get( $token );
@@ -170,7 +210,7 @@ final class PendingLogin {
 			&& is_bool( $record['remember'] ?? null )
 			&& is_string( $record['redirect_to'] ?? null )
 			&& is_string( $record['ip_key'] ?? null )
-			&& is_int( $record['attempts'] ?? null )
+			&& is_bool( $record['secure'] ?? null )
 			&& is_int( $record['expires'] ?? null )
 			&& is_string( $record['passkey_key'] ?? null );
 	}
@@ -182,6 +222,22 @@ final class PendingLogin {
 	 */
 	private static function name( string $token ): string {
 		return self::PREFIX . hash( 'sha256', $token );
+	}
+
+	/**
+	 * Storage key of a token's attempt counter.
+	 *
+	 * @param string $token Token.
+	 */
+	private static function attempt_key( string $token ): string {
+		return self::ATTEMPT_PREFIX . hash( 'sha256', $token );
+	}
+
+	/**
+	 * Attempt counter storage.
+	 */
+	private function counter(): StorageInterface {
+		return $this->storage ?? lw_firewall_resolve_storage( (string) Options::get( 'storage', 'auto' ) );
 	}
 
 	/**

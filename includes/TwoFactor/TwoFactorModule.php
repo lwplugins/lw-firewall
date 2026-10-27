@@ -52,8 +52,11 @@ final class TwoFactorModule {
 			return false;
 		}
 
-		( new LoginInterceptor() )->register();
-		( new PasswordAuthGuard() )->register( (bool) Options::get( 'twofa_block_app_passwords', false ) );
+		$signon   = new SignonTracker();
+		$throttle = new FailureThrottle();
+		$signon->register();
+		( new LoginInterceptor( null, null, null, null, null, $signon, $throttle ) )->register();
+		( new PasswordAuthGuard( null, $signon, $throttle ) )->register( (bool) Options::get( 'twofa_block_app_passwords', false ) );
 
 		return true;
 	}
