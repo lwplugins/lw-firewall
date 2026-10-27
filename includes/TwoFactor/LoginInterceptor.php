@@ -38,6 +38,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * `wp_login` is deliberately NOT fired again after the second factor: it
  * would re-enter this interceptor and repeat every other plugin's login side
  * effects. Hook `lw_firewall_2fa_passed` for "the login is now complete".
+ *
+ * A passwordless passkey sign-in (Rest\PasskeyLoginController) already
+ * proved two factors (possession + user verification) and fires `wp_login`
+ * itself; it calls skip_once() right before, so that one `wp_login` is not
+ * held. The flag is PHP-only (no request input), bound to one user, spent by
+ * the first matching `wp_login` and cancelled by the caller afterwards.
  */
 final class LoginInterceptor {
 
@@ -54,6 +60,13 @@ final class LoginInterceptor {
 	 * @var array<int, string[]>
 	 */
 	private array $issued = array();
+
+	/**
+	 * User whose next `wp_login` in this request is not held (0 = none).
+	 *
+	 * @var int
+	 */
+	private static int $skip_user = 0;
 
 	/**
 	 * Halts the request after a redirect or a rendered screen.
@@ -183,7 +196,7 @@ final class LoginInterceptor {
 	 * @param mixed $user  User who passed the password check.
 	 */
 	public function on_wp_login( $login = '', $user = null ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
-		if ( ! $user instanceof WP_User || $this->challenge->is_completing() || ! $this->intercepts( $user ) ) {
+		if ( ! $user instanceof WP_User || self::take_skip( (int) $user->ID ) || $this->challenge->is_completing() || ! $this->intercepts( $user ) ) {
 			return;
 		}
 
@@ -203,6 +216,37 @@ final class LoginInterceptor {
 		$secure   = $this->signon->secure() ?? is_ssl();
 		$token    = $this->pending()->create( $id, $remember, LoginRequest::redirect_to(), $secure, $enroll );
 		$this->redirect( ChallengePage::url( $token ) );
+	}
+
+	/**
+	 * Let the next `wp_login` of this user in this request through unheld
+	 * (passwordless passkey sign-in only). Replaces an earlier flag.
+	 *
+	 * @param int $user_id User.
+	 */
+	public static function skip_once( int $user_id ): void {
+		self::$skip_user = max( 0, $user_id );
+	}
+
+	/**
+	 * Drop an unspent skip_once() flag.
+	 */
+	public static function cancel_skip(): void {
+		self::$skip_user = 0;
+	}
+
+	/**
+	 * Spend the flag when it names this user.
+	 *
+	 * @param int $user_id User of the `wp_login`.
+	 */
+	private static function take_skip( int $user_id ): bool {
+		if ( $user_id <= 0 || self::$skip_user !== $user_id ) {
+			return false;
+		}
+		self::$skip_user = 0;
+
+		return true;
 	}
 
 	/**

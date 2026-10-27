@@ -51,6 +51,24 @@ final class TwoFactorModuleTest extends MonkeyTestCase {
 		$this->assertFalse( has_action( 'network_admin_notices' ) );
 	}
 
+	public function test_passwordless_passkey_login_is_wired_by_default(): void {
+		Functions\when( 'get_option' )->justReturn( array( 'twofa_enabled' => true ) );
+
+		TwoFactorModule::init();
+
+		$this->assertTrue( has_action( 'rest_api_init' ) );
+		$this->assertTrue( has_action( 'login_form' ) );
+	}
+
+	public function test_passwordless_passkey_login_can_be_switched_off(): void {
+		Functions\when( 'get_option' )->justReturn( array( 'twofa_enabled' => true, 'twofa_passkey_login' => false ) );
+
+		TwoFactorModule::init();
+
+		$this->assertFalse( has_action( 'rest_api_init' ) );
+		$this->assertFalse( has_action( 'login_form' ) );
+	}
+
 	public function test_blocking_app_passwords_is_wired(): void {
 		Functions\when( 'get_option' )->justReturn( array( 'twofa_enabled' => true, 'twofa_block_app_passwords' => true ) );
 

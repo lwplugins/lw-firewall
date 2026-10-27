@@ -79,7 +79,7 @@ final class ChallengePage {
 		}
 
 		if ( null !== $passkey ) {
-			$this->enqueue_script();
+			self::enqueue_script();
 		}
 
 		login_header( __( 'Two-factor authentication', 'lw-firewall' ), '', self::errors( $error ) );
@@ -240,9 +240,10 @@ final class ChallengePage {
 	}
 
 	/**
-	 * Enqueue the passkey script (printed by login_footer()).
+	 * Enqueue the passkey script (printed by login_footer()); shared with
+	 * the passwordless button of the login form (PasskeyLoginButton).
 	 */
-	private function enqueue_script(): void {
+	public static function enqueue_script(): void {
 		if ( ! defined( 'LW_FIREWALL_URL' ) || ! defined( 'LW_FIREWALL_VERSION' ) ) {
 			return;
 		}

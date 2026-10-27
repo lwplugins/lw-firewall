@@ -161,7 +161,16 @@ final class LoginRequest {
 			return array();
 		}
 
-		$data = json_decode( $raw, true );
+		return self::passkey_fields( json_decode( $raw, true ) );
+	}
+
+	/**
+	 * The base64url string fields of a decoded passkey assertion.
+	 *
+	 * @param mixed $data Decoded assertion (anything else yields an empty array).
+	 * @return array<string, string>
+	 */
+	public static function passkey_fields( $data ): array {
 		if ( ! is_array( $data ) ) {
 			return array();
 		}
