@@ -98,6 +98,12 @@ Use one of your recovery codes on the second step ("Use a recovery code"); each 
 = Passkey sign-in does not work on my site. =
 Three known cases. A captcha-type plugin that checks fields posted to the login form refuses the passkey sign-in, because that request has no password; exempt it for passkey sign-in or use the passkey only as a second factor. If you sign in on a host name that differs from the site address (for example a www alias), allow it with the `lw_firewall_passkey_allowed_origins` filter. Passkeys belong to the site's domain, so moving the site to a new domain makes the existing passkeys unusable; register them again (recovery codes and the authenticator app keep working).
 
+= An app or plugin can no longer sign in with my password. =
+For an account with a second factor, and for an account in a required role once its grace period ends, password logins outside the login page are refused: XML-RPC apps, REST API login plugins and AJAX login forms of themes or page builders cannot show the second step. Create an application password on the user's profile for the integration instead, and keep Block Application Passwords off for that account.
+
+= Does two-factor login work on multisite? =
+Yes. The settings are network-wide, because a sign-in is valid on every site of the network: a network administrator sets them in the main site's Two-Factor tab, and the other sites show them read-only. Network-activate the plugin so that every site asks for the second factor.
+
 == Changelog ==
 
 = 1.9.0 =
@@ -105,9 +111,11 @@ Three known cases. A captcha-type plugin that checks fields posted to the login 
 * New: Passkeys as a second factor and, optionally, as a passwordless sign-in button on the login page (up to 10 per account).
 * New: Per-role requirement with a grace period. Required users get a reminder first, then are taken to the setup page at login instead of being locked out; the forced setup is confirmed with a code sent by e-mail.
 * New: "Remember this device" for a chosen number of days, and an e-mail to the account owner whenever a second factor, recovery codes or remembered devices change.
-* New: Self-service on the profile page, a Two-Factor settings tab with usage per role, an admin reset on each profile, and `wp lw-firewall 2fa status` / `2fa reset` WP-CLI commands.
+* New: Self-service on the profile page (changes on an account with a second factor are confirmed with a second factor), a Two-Factor settings tab with usage per role, an admin reset on each profile, and `wp lw-firewall 2fa status` / `2fa reset` WP-CLI commands.
 * New: Emergency off switch: `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in wp-config.php.
 * New: Filter `lw_firewall_passkey_allowed_origins` for passkey sign-in on an extra host name of the site.
+* New: On multisite the two-factor settings are network-wide, set on the main site by a network administrator.
+* New: Password logins over XML-RPC, the REST API or AJAX are refused for accounts with a second factor (and for required accounts after the grace period); integrations use application passwords.
 
 = 1.8.5 =
 * Change: On multisite, managing bans and user lockouts, reinstalling the worker and updating the geo data are now network administrator tasks. Site administrators keep managing their own site's settings and imports.

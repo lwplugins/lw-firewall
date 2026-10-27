@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-10-27T10:44:25+00:00\n"
+"POT-Creation-Date: 2026-10-27T11:22:18+00:00\n"
 "PO-Revision-Date: 2026-10-27 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
@@ -1121,19 +1121,19 @@ msgstr "Nincs frissítendő tiltott ország."
 msgid "%1$d of %2$d countries updated."
 msgstr "%2$d országból %1$d frissítve."
 
-#: includes/Rest/Admin/SettingsController.php:66
+#: includes/Rest/Admin/SettingsController.php:67
 msgid "The request is too large (at most 256 KB)."
 msgstr "A kérés túl nagy (legfeljebb 256 KB lehet)."
 
-#: includes/Rest/Admin/SettingsController.php:80
+#: includes/Rest/Admin/SettingsController.php:86
 msgid "Some settings are not valid. Nothing was saved."
 msgstr "Néhány beállítás érvénytelen. Semmi sem lett elmentve."
 
-#: includes/Rest/Admin/SettingsMeta.php:116
+#: includes/Rest/Admin/SettingsMeta.php:134
 msgid "Auto-detect"
 msgstr "Automatikus felismerés"
 
-#: includes/Rest/Admin/SettingsMeta.php:131
+#: includes/Rest/Admin/SettingsMeta.php:149
 msgid "File"
 msgstr "Fájl"
 
@@ -1278,6 +1278,14 @@ msgstr "Ismeretlen beállítás: %s."
 msgid "\"%s\" is not a valid role slug."
 msgstr "A(z) „%s” nem érvényes szerepkör-azonosító."
 
+#: includes/Settings/NetworkKeys.php:108
+msgid ""
+"Two-factor settings are network-wide: a network administrator sets them on "
+"the main site."
+msgstr ""
+"A kétlépcsős beállítások az egész hálózatra vonatkoznak: a hálózati "
+"adminisztrátor állítja be őket a fő oldalon."
+
 #. translators: %s: constant name
 #: includes/Settings/SettingsWriter.php:58
 #, php-format
@@ -1391,17 +1399,17 @@ msgstr ""
 msgid "The form expired. Try again."
 msgstr "Az űrlap lejárt. Próbáld újra."
 
-#: includes/TwoFactor/ChallengeController.php:308
+#: includes/TwoFactor/ChallengeController.php:314
 msgid "Wrong second-factor answer."
 msgstr "Hibás második lépcsős válasz."
 
-#: includes/TwoFactor/ChallengeController.php:317
+#: includes/TwoFactor/ChallengeController.php:323
 msgid "The passkey was not accepted. Try again or use another method."
 msgstr ""
 "A hozzáférési kulcsot nem fogadtuk el. Próbáld újra, vagy válassz másik "
 "módszert."
 
-#: includes/TwoFactor/ChallengeController.php:318
+#: includes/TwoFactor/ChallengeController.php:324
 msgid "That code is not valid. Try again."
 msgstr "Ez a kód nem érvényes. Próbáld újra."
 
@@ -1460,7 +1468,7 @@ msgid_plural "Remember this device for %d days"
 msgstr[0] "Eszköz megjegyzése %d napig"
 msgstr[1] "Eszköz megjegyzése %d napig"
 
-#: includes/TwoFactor/ChallengePage.php:190
+#: includes/TwoFactor/ChallengePage.php:190 build/profile.js:1
 msgid "Recovery code"
 msgstr "Helyreállító kód"
 
@@ -1713,7 +1721,7 @@ msgstr ""
 msgid "The passkey could not be verified. Please try again."
 msgstr "A hozzáférési kulcsot nem sikerült ellenőrizni. Próbáld újra."
 
-#: includes/TwoFactor/Passkey/PasskeyService.php:227
+#: includes/TwoFactor/Passkey/PasskeyService.php:227 build/profile.js:1
 msgid "Passkey"
 msgstr "Hozzáférési kulcs"
 
@@ -1755,22 +1763,22 @@ msgstr "Betöltés…"
 msgid "Two-factor settings need JavaScript."
 msgstr "A kétlépcsős beállításokhoz JavaScript kell."
 
-#: includes/TwoFactor/Rest/FactorsController.php:171
+#: includes/TwoFactor/Rest/FactorsController.php:175
 msgid ""
 "An authenticator app is already set up. Remove it first to set up a new one."
 msgstr ""
 "Már be van állítva hitelesítő alkalmazás. Új beállításához előbb távolítsd "
 "el a régit."
 
-#: includes/TwoFactor/Rest/FactorsController.php:199
+#: includes/TwoFactor/Rest/FactorsController.php:203
 msgid "An authenticator app is already set up."
 msgstr "Már be van állítva hitelesítő alkalmazás."
 
-#: includes/TwoFactor/Rest/FactorsController.php:204
+#: includes/TwoFactor/Rest/FactorsController.php:208
 msgid "The setup key expired. Start the setup again."
 msgstr "A beállítási kulcs lejárt. Kezdd újra a beállítást."
 
-#: includes/TwoFactor/Rest/FactorsController.php:210
+#: includes/TwoFactor/Rest/FactorsController.php:214
 msgid ""
 "The code is not correct. Check the time on your phone and try the newest "
 "code."
@@ -1778,15 +1786,15 @@ msgstr ""
 "A kód nem helyes. Ellenőrizd a telefonod idejét, és próbáld a legfrissebb "
 "kódot."
 
-#: includes/TwoFactor/Rest/FactorsController.php:250
+#: includes/TwoFactor/Rest/FactorsController.php:254
 msgid "Set up an authenticator app or a passkey first."
 msgstr "Előbb állíts be hitelesítő alkalmazást vagy hozzáférési kulcsot."
 
-#: includes/TwoFactor/Rest/FactorsController.php:314
+#: includes/TwoFactor/Rest/FactorsController.php:318
 msgid "User not found."
 msgstr "A felhasználó nem található."
 
-#: includes/TwoFactor/Rest/FactorsController.php:332
+#: includes/TwoFactor/Rest/FactorsController.php:336
 msgid "Sorry, you are not allowed to do that."
 msgstr "Sajnos ehhez nincs jogosultságod."
 
@@ -1807,33 +1815,42 @@ msgstr ""
 msgid "Too many sign-in attempts. Wait a few minutes and try again."
 msgstr "Túl sok belépési kísérlet. Várj néhány percet, és próbáld újra."
 
-#: includes/TwoFactor/Rest/PasskeysController.php:108
+#: includes/TwoFactor/Rest/PasskeysController.php:116
+msgid "This account has no passkey."
+msgstr "Ennek a fióknak nincs hozzáférési kulcsa."
+
+#: includes/TwoFactor/Rest/PasskeysController.php:122
+#: includes/TwoFactor/Rest/PasskeysController.php:141
 msgid "Passkeys are not available on this site right now."
 msgstr "A hozzáférési kulcsok most nem érhetők el ezen az oldalon."
 
-#: includes/TwoFactor/Rest/PasskeysController.php:136 build/profile.js:2
+#: includes/TwoFactor/Rest/PasskeysController.php:169 build/profile.js:2
 msgid "The passkey could not be added. Try again."
 msgstr "A hozzáférési kulcsot nem sikerült hozzáadni. Próbáld újra."
 
-#: includes/TwoFactor/Rest/PasskeysController.php:161
+#: includes/TwoFactor/Rest/PasskeysController.php:194
 msgid "This passkey does not exist."
 msgstr "Ez a hozzáférési kulcs nem létezik."
 
-#: includes/TwoFactor/Rest/ReAuth.php:68
+#: includes/TwoFactor/Rest/ReAuth.php:87
+msgid ""
+"Confirm it with a code from your authenticator app, a recovery code or your "
+"passkey."
+msgstr ""
+"Erősítsd meg a hitelesítő alkalmazásod kódjával, egy helyreállító kóddal "
+"vagy a hozzáférési kulcsoddal."
+
+#: includes/TwoFactor/Rest/ReAuth.php:103 build/profile.js:1
+msgid "Confirm it with your password."
+msgstr "Erősítsd meg a jelszavaddal."
+
+#: includes/TwoFactor/Rest/ReAuth.php:123
 msgid "Too many wrong attempts. Wait 15 minutes and try again."
 msgstr "Túl sok hibás kísérlet. Várj 15 percet, és próbáld újra."
 
-#: includes/TwoFactor/Rest/ReAuth.php:78
-msgid "The password or code is not correct."
-msgstr "A jelszó vagy a kód nem helyes."
-
-#: includes/TwoFactor/Rest/ReAuth.php:123 build/profile.js:1
-msgid "Confirm it with your password or a code from your authenticator app."
-msgstr "Erősítsd meg a jelszavaddal vagy a hitelesítő alkalmazásod kódjával."
-
-#: includes/TwoFactor/Rest/ReAuth.php:124 build/profile.js:1
-msgid "Confirm it with your password."
-msgstr "Erősítsd meg a jelszavaddal."
+#: includes/TwoFactor/Rest/ReAuth.php:133
+msgid "The confirmation was not accepted. Try again."
+msgstr "A megerősítés nem sikerült. Próbáld újra."
 
 #: includes/TwoFactor/TwoFactorModule.php:97
 msgid "LW Firewall: two-factor login is not active"
@@ -3921,6 +3938,18 @@ msgstr ""
 "jelszót is helyettesítheti."
 
 #: build/index.js:25
+msgid "Set network-wide on the main site."
+msgstr "Az egész hálózatra a fő oldalon állítható be."
+
+#: build/index.js:25
+msgid ""
+"These settings apply to the whole network: only a network administrator can "
+"change them."
+msgstr ""
+"Ezek a beállítások az egész hálózatra vonatkoznak: csak hálózati "
+"adminisztrátor módosíthatja őket."
+
+#: build/index.js:25
 msgid ""
 "Locked out? Add define( 'LW_FIREWALL_TWOFA_ENABLED', false ); to wp-"
 "config.php to switch two-factor login off at once, or remove one user's "
@@ -4225,16 +4254,49 @@ msgid "Your unsaved changes on the other tabs will be discarded."
 msgstr "A többi fülön lévő nem mentett változásaid elvesznek."
 
 #: build/profile.js:1
-msgid "Current password"
-msgstr "Jelenlegi jelszó"
+msgid "Authenticator code"
+msgstr "Hitelesítő kód"
 
 #: build/profile.js:1
-msgid "or authenticator code"
-msgstr "vagy hitelesítő alkalmazás kódja"
+msgid ""
+"This browser cannot use your passkey and you have no recovery code left. Use "
+"another browser, or ask an administrator to reset two-factor for you."
+msgstr ""
+"Ez a böngésző nem tudja használni a hozzáférési kulcsodat, és nincs több "
+"helyreállító kódod. Használj másik böngészőt, vagy kérd meg egy "
+"adminisztrátort, hogy állítsa vissza a kétlépcsős belépésedet."
 
 #: build/profile.js:1 build/profile.js:3
 msgid "Cancel"
 msgstr "Mégse"
+
+#: build/profile.js:1 build/profile.js:2
+msgid "The passkey prompt was closed or timed out. Try again."
+msgstr "A hozzáférésikulcs-ablakot bezárták, vagy lejárt az idő. Próbáld újra."
+
+#: build/profile.js:1
+msgid "The passkey was not accepted. Try again."
+msgstr "A hozzáférési kulcsot nem fogadtuk el. Próbáld újra."
+
+#: build/profile.js:1
+msgid ""
+"Confirm it with your second factor: a code from your authenticator app, your "
+"passkey or a recovery code."
+msgstr ""
+"Erősítsd meg a második lépcsővel: a hitelesítő alkalmazásod kódjával, a "
+"hozzáférési kulcsoddal vagy egy helyreállító kóddal."
+
+#: build/profile.js:1
+msgid "Confirm with"
+msgstr "Megerősítés ezzel"
+
+#: build/profile.js:1
+msgid "Current password"
+msgstr "Jelenlegi jelszó"
+
+#: build/profile.js:1
+msgid "Your browser asks for the passkey when you continue."
+msgstr "Ha továbblépsz, a böngésződ kéri a hozzáférési kulcsot."
 
 #: build/profile.js:1
 msgid "Loading two-factor settings…"
@@ -4309,10 +4371,6 @@ msgstr "pl. Munkahelyi laptop"
 #: build/profile.js:2
 msgid "Add passkey"
 msgstr "Hozzáférési kulcs hozzáadása"
-
-#: build/profile.js:2
-msgid "The passkey prompt was closed or timed out. Try again."
-msgstr "A hozzáférésikulcs-ablakot bezárták, vagy lejárt az idő. Próbáld újra."
 
 #: build/profile.js:2
 msgid ""
@@ -4424,12 +4482,8 @@ msgid "Create new codes"
 msgstr "Új kódok készítése"
 
 #: build/profile.js:7
-msgid ""
-"The old codes stop working. Confirm it with your password or a code from "
-"your authenticator app."
-msgstr ""
-"A régi kódok megszűnnek működni. Erősítsd meg a jelszavaddal vagy a "
-"hitelesítő alkalmazásod kódjával."
+msgid "The old codes stop working. Confirm it with your second factor."
+msgstr "A régi kódok nem működnek tovább. Erősítsd meg a második lépcsővel."
 
 #: build/profile.js:7
 msgid "Remembered devices"
@@ -4450,6 +4504,23 @@ msgstr "Minden megjegyzett eszköz elfelejtése"
 #: build/profile.js:7
 msgid "Every remembered device asks for the second step again."
 msgstr "Minden megjegyzett eszköz újra kéri a második lépést."
+
+#~ msgid "The password or code is not correct."
+#~ msgstr "A jelszó vagy a kód nem helyes."
+
+#~ msgid "Confirm it with your password or a code from your authenticator app."
+#~ msgstr ""
+#~ "Erősítsd meg a jelszavaddal vagy a hitelesítő alkalmazásod kódjával."
+
+#~ msgid "or authenticator code"
+#~ msgstr "vagy hitelesítő alkalmazás kódja"
+
+#~ msgid ""
+#~ "The old codes stop working. Confirm it with your password or a code from "
+#~ "your authenticator app."
+#~ msgstr ""
+#~ "A régi kódok megszűnnek működni. Erősítsd meg a jelszavaddal vagy a "
+#~ "hitelesítő alkalmazásod kódjával."
 
 #~ msgid "Rate limit: filter parameters"
 #~ msgstr "Rate limit: filter paraméterek"
