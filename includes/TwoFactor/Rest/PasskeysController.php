@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\TwoFactor\Rest;
 
 use LightweightPlugins\Firewall\Rest\Admin\Routes;
+use LightweightPlugins\Firewall\TwoFactor\Enforcement;
 use LightweightPlugins\Firewall\TwoFactor\FailureThrottle;
 use LightweightPlugins\Firewall\TwoFactor\Passkey\PasskeyService;
 use LightweightPlugins\Firewall\TwoFactor\RecoveryIssuer;
@@ -51,11 +52,13 @@ final class PasskeysController {
 	 * @param PasskeyService|null  $service  Passkey ceremonies.
 	 * @param FailureThrottle|null $throttle Re-auth budget.
 	 * @param \Closure|null        $clock    Returns the current Unix time; null = time().
+	 * @param Enforcement|null     $enforcement Requirement rules.
 	 */
 	public function __construct(
 		private readonly ?PasskeyService $service = null,
 		private readonly ?FailureThrottle $throttle = null,
-		private readonly ?\Closure $clock = null
+		private readonly ?\Closure $clock = null,
+		private readonly ?Enforcement $enforcement = null
 	) {}
 
 	/**
@@ -159,7 +162,7 @@ final class PasskeysController {
 		}
 		RecoveryIssuer::prune( $factors );
 
-		return FactorStatus::of( $user );
+		return FactorStatus::of( $user, $this->enforcement );
 	}
 
 	/**

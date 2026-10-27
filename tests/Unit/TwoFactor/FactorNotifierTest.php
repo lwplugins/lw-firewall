@@ -118,6 +118,32 @@ final class FactorNotifierTest extends MonkeyTestCase {
 		$this->assertStringContainsString( 'All two-factor sign-in methods were removed', $this->mails[1][2] );
 	}
 
+	public function test_the_recovery_and_devices_mails_carry_no_codes(): void {
+		( new FactorNotifier() )->notify( 6, 'regenerated', 'recovery' );
+		( new FactorNotifier() )->notify( 6, 'forgotten', 'devices' );
+
+		$this->assertCount( 2, $this->mails );
+		$this->assertStringContainsString( 'New recovery codes were created', $this->mails[0][2] );
+		$this->assertStringContainsString( 'Every remembered device was signed out', $this->mails[1][2] );
+		foreach ( $this->mails as $mail ) {
+			$this->assertSame( 'bob@example.com', $mail[0] );
+			$this->assertDoesNotMatchRegularExpression( '/[2-9a-z]{4}-[2-9a-z]{4}/', $mail[2], 'No recovery code in the mail.' );
+		}
+	}
+
+	public function test_forgetting_devices_through_the_action_does_not_loop(): void {
+		$calls = 0;
+		Actions\expectDone( UserFactors::CHANGED_ACTION )->once()->whenHappen(
+			static function () use ( &$calls ) {
+				++$calls;
+			}
+		);
+		do_action( UserFactors::CHANGED_ACTION, 6, 'forgotten', 'devices' );
+		( new \LightweightPlugins\Firewall\TwoFactor\RememberRevoker() )->on_factor_changed( 6 );
+
+		$this->assertSame( 1, $calls, 'Rotating the salt fires no further change action.' );
+	}
+
 	public function test_no_mail_without_an_address_or_user(): void {
 		( new FactorNotifier() )->notify( 99, 'added', 'totp' );
 		$this->assertSame( array(), $this->mails );

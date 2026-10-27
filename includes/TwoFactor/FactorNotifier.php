@@ -37,8 +37,8 @@ final class FactorNotifier {
 	 * Send the notification (plain text).
 	 *
 	 * @param mixed $user_id User.
-	 * @param mixed $change  'added' or 'removed'.
-	 * @param mixed $factor  'totp', 'passkey' or 'all'.
+	 * @param mixed $change  'added', 'removed', 'regenerated' or 'forgotten'.
+	 * @param mixed $factor  'totp', 'passkey', 'all', 'recovery' or 'devices'.
 	 */
 	public function notify( $user_id, $change = '', $factor = '' ): void {
 		$user = is_numeric( $user_id ) ? get_userdata( (int) $user_id ) : false;
@@ -72,10 +72,16 @@ final class FactorNotifier {
 	/**
 	 * Human description of the change.
 	 *
-	 * @param string $change 'added' or 'removed'.
-	 * @param string $factor 'totp', 'passkey' or 'all'.
+	 * @param string $change 'added', 'removed', 'regenerated' or 'forgotten'.
+	 * @param string $factor 'totp', 'passkey', 'all', 'recovery' or 'devices'.
 	 */
 	private static function describe( string $change, string $factor ): string {
+		if ( 'recovery' === $factor ) {
+			return __( 'New recovery codes were created (the old ones no longer work)', 'lw-firewall' );
+		}
+		if ( 'devices' === $factor ) {
+			return __( 'Every remembered device was signed out of the second step', 'lw-firewall' );
+		}
 		if ( 'all' === $factor ) {
 			return __( 'All two-factor sign-in methods were removed', 'lw-firewall' );
 		}

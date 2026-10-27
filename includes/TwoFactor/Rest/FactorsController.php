@@ -29,11 +29,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * logged-out one, which every permission callback refuses.
  *
  * - GET  /me, GET /users/{id} (edit_user): FactorStatus.
- * - POST /totp/begin → { secret, uri }: the secret waits sealed in
- *   PendingTotpSecret; re-auth is asked once the account has any factor.
+ * - POST /totp/begin ( current_password ) → { secret, uri }: the secret
+ *   waits sealed in PendingTotpSecret.
  * - POST /totp/confirm ( code ) → { recovery_codes }: codes only on the first
  *   issue, shown once.
- * - DELETE /totp, POST /recovery/regenerate, POST /devices/forget: ReAuth.
+ * - DELETE /totp, POST /recovery/regenerate, POST /devices/forget: ReAuth;
+ *   the last two announce UserFactors::CHANGED_ACTION ( 'regenerated',
+ *   'recovery' ) / ( 'forgotten', 'devices' ), so FactorNotifier mails the owner.
  * - POST /users/{id}/reset: another user only, with the admin's own password.
  *
  * Passkey routes: PasskeysController.
@@ -134,6 +136,10 @@ final class FactorsController {
 	/**
 	 * GET /me.
 	 *
+	 * For a user whose role requires a second factor this may start the grace
+	 * clock (Enforcement::grace_ends_at() writes it once): intended, the same as
+	 * the enrollment notice.
+	 *
 	 * @return array<string, mixed>
 	 */
 	public function me(): array {
@@ -164,11 +170,11 @@ final class FactorsController {
 		if ( $factors->has_totp_record() ) {
 			return new WP_Error( self::CODE_EXISTS, __( 'An authenticator app is already set up. Remove it first to set up a new one.', 'lw-firewall' ), array( 'status' => 409 ) );
 		}
-		if ( $factors->has_any() ) {
-			$proof = $this->reauth()->check( $user, $request );
-			if ( $proof instanceof WP_Error ) {
-				return $proof;
-			}
+		// Always the password (never a code: there is no app yet), also for the first
+		// factor: a stolen session must not plant its own authenticator.
+		$proof = $this->reauth()->check( $user, $request, false );
+		if ( $proof instanceof WP_Error ) {
+			return $proof;
 		}
 
 		$secret = Totp::generate_secret();
@@ -249,7 +255,10 @@ final class FactorsController {
 			return $proof;
 		}
 
-		return array( 'recovery_codes' => RecoveryIssuer::regenerate( $factors ) );
+		$codes = RecoveryIssuer::regenerate( $factors );
+		self::announce( (int) $user->ID, 'regenerated', 'recovery' );
+
+		return array( 'recovery_codes' => $codes );
 	}
 
 	/**
@@ -266,6 +275,7 @@ final class FactorsController {
 		}
 
 		( new UserFactors( (int) $user->ID ) )->forget_devices();
+		self::announce( (int) $user->ID, 'forgotten', 'devices' );
 
 		return array( 'forgotten' => true );
 	}
@@ -302,6 +312,17 @@ final class FactorsController {
 		$user = get_userdata( absint( $request->get_param( 'user_id' ) ) );
 
 		return $user instanceof WP_User ? $user : new WP_Error( self::CODE_NO_USER, __( 'User not found.', 'lw-firewall' ), array( 'status' => 404 ) );
+	}
+
+	/**
+	 * Tell the factor-change listeners (owner e-mail) about a security change.
+	 *
+	 * @param int    $user_id User.
+	 * @param string $change  Change.
+	 * @param string $factor  Subject.
+	 */
+	private static function announce( int $user_id, string $change, string $factor ): void {
+		do_action( 'lw_firewall_2fa_factor_changed', $user_id, $change, $factor ); // Same as UserFactors::CHANGED_ACTION (a literal for the hook-name sniff).
 	}
 
 	/**

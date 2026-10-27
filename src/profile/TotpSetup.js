@@ -1,5 +1,5 @@
 /**
- * Authenticator-app setup: (re-auth when the account has a factor) → QR,
+ * Authenticator-app setup: current password → QR,
  * grouped key and otpauth link → code → recovery codes.
  */
 /**
@@ -46,17 +46,16 @@ function Qr( { uri } ) {
 
 /**
  * @param {Object}   props
- * @param {boolean}  props.needsProof Account already has a factor.
- * @param {Function} props.onEnabled  ( recoveryCodes ) => void.
+ * @param {Function} props.onEnabled ( recoveryCodes ) => void.
  */
-export default function TotpSetup( { needsProof, onEnabled } ) {
+export default function TotpSetup( { onEnabled } ) {
 	const [ stage, setStage ] = useState( 'idle' );
 	const [ setup, setSetup ] = useState( null );
 	const [ code, setCode ] = useState( '' );
 	const [ busy, setBusy ] = useState( false );
 	const [ error, setError ] = useState( '' );
 
-	const begin = async ( proof = {} ) => {
+	const begin = async ( proof ) => {
 		setBusy( true );
 		setError( '' );
 		try {
@@ -97,6 +96,10 @@ export default function TotpSetup( { needsProof, onEnabled } ) {
 		return (
 			<ProofForm
 				allowCode={ false }
+				prompt={ __(
+					'Enter your current password to set up an authenticator app.',
+					'lw-firewall'
+				) }
 				submitLabel={ __( 'Continue', 'lw-firewall' ) }
 				busy={ busy }
 				error={ error }
@@ -195,7 +198,7 @@ export default function TotpSetup( { needsProof, onEnabled } ) {
 				variant="secondary"
 				isBusy={ busy }
 				disabled={ busy }
-				onClick={ () => ( needsProof ? setStage( 'proof' ) : begin() ) }
+				onClick={ () => setStage( 'proof' ) }
 			>
 				{ __( 'Set up authenticator app', 'lw-firewall' ) }
 			</Button>

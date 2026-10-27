@@ -159,7 +159,7 @@ export default function SelfService( { passkeysAvailable } ) {
 						/>
 					</>
 				) : (
-					<TotpSetup needsProof={ hasAny } onEnabled={ changed } />
+					<TotpSetup onEnabled={ changed } />
 				) }
 			</Row>
 

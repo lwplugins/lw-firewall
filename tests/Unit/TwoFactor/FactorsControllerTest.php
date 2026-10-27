@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Firewall\Tests\Unit\TwoFactor;
 
+use Brain\Monkey\Actions;
 use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
 use LightweightPlugins\Firewall\Tests\Unit\TwoFactor\Passkey\SoftAuthenticator;
@@ -105,7 +106,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 	 * @param array<string, mixed> $reauth Re-auth parameters for begin.
 	 * @return array<string, mixed>|\WP_Error
 	 */
-	private function enroll_totp( array $reauth = array() ) {
+	private function enroll_totp( array $reauth = array( 'current_password' => 'bob-pw' ) ) {
 		$begin = $this->factors()->totp_begin( $this->req( $reauth ) );
 		$this->assertIsArray( $begin );
 		return $this->factors()->totp_confirm( $this->req( array( 'code' => $this->bob_code( $begin['secret'] ) ) ) );
@@ -209,7 +210,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 	public function test_me_never_contains_the_pending_secret(): void {
 		$this->current = 6;
-		$begin         = $this->factors()->totp_begin( $this->req() );
+		$begin         = $this->factors()->totp_begin( $this->req( array( 'current_password' => 'bob-pw' ) ) );
 
 		$me = $this->factors()->me();
 		$this->assertFalse( $me['totp'] );
@@ -242,7 +243,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 	public function test_totp_begin_returns_secret_and_uri_and_keeps_it_sealed(): void {
 		$this->current = 6;
-		$begin         = $this->factors()->totp_begin( $this->req() );
+		$begin         = $this->factors()->totp_begin( $this->req( array( 'current_password' => 'bob-pw' ) ) );
 
 		$this->assertSame( array( 'secret', 'uri' ), array_keys( $begin ) );
 		$this->assertMatchesRegularExpression( '/^[A-Z2-7]{32}$/', $begin['secret'] );
@@ -256,7 +257,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 	public function test_confirm_with_a_wrong_code_is_400_and_saves_nothing(): void {
 		$this->current = 6;
-		$this->factors()->totp_begin( $this->req() );
+		$this->factors()->totp_begin( $this->req( array( 'current_password' => 'bob-pw' ) ) );
 
 		$this->assert_error( FactorsController::CODE_INVALID, 400, $this->factors()->totp_confirm( $this->req( array( 'code' => '000000' ) ) ) );
 		$this->assertFalse( ( new UserFactors( 6 ) )->has_totp() );
@@ -287,7 +288,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 		$this->add_passkey();
 		$hashes = ( new UserFactors( 6 ) )->recovery_hashes();
 
-		$out = $this->enroll_totp( array( 'current_password' => 'bob-pw' ) );
+		$out = $this->enroll_totp();
 
 		$this->assertSame( array(), $out['recovery_codes'] );
 		$this->assertSame( $hashes, ( new UserFactors( 6 ) )->recovery_hashes() );
@@ -295,6 +296,16 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 	public function test_begin_is_refused_while_totp_is_on(): void {
 		$this->assert_error( FactorsController::CODE_EXISTS, 409, $this->factors()->totp_begin( $this->req( array( 'current_password' => 'alice-pw' ) ) ) );
+	}
+
+	public function test_first_factor_begin_needs_the_password(): void {
+		$this->current = 6;
+
+		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->totp_begin( $this->req() ) );
+		$this->assert_error( ReAuth::FAILED_CODE, 403, $this->factors()->totp_begin( $this->req( array( 'current_password' => 'nope' ) ) ) );
+		$this->assertNull( PendingTotpSecret::get( 6 ), 'No secret issued without the password.' );
+		$this->assertSame( 1, $this->storage->count( 6, FailureThrottle::META_KEY, FailureThrottle::WINDOW ), 'Counted by the throttle.' );
+		$this->assertIsArray( $this->factors()->totp_begin( $this->req( array( 'current_password' => 'bob-pw' ) ) ) );
 	}
 
 	public function test_begin_needs_reauth_once_the_account_has_a_factor(): void {
@@ -368,6 +379,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->recovery_regenerate( $this->req() ) );
 		$this->assertSame( array( 'old' ), ( new UserFactors( 5 ) )->recovery_hashes() );
 
+		Actions\expectDone( UserFactors::CHANGED_ACTION )->once()->with( 5, 'regenerated', 'recovery' );
 		$out = $this->factors()->recovery_regenerate( $this->req( array( 'code' => $this->code() ) ) );
 		$this->assertCount( 10, $out['recovery_codes'] );
 		$this->assertCount( 10, ( new UserFactors( 5 ) )->recovery_hashes() );
@@ -384,6 +396,8 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->devices_forget( $this->req() ) );
 		$this->assertSame( $salt, ( new UserFactors( 5 ) )->remember_salt() );
+
+		Actions\expectDone( UserFactors::CHANGED_ACTION )->once()->with( 5, 'forgotten', 'devices' );
 
 		$this->assertSame( array( 'forgotten' => true ), $this->factors()->devices_forget( $this->req( array( 'current_password' => 'alice-pw' ) ) ) );
 		$this->assertNotSame( $salt, ( new UserFactors( 5 ) )->remember_salt() );
