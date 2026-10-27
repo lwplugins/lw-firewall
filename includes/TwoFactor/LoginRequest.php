@@ -38,6 +38,13 @@ final class LoginRequest {
 	}
 
 	/**
+	 * The "Remember this device" checkbox of the challenge screen.
+	 */
+	public static function remember_device(): bool {
+		return ! empty( $_POST['lwfw_remember_device'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read after the challenge nonce check.
+	}
+
+	/**
 	 * The requested redirect of the login form, validated ('' = none).
 	 *
 	 * The wp-login.php form posts `redirect_to`, WooCommerce posts `redirect`.

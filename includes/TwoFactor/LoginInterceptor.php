@@ -59,6 +59,13 @@ final class LoginInterceptor {
 	private \Closure $halt;
 
 	/**
+	 * Trusted-device cookie.
+	 *
+	 * @var RememberDevice
+	 */
+	private RememberDevice $remember;
+
+	/**
 	 * The running wp_signon().
 	 *
 	 * @var SignonTracker
@@ -89,6 +96,7 @@ final class LoginInterceptor {
 	 * @param \Closure|null             $halt     Ends the request; null = exit.
 	 * @param SignonTracker|null        $signon   Shared sign-on state (registered by TwoFactorModule).
 	 * @param FailureThrottle|null      $throttle Per-account failure cap.
+	 * @param RememberDevice|null       $remember Trusted-device cookie.
 	 */
 	public function __construct(
 		private readonly ?PendingLogin $pending = null,
@@ -97,15 +105,17 @@ final class LoginInterceptor {
 		private readonly ?RequestContext $context = null,
 		?\Closure $halt = null,
 		?SignonTracker $signon = null,
-		?FailureThrottle $throttle = null
+		?FailureThrottle $throttle = null,
+		?RememberDevice $remember = null
 	) {
+		$this->remember  = $remember ?? new RememberDevice();
 		$this->halt      = $halt ?? static function (): void {
 			exit;
 		};
 		$this->signon    = $signon ?? new SignonTracker();
 		$this->throttle  = $throttle ?? new FailureThrottle();
 		$this->page      = $page ?? new ChallengePage();
-		$this->challenge = new ChallengeController( $this->pending(), $verifier ?? new SecondFactorVerifier(), $this->page, $this->halt, $this->throttle );
+		$this->challenge = new ChallengeController( $this->pending(), $verifier ?? new SecondFactorVerifier(), $this->page, $this->halt, $this->throttle, $this->remember );
 	}
 
 	/**
@@ -204,10 +214,14 @@ final class LoginInterceptor {
 	/**
 	 * Whether the user must answer a second factor.
 	 *
+	 * A remembered device only skips the challenge of a user who HAS factors;
+	 * it never stands in for forced enrollment (role enforcement), which
+	 * looks at has_any() on its own.
+	 *
 	 * @param WP_User $user User.
 	 */
 	public function should_challenge( WP_User $user ): bool {
-		return ( new UserFactors( (int) $user->ID ) )->has_any();
+		return ( new UserFactors( (int) $user->ID ) )->has_any() && ! $this->remember->is_valid( (int) $user->ID );
 	}
 
 	/**

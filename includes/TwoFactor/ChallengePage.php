@@ -141,6 +141,7 @@ final class ChallengePage {
 			<input type="hidden" name="lwfw_passkey" id="lwfw-2fa-passkey" value="" />
 			<?php wp_nonce_field( 'lw_firewall_2fa_' . $token, 'lwfw_2fa_nonce', false ); ?>
 			<?php $this->render_code_field( $mode ); ?>
+			<?php $this->render_remember(); ?>
 			<?php if ( null !== $passkey ) : ?>
 				<p class="lwfw-2fa-passkey">
 					<button type="button" class="button button-secondary button-large" id="lwfw-2fa-passkey-button" data-options="<?php echo esc_attr( (string) wp_json_encode( $passkey ) ); ?>" data-error="<?php echo esc_attr__( 'The passkey check did not finish. Try again or use another method.', 'lw-firewall' ); ?>">
@@ -149,6 +150,27 @@ final class ChallengePage {
 				</p>
 			<?php endif; ?>
 		</form>
+		<?php
+	}
+
+	/**
+	 * The "Remember this device" checkbox, only when the admin enabled it.
+	 */
+	private function render_remember(): void {
+		$days = RememberDevice::days();
+		if ( $days <= 0 ) {
+			return;
+		}
+		?>
+		<p class="forgetmenot lwfw-2fa-remember">
+			<label for="lwfw-2fa-remember">
+				<input type="checkbox" name="lwfw_remember_device" id="lwfw-2fa-remember" value="1" />
+				<?php
+				/* translators: %d: number of days */
+				echo esc_html( sprintf( _n( 'Remember this device for %d day', 'Remember this device for %d days', $days, 'lw-firewall' ), $days ) );
+				?>
+			</label>
+		</p>
 		<?php
 	}
 

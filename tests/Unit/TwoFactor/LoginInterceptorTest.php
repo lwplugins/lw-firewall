@@ -25,6 +25,7 @@ use LightweightPlugins\Firewall\TwoFactor\LoginInterceptor;
 use LightweightPlugins\Firewall\TwoFactor\Passkey\PasskeyService;
 use LightweightPlugins\Firewall\TwoFactor\PasskeyRecord;
 use LightweightPlugins\Firewall\TwoFactor\PendingLogin;
+use LightweightPlugins\Firewall\TwoFactor\RememberDevice;
 use LightweightPlugins\Firewall\TwoFactor\RequestContext;
 use LightweightPlugins\Firewall\TwoFactor\SecondFactorVerifier;
 use LightweightPlugins\Firewall\TwoFactor\SignonTracker;
@@ -183,7 +184,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 	/**
 	 * @param array<string, bool> $flags Request flags.
 	 */
-	private function interceptor( array $flags = array() ): LoginInterceptor {
+	private function interceptor( array $flags = array(), ?RememberDevice $remember = null ): LoginInterceptor {
 		$clock = fn (): int => $this->now;
 
 		return new LoginInterceptor(
@@ -196,7 +197,8 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 				throw new \RuntimeException( 'halt' );
 			},
 			$this->signon,
-			$this->throttle
+			$this->throttle,
+			$remember
 		);
 	}
 
@@ -754,5 +756,61 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$this->signon->start( 'alice', 'pw' );
 		$this->assertTrue( $this->signon->accepts_password_for( 'alice' ) );
 		$this->assertFalse( $this->signon->accepts_password_for( 'alice@example.com' ) );
+	}
+
+	// ---- remember this device -----------------------------------------------
+
+	/**
+	 * @param array<int, array{0: string, 1: string, 2: array<string, mixed>}> $sink Captured cookies.
+	 */
+	private function remember_device( array &$sink ): RememberDevice {
+		return new RememberDevice(
+			fn (): int => $this->now,
+			static function ( string $name, string $value, array $options ) use ( &$sink ): void {
+				$sink[] = array( $name, $value, $options );
+			}
+		);
+	}
+
+	public function test_the_checkbox_shows_only_when_remember_days_is_set(): void {
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+		$this->assertStringNotContainsString( 'lwfw_remember_device', $this->open( $interceptor, $token ) );
+
+		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false, 'twofa_remember_days' => 14 ) ) );
+		$html = $this->open( $interceptor, $token );
+		$this->assertStringContainsString( 'name="lwfw_remember_device"', $html );
+		$this->assertStringContainsString( 'Remember this device for 14 days', $html );
+	}
+
+	public function test_a_ticked_box_issues_the_cookie_and_the_next_login_skips_the_challenge(): void {
+		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false, 'twofa_remember_days' => 14 ) ) );
+		$sink        = array();
+		$interceptor = $this->interceptor( array(), $this->remember_device( $sink ) );
+		$token       = $this->login( 5, $interceptor );
+
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code(), 'lwfw_remember_device' => '1' ) );
+
+		$this->assertCount( 1, $sink );
+		$this->assertSame( 14 * 86400 + $this->now, $sink[0][2]['expires'] );
+		$_COOKIE[ $sink[0][0] ] = $sink[0][1];
+		$this->assertFalse( $interceptor->should_challenge( $this->users[5] ) );
+		$this->assertTrue( $interceptor->should_challenge( $this->users[6] ) === false, 'No factors, no challenge.' );
+		unset( $_COOKIE[ $sink[0][0] ] );
+		$this->assertTrue( $interceptor->should_challenge( $this->users[5] ) );
+	}
+
+	public function test_an_unticked_box_or_zero_days_issues_nothing(): void {
+		$sink        = array();
+		$interceptor = $this->interceptor( array(), $this->remember_device( $sink ) );
+		$token       = $this->login( 5, $interceptor );
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code(), 'lwfw_remember_device' => '1' ) );
+		$this->assertSame( array(), $sink, 'Days = 0: nothing is issued.' );
+
+		OptionStore::install( array( 'lw_firewall' => array( 'log_enabled' => false, 'twofa_remember_days' => 14 ) ) );
+		$this->now += 60;
+		$token = $this->login( 5, $interceptor );
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+		$this->assertSame( array(), $sink, 'Box not ticked: nothing is issued.' );
 	}
 }

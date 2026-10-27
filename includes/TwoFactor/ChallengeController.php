@@ -41,13 +41,15 @@ final class ChallengeController {
 	 * @param ChallengePage        $page     Screen.
 	 * @param \Closure             $halt     Ends the request.
 	 * @param FailureThrottle      $throttle Per-account failure cap.
+	 * @param RememberDevice|null  $remember Trusted-device cookie; null = default.
 	 */
 	public function __construct(
 		private readonly PendingLogin $pending,
 		private readonly SecondFactorVerifier $verifier,
 		private readonly ChallengePage $page,
 		private readonly \Closure $halt,
-		private readonly FailureThrottle $throttle
+		private readonly FailureThrottle $throttle,
+		private readonly ?RememberDevice $remember = null
 	) {}
 
 	/**
@@ -199,6 +201,10 @@ final class ChallengeController {
 		$this->completing = true;
 		wp_set_auth_cookie( (int) $user->ID, $record['remember'], $record['secure'] );
 		wp_set_current_user( (int) $user->ID );
+		$days = RememberDevice::days();
+		if ( $days > 0 && LoginRequest::remember_device() ) {
+			( $this->remember ?? new RememberDevice() )->issue( (int) $user->ID, $days );
+		}
 
 		/**
 		 * Fires when a login passed its second factor and the session is set.
