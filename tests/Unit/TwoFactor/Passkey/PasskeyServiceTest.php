@@ -46,8 +46,8 @@ final class PasskeyServiceTest extends MonkeyTestCase {
 		return SoftAuthenticator::b64url( $bin );
 	}
 
-	private function client_data( string $origin = 'https://example.com' ): string {
-		return self::b64( (string) json_encode( array( 'type' => 'x', 'origin' => $origin ) ) );
+	private function client_data( string $origin = 'https://example.com', array $extra = array() ): string {
+		return self::b64( (string) json_encode( array( 'type' => 'x', 'origin' => $origin ) + $extra ) );
 	}
 
 	/**
@@ -64,10 +64,10 @@ final class PasskeyServiceTest extends MonkeyTestCase {
 	 *
 	 * @return array<string, string>
 	 */
-	private function assertion( string $raw_cred, int $count, ?string $handle_bin, string $origin = 'https://example.com' ): array {
+	private function assertion( string $raw_cred, int $count, ?string $handle_bin, string $origin = 'https://example.com', array $extra = array() ): array {
 		$out = array(
 			'id'                => self::b64( $raw_cred ),
-			'clientDataJSON'    => $this->client_data( $origin ),
+			'clientDataJSON'    => $this->client_data( $origin, $extra ),
 			'authenticatorData' => self::b64( hash( 'sha256', 'example.com', true ) . chr( 5 ) . pack( 'N', $count ) ),
 			'signature'         => self::b64( 'sig' ),
 		);
@@ -126,6 +126,13 @@ final class PasskeyServiceTest extends MonkeyTestCase {
 		$this->assertSame( 'att', $args[1] );
 		$this->assertSame( $this->lib->challenge, $args[2] );
 		$this->assertSame( array( true, true, true, true ), array_slice( $args, 3 ) );
+	}
+
+	public function test_finish_registration_label_is_normalized_and_capped(): void {
+		$key    = $this->service->registration_options( $this->alice )['key'];
+		$record = $this->service->finish_registration( $this->alice, $key, $this->client_data(), self::b64( 'att' ), "  <b>" . str_repeat( 'é', 100 ) . "</b>\n" );
+		$this->assertSame( str_repeat( 'é', 60 ), $record->label );
+		$this->assertSame( str_repeat( 'é', 60 ), ( new UserFactors( 5 ) )->passkeys()[0]->label );
 	}
 
 	public function test_finish_registration_default_label(): void {
@@ -189,13 +196,13 @@ final class PasskeyServiceTest extends MonkeyTestCase {
 		$this->assertMatchesRegularExpression( '/^[0-9a-f]{32}$/', $out['key'] );
 		$this->assertSame( array(), $this->lib->calls['getGetArgs'][0] );
 		$this->assertTrue( $this->lib->calls['getGetArgs'][7] );
-		$this->assertSame( 0, ChallengeStore::take( $out['key'], 'assert' )['user_id'] );
+		$this->assertSame( 0, ChallengeStore::take( $out['key'], 'assert_login' )['user_id'] );
 
 		$this->give_key( 5, 'k1' );
 		$out = $this->service->assertion_options( $this->alice );
 		$this->assertSame( array( 'k1' ), $this->lib->calls['getGetArgs'][0] );
 		$this->assertSame( 120, $this->lib->calls['getGetArgs'][1] );
-		$this->assertSame( 5, ChallengeStore::take( $out['key'], 'assert' )['user_id'] );
+		$this->assertSame( 5, ChallengeStore::take( $out['key'], 'assert_2fa' )['user_id'] );
 	}
 
 	// ---- verification -------------------------------------------------------
@@ -245,18 +252,65 @@ final class PasskeyServiceTest extends MonkeyTestCase {
 		$this->assertArrayNotHasKey( 'processGet', $this->lib->calls );
 	}
 
-	public function test_second_factor_binds_to_challenge_user(): void {
+	public function test_second_factor_happy_path_handle_optional_but_checked(): void {
 		$this->give_key( 5, 'k1' );
 		$this->give_key( 9, 'k9' );
 
 		$key = $this->service->assertion_options( $this->alice )['key'];
-		$this->assert_error( 'lwfw_passkey_unknown', $this->service->verify_assertion( $key, $this->assertion( 'k9', 1, $this->handle_bin( 9 ) ) ) );
+		$this->assertSame( 5, $this->service->verify_assertion( $key, $this->assertion( 'k1', 1, null ), 5 ) );
 
 		$key = $this->service->assertion_options( $this->alice )['key'];
-		$this->assertSame( 5, $this->service->verify_assertion( $key, $this->assertion( 'k1', 1, null ) ) );
+		$this->assertSame( 5, $this->service->verify_assertion( $key, $this->assertion( 'k1', 2, $this->handle_bin( 5 ) ), 5 ) );
 
 		$key = $this->service->assertion_options( $this->alice )['key'];
-		$this->assert_error( 'lwfw_passkey_handle', $this->service->verify_assertion( $key, $this->assertion( 'k1', 2, $this->handle_bin( 9 ) ) ) );
+		$this->assert_error( 'lwfw_passkey_handle', $this->service->verify_assertion( $key, $this->assertion( 'k1', 3, $this->handle_bin( 9 ) ), 5 ) );
+	}
+
+	public function test_other_users_passkey_cannot_pass_second_factor(): void {
+		$this->give_key( 5, 'k1' );
+		$this->give_key( 9, 'k9' );
+		$bob = new \WP_User( 9, 'bob', 'Bob' );
+
+		// B's passkey against A's 2FA challenge.
+		$key = $this->service->assertion_options( $this->alice )['key'];
+		$this->assert_error( 'lwfw_passkey_unknown', $this->service->verify_assertion( $key, $this->assertion( 'k9', 1, $this->handle_bin( 9 ) ), 5 ) );
+
+		// B's own 2FA challenge (attacker started a login as B), B's passkey, presented for A.
+		$key = $this->service->assertion_options( $bob )['key'];
+		$this->assert_error( 'lwfw_passkey_unknown', $this->service->verify_assertion( $key, $this->assertion( 'k9', 1, $this->handle_bin( 9 ) ), 5 ) );
+
+		// A discoverable challenge presented on the 2FA path.
+		$key = $this->service->assertion_options( null )['key'];
+		$this->assert_error( 'lwfw_passkey_challenge', $this->service->verify_assertion( $key, $this->assertion( 'k9', 1, $this->handle_bin( 9 ) ), 5 ) );
+
+		$key = $this->service->assertion_options( $this->alice )['key'];
+		$this->assert_error( 'lwfw_passkey_unknown', $this->service->verify_assertion( $key, $this->assertion( 'k1', 1, null ), 0 ) );
+		$this->assertArrayNotHasKey( 'processGet', $this->lib->calls );
+	}
+
+	public function test_passwordless_rejects_user_bound_challenge(): void {
+		$this->give_key( 5, 'k1' );
+		$key = $this->service->assertion_options( $this->alice )['key'];
+		$this->assert_error( 'lwfw_passkey_challenge', $this->service->verify_assertion( $key, $this->assertion( 'k1', 1, $this->handle_bin( 5 ) ) ) );
+		$this->assertArrayNotHasKey( 'processGet', $this->lib->calls );
+	}
+
+	public function test_cross_origin_client_data_is_rejected(): void {
+		$this->give_key( 5, 'k1' );
+		$key = $this->service->assertion_options( null )['key'];
+		$this->assert_error( 'lwfw_passkey_invalid', $this->service->verify_assertion( $key, $this->assertion( 'k1', 1, $this->handle_bin( 5 ), 'https://example.com', array( 'crossOrigin' => true ) ) ) );
+
+		$key = $this->service->assertion_options( null )['key'];
+		$this->assertSame( 5, $this->service->verify_assertion( $key, $this->assertion( 'k1', 1, $this->handle_bin( 5 ), 'https://example.com', array( 'crossOrigin' => false ) ) ) );
+
+		$key = $this->service->registration_options( $this->alice )['key'];
+		$this->assert_error( 'lwfw_passkey_invalid', $this->service->finish_registration( $this->alice, $key, $this->client_data( 'https://example.com', array( 'crossOrigin' => true ) ), self::b64( 'att' ), 'x' ) );
+	}
+
+	public function test_subdomain_origin_is_rejected(): void {
+		$this->give_key( 5, 'k1' );
+		$key = $this->service->assertion_options( null )['key'];
+		$this->assert_error( 'lwfw_passkey_invalid', $this->service->verify_assertion( $key, $this->assertion( 'k1', 1, $this->handle_bin( 5 ), 'https://sub.example.com' ) ) );
 	}
 
 	public function test_sign_count_regression_is_clone(): void {

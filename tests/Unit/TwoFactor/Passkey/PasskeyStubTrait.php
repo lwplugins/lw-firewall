@@ -23,7 +23,7 @@ trait PasskeyStubTrait {
 	 */
 	protected array $transients = array();
 
-	protected function stub_passkey_wp( string $home = 'https://example.com' ): void {
+	protected function stub_passkey_wp( string $home = 'https://example.com', ?string $site = null ): void {
 		$this->transients = array();
 		$store            = &$this->transients;
 
@@ -48,6 +48,7 @@ trait PasskeyStubTrait {
 			}
 		);
 		Functions\when( 'home_url' )->justReturn( $home );
+		Functions\when( 'site_url' )->justReturn( $site ?? $home );
 		Functions\when( 'get_bloginfo' )->justReturn( 'Example &amp; Co' );
 		Functions\when( 'wp_specialchars_decode' )->alias( static fn ( $s, $q = 0 ) => htmlspecialchars_decode( (string) $s, ENT_QUOTES ) );
 		Functions\when( 'wp_parse_url' )->alias( static fn ( $url, $component = -1 ) => parse_url( (string) $url, $component ) );

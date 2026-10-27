@@ -26,7 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class PasskeyService {
 
 	private const PURPOSE_REGISTER = 'register';
-	private const PURPOSE_ASSERT   = 'assert';
+	private const PURPOSE_2FA      = 'assert_2fa';
+	private const PURPOSE_LOGIN    = 'assert_login';
 
 	/**
 	 * Ceremony timeout in seconds (same as the challenge lifetime).
@@ -48,20 +49,24 @@ final class PasskeyService {
 	 */
 	public function registration_options( WP_User $user ): array|WP_Error {
 		try {
-			$factors = new UserFactors( (int) $user->ID );
-			$lib     = $this->library();
-			$args    = $lib->getCreateArgs(
-				(string) hex2bin( $factors->user_handle() ),
-				(string) $user->user_login,
-				'' !== (string) $user->display_name ? (string) $user->display_name : (string) $user->user_login,
-				self::TIMEOUT,
-				true,
-				true,
-				null,
-				$this->credential_ids( $factors )
-			);
+			return WebAuthnFactory::isolated(
+				function () use ( $user ): array {
+					$factors = new UserFactors( (int) $user->ID );
+					$lib     = $this->library();
+					$args    = $lib->getCreateArgs(
+						(string) hex2bin( $factors->user_handle() ),
+						(string) $user->user_login,
+						'' !== (string) $user->display_name ? (string) $user->display_name : (string) $user->user_login,
+						self::TIMEOUT,
+						true,
+						true,
+						null,
+						$this->credential_ids( $factors )
+					);
 
-			return $this->issue( $lib, $args, self::PURPOSE_REGISTER, (int) $user->ID );
+					return $this->issue( $lib, $args, self::PURPOSE_REGISTER, (int) $user->ID );
+				}
+			);
 		} catch ( \Throwable $e ) {
 			return PasskeyError::make( PasskeyError::INVALID, $e );
 		}
@@ -89,7 +94,9 @@ final class PasskeyService {
 		}
 
 		try {
-			$created = get_object_vars( $this->library()->processCreate( $client_data, $attestation, $challenge['challenge'], true, true, true, true ) );
+			$created = WebAuthnFactory::isolated(
+				fn (): array => get_object_vars( $this->library()->processCreate( $client_data, $attestation, $challenge['challenge'], true, true, true, true ) )
+			);
 		} catch ( \Throwable $e ) {
 			return PasskeyError::make( PasskeyError::INVALID, $e );
 		}
@@ -111,13 +118,18 @@ final class PasskeyService {
 	 * @return array{key: string, options: array<string, mixed>}|WP_Error
 	 */
 	public function assertion_options( ?WP_User $user ): array|WP_Error {
+		$user_id = null === $user ? 0 : (int) $user->ID;
+		$purpose = null === $user ? self::PURPOSE_LOGIN : self::PURPOSE_2FA;
 		try {
-			$user_id = null === $user ? 0 : (int) $user->ID;
-			$ids     = $user_id > 0 ? $this->credential_ids( new UserFactors( $user_id ) ) : array();
-			$lib     = $this->library();
-			$args    = $lib->getGetArgs( $ids, self::TIMEOUT, true, true, true, true, true, true );
+			return WebAuthnFactory::isolated(
+				function () use ( $user_id, $purpose ): array {
+					$ids  = $user_id > 0 ? $this->credential_ids( new UserFactors( $user_id ) ) : array();
+					$lib  = $this->library();
+					$args = $lib->getGetArgs( $ids, self::TIMEOUT, true, true, true, true, true, true );
 
-			return $this->issue( $lib, $args, self::PURPOSE_ASSERT, $user_id );
+					return $this->issue( $lib, $args, $purpose, $user_id );
+				}
+			);
 		} catch ( \Throwable $e ) {
 			return PasskeyError::make( PasskeyError::INVALID, $e );
 		}
@@ -126,19 +138,24 @@ final class PasskeyService {
 	/**
 	 * Verify an assertion.
 	 *
-	 * For a challenge bound to a user (second factor) the credential must belong
-	 * to that user; callers must still compare the returned ID with the user
-	 * they expect. For a discoverable challenge the userHandle is mandatory.
+	 * Second factor: pass the pending user's ID. The challenge must be a 2FA
+	 * challenge issued for exactly that user, and the credential must be one
+	 * of that user's passkeys. Passwordless: pass null. The challenge must be a
+	 * discoverable one, and the userHandle is mandatory.
 	 *
-	 * @param string               $key        Challenge key from assertion_options().
-	 * @param array<string, mixed> $credential id, clientDataJSON, authenticatorData,
-	 *                                         signature, userHandle (base64url).
+	 * @param string               $key              Challenge key from assertion_options().
+	 * @param array<string, mixed> $credential       id, clientDataJSON, authenticatorData,
+	 *                                               signature, userHandle (base64url).
+	 * @param int|null             $expected_user_id Pending 2FA user, null = passwordless.
 	 * @return int|WP_Error User ID.
 	 */
-	public function verify_assertion( string $key, array $credential ): int|WP_Error {
-		$challenge = ChallengeStore::take( $key, self::PURPOSE_ASSERT );
-		if ( null === $challenge ) {
+	public function verify_assertion( string $key, array $credential, ?int $expected_user_id = null ): int|WP_Error {
+		$challenge = ChallengeStore::take( $key, null === $expected_user_id ? self::PURPOSE_LOGIN : self::PURPOSE_2FA );
+		if ( null === $challenge || ( null === $expected_user_id && 0 !== $challenge['user_id'] ) ) {
 			return PasskeyError::make( PasskeyError::CHALLENGE );
+		}
+		if ( null !== $expected_user_id && ( $expected_user_id <= 0 || $challenge['user_id'] !== $expected_user_id ) ) {
+			return PasskeyError::make( PasskeyError::UNKNOWN );
 		}
 
 		$input = AssertionInput::parse( $credential );
@@ -147,17 +164,13 @@ final class PasskeyService {
 		}
 
 		$user_id = UserFactors::find_user_by_credential( $input->credential_id );
-		if ( null === $user_id || ( $challenge['user_id'] > 0 && $challenge['user_id'] !== $user_id ) ) {
+		$factors = null === $user_id ? null : new UserFactors( $user_id );
+		$record  = null === $factors ? null : $this->find_record( $factors, $input->credential_id );
+		if ( null === $user_id || null === $record || ( null !== $expected_user_id && $expected_user_id !== $user_id ) ) {
 			return PasskeyError::make( PasskeyError::UNKNOWN );
 		}
 
-		$factors = new UserFactors( $user_id );
-		$record  = $this->find_record( $factors, $input->credential_id );
-		if ( null === $record ) {
-			return PasskeyError::make( PasskeyError::UNKNOWN );
-		}
-
-		$handle_required = 0 === $challenge['user_id'];
+		$handle_required = null === $expected_user_id;
 		if ( ( $handle_required || '' !== $input->user_handle ) && ! hash_equals( $factors->user_handle(), bin2hex( $input->user_handle ) ) ) {
 			return PasskeyError::make( PasskeyError::HANDLE );
 		}
@@ -180,7 +193,9 @@ final class PasskeyService {
 		}
 
 		try {
-			$ok = $this->library()->processGet( $input->client_data, $input->authenticator_data, $input->signature, $record->public_key, $challenge, null, true, true );
+			$ok = WebAuthnFactory::isolated(
+				fn () => $this->library()->processGet( $input->client_data, $input->authenticator_data, $input->signature, $record->public_key, $challenge, null, true, true )
+			);
 		} catch ( \Throwable $e ) {
 			return PasskeyError::make( PasskeyError::INVALID, $e );
 		}
@@ -281,14 +296,17 @@ final class PasskeyService {
 	}
 
 	/**
-	 * Whether clientDataJSON names an origin of this site.
+	 * Whether clientDataJSON names an allowed origin and is not cross-origin.
 	 *
 	 * @param string $client_data Raw clientDataJSON.
 	 */
 	private function origin_ok( string $client_data ): bool {
 		$data = json_decode( $client_data, true );
 
-		return is_array( $data ) && isset( $data['origin'] ) && is_string( $data['origin'] ) && WebAuthnFactory::origin_allowed( $data['origin'] );
+		return is_array( $data )
+			&& false === ( $data['crossOrigin'] ?? false )
+			&& isset( $data['origin'] ) && is_string( $data['origin'] )
+			&& OriginPolicy::allowed( $data['origin'] );
 	}
 
 	/**

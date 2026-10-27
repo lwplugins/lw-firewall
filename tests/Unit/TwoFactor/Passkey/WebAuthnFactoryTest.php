@@ -49,19 +49,27 @@ final class WebAuthnFactoryTest extends MonkeyTestCase {
 		WebAuthnFactory::create();
 	}
 
-	public function test_origin_must_be_rp_or_subdomain_over_https(): void {
-		$this->assertTrue( WebAuthnFactory::origin_allowed( 'https://example.com' ) );
-		$this->assertTrue( WebAuthnFactory::origin_allowed( 'https://www.example.com' ) );
-		$this->assertTrue( WebAuthnFactory::origin_allowed( 'https://EXAMPLE.com:8443' ) );
-		$this->assertFalse( WebAuthnFactory::origin_allowed( 'http://example.com' ) );
-		$this->assertFalse( WebAuthnFactory::origin_allowed( 'https://evilexample.com' ) );
-		$this->assertFalse( WebAuthnFactory::origin_allowed( 'https://example.com.evil.net' ) );
-		$this->assertFalse( WebAuthnFactory::origin_allowed( 'android:apk-key-hash:abc' ) );
-		$this->assertFalse( WebAuthnFactory::origin_allowed( '' ) );
-	}
+	public function test_isolated_restores_the_global_encoding_flag(): void {
+		\lbuchs\WebAuthn\Binary\ByteBuffer::$useBase64UrlEncoding = false;
+		$json = WebAuthnFactory::isolated(
+			static function (): string {
+				$lib = WebAuthnFactory::create();
+				return (string) json_encode( $lib->getGetArgs() );
+			}
+		);
+		$this->assertFalse( \lbuchs\WebAuthn\Binary\ByteBuffer::$useBase64UrlEncoding );
+		$this->assertStringNotContainsString( '=?BINARY?', $json );
 
-	public function test_localhost_allows_http(): void {
-		Functions\when( 'home_url' )->justReturn( 'http://localhost:8080' );
-		$this->assertTrue( WebAuthnFactory::origin_allowed( 'http://localhost:8080' ) );
+		try {
+			WebAuthnFactory::isolated(
+				static function (): void {
+					WebAuthnFactory::create();
+					throw new \RuntimeException( 'boom' );
+				}
+			);
+		} catch ( \RuntimeException $e ) {
+			$this->assertSame( 'boom', $e->getMessage() );
+		}
+		$this->assertFalse( \lbuchs\WebAuthn\Binary\ByteBuffer::$useBase64UrlEncoding );
 	}
 }

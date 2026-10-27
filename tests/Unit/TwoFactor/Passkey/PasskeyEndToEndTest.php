@@ -93,7 +93,7 @@ final class PasskeyEndToEndTest extends MonkeyTestCase {
 		if ( null !== $tamper ) {
 			$cred = $tamper( $cred );
 		}
-		return $this->service->verify_assertion( $out['key'], $cred );
+		return $this->service->verify_assertion( $out['key'], $cred, null === $user ? null : (int) $user->ID );
 	}
 
 	public function test_real_registration_and_real_assertion(): void {
@@ -146,6 +146,14 @@ final class PasskeyEndToEndTest extends MonkeyTestCase {
 		$out  = $this->service->assertion_options( null );
 		$cred = $this->device->get( random_bytes( 32 ), self::ORIGIN, self::RP, 1 );
 		$this->assertSame( 'lwfw_passkey_invalid', $this->service->verify_assertion( $out['key'], $cred )->get_error_code() );
+	}
+
+	public function test_global_encoding_flag_is_left_as_found(): void {
+		\lbuchs\WebAuthn\Binary\ByteBuffer::$useBase64UrlEncoding = false;
+		$this->register();
+		$this->assertFalse( \lbuchs\WebAuthn\Binary\ByteBuffer::$useBase64UrlEncoding );
+		$this->assertSame( 5, $this->login( 1 ) );
+		$this->assertFalse( \lbuchs\WebAuthn\Binary\ByteBuffer::$useBase64UrlEncoding );
 	}
 
 	public function test_registration_without_uv_is_rejected(): void {
