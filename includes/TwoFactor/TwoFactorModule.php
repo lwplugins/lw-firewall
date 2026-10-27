@@ -58,6 +58,8 @@ final class TwoFactorModule {
 		( new LoginInterceptor( null, null, null, null, null, $signon, $throttle ) )->register();
 		( new PasswordAuthGuard( null, $signon, $throttle ) )->register( (bool) Options::get( 'twofa_block_app_passwords', false ) );
 		( new EnrollmentNotice() )->register();
+		( new MailFailureNotice() )->register();
+		( new FactorNotifier() )->register();
 
 		return true;
 	}

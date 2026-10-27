@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * The only reader/writer of the two-factor user meta.
+ *
+ * Every factor added or removed here fires `lw_firewall_2fa_factor_changed`
+ * ( $user_id, 'added'|'removed', 'totp'|'passkey'|'all' ): the one place the
+ * change notification (FactorNotifier) listens to, whatever path made it.
  */
 final class UserFactors {
 
@@ -25,6 +29,11 @@ final class UserFactors {
 	public const META_HANDLE   = '_lw_firewall_user_handle';
 	public const META_SALT     = '_lw_firewall_remember_salt';
 	public const META_SINCE    = '_lw_firewall_2fa_since';
+
+	/**
+	 * Action fired on every added or removed factor.
+	 */
+	public const CHANGED_ACTION = 'lw_firewall_2fa_factor_changed';
 
 	/**
 	 * Passkey limit per user.
@@ -81,6 +90,7 @@ final class UserFactors {
 				)
 			)
 		);
+		$this->changed( 'added', 'totp' );
 	}
 
 	/**
@@ -101,7 +111,11 @@ final class UserFactors {
 	 * Remove the TOTP factor.
 	 */
 	public function delete_totp(): void {
+		$had = $this->has_totp_record();
 		delete_user_meta( $this->user_id, self::META_TOTP );
+		if ( $had ) {
+			$this->changed( 'removed', 'totp' );
+		}
 	}
 
 	/**
@@ -166,6 +180,7 @@ final class UserFactors {
 		$keys[] = $record;
 		$this->save_passkeys( $keys );
 		add_user_meta( $this->user_id, self::META_LOOKUP, hash( 'sha256', $record->credential_id ), false );
+		$this->changed( 'added', 'passkey' );
 
 		return true;
 	}
@@ -210,6 +225,7 @@ final class UserFactors {
 
 		$this->save_passkeys( $kept );
 		delete_user_meta( $this->user_id, self::META_LOOKUP, $lookup );
+		$this->changed( 'removed', 'passkey' );
 
 		return true;
 	}
@@ -273,10 +289,24 @@ final class UserFactors {
 	 * phone) must not open a fresh password-only grace window.
 	 */
 	public function reset_all(): void {
+		$had = $this->has_any();
 		foreach ( array( self::META_TOTP, self::META_RECOVERY, self::META_PASSKEYS, self::META_LOOKUP, self::META_HANDLE, self::META_SALT ) as $meta ) {
 			delete_user_meta( $this->user_id, $meta );
 		}
 		update_user_meta( $this->user_id, self::META_SALT, bin2hex( random_bytes( 16 ) ) );
+		if ( $had ) {
+			$this->changed( 'removed', 'all' );
+		}
+	}
+
+	/**
+	 * Announce an added or removed factor.
+	 *
+	 * @param string $change 'added' or 'removed'.
+	 * @param string $factor 'totp', 'passkey' or 'all'.
+	 */
+	private function changed( string $change, string $factor ): void {
+		do_action( 'lw_firewall_2fa_factor_changed', $this->user_id, $change, $factor ); // Same as self::CHANGED_ACTION (a literal for the hook-name sniff).
 	}
 
 	/**

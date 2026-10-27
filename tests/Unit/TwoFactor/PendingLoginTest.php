@@ -182,8 +182,9 @@ final class PendingLoginTest extends MonkeyTestCase {
 	}
 
 	public function test_expired_counters_of_the_account_are_purged_on_create(): void {
+		// Counters outlive the record by up to the enrollment lifetime (shared window).
 		$this->store()->create( 7, false, '' );
-		$this->now += PendingLogin::TTL + 1;
+		$this->now += PendingLogin::ENROLL_TTL + 1;
 		$this->store()->create( 7, false, '' );
 
 		$this->assertCount( 1, $this->db->rows() );

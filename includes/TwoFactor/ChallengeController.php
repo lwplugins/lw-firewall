@@ -126,12 +126,7 @@ final class ChallengeController {
 		}
 
 		if ( EnrollmentController::is_enrollment( $pending ) ) {
-			if ( $this->enrollment()->confirm( $token, $user, $pending ) ) {
-				$this->throttle->succeeded( (int) $user->ID );
-				( $this->halt )();
-				return;
-			}
-			$this->reject( $token, $user, SecondFactorVerifier::TOTP );
+			$this->confirm_enrollment( $token, $user, $pending );
 			return;
 		}
 
@@ -142,6 +137,29 @@ final class ChallengeController {
 		}
 
 		$this->reject( $token, $user, $method );
+	}
+
+	/**
+	 * The enrollment codes (attempt already claimed).
+	 *
+	 * @param string               $token   Pending token.
+	 * @param WP_User              $user    Pending user.
+	 * @param array<string, mixed> $pending Pending record.
+	 */
+	private function confirm_enrollment( string $token, WP_User $user, array $pending ): void {
+		$result = $this->enrollment()->confirm( $token, $user, $pending );
+		if ( EnrollmentController::CONFIRMED === $result ) {
+			$this->throttle->succeeded( (int) $user->ID );
+			( $this->halt )();
+			return;
+		}
+		if ( EnrollmentController::STALE === $result ) {
+			// The account got a factor meanwhile, or another sign-in bound first: not a wrong answer.
+			$this->stop_expired( false );
+			return;
+		}
+
+		$this->reject( $token, $user, SecondFactorVerifier::TOTP );
 	}
 
 	/**

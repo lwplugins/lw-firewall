@@ -25,9 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * (AttemptCounter, fail closed), so parallel requests cannot spend more than
  * five guesses on one token, whatever the firewall storage backend does.
  *
- * An enrollment record (forced enrollment, see EnrollmentController) also
- * carries the new TOTP secret, sealed with SecretBox, and after a confirmed
- * code the `enrolled` flag: the record then waits for the "continue" step.
+ * An enrollment record (forced enrollment, see EnrollmentController) lives
+ * ten minutes and also carries the new TOTP secret (sealed with SecretBox),
+ * the hashed e-mail code (EnrollmentMail) and, after a confirmed code, the
+ * `enrolled` flag: the record then waits for the "continue" step.
  */
 final class PendingLogin {
 
@@ -35,6 +36,16 @@ final class PendingLogin {
 	 * Lifetime in seconds.
 	 */
 	public const TTL = 300;
+
+	/**
+	 * Lifetime of a forced-enrollment record (time to add the key to an app).
+	 */
+	public const ENROLL_TTL = 600;
+
+	/**
+	 * Window of the per-token attempt counters (covers both lifetimes).
+	 */
+	private const WINDOW = self::ENROLL_TTL;
 
 	/**
 	 * Wrong answers allowed per token.
@@ -75,7 +86,7 @@ final class PendingLogin {
 		$token = bin2hex( random_bytes( 16 ) );
 
 		// Fresh counter for this token; drop the account's expired ones.
-		$this->counter()->purge( $user_id, self::ATTEMPT_PREFIX, self::TTL );
+		$this->counter()->purge( $user_id, self::ATTEMPT_PREFIX, self::WINDOW );
 		$this->counter()->hold( $user_id, self::attempt_key( $token ), 0 );
 
 		$this->save(
@@ -86,10 +97,15 @@ final class PendingLogin {
 				'redirect_to' => $redirect_to,
 				'ip_key'      => $this->ip_key(),
 				'secure'      => $secure,
-				'expires'     => $this->now() + self::TTL,
+				'expires'     => $this->now() + ( '' === $enroll ? self::TTL : self::ENROLL_TTL ),
 				'passkey_key' => '',
 				'enroll'      => '' === $enroll ? '' : SecretBox::seal( $enroll ),
 				'enrolled'    => false,
+				'mail'        => array(
+					'hash'    => '',
+					'expires' => 0,
+					'failed'  => false,
+				),
 			)
 		);
 
@@ -100,7 +116,7 @@ final class PendingLogin {
 	 * The record of a token, when it exists, is unexpired and belongs to this IP.
 	 *
 	 * @param string $token Token from create().
-	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string, enroll: string, enrolled: bool}|null
+	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string, enroll: string, enrolled: bool, mail: array{hash: string, expires: int, failed: bool}}|null
 	 */
 	public function get( string $token ): ?array {
 		if ( 1 !== preg_match( '/^[0-9a-f]{32}$/D', $token ) ) {
@@ -131,7 +147,7 @@ final class PendingLogin {
 			return false;
 		}
 
-		$count = $this->counter()->increment( $record['user_id'], self::attempt_key( $token ), self::TTL );
+		$count = $this->counter()->increment( $record['user_id'], self::attempt_key( $token ), self::WINDOW );
 		if ( $count > self::MAX_ATTEMPTS ) {
 			$this->drop( $token, $record['user_id'] );
 			return false;
@@ -148,7 +164,7 @@ final class PendingLogin {
 	public function attempts( string $token ): int {
 		$record = $this->get( $token );
 
-		return null === $record ? 0 : $this->counter()->count( $record['user_id'], self::attempt_key( $token ), self::TTL );
+		return null === $record ? 0 : $this->counter()->count( $record['user_id'], self::attempt_key( $token ), self::WINDOW );
 	}
 
 	/**
@@ -163,7 +179,7 @@ final class PendingLogin {
 			return 0;
 		}
 
-		$used = $this->counter()->count( $record['user_id'], self::attempt_key( $token ), self::TTL );
+		$used = $this->counter()->count( $record['user_id'], self::attempt_key( $token ), self::WINDOW );
 		$left = $used >= self::MAX_ATTEMPTS ? 0 : self::MAX_ATTEMPTS - $used;
 		if ( 0 === $left ) {
 			$this->drop( $token, $record['user_id'] );
@@ -180,12 +196,29 @@ final class PendingLogin {
 	 * @param string $key   ChallengeStore key.
 	 */
 	public function attach_passkey( string $token, string $key ): bool {
+		return $this->patch( $token, array( 'passkey_key' => $key ) );
+	}
+
+	/**
+	 * Overwrite fields of a live record (unknown keys and a broken shape are refused).
+	 *
+	 * @param string               $token  Token.
+	 * @param array<string, mixed> $fields Fields to replace.
+	 * @param int                  $ttl    New lifetime from now; 0 = keep the expiry (a write never extends it).
+	 */
+	public function patch( string $token, array $fields, int $ttl = 0 ): bool {
 		$record = $this->get( $token );
-		if ( null === $record ) {
+		if ( null === $record || array() !== array_diff_key( $fields, $record ) ) {
 			return false;
 		}
 
-		$record['passkey_key'] = $key;
+		$record = array_replace( $record, $fields );
+		if ( $ttl > 0 ) {
+			$record['expires'] = $this->now() + $ttl;
+		}
+		if ( ! self::well_formed( $record ) ) {
+			return false;
+		}
 		$this->save( $token, $record );
 
 		return true;
@@ -203,32 +236,11 @@ final class PendingLogin {
 	}
 
 	/**
-	 * After a confirmed enrollment code: wait for the "continue" step.
-	 *
-	 * The record gets a fresh lifetime for that one step (no more answers are
-	 * checked on it), so reading the recovery codes does not run out the clock.
-	 *
-	 * @param string $token Token.
-	 */
-	public function mark_enrolled( string $token ): bool {
-		$record = $this->get( $token );
-		if ( null === $record || '' === $record['enroll'] ) {
-			return false;
-		}
-
-		$record['enrolled'] = true;
-		$record['expires']  = $this->now() + self::TTL;
-		$this->save( $token, $record );
-
-		return true;
-	}
-
-	/**
 	 * Fetch and delete (single use). Only the request whose delete removed the
 	 * row gets the record, so two parallel correct answers yield one session.
 	 *
 	 * @param string $token Token.
-	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string, enroll: string, enrolled: bool}|null
+	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string, enroll: string, enrolled: bool, mail: array{hash: string, expires: int, failed: bool}}|null
 	 */
 	public function consume( string $token ): ?array {
 		$record = $this->get( $token );
@@ -265,7 +277,10 @@ final class PendingLogin {
 			&& is_int( $record['expires'] ?? null )
 			&& is_string( $record['passkey_key'] ?? null )
 			&& is_string( $record['enroll'] ?? null )
-			&& is_bool( $record['enrolled'] ?? null );
+			&& is_bool( $record['enrolled'] ?? null )
+			&& is_string( $record['mail']['hash'] ?? null )
+			&& is_int( $record['mail']['expires'] ?? null )
+			&& is_bool( $record['mail']['failed'] ?? null );
 	}
 
 	/**
@@ -298,9 +313,9 @@ final class PendingLogin {
 	}
 
 	/**
-	 * Attempt counter.
+	 * Attempt counter (shared with the enrollment binding claim).
 	 */
-	private function counter(): AttemptCounter {
+	public function counter(): AttemptCounter {
 		return $this->counter ?? new AttemptCounter( $this->clock );
 	}
 
@@ -312,9 +327,9 @@ final class PendingLogin {
 	}
 
 	/**
-	 * Current Unix time.
+	 * Current Unix time (the store's clock).
 	 */
-	private function now(): int {
+	public function now(): int {
 		return null === $this->clock ? time() : (int) ( $this->clock )();
 	}
 }

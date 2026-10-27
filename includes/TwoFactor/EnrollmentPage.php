@@ -25,12 +25,13 @@ final class EnrollmentPage {
 	/**
 	 * Setup screen: the key, the authenticator link and the code field.
 	 *
-	 * @param string  $token  Pending token.
-	 * @param WP_User $user   Pending user.
-	 * @param string  $secret Base32 secret.
-	 * @param string  $error  Error message ('' = none).
+	 * @param string      $token  Pending token.
+	 * @param WP_User     $user   Pending user.
+	 * @param string      $secret Base32 secret.
+	 * @param string      $error   Error message ('' = none).
+	 * @param string|null $mail_to Masked address the e-mail code went to; null = no e-mail step.
 	 */
-	public function render_setup( string $token, WP_User $user, string $secret, string $error ): void {
+	public function render_setup( string $token, WP_User $user, string $secret, string $error, ?string $mail_to = null ): void {
 		$issuer = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
 		$uri    = Totp::provisioning_uri( $secret, (string) $user->user_login, '' !== $issuer ? $issuer : 'WordPress' );
 
@@ -43,6 +44,8 @@ final class EnrollmentPage {
 				<code><?php echo esc_html( implode( ' ', str_split( $secret, 4 ) ) ); ?></code>
 			</p>
 			<p><a href="<?php echo esc_url( $uri, array( 'otpauth' ) ); ?>"><?php esc_html_e( 'Open in your authenticator app', 'lw-firewall' ); ?></a></p>
+			<p class="description"><?php esc_html_e( 'This key is valid for 10 minutes. If you start over, you get a new key: delete the old entry from your app.', 'lw-firewall' ); ?></p>
+			<?php $this->render_mail_field( $mail_to ); ?>
 			<?php $this->hidden_fields( $token ); ?>
 			<input type="hidden" name="lwfw_method" value="<?php echo esc_attr( SecondFactorVerifier::TOTP ); ?>" />
 			<p>
@@ -87,6 +90,28 @@ final class EnrollmentPage {
 		</form>
 		<?php
 		login_footer();
+	}
+
+	/**
+	 * The e-mail code field (when the code was sent).
+	 *
+	 * @param string|null $mail_to Masked address; null = no e-mail step.
+	 */
+	private function render_mail_field( ?string $mail_to ): void {
+		if ( null === $mail_to ) {
+			return;
+		}
+		?>
+		<p>
+			<label for="lwfw-2fa-mail-code">
+				<?php
+				/* translators: %s: masked e-mail address */
+				echo esc_html( '' !== $mail_to ? sprintf( __( 'Code we e-mailed to %s', 'lw-firewall' ), $mail_to ) : __( 'Code we e-mailed to you', 'lw-firewall' ) );
+				?>
+			</label>
+			<input type="text" name="lwfw_mail_code" id="lwfw-2fa-mail-code" class="input" value="" size="20" autocomplete="off" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" />
+		</p>
+		<?php
 	}
 
 	/**

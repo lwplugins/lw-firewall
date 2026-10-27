@@ -34,6 +34,11 @@ final class FailureLog {
 	public const PASSKEY_FAILED = 'twofa_passkey_failed';
 
 	/**
+	 * The e-mail code of a forced enrollment could not be sent.
+	 */
+	public const ENROLL_MAIL_FAILED = 'twofa_enroll_mail_failed';
+
+	/**
 	 * Log one refusal.
 	 *
 	 * @param string $reason One of the constants.

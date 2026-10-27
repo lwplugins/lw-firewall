@@ -132,6 +132,15 @@ final class LoginRequest {
 	}
 
 	/**
+	 * Submitted e-mail code of a forced enrollment.
+	 */
+	public static function mail_code(): string {
+		$raw = isset( $_POST['lwfw_mail_code'] ) && is_string( $_POST['lwfw_mail_code'] ) ? sanitize_text_field( wp_unslash( $_POST['lwfw_mail_code'] ) ) : '';
+
+		return substr( $raw, 0, 16 );
+	}
+
+	/**
 	 * Submitted TOTP or recovery code.
 	 */
 	public static function code(): string {

@@ -23,6 +23,31 @@ delete_option( 'lw_firewall_user_locks' );
 delete_option( 'lw_firewall_alert_queue' );
 delete_option( 'lw_firewall_dropped_filter_params' );
 delete_transient( 'lw_firewall_admin_alert_mail_error' );
+delete_option( 'lw_firewall_2fa_mail_failed' );
+
+// Remove every two-factor user meta row: the factors, the passkey lookup and
+// user handle, the remember salt, the grace start and the attempt counters
+// (`_lw_firewall_2fa_tok_*`, `_lw_firewall_2fa_fail`, `_lw_firewall_2fa_bind`).
+// The usermeta table is network-wide, so one pass covers every site.
+global $wpdb;
+$lw_firewall_2fa_keys = [
+	'_lw_firewall_totp',
+	'_lw_firewall_recovery',
+	'_lw_firewall_passkeys',
+	'_lw_firewall_passkey_lookup',
+	'_lw_firewall_user_handle',
+	'_lw_firewall_remember_salt',
+];
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-off uninstall cleanup across all users.
+$wpdb->query(
+	$wpdb->prepare(
+		"DELETE FROM {$wpdb->usermeta} WHERE meta_key IN (" . implode( ', ', array_fill( 0, count( $lw_firewall_2fa_keys ), '%s' ) ) . ') OR meta_key LIKE %s', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Core table name; one %s placeholder per key.
+		...array_merge( $lw_firewall_2fa_keys, [ $wpdb->esc_like( '_lw_firewall_2fa_' ) . '%' ] )
+	)
+);
+if ( function_exists( 'wp_cache_flush_group' ) ) {
+	wp_cache_flush_group( 'user_meta' );
+}
 
 // Remove the administrator scan cron event.
 $lw_firewall_scan_event = wp_next_scheduled( 'lw_firewall_admin_scan' );
