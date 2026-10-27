@@ -8,7 +8,7 @@ Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Lightweight WordPress firewall — rate-limits endpoints, blocks bots, bans repeat offenders, adds security headers and optional two-factor login with passkeys.
+Lightweight WordPress firewall: rate limits, bot blocking, auto-bans, security headers and optional two-factor login with passkeys.
 
 == Description ==
 
