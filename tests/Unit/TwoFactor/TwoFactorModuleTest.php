@@ -48,6 +48,8 @@ final class TwoFactorModuleTest extends MonkeyTestCase {
 		$this->assertTrue( has_filter( 'authenticate' ) );
 		$this->assertFalse( has_filter( 'wp_is_application_passwords_available_for_user' ) );
 		$this->assertTrue( has_action( 'admin_notices' ), 'The grace-period reminder.' );
+		$this->assertTrue( has_action( 'show_user_profile' ), 'The profile section.' );
+		$this->assertTrue( has_action( 'edit_user_profile' ) );
 		$this->assertFalse( has_action( 'network_admin_notices' ) );
 	}
 
@@ -56,7 +58,7 @@ final class TwoFactorModuleTest extends MonkeyTestCase {
 
 		TwoFactorModule::init();
 
-		$this->assertTrue( has_action( 'rest_api_init' ) );
+		$this->assertNotFalse( has_action( 'rest_api_init', 'LightweightPlugins\\Firewall\\TwoFactor\\Rest\\PasskeyLoginController->register_routes()' ) );
 		$this->assertTrue( has_action( 'login_form' ) );
 	}
 
@@ -65,7 +67,8 @@ final class TwoFactorModuleTest extends MonkeyTestCase {
 
 		TwoFactorModule::init();
 
-		$this->assertFalse( has_action( 'rest_api_init' ) );
+		$this->assertFalse( has_action( 'rest_api_init', 'LightweightPlugins\\Firewall\\TwoFactor\\Rest\\PasskeyLoginController->register_routes()' ) );
+		$this->assertNotFalse( has_action( 'rest_api_init', 'LightweightPlugins\\Firewall\\TwoFactor\\Rest\\FactorsController->register_routes()' ), 'Profile self-service stays.' );
 		$this->assertFalse( has_action( 'login_form' ) );
 	}
 

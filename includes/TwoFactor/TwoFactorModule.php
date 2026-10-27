@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace LightweightPlugins\Firewall\TwoFactor;
 
 use LightweightPlugins\Firewall\Options;
+use LightweightPlugins\Firewall\TwoFactor\Rest\FactorsController;
 use LightweightPlugins\Firewall\TwoFactor\Rest\PasskeyLoginController;
+use LightweightPlugins\Firewall\TwoFactor\Rest\PasskeysController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -62,6 +64,9 @@ final class TwoFactorModule {
 		( new MailFailureNotice() )->register();
 		( new FactorNotifier() )->register();
 		( new RememberRevoker() )->register();
+		( new ProfileSection() )->register();
+		( new FactorsController( $throttle ) )->register();
+		( new PasskeysController( null, $throttle ) )->register();
 
 		if ( (bool) Options::get( 'twofa_passkey_login', true ) ) {
 			( new PasskeyLoginController( null, null, $throttle ) )->register();

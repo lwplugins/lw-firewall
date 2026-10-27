@@ -84,6 +84,7 @@ final class EnrollmentFlowTest extends MonkeyTestCase {
 	 */
 	private function secret_in( string $html ): string {
 		$this->assertSame( 1, preg_match( '/otpauth:\/\/totp\/[^"]*[?&]secret=([A-Z2-7]+)/', $html, $m ), 'The screen carries an otpauth link.' );
+		$this->assertStringContainsString( 'data-lwfw-qr="otpauth://totp/', $html, 'The QR code source sits next to the key.' );
 		return $m[1];
 	}
 

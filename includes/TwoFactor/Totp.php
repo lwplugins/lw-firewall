@@ -100,4 +100,17 @@ final class Totp {
 			. '&issuer=' . rawurlencode( $issuer )
 			. '&algorithm=SHA1&digits=6&period=30';
 	}
+
+	/**
+	 * Provisioning URI with this site's name as the issuer.
+	 *
+	 * @param string $secret_b32 Base32 secret.
+	 * @param string $account    Account label (the user login).
+	 * @return string
+	 */
+	public static function site_uri( string $secret_b32, string $account ): string {
+		$issuer = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
+
+		return self::provisioning_uri( $secret_b32, $account, '' !== $issuer ? $issuer : 'WordPress' );
+	}
 }

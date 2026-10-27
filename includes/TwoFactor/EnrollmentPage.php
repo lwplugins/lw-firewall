@@ -17,8 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Same frame as ChallengePage (core login_header()/login_footer()) and the
- * same action URL and nonce. The setup key is printed as text and in an
- * otpauth:// link, never in a form field.
+ * same action URL and nonce. The setup key is printed as text, in an
+ * otpauth:// link and as a QR code (QrScript draws it from a data attribute),
+ * never in a form field.
  */
 final class EnrollmentPage {
 
@@ -32,17 +33,18 @@ final class EnrollmentPage {
 	 * @param string|null $mail_to Masked address the e-mail code went to; null = no e-mail step.
 	 */
 	public function render_setup( string $token, WP_User $user, string $secret, string $error, ?string $mail_to = null ): void {
-		$issuer = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
-		$uri    = Totp::provisioning_uri( $secret, (string) $user->user_login, '' !== $issuer ? $issuer : 'WordPress' );
+		$uri = Totp::site_uri( $secret, (string) $user->user_login );
+		QrScript::enqueue();
 
 		login_header( __( 'Set up two-factor authentication', 'lw-firewall' ), '', ChallengePage::errors( $error ) );
 		?>
 		<form name="lwfw2faform" id="lwfw-2fa-form" class="lwfw-2fa-enroll" action="<?php echo esc_url( ChallengePage::url( $token ) ); ?>" method="post" autocomplete="off">
-			<p><?php esc_html_e( 'Your account must use two-factor authentication. Add this key to your authenticator app, then enter the 6-digit code the app shows.', 'lw-firewall' ); ?></p>
+			<p><?php esc_html_e( 'Your account must use two-factor authentication. Scan the QR code or add this key to your authenticator app, then enter the 6-digit code the app shows.', 'lw-firewall' ); ?></p>
 			<p class="lwfw-2fa-key">
 				<strong><?php esc_html_e( 'Setup key', 'lw-firewall' ); ?></strong><br />
 				<code><?php echo esc_html( implode( ' ', str_split( $secret, 4 ) ) ); ?></code>
 			</p>
+			<div class="lwfw-2fa-qr" <?php echo esc_attr( QrScript::ATTRIBUTE ); ?>="<?php echo esc_attr( $uri ); ?>" aria-label="<?php esc_attr_e( 'QR code for your authenticator app', 'lw-firewall' ); ?>" role="img"></div>
 			<p><a href="<?php echo esc_url( $uri, array( 'otpauth' ) ); ?>"><?php esc_html_e( 'Open in your authenticator app', 'lw-firewall' ); ?></a></p>
 			<p class="description"><?php esc_html_e( 'This key is valid for 10 minutes. If you start over, you get a new key: delete the old entry from your app.', 'lw-firewall' ); ?></p>
 			<?php $this->render_mail_field( $mail_to ); ?>
