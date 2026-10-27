@@ -108,6 +108,8 @@ Three known cases. A captcha-type plugin that checks fields posted to the login 
 * New: Self-service on the profile page, a Two-Factor settings tab with usage per role, an admin reset on each profile, and `wp lw-firewall 2fa status` / `2fa reset` WP-CLI commands.
 * New: Emergency off switch: `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in wp-config.php.
 * New: Filter `lw_firewall_passkey_allowed_origins` for passkey sign-in on an extra host name of the site.
+
+= 1.8.5 =
 * Change: On multisite, managing bans and user lockouts, reinstalling the worker and updating the geo data are now network administrator tasks. Site administrators keep managing their own site's settings and imports.
 * Change: On multisite, the .htaccess geo block follows the main site's settings.
 

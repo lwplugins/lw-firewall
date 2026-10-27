@@ -255,7 +255,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 
 ## WP-CLI Commands
 
-All 33 commands are listed below. `--format` accepts `table` (default), `json`, `csv` or `yaml`.
+All 37 commands are listed below. `--format` accepts `table` (default), `json`, `csv` or `yaml`.
 
 ### Status
 

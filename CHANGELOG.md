@@ -15,9 +15,13 @@
 - Filter `lw_firewall_passkey_allowed_origins` to allow passkey sign-in on an extra host name of the site (for example a www alias).
 
 ### Changed
+- Internal: the release package is built with the bundled WebAuthn library namespaced, and the release workflow verifies the downloaded build tool's checksum.
+
+## [1.8.5] - 2026-10-24
+
+### Changed
 - On multisite, managing bans and user lockouts, reinstalling the worker and updating the geo data are now network administrator tasks. Site administrators keep managing their own site's settings and imports.
 - On multisite, the .htaccess geo block follows the main site's settings.
-- Internal: the release package is built with the bundled WebAuthn library namespaced, and the release workflow verifies the downloaded build tool's checksum.
 
 ## [1.8.4] - 2026-10-21
 
