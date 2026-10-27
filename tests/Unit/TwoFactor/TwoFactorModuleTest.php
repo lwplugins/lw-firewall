@@ -47,6 +47,8 @@ final class TwoFactorModuleTest extends MonkeyTestCase {
 		$this->assertTrue( has_filter( 'send_auth_cookies' ) );
 		$this->assertTrue( has_filter( 'authenticate' ) );
 		$this->assertFalse( has_filter( 'wp_is_application_passwords_available_for_user' ) );
+		$this->assertTrue( has_action( 'admin_notices' ), 'The grace-period reminder.' );
+		$this->assertFalse( has_action( 'network_admin_notices' ) );
 	}
 
 	public function test_blocking_app_passwords_is_wired(): void {

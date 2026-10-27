@@ -125,6 +125,13 @@ final class LoginRequest {
 	}
 
 	/**
+	 * Whether the "continue" button of the recovery-codes step was posted.
+	 */
+	public static function continues(): bool {
+		return isset( $_POST['lwfw_step'] ) && is_string( $_POST['lwfw_step'] ) && 'continue' === sanitize_key( wp_unslash( $_POST['lwfw_step'] ) );
+	}
+
+	/**
 	 * Submitted TOTP or recovery code.
 	 */
 	public static function code(): string {

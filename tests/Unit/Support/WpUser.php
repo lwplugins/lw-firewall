@@ -13,11 +13,17 @@ if ( ! class_exists( 'WP_User' ) ) {
 		public int $ID;
 		public string $user_login;
 		public string $display_name;
+		/** @var string[] */
+		public array $roles = array();
 
-		public function __construct( int $id = 0, string $login = '', string $display_name = '' ) {
+		/**
+		 * @param string[] $roles Roles on the current site.
+		 */
+		public function __construct( int $id = 0, string $login = '', string $display_name = '', array $roles = array() ) {
 			$this->ID           = $id;
 			$this->user_login   = $login;
 			$this->display_name = $display_name;
+			$this->roles        = $roles;
 		}
 	}
 }

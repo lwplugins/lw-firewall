@@ -31,6 +31,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    on success the pending record is consumed, then wp_set_auth_cookie(),
  *    wp_set_current_user() and `lw_firewall_2fa_passed` ( $user_id, $method ).
  *
+ * A required user without any factor after the grace (Enforcement) is held
+ * the same way, but the screen is the forced enrollment (EnrollmentController):
+ * nobody is locked out, and no session exists until the new factor is set up.
+ *
  * `wp_login` is deliberately NOT fired again after the second factor: it
  * would re-enter this interceptor and repeat every other plugin's login side
  * effects. Hook `lw_firewall_2fa_passed` for "the login is now complete".
@@ -97,6 +101,7 @@ final class LoginInterceptor {
 	 * @param SignonTracker|null        $signon   Shared sign-on state (registered by TwoFactorModule).
 	 * @param FailureThrottle|null      $throttle Per-account failure cap.
 	 * @param RememberDevice|null       $remember Trusted-device cookie.
+	 * @param Enforcement|null          $enforcement Role enforcement (forced enrollment).
 	 */
 	public function __construct(
 		private readonly ?PendingLogin $pending = null,
@@ -106,7 +111,8 @@ final class LoginInterceptor {
 		?\Closure $halt = null,
 		?SignonTracker $signon = null,
 		?FailureThrottle $throttle = null,
-		?RememberDevice $remember = null
+		?RememberDevice $remember = null,
+		private readonly ?Enforcement $enforcement = null
 	) {
 		$this->remember  = $remember ?? new RememberDevice();
 		$this->halt      = $halt ?? static function (): void {
@@ -191,14 +197,17 @@ final class LoginInterceptor {
 			return;
 		}
 
+		// No factor yet means the hold is a forced enrollment (see intercepts()).
+		$enroll   = ( new UserFactors( $id ) )->has_any() ? '' : Totp::generate_secret();
 		$remember = $this->signon->remember() ?? LoginRequest::remember();
 		$secure   = $this->signon->secure() ?? is_ssl();
-		$token    = $this->pending()->create( $id, $remember, LoginRequest::redirect_to(), $secure );
+		$token    = $this->pending()->create( $id, $remember, LoginRequest::redirect_to(), $secure, $enroll );
 		$this->redirect( ChallengePage::url( $token ) );
 	}
 
 	/**
-	 * Whether this login is held for a second factor: interactive requests
+	 * Whether this login is held for a second factor (or, for a required
+	 * user without one after the grace, for enrollment): interactive requests
 	 * only, and not core's cookie re-auth of a session that already passed.
 	 *
 	 * @param WP_User $user User.
@@ -208,7 +217,7 @@ final class LoginInterceptor {
 			return false;
 		}
 
-		return $this->should_challenge( $user );
+		return $this->should_challenge( $user ) || ( $this->enforcement ?? new Enforcement() )->must_enroll_now( $user );
 	}
 
 	/**

@@ -26,6 +26,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * any custom wp_authenticate() call, whether or not REST_REQUEST /
  * XMLRPC_REQUEST are defined yet at that point.
  *
+ * The same refusal covers a user who must enroll now (Enforcement): past the
+ * grace without a factor, only the login page, which forces the enrollment,
+ * accepts the account password.
+ *
  * Exempt: an application password (core fires
  * `application_password_did_authenticate` from wp_authenticate_application_password,
  * and REST application passwords never reach `authenticate` at all), and
@@ -64,11 +68,13 @@ final class PasswordAuthGuard {
 	 * @param RequestContext|null  $context  Request kind; null = detect.
 	 * @param SignonTracker|null   $signon   Shared sign-on state; null = none (refuse all password logins).
 	 * @param FailureThrottle|null $throttle Per-account failure cap.
+	 * @param Enforcement|null     $enforcement Role enforcement; null = default.
 	 */
 	public function __construct(
 		private readonly ?RequestContext $context = null,
 		private readonly ?SignonTracker $signon = null,
-		private readonly ?FailureThrottle $throttle = null
+		private readonly ?FailureThrottle $throttle = null,
+		private readonly ?Enforcement $enforcement = null
 	) {}
 
 	/**
@@ -110,14 +116,26 @@ final class PasswordAuthGuard {
 			return new WP_Error( self::THROTTLED_CODE, ChallengePage::throttled_message() );
 		}
 
-		if ( ! $user instanceof WP_User || ! self::has_factors( $user ) || $this->signed_on( $user, $username, $context ) ) {
+		if ( ! $user instanceof WP_User || $this->signed_on( $user, $username, $context ) ) {
 			return $user;
 		}
 
-		return new WP_Error(
-			self::ERROR_CODE,
-			__( 'This account uses two-factor authentication, so its password alone cannot sign in here. Sign in on the login page, or use an application password where they are allowed.', 'lw-firewall' )
-		);
+		if ( self::has_factors( $user ) ) {
+			return new WP_Error(
+				self::ERROR_CODE,
+				__( 'This account uses two-factor authentication, so its password alone cannot sign in here. Sign in on the login page, or use an application password where they are allowed.', 'lw-firewall' )
+			);
+		}
+
+		// Past the grace without a factor: only the login page (forced enrollment) accepts the password.
+		if ( ( $this->enforcement ?? new Enforcement() )->must_enroll_now( $user ) ) {
+			return new WP_Error(
+				self::ERROR_CODE,
+				__( 'This account must set up two-factor authentication. Sign in on the login page to set it up.', 'lw-firewall' )
+			);
+		}
+
+		return $user;
 	}
 
 	/**

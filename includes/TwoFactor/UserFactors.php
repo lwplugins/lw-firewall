@@ -249,6 +249,24 @@ final class UserFactors {
 	}
 
 	/**
+	 * Start of the enforcement grace period (Unix time; 0 = not started).
+	 */
+	public function grace_since(): int {
+		$stored = get_user_meta( $this->user_id, self::META_SINCE, true );
+
+		return is_numeric( $stored ) && (int) $stored > 0 ? (int) $stored : 0;
+	}
+
+	/**
+	 * Record the start of the enforcement grace period.
+	 *
+	 * @param int $time Unix time.
+	 */
+	public function start_grace( int $time ): void {
+		update_user_meta( $this->user_id, self::META_SINCE, $time );
+	}
+
+	/**
 	 * Delete every factor and rotate the remember salt (invalidates remembered devices).
 	 *
 	 * The 2FA grace-period start (META_SINCE) is kept on purpose: a reset (e.g. a lost

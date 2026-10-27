@@ -1,0 +1,110 @@
+<?php
+/**
+ * The forced-enrollment screens on wp-login.php.
+ *
+ * @package LightweightPlugins\Firewall
+ */
+
+declare(strict_types=1);
+
+namespace LightweightPlugins\Firewall\TwoFactor;
+
+use WP_User;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Same frame as ChallengePage (core login_header()/login_footer()) and the
+ * same action URL and nonce. The setup key is printed as text and in an
+ * otpauth:// link, never in a form field.
+ */
+final class EnrollmentPage {
+
+	/**
+	 * Setup screen: the key, the authenticator link and the code field.
+	 *
+	 * @param string  $token  Pending token.
+	 * @param WP_User $user   Pending user.
+	 * @param string  $secret Base32 secret.
+	 * @param string  $error  Error message ('' = none).
+	 */
+	public function render_setup( string $token, WP_User $user, string $secret, string $error ): void {
+		$issuer = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
+		$uri    = Totp::provisioning_uri( $secret, (string) $user->user_login, '' !== $issuer ? $issuer : 'WordPress' );
+
+		login_header( __( 'Set up two-factor authentication', 'lw-firewall' ), '', ChallengePage::errors( $error ) );
+		?>
+		<form name="lwfw2faform" id="lwfw-2fa-form" class="lwfw-2fa-enroll" action="<?php echo esc_url( ChallengePage::url( $token ) ); ?>" method="post" autocomplete="off">
+			<p><?php esc_html_e( 'Your account must use two-factor authentication. Add this key to your authenticator app, then enter the 6-digit code the app shows.', 'lw-firewall' ); ?></p>
+			<p class="lwfw-2fa-key">
+				<strong><?php esc_html_e( 'Setup key', 'lw-firewall' ); ?></strong><br />
+				<code><?php echo esc_html( implode( ' ', str_split( $secret, 4 ) ) ); ?></code>
+			</p>
+			<p><a href="<?php echo esc_url( $uri, array( 'otpauth' ) ); ?>"><?php esc_html_e( 'Open in your authenticator app', 'lw-firewall' ); ?></a></p>
+			<?php $this->hidden_fields( $token ); ?>
+			<input type="hidden" name="lwfw_method" value="<?php echo esc_attr( SecondFactorVerifier::TOTP ); ?>" />
+			<p>
+				<label for="lwfw-2fa-code"><?php esc_html_e( 'Code from your authenticator app', 'lw-firewall' ); ?></label>
+				<input type="text" name="lwfw_code" id="lwfw-2fa-code" class="input" value="" size="20" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" />
+			</p>
+			<p class="submit">
+				<input type="submit" name="wp-submit" id="lwfw-2fa-submit" class="button button-primary button-large" value="<?php echo esc_attr__( 'Turn on and continue', 'lw-firewall' ); ?>" />
+			</p>
+		</form>
+		<?php
+		$this->render_nav();
+		login_footer( 'lwfw-2fa-code' );
+	}
+
+	/**
+	 * The "continue" step: the recovery codes right after the confirmation,
+	 * or (any later visit) only a note that they were shown.
+	 *
+	 * @param string   $token Pending token.
+	 * @param string[] $codes Plain recovery codes; empty = already shown.
+	 */
+	public function render_continue( string $token, array $codes ): void {
+		login_header( __( 'Save your recovery codes', 'lw-firewall' ), '', ChallengePage::errors( '' ) );
+		?>
+		<form name="lwfw2faform" id="lwfw-2fa-form" class="lwfw-2fa-codes" action="<?php echo esc_url( ChallengePage::url( $token ) ); ?>" method="post" autocomplete="off">
+			<?php if ( array() !== $codes ) : ?>
+				<p><?php esc_html_e( 'Two-factor authentication is on. If you lose your phone, each of these codes signs you in once. Save them now: they are shown only this time.', 'lw-firewall' ); ?></p>
+				<ol class="lwfw-2fa-recovery-list">
+					<?php foreach ( $codes as $code ) : ?>
+						<li><code><?php echo esc_html( $code ); ?></code></li>
+					<?php endforeach; ?>
+				</ol>
+			<?php else : ?>
+				<p><?php esc_html_e( 'Two-factor authentication is on. Your recovery codes were shown once; if you did not save them, create new ones on your profile after signing in.', 'lw-firewall' ); ?></p>
+			<?php endif; ?>
+			<?php $this->hidden_fields( $token ); ?>
+			<input type="hidden" name="lwfw_step" value="continue" />
+			<p class="submit">
+				<input type="submit" name="wp-submit" id="lwfw-2fa-submit" class="button button-primary button-large" value="<?php echo esc_attr( array() !== $codes ? __( 'I saved them, continue', 'lw-firewall' ) : __( 'Continue', 'lw-firewall' ) ); ?>" />
+			</p>
+		</form>
+		<?php
+		login_footer();
+	}
+
+	/**
+	 * Token and nonce fields (the secret is never one of them).
+	 *
+	 * @param string $token Pending token.
+	 */
+	private function hidden_fields( string $token ): void {
+		?>
+		<input type="hidden" name="token" value="<?php echo esc_attr( $token ); ?>" />
+		<?php
+		wp_nonce_field( 'lw_firewall_2fa_' . $token, 'lwfw_2fa_nonce', false );
+	}
+
+	/**
+	 * Back to the login form.
+	 */
+	private function render_nav(): void {
+		echo '<p id="nav"><a href="' . esc_url( wp_login_url() ) . '">' . esc_html__( 'Start over', 'lw-firewall' ) . '</a></p>';
+	}
+}

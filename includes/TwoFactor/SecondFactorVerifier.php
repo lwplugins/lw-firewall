@@ -77,6 +77,17 @@ final class SecondFactorVerifier {
 	}
 
 	/**
+	 * The code that confirms a new, not yet stored TOTP secret.
+	 *
+	 * @param string $secret Base32 secret being enrolled.
+	 * @param string $code   Submitted code.
+	 * @return int|null Accepted time step (store it as the replay guard), or null.
+	 */
+	public function verify_enrollment( string $secret, string $code ): ?int {
+		return Totp::verify( $secret, $code, 0, $this->now() );
+	}
+
+	/**
 	 * A recovery code; a match is removed from the user's list.
 	 *
 	 * @param int    $user_id User.

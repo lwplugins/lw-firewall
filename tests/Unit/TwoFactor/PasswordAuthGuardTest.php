@@ -13,6 +13,7 @@ use Brain\Monkey\Functions;
 use LightweightPlugins\Firewall\Tests\Unit\MonkeyTestCase;
 use LightweightPlugins\Firewall\Tests\Unit\Support\FakeWpdb;
 use LightweightPlugins\Firewall\TwoFactor\AttemptCounter;
+use LightweightPlugins\Firewall\TwoFactor\Enforcement;
 use LightweightPlugins\Firewall\Tests\Unit\Support\OptionStore;
 use LightweightPlugins\Firewall\TwoFactor\FailureThrottle;
 use LightweightPlugins\Firewall\TwoFactor\PasskeyRecord;
@@ -289,5 +290,47 @@ final class PasswordAuthGuardTest extends MonkeyTestCase {
 		$this->assertFalse( has_filter( 'determine_current_user' ) );
 		$this->assertFalse( has_filter( 'wp_is_application_passwords_available_for_user' ) );
 		$this->assertTrue( $guard->filter_app_passwords( true, $this->bob ) );
+	}
+
+	// ---- role enforcement -----------------------------------------------------
+
+	private function enforce( int $grace ): void {
+		if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+			define( 'DAY_IN_SECONDS', 86400 );
+		}
+		Functions\when( 'is_multisite' )->justReturn( false );
+		OptionStore::install(
+			array(
+				'lw_firewall' => array(
+					'log_enabled'          => false,
+					'twofa_enabled'        => true,
+					'twofa_required_roles' => array( 'editor' ),
+					'twofa_grace_days'     => $grace,
+				),
+			)
+		);
+		$this->bob->roles = array( 'editor' );
+	}
+
+	public function test_a_user_who_must_enroll_cannot_use_the_password_outside_the_login_page(): void {
+		$this->enforce( 0 );
+		$guard = new PasswordAuthGuard( new RequestContext( array( 'xmlrpc' => true ) ), $this->signon, $this->throttle, new Enforcement( static fn (): int => 1700000000 ) );
+
+		$this->assert_refused( $guard->filter( $this->bob, 'bob', 'pw' ) );
+	}
+
+	public function test_a_user_who_must_enroll_passes_to_the_login_page(): void {
+		$this->enforce( 0 );
+		$this->signon->start( 'bob', 'pw' );
+		$guard = new PasswordAuthGuard( new RequestContext( array() ), $this->signon, $this->throttle, new Enforcement( static fn (): int => 1700000000 ) );
+
+		$this->assertSame( $this->bob, $guard->filter( $this->bob, 'bob', 'pw' ), 'The interceptor turns it into an enrollment.' );
+	}
+
+	public function test_inside_the_grace_the_password_still_works_everywhere(): void {
+		$this->enforce( 7 );
+		$guard = new PasswordAuthGuard( new RequestContext( array( 'xmlrpc' => true ) ), $this->signon, $this->throttle, new Enforcement( static fn (): int => 1700000000 ) );
+
+		$this->assertSame( $this->bob, $guard->filter( $this->bob, 'bob', 'pw' ) );
 	}
 }

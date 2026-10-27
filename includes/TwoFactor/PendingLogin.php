@@ -24,6 +24,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * checked, with an atomic database counter in the account's usermeta
  * (AttemptCounter, fail closed), so parallel requests cannot spend more than
  * five guesses on one token, whatever the firewall storage backend does.
+ *
+ * An enrollment record (forced enrollment, see EnrollmentController) also
+ * carries the new TOTP secret, sealed with SecretBox, and after a confirmed
+ * code the `enrolled` flag: the record then waits for the "continue" step.
  */
 final class PendingLogin {
 
@@ -64,9 +68,10 @@ final class PendingLogin {
 	 * @param bool   $remember    "Remember me" of the login form.
 	 * @param string $redirect_to Validated redirect target ('' = default).
 	 * @param bool   $secure      Whether the session cookie must be secure-only.
+	 * @param string $enroll      Base32 TOTP secret of a forced enrollment ('' = a challenge).
 	 * @return string 32 char hex token.
 	 */
-	public function create( int $user_id, bool $remember, string $redirect_to, bool $secure = false ): string {
+	public function create( int $user_id, bool $remember, string $redirect_to, bool $secure = false, string $enroll = '' ): string {
 		$token = bin2hex( random_bytes( 16 ) );
 
 		// Fresh counter for this token; drop the account's expired ones.
@@ -83,6 +88,8 @@ final class PendingLogin {
 				'secure'      => $secure,
 				'expires'     => $this->now() + self::TTL,
 				'passkey_key' => '',
+				'enroll'      => '' === $enroll ? '' : SecretBox::seal( $enroll ),
+				'enrolled'    => false,
 			)
 		);
 
@@ -93,7 +100,7 @@ final class PendingLogin {
 	 * The record of a token, when it exists, is unexpired and belongs to this IP.
 	 *
 	 * @param string $token Token from create().
-	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string}|null
+	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string, enroll: string, enrolled: bool}|null
 	 */
 	public function get( string $token ): ?array {
 		if ( 1 !== preg_match( '/^[0-9a-f]{32}$/D', $token ) ) {
@@ -185,11 +192,43 @@ final class PendingLogin {
 	}
 
 	/**
+	 * The plain TOTP secret of an enrollment record (null = not one, or unreadable).
+	 *
+	 * @param array<string, mixed> $record Record from get().
+	 */
+	public static function enroll_secret( array $record ): ?string {
+		$sealed = $record['enroll'] ?? '';
+
+		return is_string( $sealed ) && '' !== $sealed ? SecretBox::open( $sealed ) : null;
+	}
+
+	/**
+	 * After a confirmed enrollment code: wait for the "continue" step.
+	 *
+	 * The record gets a fresh lifetime for that one step (no more answers are
+	 * checked on it), so reading the recovery codes does not run out the clock.
+	 *
+	 * @param string $token Token.
+	 */
+	public function mark_enrolled( string $token ): bool {
+		$record = $this->get( $token );
+		if ( null === $record || '' === $record['enroll'] ) {
+			return false;
+		}
+
+		$record['enrolled'] = true;
+		$record['expires']  = $this->now() + self::TTL;
+		$this->save( $token, $record );
+
+		return true;
+	}
+
+	/**
 	 * Fetch and delete (single use). Only the request whose delete removed the
 	 * row gets the record, so two parallel correct answers yield one session.
 	 *
 	 * @param string $token Token.
-	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string}|null
+	 * @return array{user_id: int, remember: bool, redirect_to: string, ip_key: string, secure: bool, expires: int, passkey_key: string, enroll: string, enrolled: bool}|null
 	 */
 	public function consume( string $token ): ?array {
 		$record = $this->get( $token );
@@ -224,7 +263,9 @@ final class PendingLogin {
 			&& is_string( $record['ip_key'] ?? null )
 			&& is_bool( $record['secure'] ?? null )
 			&& is_int( $record['expires'] ?? null )
-			&& is_string( $record['passkey_key'] ?? null );
+			&& is_string( $record['passkey_key'] ?? null )
+			&& is_string( $record['enroll'] ?? null )
+			&& is_bool( $record['enrolled'] ?? null );
 	}
 
 	/**

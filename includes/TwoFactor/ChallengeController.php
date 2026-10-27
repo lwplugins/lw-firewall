@@ -23,6 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * record (five per token, claimed atomically before the check), by the
  * module's own per-account FailureThrottle, and reported as `wp_login_failed`,
  * so the firewall's per-IP and per-username lockouts (when on) count it too.
+ *
+ * A forced-enrollment record (EnrollmentController) runs through the same
+ * nonce and attempt claims; its code confirms a new factor instead, and the
+ * session starts on the following "continue" POST.
  */
 final class ChallengeController {
 
@@ -36,12 +40,13 @@ final class ChallengeController {
 	/**
 	 * Constructor.
 	 *
-	 * @param PendingLogin         $pending  Pending-login store.
-	 * @param SecondFactorVerifier $verifier Factor checks.
-	 * @param ChallengePage        $page     Screen.
-	 * @param \Closure             $halt     Ends the request.
-	 * @param FailureThrottle      $throttle Per-account failure cap.
-	 * @param RememberDevice|null  $remember Trusted-device cookie; null = default.
+	 * @param PendingLogin              $pending  Pending-login store.
+	 * @param SecondFactorVerifier      $verifier Factor checks.
+	 * @param ChallengePage             $page     Screen.
+	 * @param \Closure                  $halt     Ends the request.
+	 * @param FailureThrottle           $throttle Per-account failure cap.
+	 * @param RememberDevice|null       $remember   Trusted-device cookie; null = default.
+	 * @param EnrollmentController|null $enrollment Forced enrollment; null = default.
 	 */
 	public function __construct(
 		private readonly PendingLogin $pending,
@@ -49,7 +54,8 @@ final class ChallengeController {
 		private readonly ChallengePage $page,
 		private readonly \Closure $halt,
 		private readonly FailureThrottle $throttle,
-		private readonly ?RememberDevice $remember = null
+		private readonly ?RememberDevice $remember = null,
+		private readonly ?EnrollmentController $enrollment = null
 	) {}
 
 	/**
@@ -69,7 +75,8 @@ final class ChallengeController {
 		$pending = '' === $token ? null : $this->pending->get( $token );
 		$user    = null === $pending ? false : get_userdata( $pending['user_id'] );
 
-		if ( null === $pending || ! $user instanceof WP_User ) {
+		// An enrollment whose account got a factor meanwhile: sign in normally instead.
+		if ( null === $pending || ! $user instanceof WP_User || EnrollmentController::enrolled_elsewhere( $pending, (int) $user->ID ) ) {
 			$this->stop_expired( false );
 			return;
 		}
@@ -84,6 +91,22 @@ final class ChallengeController {
 			return;
 		}
 
+		if ( $pending['enrolled'] ) {
+			$this->finish_enrollment( $token, $user );
+			return;
+		}
+
+		$this->answer( $token, $user, $pending );
+	}
+
+	/**
+	 * Claim the attempt, then check the answer (or the enrollment code).
+	 *
+	 * @param string               $token   Pending token.
+	 * @param WP_User              $user    Pending user.
+	 * @param array<string, mixed> $pending Pending record.
+	 */
+	private function answer( string $token, WP_User $user, array $pending ): void {
 		if ( $this->throttle->is_blocked( (int) $user->ID ) ) {
 			$this->page->render_throttled();
 			( $this->halt )();
@@ -102,6 +125,16 @@ final class ChallengeController {
 			return;
 		}
 
+		if ( EnrollmentController::is_enrollment( $pending ) ) {
+			if ( $this->enrollment()->confirm( $token, $user, $pending ) ) {
+				$this->throttle->succeeded( (int) $user->ID );
+				( $this->halt )();
+				return;
+			}
+			$this->reject( $token, $user, SecondFactorVerifier::TOTP );
+			return;
+		}
+
 		$method = LoginRequest::method();
 		if ( $this->check( $method, (int) $user->ID, $pending ) ) {
 			$this->complete( $token, $user, $method );
@@ -112,6 +145,21 @@ final class ChallengeController {
 	}
 
 	/**
+	 * After a confirmed enrollment: only the "continue" button starts the session.
+	 *
+	 * @param string  $token Pending token.
+	 * @param WP_User $user  Pending user.
+	 */
+	private function finish_enrollment( string $token, WP_User $user ): void {
+		if ( ! LoginRequest::continues() ) {
+			$this->show( $token, $user, '' );
+			return;
+		}
+
+		$this->complete( $token, $user, SecondFactorVerifier::TOTP );
+	}
+
+	/**
 	 * Render the challenge (issuing a fresh passkey challenge when offered).
 	 *
 	 * @param string  $token Pending token.
@@ -119,6 +167,16 @@ final class ChallengeController {
 	 * @param string  $error Error message ('' = none).
 	 */
 	private function show( string $token, WP_User $user, string $error ): void {
+		$record = $this->pending->get( $token );
+		if ( null !== $record && EnrollmentController::is_enrollment( $record ) ) {
+			if ( ! $this->enrollment()->show( $token, $user, $record, $error ) ) {
+				$this->stop_expired( false );
+				return;
+			}
+			( $this->halt )();
+			return;
+		}
+
 		$id       = (int) $user->ID;
 		$verifier = $this->verifier;
 		$passkey  = $verifier->passkey_options( $user );
@@ -251,6 +309,13 @@ final class ChallengeController {
 	private function stop_expired( bool $locked ): void {
 		$this->page->render_expired( $locked );
 		( $this->halt )();
+	}
+
+	/**
+	 * Forced-enrollment handler.
+	 */
+	private function enrollment(): EnrollmentController {
+		return $this->enrollment ?? new EnrollmentController( $this->pending, $this->verifier );
 	}
 
 	/**

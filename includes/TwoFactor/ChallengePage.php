@@ -230,7 +230,7 @@ final class ChallengePage {
 	 *
 	 * @param string $message Plain text message.
 	 */
-	private static function errors( string $message ): WP_Error {
+	public static function errors( string $message ): WP_Error {
 		$errors = new WP_Error();
 		if ( '' !== $message ) {
 			$errors->add( 'lwfw_2fa', esc_html( $message ) );
