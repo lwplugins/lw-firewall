@@ -73,10 +73,12 @@ final class UserFactors {
 		update_user_meta(
 			$this->user_id,
 			self::META_TOTP,
-			array(
-				'secret'       => SecretBox::seal( $secret_b32 ),
-				'last_step'    => 0,
-				'confirmed_at' => time(),
+			wp_slash(
+				array(
+					'secret'       => SecretBox::seal( $secret_b32 ),
+					'last_step'    => 0,
+					'confirmed_at' => time(),
+				)
 			)
 		);
 	}
@@ -92,7 +94,7 @@ final class UserFactors {
 			return;
 		}
 		$data['last_step'] = $step;
-		update_user_meta( $this->user_id, self::META_TOTP, $data );
+		update_user_meta( $this->user_id, self::META_TOTP, wp_slash( $data ) );
 	}
 
 	/**
@@ -119,7 +121,7 @@ final class UserFactors {
 	 * @param string[] $hashes Hashes.
 	 */
 	public function set_recovery( array $hashes ): void {
-		update_user_meta( $this->user_id, self::META_RECOVERY, array_values( $hashes ) );
+		update_user_meta( $this->user_id, self::META_RECOVERY, wp_slash( array_values( $hashes ) ) );
 	}
 
 	/**
@@ -235,6 +237,9 @@ final class UserFactors {
 
 	/**
 	 * Delete every factor and rotate the remember salt (invalidates remembered devices).
+	 *
+	 * The 2FA grace-period start (META_SINCE) is kept on purpose: a reset (e.g. a lost
+	 * phone) must not open a fresh password-only grace window.
 	 */
 	public function reset_all(): void {
 		foreach ( array( self::META_TOTP, self::META_RECOVERY, self::META_PASSKEYS, self::META_LOOKUP, self::META_HANDLE, self::META_SALT ) as $meta ) {
@@ -283,7 +288,7 @@ final class UserFactors {
 		update_user_meta(
 			$this->user_id,
 			self::META_PASSKEYS,
-			array_map( static fn ( PasskeyRecord $key ): array => $key->to_array(), $keys )
+			wp_slash( array_map( static fn ( PasskeyRecord $key ): array => $key->to_array(), $keys ) )
 		);
 	}
 

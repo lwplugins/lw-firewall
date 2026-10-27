@@ -27,6 +27,7 @@ trait UserMetaStubTrait {
 	protected function stub_user_meta(): void {
 		$this->user_meta = array();
 		$store           = &$this->user_meta;
+		Functions\when( 'wp_slash' )->alias( static fn ( $v ) => self::meta_map_strings( $v, 'addslashes' ) );
 
 		Functions\when( 'get_user_meta' )->alias(
 			static function ( $user_id, $key = '', $single = false ) use ( &$store ) {
@@ -43,13 +44,13 @@ trait UserMetaStubTrait {
 				if ( $unique && $rows ) {
 					return false;
 				}
-				$store[ (int) $user_id ][ $key ][] = $value;
+				$store[ (int) $user_id ][ $key ][] = self::meta_map_strings( $value, 'stripslashes' );
 				return count( $store[ (int) $user_id ][ $key ] );
 			}
 		);
 		Functions\when( 'update_user_meta' )->alias(
 			static function ( $user_id, $key, $value, $prev = '' ) use ( &$store ) {
-				$store[ (int) $user_id ][ $key ] = array( $value );
+				$store[ (int) $user_id ][ $key ] = array( self::meta_map_strings( $value, 'stripslashes' ) );
 				return true;
 			}
 		);
@@ -89,5 +90,19 @@ trait UserMetaStubTrait {
 				return array_slice( $ids, 0, (int) ( $args['number'] ?? count( $ids ) ) );
 			}
 		);
+	}
+
+	/**
+	 * Apply a string function to every string in a value (mimics wp_slash / wp_unslash).
+	 *
+	 * @param mixed    $value Value.
+	 * @param callable $fn    String function.
+	 * @return mixed
+	 */
+	private static function meta_map_strings( $value, callable $fn ) {
+		if ( is_array( $value ) ) {
+			return array_map( static fn ( $v ) => self::meta_map_strings( $v, $fn ), $value );
+		}
+		return is_string( $value ) ? $fn( $value ) : $value;
 	}
 }

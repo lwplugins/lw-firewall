@@ -118,11 +118,35 @@ final class UserFactorsTest extends MonkeyTestCase {
 		$this->assertMatchesRegularExpression( '/^[0-9a-f]{32}$/', $salt );
 		$this->assertSame( $salt, $f->remember_salt() );
 
+		$raw_salt = $this->user_meta[5]['_lw_firewall_remember_salt'][0];
 		$f->reset_all();
+		$this->assertNotSame( $raw_salt, $this->user_meta[5]['_lw_firewall_remember_salt'][0] );
 		$this->assertFalse( $f->has_any() );
 		$this->assertSame( array(), $f->recovery_hashes() );
 		$this->assertNull( UserFactors::find_user_by_credential( 'credA' ) );
 		$this->assertNotSame( $salt, $f->remember_salt() );
+	}
+
+	public function test_reset_all_keeps_grace_period_start(): void {
+		$f = new UserFactors( 5 );
+		$f->save_totp( 'JBSWY3DPEHPK3PXP' );
+		$f->set_recovery( array( 'a' ) );
+		$f->add_passkey( $this->record( 'credA' ) );
+		$f->user_handle();
+		update_user_meta( 5, UserFactors::META_SINCE, 12345 );
+
+		$f->reset_all();
+
+		$this->assertSame( 12345, get_user_meta( 5, UserFactors::META_SINCE, true ) );
+		foreach ( array( 'TOTP', 'RECOVERY', 'PASSKEYS', 'LOOKUP', 'HANDLE' ) as $name ) {
+			$this->assertArrayNotHasKey( constant( UserFactors::class . '::META_' . $name ), $this->user_meta[5] );
+		}
+	}
+
+	public function test_backslash_in_label_survives_storage(): void {
+		$f = new UserFactors( 5 );
+		$f->add_passkey( $this->record( 'credA', 'My \\ key\\n' ) );
+		$this->assertSame( 'My \\ key\\n', $f->passkeys()[0]->label );
 	}
 
 	public function test_label_is_sanitized_and_capped(): void {
