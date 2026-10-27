@@ -52,6 +52,7 @@ final class Routes {
 		( new AlertsController() )->register_routes();
 		( new TransferController() )->register_routes();
 		( new StatusController() )->register_routes();
+		( new TwoFactorController() )->register_routes();
 	}
 
 	/**

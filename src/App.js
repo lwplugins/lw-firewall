@@ -31,6 +31,7 @@ import ProtectionTab from './tabs/ProtectionTab';
 import SecurityTab from './tabs/SecurityTab';
 import SpamTab from './tabs/spam/SpamTab';
 import StatusTab from './tabs/status/StatusTab';
+import TwoFactorTab from './tabs/twofactor/TwoFactorTab';
 
 const VIEWS = {
 	general: GeneralTab,
@@ -40,6 +41,7 @@ const VIEWS = {
 	'ip-rules': IpRulesTab,
 	geo: GeoTab,
 	security: SecurityTab,
+	'two-factor': TwoFactorTab,
 	alerts: AlertsTab,
 	status: StatusTab,
 	logs: LogsTab,

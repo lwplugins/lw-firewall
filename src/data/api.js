@@ -23,6 +23,7 @@ import {
 	toSettings,
 	toStatus,
 	toTestResult,
+	toTwoFactorSummary,
 	toUnbanResult,
 	toWorkerResult,
 } from './shapes';
@@ -88,6 +89,9 @@ export const api = {
 
 	// Status.
 	status: () => get( '/status' ).then( toStatus ),
+
+	// Two-factor adoption per role.
+	twoFactorSummary: () => get( '/2fa/summary' ).then( toTwoFactorSummary ),
 };
 
 /**

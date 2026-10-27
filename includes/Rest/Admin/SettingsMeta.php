@@ -62,6 +62,7 @@ final class SettingsMeta {
 			'storage_backends' => self::storage_backends(),
 			'countries'        => (object) Countries::all(),
 			'bots_defaults'    => $defaults['blocked_bots'],
+			'roles'            => self::roles(),
 			'server'           => self::server(),
 			'docs_url'         => self::docs_url(),
 		];
@@ -83,6 +84,24 @@ final class SettingsMeta {
 		}
 
 		return $ranges;
+	}
+
+	/**
+	 * Roles the two-factor requirement can target.
+	 *
+	 * @return array<int, array{value: string, label: string}>
+	 */
+	private static function roles(): array {
+		$roles = [];
+
+		foreach ( wp_roles()->get_names() as $slug => $name ) {
+			$roles[] = [
+				'value' => (string) $slug,
+				'label' => translate_user_role( (string) $name ),
+			];
+		}
+
+		return $roles;
 	}
 
 	/**

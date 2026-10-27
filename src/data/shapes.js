@@ -70,6 +70,10 @@ export function toSettings( data ) {
 				} ) )
 				.sort( ( a, b ) => a.name.localeCompare( b.name ) ),
 			botsDefaults: list( meta.bots_defaults ),
+			roles: list( meta.roles ).map( ( r ) => ( {
+				value: String( r.value ),
+				label: String( r.label ),
+			} ) ),
 			adminEmail: server.admin_email || '',
 			usersCanRegister: !! server.users_can_register,
 			muPluginsDir: server.mu_plugins_dir || '',
@@ -346,5 +350,30 @@ export function toStatus( data ) {
 			pending: num( a.pending ),
 			mailError: !! a.mail_error,
 		},
+	};
+}
+
+// Two-factor ----------------------------------------------------------------
+
+/**
+ * GET /admin/2fa/summary → counts per role (no user data).
+ *
+ * @param {Object} data Response.
+ * @return {Object} Summary.
+ */
+export function toTwoFactorSummary( data ) {
+	return {
+		roles: list( data?.roles ).map( ( r ) => ( {
+			role: String( r.role ),
+			label: String( r.label ),
+			users: num( r.users ),
+			with2fa: num( r.with_2fa ),
+			required: !! r.required,
+		} ) ),
+		totalUsers: num( data?.total_users ),
+		totalWith2fa: num( data?.total_with_2fa ),
+		truncated: !! data?.truncated,
+		passkeysAvailable: !! data?.passkeys_available,
+		cryptoAvailable: !! data?.crypto_available,
 	};
 }

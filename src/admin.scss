@@ -1345,3 +1345,10 @@ body.lw-firewall-screen {
 		grid-template-columns: 1fr;
 	}
 }
+
+// Two-factor tab: required roles checklist.
+.lw-fw-twofa__roles {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: $gap-sm $gap-lg;
+}

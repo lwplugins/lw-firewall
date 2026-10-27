@@ -14,6 +14,7 @@ import {
 	notAllowed,
 	people,
 	shield,
+	unlock,
 } from '@wordpress/icons';
 
 /**
@@ -92,6 +93,14 @@ export const TABS = [
 		icon: shield,
 		save: true,
 		fields: [ 'security_headers' ],
+	},
+	{
+		id: 'two-factor',
+		label: __( 'Two-Factor', 'lw-firewall' ),
+		title: __( 'Two-Factor Login', 'lw-firewall' ),
+		icon: unlock,
+		save: true,
+		prefixes: [ 'twofa_' ],
 	},
 	{
 		id: 'alerts',
