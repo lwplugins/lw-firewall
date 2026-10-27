@@ -29,6 +29,7 @@ use LightweightPlugins\Firewall\Rules\RegisterGuard;
 use LightweightPlugins\Firewall\Rules\SecurityHeaders;
 use LightweightPlugins\Firewall\Rules\UserLockGuard;
 use LightweightPlugins\Firewall\SiteManager\Integration as SiteManagerIntegration;
+use LightweightPlugins\Firewall\TwoFactor\TwoFactorModule;
 use LightweightPlugins\Firewall\Upgrade\BotDefaultsMigration;
 use LightweightPlugins\Firewall\Upgrade\FilterParamsMigration;
 
@@ -44,6 +45,7 @@ final class Plugin {
 		BotDefaultsMigration::maybe_apply();
 		FilterParamsMigration::maybe_apply();
 		$this->init_alerts();
+		TwoFactorModule::init();
 		$this->bootstrap_worker();
 		Hub::init( LW_FIREWALL_FILE );
 		$this->init_admin();

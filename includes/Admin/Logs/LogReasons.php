@@ -47,6 +47,8 @@ final class LogReasons {
 			'reset_user'            => __( 'Password reset flood (per account)', 'lw-firewall' ),
 			'reset_global'          => __( 'Password reset flood (site-wide cap)', 'lw-firewall' ),
 			'reset_spam'            => __( 'Password reset bot request', 'lw-firewall' ),
+			'twofa_failed'          => __( 'Wrong two-factor code', 'lw-firewall' ),
+			'twofa_passkey_failed'  => __( 'Passkey not accepted at two-factor login', 'lw-firewall' ),
 		];
 	}
 
