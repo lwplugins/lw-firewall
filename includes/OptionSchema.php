@@ -55,6 +55,8 @@ final class OptionSchema {
 			'reset_ban_duration'          => [ 60, 2592000 ],
 			'comment_min_fill_time'       => [ 1, 3600 ],
 			'comment_token_max_age'       => [ 600, 2592000 ],
+			'twofa_grace_days'            => [ 0, 90 ],
+			'twofa_remember_days'         => [ 0, 90 ],
 		];
 	}
 

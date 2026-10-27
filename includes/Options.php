@@ -39,6 +39,7 @@ final class Options {
 		'ip_whitelist',
 		'ip_blacklist',
 		'blocked_countries',
+		'twofa_required_roles',
 	];
 
 	/**
@@ -163,6 +164,14 @@ final class Options {
 			'add_to_cart_require_cookie'    => true,
 			'geo_enabled'                   => true,
 			'blocked_countries'             => [ 'CN', 'RU', 'IN', 'VN', 'ID', 'BD' ],
+			// Two-factor login (TOTP, recovery codes, passkeys). Opt-in: off until
+			// an administrator turns it on, so no existing site changes behaviour.
+			'twofa_enabled'                 => false,
+			'twofa_required_roles'          => [],
+			'twofa_grace_days'              => 7,
+			'twofa_remember_days'           => 0,
+			'twofa_block_app_passwords'     => false,
+			'twofa_passkey_login'           => true,
 		];
 	}
 

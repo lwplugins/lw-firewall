@@ -111,6 +111,19 @@ jobs:
         if: steps.check_release.outputs.exists == 'false'
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
+      # The WebAuthn library ships under a private namespace so it can never
+      # collide with a copy bundled by another plugin. Strauss moves it to
+      # vendor-prefixed/ and deletes the unprefixed copy from vendor/.
+      - name: Scope bundled dependencies (Strauss)
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          curl -sSL -o strauss.phar https://github.com/BrianHenryIE/strauss/releases/download/0.27.3/strauss.phar
+          php strauss.phar
+          composer dump-autoload --no-dev --optimize --no-interaction
+          test -f vendor-prefixed/lbuchs/webauthn/src/WebAuthn.php || { echo "Strauss scoping failed: vendor-prefixed/lbuchs missing"; exit 1; }
+          test ! -d vendor/lbuchs || { echo "Unprefixed vendor/lbuchs still present after scoping"; exit 1; }
+          grep -qF 'namespace LightweightPlugins\Firewall\Vendor\lbuchs\WebAuthn;' vendor-prefixed/lbuchs/webauthn/src/WebAuthn.php || { echo "Namespace was not prefixed"; exit 1; }
+
       # The admin is a React app: build/ is committed (so Composer and git
       # installs work) and rebuilt here from src/ so the ZIP always matches it.
       - name: Setup Node
@@ -135,7 +148,7 @@ jobs:
             --exclude='node_modules' --exclude='/src' --exclude='/package.json' --exclude='/package-lock.json' --exclude='.gitignore' --exclude='.gitattributes' \
             --exclude='tests' --exclude='docs' --exclude='.claude' --exclude='.superpowers' \
             --exclude='phpstan.neon.dist' --exclude='phpstan-baseline.neon' \
-            --exclude='phpstan-bootstrap.php' --exclude='phpunit.xml.dist' --exclude='*.log' . dist/lw-firewall/
+            --exclude='phpstan-bootstrap.php' --exclude='phpunit.xml.dist' --exclude='strauss.phar' --exclude='*.log' . dist/lw-firewall/
           cd dist && zip -r "lw-firewall-${VERSION}.zip" lw-firewall/
 
       - name: Create tag and release

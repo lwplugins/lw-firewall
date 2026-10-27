@@ -46,6 +46,14 @@ spl_autoload_register(
 	}
 );
 
+// Scoped (Strauss-prefixed) dependencies — present in release builds. The bundled
+// WebAuthn library lives under LightweightPlugins\Firewall\Vendor\ so it can never
+// collide with a copy shipped by another plugin. Absent in Composer installs and
+// development, where the unprefixed class is used instead.
+if ( file_exists( LW_FIREWALL_PATH . 'vendor-prefixed/autoload.php' ) ) {
+	require_once LW_FIREWALL_PATH . 'vendor-prefixed/autoload.php';
+}
+
 /**
  * Factory function — singleton Plugin instance.
  */

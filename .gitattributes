@@ -13,3 +13,4 @@
 /src	export-ignore
 /package.json	export-ignore
 /package-lock.json	export-ignore
+/strauss.phar	export-ignore

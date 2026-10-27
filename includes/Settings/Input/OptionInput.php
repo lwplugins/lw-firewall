@@ -38,12 +38,13 @@ final class OptionInput {
 	 * @var array<string, class-string>
 	 */
 	private const PARSERS = [
-		'ip_whitelist'      => IpListParser::class,
-		'ip_blacklist'      => IpListParser::class,
-		'trusted_proxies'   => IpListParser::class,
-		'blocked_countries' => CountryListParser::class,
-		'blocked_bots'      => BotListParser::class,
-		'admin_alert_email' => EmailListParser::class,
+		'ip_whitelist'         => IpListParser::class,
+		'ip_blacklist'         => IpListParser::class,
+		'trusted_proxies'      => IpListParser::class,
+		'blocked_countries'    => CountryListParser::class,
+		'blocked_bots'         => BotListParser::class,
+		'admin_alert_email'    => EmailListParser::class,
+		'twofa_required_roles' => RoleListParser::class,
 	];
 
 	/**

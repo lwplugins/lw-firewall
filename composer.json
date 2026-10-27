@@ -4,7 +4,8 @@
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "lbuchs/webauthn": "^2.2"
     },
     "autoload": {
         "psr-4": {
@@ -32,6 +33,18 @@
         "phpcbf": "phpcbf",
         "analyse": "phpstan analyse --memory-limit=2G",
         "test": "phpunit"
+    },
+    "extra": {
+        "strauss": {
+            "target_directory": "vendor-prefixed",
+            "namespace_prefix": "LightweightPlugins\\Firewall\\Vendor\\",
+            "classmap_prefix": "LightweightPlugins_Firewall_Vendor_",
+            "constant_prefix": "LW_FIREWALL_VENDOR_",
+            "packages": [
+                "lbuchs/webauthn"
+            ],
+            "delete_vendor_packages": true
+        }
     },
     "config": {
         "preferred-install": "dist",
