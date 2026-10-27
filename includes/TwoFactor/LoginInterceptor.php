@@ -29,15 +29,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    stores a PendingLogin and redirects to wp-login.php?action=lw_firewall_2fa;
  * 3. the challenge screen (ChallengeController) accepts a TOTP code, a recovery code or a passkey;
  *    on success the pending record is consumed, then wp_set_auth_cookie(),
- *    wp_set_current_user() and `lw_firewall_2fa_passed` ( $user_id, $method ).
+ *    wp_set_current_user(), `lw_firewall_2fa_passed` ( $user_id, $method )
+ *    and core's `wp_login` ( $user_login, $user ).
  *
  * A required user without any factor after the grace (Enforcement) is held
  * the same way, but the screen is the forced enrollment (EnrollmentController):
  * nobody is locked out, and no session exists until the new factor is set up.
  *
- * `wp_login` is deliberately NOT fired again after the second factor: it
- * would re-enter this interceptor and repeat every other plugin's login side
- * effects. Hook `lw_firewall_2fa_passed` for "the login is now complete".
+ * The password step's `wp_login` stops at priority 1, so no other callback
+ * sees it; `wp_login` fires once more after the second factor (and after a
+ * forced enrollment's "continue"), and that one is the real "login complete"
+ * for every other plugin. It is not held again: ChallengeController is
+ * completing at that point (is_completing()), which on_wp_login() and the
+ * cookie filters check first.
  *
  * A passwordless passkey sign-in (Rest\PasskeyLoginController) already
  * proved two factors (possession + user verification) and fires `wp_login`

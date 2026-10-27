@@ -144,7 +144,7 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 		$_POST               = array();
 
 		Actions\expectDone( 'lw_firewall_2fa_passed' )->once()->with( 5, 'totp' );
-		Actions\expectDone( 'wp_login' )->never();
+		Actions\expectDone( 'wp_login' )->once()->with( 'alice', $this->users[5] );
 
 		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
 
@@ -270,6 +270,38 @@ final class LoginInterceptorTest extends MonkeyTestCase {
 
 		$this->assertSame( $redirects + 1, count( $this->redirects ) );
 		$this->assertSame( 1, $this->cleared, 'Only the password step cleared cookies.' );
+	}
+
+	public function test_wp_login_fires_once_after_the_second_factor_and_is_not_held_again(): void {
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+		$redirects   = count( $this->redirects );
+		$seen        = 0;
+
+		// Stands in for every later wp_login callback (priority 10): the
+		// interceptor's own priority-1 callback runs first and must let it through.
+		Actions\expectDone( 'wp_login' )->once()->whenHappen(
+			function ( $login, $user ) use ( $interceptor, &$seen ) {
+				$interceptor->on_wp_login( $login, $user );
+				++$seen;
+			}
+		);
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => $this->code() ) );
+
+		$this->assertSame( 1, $seen );
+		$this->assertSame( $redirects + 1, count( $this->redirects ), 'Only the final redirect, no new challenge.' );
+		$this->assertSame( 'https://example.com/wp-admin/', end( $this->redirects ) );
+		$this->assertSame( 1, $this->cleared, 'The completed session was not cleared.' );
+		$this->assertSame( array(), \WP_Session_Tokens::$destroyed, 'No session destroyed after the second factor.' );
+		$this->assertCount( 1, $this->cookies );
+	}
+
+	public function test_a_wrong_answer_does_not_fire_wp_login(): void {
+		$interceptor = $this->interceptor();
+		$token       = $this->login( 5, $interceptor );
+
+		Actions\expectDone( 'wp_login' )->never();
+		$this->submit( $interceptor, $token, array( 'lwfw_method' => 'totp', 'lwfw_code' => '000000' ) );
 	}
 
 	// ---- passkey ------------------------------------------------------------

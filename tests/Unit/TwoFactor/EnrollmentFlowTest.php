@@ -201,7 +201,15 @@ final class EnrollmentFlowTest extends MonkeyTestCase {
 		$this->submit( $interceptor, $token, $this->answers( $secret ) );
 
 		Actions\expectDone( 'lw_firewall_2fa_passed' )->once()->with( 6, 'totp' );
+		$redirects = count( $this->redirects );
+		Actions\expectDone( 'wp_login' )->once()->whenHappen(
+			function ( $login, $user ) use ( $interceptor ) {
+				$this->assertSame( 'bob', $login );
+				$interceptor->on_wp_login( $login, $user );
+			}
+		);
 		$this->submit( $interceptor, $token, array( 'lwfw_step' => 'continue' ) );
+		$this->assertSame( $redirects + 1, count( $this->redirects ), 'The completed login is not held again.' );
 
 		$this->assertSame( array( array( 6, true ) ), $this->cookies );
 		$this->assertSame( 'https://example.com/wp-admin/', end( $this->redirects ) );

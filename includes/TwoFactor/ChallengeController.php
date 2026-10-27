@@ -290,6 +290,12 @@ final class ChallengeController {
 		 */
 		do_action( 'lw_firewall_2fa_passed', (int) $user->ID, $method );
 
+		// The password step stopped at `wp_login` priority 1, so the rest of the
+		// login side effects (audit logs, last-login trackers, shop sessions) run
+		// now; the `completing` flag keeps LoginInterceptor from holding it again.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook: the login is now complete.
+		do_action( 'wp_login', $user->user_login, $user );
+
 		$this->redirect( LoginRequest::destination( $record['redirect_to'], $user ) );
 	}
 
