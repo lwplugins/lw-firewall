@@ -14,21 +14,21 @@ import ProofForm from './ProofForm';
 import { errorText } from './api';
 
 /**
- * @param {Object}   props
- * @param {string}   props.label       Button text.
- * @param {Object}   props.icon        Button icon.
- * @param {string}   props.confirm     Confirm button text (default: label).
- * @param {string}   props.prompt      Explanation above the fields.
- * @param {boolean}  props.allowCode   Offer the authenticator code.
- * @param {boolean}  props.destructive Red buttons.
- * @param {Function} props.onConfirm   ( proof ) => Promise.
+ * @param {Object}      props
+ * @param {string}      props.label       Button text.
+ * @param {Object}      props.icon        Button icon.
+ * @param {string}      props.confirm     Confirm button text (default: label).
+ * @param {string}      props.prompt      Explanation above the fields.
+ * @param {Object|null} props.factors     Usable factors (see ProofForm); null = password.
+ * @param {boolean}     props.destructive Red buttons.
+ * @param {Function}    props.onConfirm   ( proof ) => Promise.
  */
 export default function ConfirmAction( {
 	label,
 	icon,
 	confirm,
 	prompt,
-	allowCode,
+	factors = null,
 	destructive = false,
 	onConfirm,
 } ) {
@@ -64,7 +64,7 @@ export default function ConfirmAction( {
 
 	return (
 		<ProofForm
-			allowCode={ allowCode }
+			factors={ factors }
 			prompt={ prompt }
 			submitLabel={ confirm || label }
 			destructive={ destructive }

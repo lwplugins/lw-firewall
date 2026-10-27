@@ -83,7 +83,6 @@ export default function AdminReset( { userId } ) {
 						label={ __( 'Reset two-factor', 'lw-firewall' ) }
 						icon={ reset }
 						destructive
-						allowCode={ false }
 						prompt={ __(
 							'Confirm it with your own password.',
 							'lw-firewall'

@@ -30,7 +30,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - POST /finish ( key, credential { clientDataJSON, attestationObject },
  *   label ) → { passkey, recovery_codes } (codes on the first passkey of an
  *   account without codes, shown once);
- * - DELETE /{id} (ReAuth) → FactorStatus.
+ * - DELETE /{id} (ReAuth) → FactorStatus;
+ * - POST /2fa/reauth/passkey/options → { key, options }: the challenge of a
+ *   passkey ReAuth proof (2FA purpose, bound to the signed-in user).
  *
  * The ceremonies (user verification, origin policy, challenge binding) are
  * PasskeyService's; nothing here touches the WebAuthn data itself.
@@ -78,16 +80,47 @@ final class PasskeysController {
 			array( '/(?P<id>[a-f0-9]{64})', 'DELETE', 'delete' ),
 		);
 		foreach ( $routes as [ $route, $method, $callback ] ) {
-			register_rest_route(
-				Routes::NAMESPACE,
-				FactorsController::BASE . '/passkeys' . $route,
-				array(
-					'methods'             => $method,
-					'callback'            => array( $this, $callback ),
-					'permission_callback' => array( FactorsController::class, 'logged_in' ),
-				)
-			);
+			$this->route( '/passkeys' . $route, $method, $callback );
 		}
+		$this->route( '/reauth/passkey/options', 'POST', 'reauth_options' );
+	}
+
+	/**
+	 * Register one route for the logged-in user.
+	 *
+	 * @param string $route    Path under FactorsController::BASE.
+	 * @param string $method   HTTP method.
+	 * @param string $callback Public method name.
+	 */
+	private function route( string $route, string $method, string $callback ): void {
+		register_rest_route(
+			Routes::NAMESPACE,
+			FactorsController::BASE . $route,
+			array(
+				'methods'             => $method,
+				'callback'            => array( $this, $callback ),
+				'permission_callback' => array( FactorsController::class, 'logged_in' ),
+			)
+		);
+	}
+
+	/**
+	 * POST /reauth/passkey/options: a 2FA challenge bound to the signed-in
+	 * user, answered with one of their passkeys as ReAuth proof.
+	 *
+	 * @return array{key: string, options: array<string, mixed>}|WP_Error
+	 */
+	public function reauth_options(): array|WP_Error {
+		$user = wp_get_current_user();
+		if ( array() === ( new UserFactors( (int) $user->ID ) )->passkeys() ) {
+			return new WP_Error( self::CODE_UNKNOWN, __( 'This account has no passkey.', 'lw-firewall' ), array( 'status' => 409 ) );
+		}
+
+		$out = $this->service()->assertion_options( $user );
+
+		return $out instanceof WP_Error
+			? new WP_Error( self::CODE_UNAVAILABLE, __( 'Passkeys are not available on this site right now.', 'lw-firewall' ), array( 'status' => 503 ) )
+			: $out;
 	}
 
 	/**
@@ -203,6 +236,6 @@ final class PasskeysController {
 	 * Re-authentication checker.
 	 */
 	private function reauth(): ReAuth {
-		return new ReAuth( $this->throttle, $this->clock );
+		return new ReAuth( $this->throttle, $this->clock, $this->service );
 	}
 }

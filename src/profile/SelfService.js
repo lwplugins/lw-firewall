@@ -104,6 +104,14 @@ export default function SelfService( { passkeysAvailable } ) {
 	}
 
 	const hasAny = status.totp || status.passkeys.length > 0;
+	// What can confirm a sensitive change: a factor once there is one.
+	const proof = hasAny
+		? {
+				totp: status.totp,
+				recovery: status.recovery_left > 0,
+				passkey: status.passkeys.length > 0 && passkeysAvailable,
+			}
+		: null;
 
 	return (
 		<div className="lwfw-2fa-self">
@@ -151,15 +159,15 @@ export default function SelfService( { passkeysAvailable } ) {
 							) }
 							icon={ trash }
 							destructive
-							allowCode
-							onConfirm={ async ( proof ) => {
-								await api.totpDelete( proof );
+							factors={ proof }
+							onConfirm={ async ( answer ) => {
+								await api.totpDelete( answer );
 								await changed();
 							} }
 						/>
 					</>
 				) : (
-					<TotpSetup onEnabled={ changed } />
+					<TotpSetup factors={ proof } onEnabled={ changed } />
 				) }
 			</Row>
 
@@ -167,7 +175,7 @@ export default function SelfService( { passkeysAvailable } ) {
 				<Passkeys
 					passkeys={ status.passkeys }
 					available={ passkeysAvailable }
-					hasTotp={ status.totp }
+					factors={ proof }
 					onChange={ changed }
 				/>
 			</Row>
@@ -190,12 +198,12 @@ export default function SelfService( { passkeysAvailable } ) {
 						label={ __( 'Create new codes', 'lw-firewall' ) }
 						icon={ backup }
 						prompt={ __(
-							'The old codes stop working. Confirm it with your password or a code from your authenticator app.',
+							'The old codes stop working. Confirm it with your second factor.',
 							'lw-firewall'
 						) }
-						allowCode={ status.totp }
-						onConfirm={ async ( proof ) => {
-							const out = await api.regenerate( proof );
+						factors={ proof }
+						onConfirm={ async ( answer ) => {
+							const out = await api.regenerate( answer );
 							await changed( out.recovery_codes || [] );
 						} }
 					/>
@@ -215,9 +223,9 @@ export default function SelfService( { passkeysAvailable } ) {
 							'Forget all remembered devices',
 							'lw-firewall'
 						) }
-						allowCode={ status.totp }
-						onConfirm={ async ( proof ) => {
-							await api.forgetDevices( proof );
+						factors={ proof }
+						onConfirm={ async ( answer ) => {
+							await api.forgetDevices( answer );
 							setNotice(
 								__(
 									'Every remembered device asks for the second step again.',

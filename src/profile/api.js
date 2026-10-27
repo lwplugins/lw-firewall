@@ -23,6 +23,7 @@ export const api = {
 	passkeyFinish: ( data ) => send( '/passkeys/finish', 'POST', data ),
 	passkeyDelete: ( id, proof ) =>
 		send( `/passkeys/${ id }`, 'DELETE', proof ),
+	reauthPasskeyOptions: () => send( '/reauth/passkey/options', 'POST' ),
 	reset: ( id, proof ) => send( `/users/${ id }/reset`, 'POST', proof ),
 };
 

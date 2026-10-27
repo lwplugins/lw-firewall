@@ -1,7 +1,7 @@
 /**
- * navigator.credentials.create() for a new passkey. The options come from
- * PasskeyService (base64url binary fields); the response goes back as
- * base64url text.
+ * navigator.credentials.create() for a new passkey and .get() for a passkey
+ * re-authentication. The options come from PasskeyService (base64url binary
+ * fields); the responses go back as base64url text.
  */
 
 const toBuffer = ( b64url ) => {
@@ -62,5 +62,33 @@ export async function createPasskey( options ) {
 	return {
 		clientDataJSON: toB64url( credential.response.clientDataJSON ),
 		attestationObject: toB64url( credential.response.attestationObject ),
+	};
+}
+
+/**
+ * Sign a re-authentication challenge with one of the user's passkeys.
+ *
+ * @param {Object} options { publicKey } from /reauth/passkey/options.
+ * @return {Promise<Object>} { id, clientDataJSON, authenticatorData, signature, userHandle }.
+ */
+export async function getPasskey( options ) {
+	const key = { ...( ( options && options.publicKey ) || {} ) };
+	key.challenge = toBuffer( key.challenge );
+	if ( Array.isArray( key.allowCredentials ) ) {
+		key.allowCredentials = key.allowCredentials.map( ( cred ) => ( {
+			...cred,
+			id: toBuffer( cred.id ),
+		} ) );
+	}
+
+	const credential = await navigator.credentials.get( { publicKey: key } );
+	const response = credential.response;
+
+	return {
+		id: toB64url( credential.rawId ),
+		clientDataJSON: toB64url( response.clientDataJSON ),
+		authenticatorData: toB64url( response.authenticatorData ),
+		signature: toB64url( response.signature ),
+		userHandle: toB64url( response.userHandle ),
 	};
 }

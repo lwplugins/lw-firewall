@@ -46,9 +46,10 @@ function Qr( { uri } ) {
 
 /**
  * @param {Object}   props
+ * @param {?Object}  props.factors   Re-auth factors (see ProofForm); null = password.
  * @param {Function} props.onEnabled ( recoveryCodes ) => void.
  */
-export default function TotpSetup( { onEnabled } ) {
+export default function TotpSetup( { factors, onEnabled } ) {
 	const [ stage, setStage ] = useState( 'idle' );
 	const [ setup, setSetup ] = useState( null );
 	const [ code, setCode ] = useState( '' );
@@ -95,11 +96,15 @@ export default function TotpSetup( { onEnabled } ) {
 	if ( stage === 'proof' ) {
 		return (
 			<ProofForm
-				allowCode={ false }
-				prompt={ __(
-					'Enter your current password to set up an authenticator app.',
-					'lw-firewall'
-				) }
+				factors={ factors }
+				prompt={
+					factors
+						? ''
+						: __(
+								'Enter your current password to set up an authenticator app.',
+								'lw-firewall'
+							)
+				}
 				submitLabel={ __( 'Continue', 'lw-firewall' ) }
 				busy={ busy }
 				error={ error }

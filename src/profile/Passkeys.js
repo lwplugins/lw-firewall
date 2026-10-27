@@ -37,10 +37,10 @@ const ceremonyError = ( error ) =>
  * @param {Object}   props
  * @param {Object[]} props.passkeys  { id, label, created_at, last_used_at }.
  * @param {boolean}  props.available Passkeys work on this site.
- * @param {boolean}  props.hasTotp   Offer the code for re-auth.
+ * @param {?Object}  props.factors   Re-auth factors (see ProofForm); null = password.
  * @param {Function} props.onChange  ( recoveryCodes? ) => void after a change.
  */
-export default function Passkeys( { passkeys, available, hasTotp, onChange } ) {
+export default function Passkeys( { passkeys, available, factors, onChange } ) {
 	const [ label, setLabel ] = useState( '' );
 	const [ adding, setAdding ] = useState( false );
 	const [ busy, setBusy ] = useState( false );
@@ -89,7 +89,7 @@ export default function Passkeys( { passkeys, available, hasTotp, onChange } ) {
 								label={ __( 'Remove', 'lw-firewall' ) }
 								icon={ trash }
 								destructive
-								allowCode={ hasTotp }
+								factors={ factors }
 								onConfirm={ async ( proof ) => {
 									await api.passkeyDelete( key.id, proof );
 									onChange( [] );
@@ -148,7 +148,7 @@ export default function Passkeys( { passkeys, available, hasTotp, onChange } ) {
 
 			{ canAdd && adding && (
 				<ProofForm
-					allowCode={ hasTotp }
+					factors={ factors }
 					submitLabel={ __( 'Continue', 'lw-firewall' ) }
 					busy={ busy }
 					error={ error }

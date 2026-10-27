@@ -12,6 +12,7 @@ namespace LightweightPlugins\Firewall\TwoFactor\Rest;
 use LightweightPlugins\Firewall\Rest\Admin\Routes;
 use LightweightPlugins\Firewall\TwoFactor\Enforcement;
 use LightweightPlugins\Firewall\TwoFactor\FailureThrottle;
+use LightweightPlugins\Firewall\TwoFactor\Passkey\PasskeyService;
 use LightweightPlugins\Firewall\TwoFactor\RecoveryIssuer;
 use LightweightPlugins\Firewall\TwoFactor\Totp;
 use LightweightPlugins\Firewall\TwoFactor\UserFactors;
@@ -29,11 +30,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * logged-out one, which every permission callback refuses.
  *
  * - GET  /me, GET /users/{id} (edit_user): FactorStatus.
- * - POST /totp/begin ( current_password ) → { secret, uri }: the secret
- *   waits sealed in PendingTotpSecret.
+ * - POST /totp/begin (ReAuth) → { secret, uri }: the secret waits sealed in
+ *   PendingTotpSecret.
  * - POST /totp/confirm ( code ) → { recovery_codes }: codes only on the first
  *   issue, shown once.
- * - DELETE /totp, POST /recovery/regenerate, POST /devices/forget: ReAuth;
+ * - DELETE /totp, POST /recovery/regenerate, POST /devices/forget: ReAuth
+ *   (a factor proof once the account has one, see ReAuth);
  *   the last two announce UserFactors::CHANGED_ACTION ( 'regenerated',
  *   'recovery' ) / ( 'forgotten', 'devices' ), so FactorNotifier mails the owner.
  * - POST /users/{id}/reset: another user only, with the admin's own password.
@@ -56,11 +58,13 @@ final class FactorsController {
 	 * @param FailureThrottle|null $throttle    Re-auth budget.
 	 * @param \Closure|null        $clock       Returns the current Unix time; null = time().
 	 * @param Enforcement|null     $enforcement Requirement rules.
+	 * @param PasskeyService|null  $passkeys    Passkey re-auth; null = default.
 	 */
 	public function __construct(
 		private readonly ?FailureThrottle $throttle = null,
 		private readonly ?\Closure $clock = null,
-		private readonly ?Enforcement $enforcement = null
+		private readonly ?Enforcement $enforcement = null,
+		private readonly ?PasskeyService $passkeys = null
 	) {}
 
 	/**
@@ -170,9 +174,9 @@ final class FactorsController {
 		if ( $factors->has_totp_record() ) {
 			return new WP_Error( self::CODE_EXISTS, __( 'An authenticator app is already set up. Remove it first to set up a new one.', 'lw-firewall' ), array( 'status' => 409 ) );
 		}
-		// Always the password (never a code: there is no app yet), also for the first
-		// factor: a stolen session must not plant its own authenticator.
-		$proof = $this->reauth()->check( $user, $request, false );
+		// Also for the first factor: a stolen session must not plant its own
+		// authenticator. With a passkey already set up, only a factor proves it.
+		$proof = $this->reauth()->check( $user, $request );
 		if ( $proof instanceof WP_Error ) {
 			return $proof;
 		}
@@ -292,7 +296,7 @@ final class FactorsController {
 			return $target;
 		}
 
-		$proof = $this->reauth()->check( wp_get_current_user(), $request, false );
+		$proof = $this->reauth()->check_password( wp_get_current_user(), $request );
 		if ( $proof instanceof WP_Error ) {
 			return $proof;
 		}
@@ -336,7 +340,7 @@ final class FactorsController {
 	 * Re-authentication checker.
 	 */
 	private function reauth(): ReAuth {
-		return new ReAuth( $this->throttle, $this->clock );
+		return new ReAuth( $this->throttle, $this->clock, $this->passkeys );
 	}
 
 	/**

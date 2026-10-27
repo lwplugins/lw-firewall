@@ -76,7 +76,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 	}
 
 	private function factors(): FactorsController {
-		return new FactorsController( $this->throttle, fn (): int => $this->now );
+		return new FactorsController( $this->throttle, fn (): int => $this->now, null, new PasskeyService( $this->lib ) );
 	}
 
 	private function passkeys(): PasskeysController {
@@ -110,6 +110,37 @@ final class FactorsControllerTest extends MonkeyTestCase {
 		$begin = $this->factors()->totp_begin( $this->req( $reauth ) );
 		$this->assertIsArray( $begin );
 		return $this->factors()->totp_confirm( $this->req( array( 'code' => $this->bob_code( $begin['secret'] ) ) ) );
+	}
+
+	/**
+	 * A browser assertion of a stored passkey (FakeWebAuthn accepts the signature).
+	 *
+	 * @return array<string, string>
+	 */
+	private function assertion( string $raw_cred, int $user_id ): array {
+		$b64 = static fn ( string $bin ): string => SoftAuthenticator::b64url( $bin );
+		return array(
+			'id'                => $b64( $raw_cred ),
+			'clientDataJSON'    => $b64( (string) json_encode( array( 'type' => 'webauthn.get', 'origin' => 'https://example.com' ) ) ),
+			'authenticatorData' => $b64( hash( 'sha256', 'example.com', true ) . chr( 5 ) . pack( 'N', 7 ) ),
+			'signature'         => $b64( 'sig' ),
+			'userHandle'        => $b64( (string) hex2bin( ( new UserFactors( $user_id ) )->user_handle() ) ),
+		);
+	}
+
+	/**
+	 * Passkey ReAuth proof of the current user: options route + assertion.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function passkey_proof( string $raw_cred = 'raw-credential-id' ): array {
+		$options = $this->passkeys()->reauth_options();
+		$this->assertIsArray( $options );
+
+		return array(
+			'passkey_key' => $options['key'],
+			'passkey'     => $this->assertion( $raw_cred, $this->current ),
+		);
 	}
 
 	/**
@@ -288,7 +319,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 		$this->add_passkey();
 		$hashes = ( new UserFactors( 6 ) )->recovery_hashes();
 
-		$out = $this->enroll_totp();
+		$out = $this->enroll_totp( $this->passkey_proof() );
 
 		$this->assertSame( array(), $out['recovery_codes'] );
 		$this->assertSame( $hashes, ( new UserFactors( 6 ) )->recovery_hashes() );
@@ -308,12 +339,65 @@ final class FactorsControllerTest extends MonkeyTestCase {
 		$this->assertIsArray( $this->factors()->totp_begin( $this->req( array( 'current_password' => 'bob-pw' ) ) ) );
 	}
 
-	public function test_begin_needs_reauth_once_the_account_has_a_factor(): void {
+	public function test_begin_needs_a_factor_proof_once_the_account_has_a_factor(): void {
 		$this->current = 6;
-		$this->add_passkey();
+		$codes         = $this->add_passkey()['recovery_codes'];
 
 		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->totp_begin( $this->req() ) );
-		$this->assertIsArray( $this->factors()->totp_begin( $this->req( array( 'current_password' => 'bob-pw' ) ) ) );
+		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->totp_begin( $this->req( array( 'current_password' => 'bob-pw' ) ) ), 'The password alone no longer proves it.' );
+		$this->assertNull( PendingTotpSecret::get( 6 ) );
+		$this->assertIsArray( $this->factors()->totp_begin( $this->req( array( 'recovery_code' => $codes[0] ) ) ) );
+	}
+
+	public function test_password_only_is_refused_for_every_action_once_a_factor_exists(): void {
+		( new UserFactors( 5 ) )->set_recovery( array( 'h1' ) );
+		$password = $this->req( array( 'current_password' => 'alice-pw' ) );
+
+		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->totp_delete( $password ) );
+		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->recovery_regenerate( $password ) );
+		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->factors()->devices_forget( $password ) );
+		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->passkeys()->begin( $password ) );
+		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->passkeys()->delete( $this->req( array( 'id' => str_repeat( 'a', 64 ), 'current_password' => 'alice-pw' ) ) ) );
+		$this->assertTrue( ( new UserFactors( 5 ) )->has_totp() );
+		$this->assertSame( array( 'h1' ), ( new UserFactors( 5 ) )->recovery_hashes() );
+	}
+
+	public function test_a_recovery_code_proves_it_once_and_is_consumed(): void {
+		$this->current = 6;
+		$codes         = $this->add_passkey()['recovery_codes'];
+		$this->assertCount( 10, ( new UserFactors( 6 ) )->recovery_hashes() );
+
+		$this->assertSame( array( 'forgotten' => true ), $this->factors()->devices_forget( $this->req( array( 'recovery_code' => $codes[0] ) ) ) );
+		$this->assertCount( 9, ( new UserFactors( 6 ) )->recovery_hashes(), 'The code is used up.' );
+		$this->assert_error( ReAuth::FAILED_CODE, 403, $this->factors()->devices_forget( $this->req( array( 'recovery_code' => $codes[0] ) ) ) );
+	}
+
+	public function test_a_passkey_assertion_proves_it(): void {
+		$this->current = 6;
+		$id            = $this->add_passkey()['passkey']['id'];
+
+		$out = $this->passkeys()->delete( $this->req( array( 'id' => $id ) + $this->passkey_proof() ) );
+
+		$this->assertIsArray( $out );
+		$this->assertSame( array(), ( new UserFactors( 6 ) )->passkeys() );
+	}
+
+	public function test_a_passkey_challenge_of_another_user_or_purpose_is_refused(): void {
+		$this->assert_error( PasskeysController::CODE_UNKNOWN, 409, $this->passkeys()->reauth_options(), 'Alice has no passkey.' );
+		( new UserFactors( 5 ) )->add_passkey( new PasskeyRecord( str_repeat( 'c', 64 ), SoftAuthenticator::b64url( 'alice-key' ), 'PEM', 0, 'Key', 1, 0 ) );
+		$alice = $this->passkeys()->reauth_options();
+		$this->assertIsArray( $alice );
+
+		$this->current = 6;
+		$id            = $this->add_passkey()['passkey']['id'];
+		$login         = ( new PasskeyService( $this->lib ) )->assertion_options( null );
+		$this->assertIsArray( $login );
+
+		foreach ( array( $alice['key'], $login['key'] ) as $key ) {
+			$request = $this->req( array( 'id' => $id, 'passkey_key' => $key, 'passkey' => $this->assertion( 'raw-credential-id', 6 ) ) );
+			$this->assert_error( ReAuth::FAILED_CODE, 403, $this->passkeys()->delete( $request ) );
+		}
+		$this->assertCount( 1, ( new UserFactors( 6 ) )->passkeys() );
 	}
 
 	public function test_delete_totp_without_password_or_code_is_403(): void {
@@ -321,15 +405,15 @@ final class FactorsControllerTest extends MonkeyTestCase {
 		$this->assertTrue( ( new UserFactors( 5 ) )->has_totp() );
 	}
 
-	public function test_delete_totp_with_a_wrong_password_is_403(): void {
-		$this->assert_error( ReAuth::FAILED_CODE, 403, $this->factors()->totp_delete( $this->req( array( 'current_password' => 'nope' ) ) ) );
+	public function test_delete_totp_with_a_wrong_code_is_403(): void {
+		$this->assert_error( ReAuth::FAILED_CODE, 403, $this->factors()->totp_delete( $this->req( array( 'recovery_code' => 'nope' ) ) ) );
 		$this->assertTrue( ( new UserFactors( 5 ) )->has_totp() );
 	}
 
-	public function test_delete_totp_with_the_password(): void {
+	public function test_delete_the_only_factor_with_a_code_drops_the_recovery_codes(): void {
 		( new UserFactors( 5 ) )->set_recovery( array( 'h1' ) );
 
-		$out = $this->factors()->totp_delete( $this->req( array( 'current_password' => 'alice-pw' ) ) );
+		$out = $this->factors()->totp_delete( $this->req( array( 'code' => $this->code() ) ) );
 
 		$this->assertFalse( $out['totp'] );
 		$this->assertFalse( ( new UserFactors( 5 ) )->has_totp() );
@@ -356,17 +440,17 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 	public function test_reauth_failures_are_throttled(): void {
 		for ( $i = 0; $i < FailureThrottle::MAX_FAILURES; $i++ ) {
-			$this->factors()->totp_delete( $this->req( array( 'current_password' => 'wrong-' . $i ) ) );
+			$this->factors()->totp_delete( $this->req( array( 'recovery_code' => 'wrong-' . $i ) ) );
 		}
 
 		$this->assertTrue( $this->throttle->is_blocked( 5 ) );
-		$this->assert_error( ReAuth::BLOCKED_CODE, 429, $this->factors()->totp_delete( $this->req( array( 'current_password' => 'alice-pw' ) ) ) );
-		$this->assertTrue( ( new UserFactors( 5 ) )->has_totp(), 'Even the right password waits out the block.' );
+		$this->assert_error( ReAuth::BLOCKED_CODE, 429, $this->factors()->totp_delete( $this->req( array( 'code' => $this->code() ) ) ) );
+		$this->assertTrue( ( new UserFactors( 5 ) )->has_totp(), 'Even the right code waits out the block.' );
 	}
 
 	public function test_a_successful_reauth_restores_the_budget(): void {
-		$this->factors()->recovery_regenerate( $this->req( array( 'current_password' => 'wrong' ) ) );
-		$this->factors()->recovery_regenerate( $this->req( array( 'current_password' => 'alice-pw' ) ) );
+		$this->factors()->recovery_regenerate( $this->req( array( 'recovery_code' => 'wrong' ) ) );
+		$this->factors()->recovery_regenerate( $this->req( array( 'code' => $this->code() ) ) );
 
 		$this->assertSame( 0, $this->storage->count( 5, FailureThrottle::META_KEY, FailureThrottle::WINDOW ) );
 	}
@@ -399,7 +483,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 		Actions\expectDone( UserFactors::CHANGED_ACTION )->once()->with( 5, 'forgotten', 'devices' );
 
-		$this->assertSame( array( 'forgotten' => true ), $this->factors()->devices_forget( $this->req( array( 'current_password' => 'alice-pw' ) ) ) );
+		$this->assertSame( array( 'forgotten' => true ), $this->factors()->devices_forget( $this->req( array( 'code' => $this->code() ) ) ) );
 		$this->assertNotSame( $salt, ( new UserFactors( 5 ) )->remember_salt() );
 	}
 
@@ -445,7 +529,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 		$this->assertCount( 10, $out['recovery_codes'] );
 		$this->assertCount( 10, ( new UserFactors( 6 ) )->recovery_hashes() );
 
-		$second = $this->add_passkey( 'another-credential' );
+		$second = $this->add_passkey( 'another-credential', array( 'recovery_code' => $out['recovery_codes'][0] ) );
 		$this->assertSame( array(), $second['recovery_codes'] );
 		$this->assertCount( 2, ( new UserFactors( 6 ) )->passkeys() );
 	}
@@ -460,18 +544,19 @@ final class FactorsControllerTest extends MonkeyTestCase {
 
 	public function test_passkey_delete_requires_reauth_and_drops_unused_codes(): void {
 		$this->current = 6;
-		$id            = $this->add_passkey()['passkey']['id'];
+		$added         = $this->add_passkey();
+		$id            = $added['passkey']['id'];
 
 		$this->assert_error( ReAuth::REQUIRED_CODE, 403, $this->passkeys()->delete( $this->req( array( 'id' => $id ) ) ) );
 		$this->assertCount( 1, ( new UserFactors( 6 ) )->passkeys() );
 
-		$out = $this->passkeys()->delete( $this->req( array( 'id' => $id, 'current_password' => 'bob-pw' ) ) );
+		$out = $this->passkeys()->delete( $this->req( array( 'id' => $id, 'recovery_code' => $added['recovery_codes'][0] ) ) );
 		$this->assertSame( array(), $out['passkeys'] );
 		$this->assertSame( array(), ( new UserFactors( 6 ) )->recovery_hashes() );
 	}
 
 	public function test_deleting_an_unknown_passkey_is_404(): void {
-		$this->assert_error( PasskeysController::CODE_UNKNOWN, 404, $this->passkeys()->delete( $this->req( array( 'id' => str_repeat( 'f', 64 ), 'current_password' => 'alice-pw' ) ) ) );
+		$this->assert_error( PasskeysController::CODE_UNKNOWN, 404, $this->passkeys()->delete( $this->req( array( 'id' => str_repeat( 'f', 64 ), 'code' => $this->code() ) ) ) );
 	}
 
 	public function test_routes_are_registered_with_permission_callbacks(): void {
@@ -497,6 +582,7 @@ final class FactorsControllerTest extends MonkeyTestCase {
 			'/2fa/passkeys/begin',
 			'/2fa/passkeys/finish',
 			'/2fa/passkeys/(?P<id>[a-f0-9]{64})',
+			'/2fa/reauth/passkey/options',
 		);
 		$this->assertEqualsCanonicalizing( $expected, array_keys( $routes ) );
 		foreach ( $routes as $route => $args ) {
