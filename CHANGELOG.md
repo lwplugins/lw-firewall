@@ -1,10 +1,23 @@
 # Changelog
 
-## [1.8.5] - 2026-10-24
+## [1.9.0] - 2026-10-27
+
+### Added
+- Two-factor login (opt-in, off by default). After the password, users confirm with a code from an authenticator app (TOTP) or a one-time recovery code; 10 recovery codes are created when the app is set up.
+- Passkeys (WebAuthn) as a second factor and, optionally, as a passwordless sign-in: a "Sign in with a passkey" button on the login page that replaces both the password and the second step. Up to 10 passkeys per account.
+- Per-role requirement with a grace period: users in the chosen roles get a reminder first and are taken to the setup page at login afterwards, instead of being locked out. The forced setup is confirmed with a code sent to the account's e-mail address.
+- "Remember this device" for a chosen number of days (off by default), with a button to forget all remembered devices.
+- E-mail notification to the account owner when a second factor, recovery codes or remembered devices change.
+- Self-service on the profile page: set up or remove the authenticator app, add and remove passkeys, create new recovery codes. Sensitive steps ask for the password.
+- New Two-Factor tab in the settings with usage per role and the options above, an optional switch that disables application passwords for users with a second factor, and an admin reset button on each user's profile.
+- `wp lw-firewall 2fa status [<user>]` and `wp lw-firewall 2fa reset <user>` WP-CLI commands.
+- Emergency off switch: `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in wp-config.php switches two-factor login off at once.
+- Filter `lw_firewall_passkey_allowed_origins` to allow passkey sign-in on an extra host name of the site (for example a www alias).
 
 ### Changed
 - On multisite, managing bans and user lockouts, reinstalling the worker and updating the geo data are now network administrator tasks. Site administrators keep managing their own site's settings and imports.
 - On multisite, the .htaccess geo block follows the main site's settings.
+- Internal: the release package is built with the bundled WebAuthn library namespaced, and the release workflow verifies the downloaded build tool's checksum.
 
 ## [1.8.4] - 2026-10-21
 

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: LW Firewall 1.8.4\n"
+"Project-Id-Version: LW Firewall 1.8.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-21T12:13:17+00:00\n"
+"POT-Creation-Date: 2026-10-27T10:45:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lw-firewall\n"
@@ -157,7 +157,7 @@ msgid "banned before reasons were recorded"
 msgstr ""
 
 #: includes/Admin/Bans/Unbanner.php:68
-#: includes/Rest/Admin/BansController.php:80
+#: includes/Rest/Admin/BansController.php:81
 msgid "That is not a valid IP address."
 msgstr ""
 
@@ -198,10 +198,12 @@ msgid "WooCommerce filter requests are now recognised automatically and protecte
 msgstr ""
 
 #: includes/Admin/FilterParamsNotice.php:58
+#: includes/TwoFactor/MailFailureNotice.php:52
 msgid "Dismiss"
 msgstr ""
 
 #: includes/Admin/FilterParamsNotice.php:70
+#: includes/TwoFactor/MailFailureNotice.php:62
 msgid "You are not allowed to do this."
 msgstr ""
 
@@ -359,6 +361,18 @@ msgstr ""
 
 #: includes/Admin/Logs/LogReasons.php:48
 msgid "Password reset flood (site-wide cap)"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:50
+msgid "Wrong two-factor code"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:51
+msgid "Passkey not accepted at two-factor login"
+msgstr ""
+
+#: includes/Admin/Logs/LogReasons.php:52
+msgid "Two-factor setup e-mail could not be sent"
 msgstr ""
 
 #: includes/Admin/SettingsPage.php:67
@@ -609,7 +623,9 @@ msgid "Site: %s"
 msgstr ""
 
 #. translators: %s: local date and time.
+#. translators: %s: date and time in UTC
 #: includes/Alerts/AlertMessage.php:117
+#: includes/TwoFactor/FactorNotifier.php:62
 #, php-format
 msgid "Time: %s"
 msgstr ""
@@ -792,39 +808,39 @@ msgstr ""
 msgid "password reset rate limit"
 msgstr ""
 
-#: includes/Integrations/CookieDeclaration.php:35
+#: includes/Integrations/CookieDeclaration.php:39
 msgid "Shows the site that the visitor's browser runs JavaScript, so product filters work during a bot flood."
 msgstr ""
 
-#: includes/Integrations/CookieDeclaration.php:36
+#: includes/Integrations/CookieDeclaration.php:40
 msgid "30 days"
 msgstr ""
 
-#: includes/Integrations/CookieDeclaration.php:43
+#: includes/Integrations/CookieDeclaration.php:47
 msgid "Set for a moment while the bot check reloads the page, so the check never loops."
 msgstr ""
 
-#: includes/Integrations/CookieDeclaration.php:44
+#: includes/Integrations/CookieDeclaration.php:48
 msgid "1 minute"
 msgstr ""
 
-#: includes/Rest/Admin/BansController.php:91
+#: includes/Rest/Admin/BansController.php:92
 msgid "This address is on the IP whitelist, which bypasses every check — a ban would have no effect. Remove it from the whitelist first."
 msgstr ""
 
-#: includes/Rest/Admin/BansController.php:95
+#: includes/Rest/Admin/BansController.php:96
 msgid "This is the address you are using right now. Banning it would lock you out of the whole site, the admin included."
 msgstr ""
 
-#: includes/Rest/Admin/BansController.php:102
+#: includes/Rest/Admin/BansController.php:103
 msgid "This address cannot be banned: it is private, shared or a trusted proxy (banning it would lock out every visitor behind it), or the storage backend refused the write."
 msgstr ""
 
-#: includes/Rest/Admin/BansController.php:109
+#: includes/Rest/Admin/BansController.php:110
 msgid "Address banned."
 msgstr ""
 
-#: includes/Rest/Admin/BansController.php:138
+#: includes/Rest/Admin/BansController.php:139
 msgid "Send \"ips\" (addresses), \"users\" (username lock keys) or \"all\": true."
 msgstr ""
 
@@ -854,11 +870,11 @@ msgstr ""
 msgid "Some settings are not valid. Nothing was saved."
 msgstr ""
 
-#: includes/Rest/Admin/SettingsMeta.php:97
+#: includes/Rest/Admin/SettingsMeta.php:116
 msgid "Auto-detect"
 msgstr ""
 
-#: includes/Rest/Admin/SettingsMeta.php:112
+#: includes/Rest/Admin/SettingsMeta.php:131
 msgid "File"
 msgstr ""
 
@@ -969,16 +985,22 @@ msgid "Must be a list: one entry per line, or an array of strings."
 msgstr ""
 
 #. translators: %d: maximum number of entries
-#: includes/Settings/Input/OptionInput.php:101
+#: includes/Settings/Input/OptionInput.php:102
 #, php-format
 msgid "Too many entries: at most %d are allowed."
 msgstr ""
 
 #. translators: %s: setting key
-#: includes/Settings/Input/OptionInput.php:122
+#: includes/Settings/Input/OptionInput.php:123
 #: includes/Settings/SettingsWriter.php:51
 #, php-format
 msgid "Unknown setting: %s."
+msgstr ""
+
+#. translators: %s: the rejected entry
+#: includes/Settings/Input/RoleListParser.php:48
+#, php-format
+msgid "\"%s\" is not a valid role slug."
 msgstr ""
 
 #. translators: %s: constant name
@@ -1074,6 +1096,401 @@ msgstr ""
 
 #: includes/SiteManager/Integration.php:43
 msgid "Firewall management abilities: rate limiting, IP blocking, bot control and logs."
+msgstr ""
+
+#: includes/TwoFactor/ChallengeController.php:90
+msgid "The form expired. Try again."
+msgstr ""
+
+#: includes/TwoFactor/ChallengeController.php:308
+msgid "Wrong second-factor answer."
+msgstr ""
+
+#: includes/TwoFactor/ChallengeController.php:317
+msgid "The passkey was not accepted. Try again or use another method."
+msgstr ""
+
+#: includes/TwoFactor/ChallengeController.php:318
+msgid "That code is not valid. Try again."
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:77
+msgid "None of the sign-in methods set up for your account can be used on this site right now. Ask an administrator to reset your two-factor login."
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:85
+#: includes/TwoFactor/ChallengePage.php:124
+#: includes/TwoFactor/ProfileSection.php:73
+msgid "Two-factor authentication"
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:99
+msgid "Too many wrong answers. Sign in again to get a new chance."
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:100
+msgid "This sign-in has expired or was already used. Sign in again."
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:115
+msgid "Sign-in for this account is paused for a while after too many failed attempts. Try again later."
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:125
+#: includes/TwoFactor/ChallengePage.php:224
+#: includes/TwoFactor/EnrollmentPage.php:135
+msgid "Start over"
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:147
+msgid "The passkey check did not finish. Try again or use another method."
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:148
+msgid "Use a passkey"
+msgstr ""
+
+#. translators: %d: number of days
+#: includes/TwoFactor/ChallengePage.php:170
+#, php-format
+msgid "Remember this device for %d day"
+msgid_plural "Remember this device for %d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/TwoFactor/ChallengePage.php:190
+msgid "Recovery code"
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:197
+#: includes/TwoFactor/EnrollmentPage.php:54
+#: build/profile.js:3
+msgid "Code from your authenticator app"
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:204
+msgid "Verify"
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:220
+msgid "Use a recovery code"
+msgstr ""
+
+#: includes/TwoFactor/ChallengePage.php:222
+msgid "Use your authenticator app"
+msgstr ""
+
+#. translators: %s: site name
+#: includes/TwoFactor/EnrollmentMail.php:155
+#, php-format
+msgid "[%s] Your code to set up two-factor sign-in"
+msgstr ""
+
+#. translators: %s: site name
+#: includes/TwoFactor/EnrollmentMail.php:168
+#, php-format
+msgid "Someone signed in to your account at %s and is setting up two-factor sign-in."
+msgstr ""
+
+#. translators: %s: six-digit code
+#: includes/TwoFactor/EnrollmentMail.php:171
+#, php-format
+msgid "Your code: %s"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentMail.php:172
+msgid "It is valid for 10 minutes."
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentMail.php:174
+msgid "If this was not you, do not share the code: change your password and contact an administrator of the site."
+msgstr ""
+
+#. translators: %d: number of days
+#: includes/TwoFactor/EnrollmentNotice.php:63
+#, php-format
+msgid "Set up two-factor login within %d day."
+msgid_plural "Set up two-factor login within %d days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/TwoFactor/EnrollmentNotice.php:65
+msgid "Set it up now"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:39
+msgid "Set up two-factor authentication"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:42
+msgid "Your account must use two-factor authentication. Scan the QR code or add this key to your authenticator app, then enter the 6-digit code the app shows."
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:44
+#: build/profile.js:3
+msgid "Setup key"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:47
+#: build/profile.js:3
+msgid "QR code for your authenticator app"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:48
+#: build/profile.js:3
+msgid "Open in your authenticator app"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:49
+msgid "This key is valid for 10 minutes. If you start over, you get a new key: delete the old entry from your app."
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:58
+msgid "Turn on and continue"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:74
+#: build/profile.js:2
+msgid "Save your recovery codes"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:78
+msgid "Two-factor authentication is on. If you lose your phone, each of these codes signs you in once. Save them now: they are shown only this time."
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:85
+msgid "Two-factor authentication is on. Your recovery codes were shown once; if you did not save them, create new ones on your profile after signing in."
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:90
+msgid "I saved them, continue"
+msgstr ""
+
+#: includes/TwoFactor/EnrollmentPage.php:90
+#: build/profile.js:2
+#: build/profile.js:3
+msgid "Continue"
+msgstr ""
+
+#. translators: %s: masked e-mail address
+#: includes/TwoFactor/EnrollmentPage.php:111
+#, php-format
+msgid "Code we e-mailed to %s"
+msgstr ""
+
+#. translators: %s: masked e-mail address
+#: includes/TwoFactor/EnrollmentPage.php:111
+msgid "Code we e-mailed to you"
+msgstr ""
+
+#. translators: %s: site name
+#: includes/TwoFactor/FactorNotifier.php:53
+#, php-format
+msgid "[%s] Two-factor sign-in changed on your account"
+msgstr ""
+
+#. translators: %s: user display name or login
+#: includes/TwoFactor/FactorNotifier.php:56
+#, php-format
+msgid "Hi %s,"
+msgstr ""
+
+#. translators: 1: what changed, 2: site name
+#: includes/TwoFactor/FactorNotifier.php:59
+#, php-format
+msgid "%1$s on your account at %2$s."
+msgstr ""
+
+#. translators: %s: IP address or network
+#: includes/TwoFactor/FactorNotifier.php:64
+#, php-format
+msgid "From: %s"
+msgstr ""
+
+#. translators: %s: IP address or network
+#: includes/TwoFactor/FactorNotifier.php:64
+#: build/index.js:2
+#: build/profile.js:2
+msgid "unknown"
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:66
+msgid "If this was not you, contact an administrator of the site right away."
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:80
+msgid "New recovery codes were created (the old ones no longer work)"
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:83
+msgid "Every remembered device was signed out of the second step"
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:86
+msgid "All two-factor sign-in methods were removed"
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:91
+msgid "A passkey was added"
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:91
+msgid "A passkey was removed"
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:94
+msgid "An authenticator app was set up"
+msgstr ""
+
+#: includes/TwoFactor/FactorNotifier.php:94
+msgid "The authenticator app was removed"
+msgstr ""
+
+#: includes/TwoFactor/MailFailureNotice.php:49
+msgid "LW Firewall: two-factor setup e-mails cannot be sent"
+msgstr ""
+
+#: includes/TwoFactor/MailFailureNotice.php:51
+msgid "This site could not send the e-mail code that confirms a forced two-factor setup at sign-in. Until e-mail works, those setups go ahead with the password alone. Check the site's e-mail sending."
+msgstr ""
+
+#: includes/TwoFactor/Passkey/PasskeyError.php:53
+msgid "This passkey is not registered for this account."
+msgstr ""
+
+#: includes/TwoFactor/Passkey/PasskeyError.php:55
+msgid "This passkey belongs to a different account."
+msgstr ""
+
+#: includes/TwoFactor/Passkey/PasskeyError.php:57
+msgid "This passkey was rejected because it may have been copied. Remove it and register it again."
+msgstr ""
+
+#: includes/TwoFactor/Passkey/PasskeyError.php:59
+msgid "The passkey request has expired. Please try again."
+msgstr ""
+
+#: includes/TwoFactor/Passkey/PasskeyError.php:61
+msgid "This passkey cannot be added: it is already registered, or the limit of 10 passkeys is reached."
+msgstr ""
+
+#: includes/TwoFactor/Passkey/PasskeyError.php:63
+msgid "The passkey could not be verified. Please try again."
+msgstr ""
+
+#: includes/TwoFactor/Passkey/PasskeyService.php:227
+msgid "Passkey"
+msgstr ""
+
+#: includes/TwoFactor/PasskeyLoginButton.php:65
+msgid "The passkey sign-in did not finish. Try again or sign in with your password."
+msgstr ""
+
+#: includes/TwoFactor/PasskeyLoginButton.php:69
+msgid "Sign in with a passkey"
+msgstr ""
+
+#: includes/TwoFactor/PasswordAuthGuard.php:126
+msgid "This account uses two-factor authentication, so its password alone cannot sign in here. Sign in on the login page, or use an application password where they are allowed."
+msgstr ""
+
+#: includes/TwoFactor/PasswordAuthGuard.php:134
+msgid "This account must set up two-factor authentication. Sign in on the login page to set it up."
+msgstr ""
+
+#: includes/TwoFactor/ProfileSection.php:76
+#: assets/hub/index.js:5
+#: build/index.js:1
+#: build/index.js:10
+#: build/profile.js:1
+msgid "Loading…"
+msgstr ""
+
+#: includes/TwoFactor/ProfileSection.php:80
+msgid "Two-factor settings need JavaScript."
+msgstr ""
+
+#: includes/TwoFactor/Rest/FactorsController.php:171
+msgid "An authenticator app is already set up. Remove it first to set up a new one."
+msgstr ""
+
+#: includes/TwoFactor/Rest/FactorsController.php:199
+msgid "An authenticator app is already set up."
+msgstr ""
+
+#: includes/TwoFactor/Rest/FactorsController.php:204
+msgid "The setup key expired. Start the setup again."
+msgstr ""
+
+#: includes/TwoFactor/Rest/FactorsController.php:210
+msgid "The code is not correct. Check the time on your phone and try the newest code."
+msgstr ""
+
+#: includes/TwoFactor/Rest/FactorsController.php:250
+msgid "Set up an authenticator app or a passkey first."
+msgstr ""
+
+#: includes/TwoFactor/Rest/FactorsController.php:314
+msgid "User not found."
+msgstr ""
+
+#: includes/TwoFactor/Rest/FactorsController.php:332
+msgid "Sorry, you are not allowed to do that."
+msgstr ""
+
+#: includes/TwoFactor/Rest/PasskeyLoginController.php:175
+msgid "Passkey sign-in is not available right now. Sign in with your password."
+msgstr ""
+
+#: includes/TwoFactor/Rest/PasskeyLoginController.php:228
+msgid "This account cannot sign in right now."
+msgstr ""
+
+#: includes/TwoFactor/Rest/PasskeyLoginController.php:269
+msgid "The passkey was not accepted. Try again or sign in with your password."
+msgstr ""
+
+#: includes/TwoFactor/Rest/PasskeyLoginController.php:285
+msgid "Too many sign-in attempts. Wait a few minutes and try again."
+msgstr ""
+
+#: includes/TwoFactor/Rest/PasskeysController.php:108
+msgid "Passkeys are not available on this site right now."
+msgstr ""
+
+#: includes/TwoFactor/Rest/PasskeysController.php:136
+#: build/profile.js:2
+msgid "The passkey could not be added. Try again."
+msgstr ""
+
+#: includes/TwoFactor/Rest/PasskeysController.php:161
+msgid "This passkey does not exist."
+msgstr ""
+
+#: includes/TwoFactor/Rest/ReAuth.php:68
+msgid "Too many wrong attempts. Wait 15 minutes and try again."
+msgstr ""
+
+#: includes/TwoFactor/Rest/ReAuth.php:78
+msgid "The password or code is not correct."
+msgstr ""
+
+#: includes/TwoFactor/Rest/ReAuth.php:123
+#: build/profile.js:1
+msgid "Confirm it with your password or a code from your authenticator app."
+msgstr ""
+
+#: includes/TwoFactor/Rest/ReAuth.php:124
+#: build/profile.js:1
+msgid "Confirm it with your password."
+msgstr ""
+
+#: includes/TwoFactor/TwoFactorModule.php:97
+msgid "LW Firewall: two-factor login is not active"
+msgstr ""
+
+#: includes/TwoFactor/TwoFactorModule.php:99
+msgid "Two-factor login is switched on, but this server is missing the PHP sodium or openssl extension. Until your host enables them, accounts sign in with their password only."
 msgstr ""
 
 #: assets/hub/index.js:1
@@ -1186,12 +1603,6 @@ msgid "Show all plugins"
 msgstr ""
 
 #: assets/hub/index.js:5
-#: build/index.js:1
-#: build/index.js:10
-msgid "Loading…"
-msgstr ""
-
-#: assets/hub/index.js:5
 msgid "Search plugins"
 msgstr ""
 
@@ -1252,7 +1663,7 @@ msgid "General"
 msgstr ""
 
 #: build/index.js:1
-#: build/index.js:19
+#: build/index.js:20
 msgid "General Settings"
 msgstr ""
 
@@ -1265,18 +1676,18 @@ msgid "Spam"
 msgstr ""
 
 #: build/index.js:1
-#: build/index.js:20
+#: build/index.js:21
 msgid "Blocked Bots"
 msgstr ""
 
 #: build/index.js:1
-#: build/index.js:20
+#: build/index.js:21
 msgid "IP Rules"
 msgstr ""
 
 #: build/index.js:1
 #: build/index.js:17
-#: build/index.js:20
+#: build/index.js:21
 msgid "Geo Blocking"
 msgstr ""
 
@@ -1285,8 +1696,17 @@ msgid "Security"
 msgstr ""
 
 #: build/index.js:1
-#: build/index.js:21
+#: build/index.js:22
 msgid "Security Headers"
+msgstr ""
+
+#: build/index.js:1
+msgid "Two-Factor"
+msgstr ""
+
+#: build/index.js:1
+#: build/index.js:24
+msgid "Two-Factor Login"
 msgstr ""
 
 #: build/index.js:1
@@ -1294,12 +1714,12 @@ msgid "Alerts"
 msgstr ""
 
 #: build/index.js:1
-#: build/index.js:23
+#: build/index.js:25
 msgid "New Administrator Alert"
 msgstr ""
 
 #: build/index.js:1
-#: build/index.js:23
+#: build/index.js:25
 msgid "Firewall Status"
 msgstr ""
 
@@ -1308,7 +1728,7 @@ msgid "Logs"
 msgstr ""
 
 #: build/index.js:1
-#: build/index.js:23
+#: build/index.js:25
 msgid "Request Logging"
 msgstr ""
 
@@ -1386,10 +1806,6 @@ msgstr ""
 
 #: build/index.js:2
 msgid "You have unsaved alert changes. The scan and the test email use the saved settings, so save first."
-msgstr ""
-
-#: build/index.js:2
-msgid "unknown"
 msgstr ""
 
 #: build/index.js:2
@@ -1786,7 +2202,7 @@ msgid "Addresses the firewall banned on its own — brute-force lockouts, regist
 msgstr ""
 
 #: build/index.js:17
-#: build/index.js:23
+#: build/index.js:25
 msgid "Refresh"
 msgstr ""
 
@@ -1895,10 +2311,12 @@ msgid "Lock usernames after repeated failed logins"
 msgstr ""
 
 #: build/index.js:17
-#: build/index.js:19
 #: build/index.js:20
 #: build/index.js:21
-#: build/index.js:23
+#: build/index.js:22
+#: build/index.js:24
+#: build/index.js:25
+#: build/profile.js:5
 msgid "Off"
 msgstr ""
 
@@ -1927,7 +2345,7 @@ msgid "Ban IPs that repeatedly send spam registrations, comments or reviews. A b
 msgstr ""
 
 #: build/index.js:17
-#: build/index.js:20
+#: build/index.js:21
 msgid "Ban Threshold"
 msgstr ""
 
@@ -1936,7 +2354,7 @@ msgid "Number of rejected registrations, comments and reviews (counted together)
 msgstr ""
 
 #: build/index.js:17
-#: build/index.js:20
+#: build/index.js:21
 msgid "Ban Duration"
 msgstr ""
 
@@ -2141,7 +2559,7 @@ msgid "Each rendered form may submit one reset request. Without this, a bot can 
 msgstr ""
 
 #: build/index.js:17
-#: build/index.js:20
+#: build/index.js:21
 msgid "Auto-Ban"
 msgstr ""
 
@@ -2266,7 +2684,7 @@ msgid "Whether REMOTE_ADDR is one of the Trusted Proxies on the IP Rules tab."
 msgstr ""
 
 #: build/index.js:17
-#: build/index.js:20
+#: build/index.js:21
 msgid "Forwarded Header"
 msgstr ""
 
@@ -2383,6 +2801,7 @@ msgid "Last heartbeat"
 msgstr ""
 
 #: build/index.js:19
+#: build/profile.js:2
 msgid "never"
 msgstr ""
 
@@ -2399,491 +2818,819 @@ msgid "Succeeded"
 msgstr ""
 
 #: build/index.js:19
+msgid "Who Uses It"
+msgstr ""
+
+#: build/index.js:19
+msgid "Users with an authenticator app or a passkey, per role."
+msgstr ""
+
+#: build/index.js:19
+#: build/index.js:20
+msgid "With two-factor"
+msgstr ""
+
+#. translators: %d: total number of users.
+#: build/index.js:20
+#, js-format
+msgid "of %d users"
+msgstr ""
+
+#: build/index.js:20
+#: build/profile.js:6
+msgid "Passkeys"
+msgstr ""
+
+#: build/index.js:20
+msgid "Available"
+msgstr ""
+
+#: build/index.js:20
+msgid "Not available"
+msgstr ""
+
+#: build/index.js:20
+msgid "This server or site address cannot use passkeys."
+msgstr ""
+
+#: build/index.js:20
+msgid "The PHP sodium and openssl extensions are required for two-factor login, and this server is missing at least one of them. Two-factor login stays off until they are enabled."
+msgstr ""
+
+#: build/index.js:20
+msgid "Role"
+msgstr ""
+
+#: build/index.js:20
+msgid "Users"
+msgstr ""
+
+#: build/index.js:20
+msgid "Required"
+msgstr ""
+
+#: build/index.js:20
+msgid "Large site: only the first accounts with a second factor were counted, so the numbers are a lower bound."
+msgstr ""
+
+#: build/index.js:20
+msgid "Required Roles"
+msgstr ""
+
+#: build/index.js:20
+msgid "Users in these roles must set up a second factor. Until the grace period ends they only get a reminder; after that they are taken to the setup page at login instead of being locked out. Everyone else can opt in on their profile."
+msgstr ""
+
+#: build/index.js:20
 msgid "Core firewall settings — enable/disable, storage backend, rate limits and WooCommerce filter protection."
 msgstr ""
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Enable Firewall"
 msgstr ""
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Master switch — when off, the MU-plugin worker performs no checks (rate-limit, bot blocking, IP/geo blocking, auto-ban all skipped)."
 msgstr ""
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Enable firewall protection"
 msgstr ""
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Storage Backend"
 msgstr ""
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Storage backend for rate-limit counters. Auto-detect tries APCu, then Redis, then file."
 msgstr ""
 
 #. translators: %s: storage backend name.
-#: build/index.js:20
+#: build/index.js:21
 #, js-format
 msgid "%s (not available on this server)"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate Limit"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Maximum number of rate-limited requests per IP within the time window. Applies to WooCommerce filters, login, REST, XML-RPC and any other protected endpoint."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Time Window"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Time window in seconds for rate limiting."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate Limit Action"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Response when the rate limit is exceeded. 302 strips query parameters and redirects to the same path; 429 returns a Retry-After header."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "302 Redirect (strip filters)"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "429 Too Many Requests"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "WooCommerce Filters"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "WooCommerce product-filter URLs (filter_*, query_type_*, min_price, max_price, rating_filter and the Product Filters block arguments) are served only to visitors carrying a cookie that every page sets from JavaScript. Without it, a tiny page sets the cookie and reloads the same URL, so real visitors barely notice, while bot networks sending one request per IP never reach WooCommerce. Signed-in users and whitelisted IPs are not challenged. The per-IP rate limit above still applies to filter requests."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Require the visitor cookie for filter requests"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Allow Googlebot"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Let a genuine Googlebot (verified by reverse and forward DNS, cached for a day) request filter URLs without the cookie. Usually best left off: indexing filter combinations wastes crawl budget."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Skip the check for verified Googlebot"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Add-to-Cart Links"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Apply the same visitor-cookie check to GET links with ?add-to-cart= (each one creates a cart and a WooCommerce session). Real visitors get the product added after one quick reload. Add-to-cart forms and AJAX (POST) are never affected. The per-IP rate limit also applies while this is on."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Require the visitor cookie for add-to-cart links"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Endpoint Protection"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Enable rate limiting on specific WordPress endpoints."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate-limit wp-cron.php requests"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Protects against DDoS attacks targeting wp-cron.php."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate-limit xmlrpc.php requests"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Protects against brute-force and DDoS via xmlrpc.php."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate-limit wp-login.php requests"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate-limits wp-login.php requests per IP."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate-limit REST API requests"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Rate-limits /wp-json/ requests per IP."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Block 404 flood"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Brute-Force Login Protection"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Ban IPs that submit too many failed login attempts (fail2ban style). A banned IP is blocked from the whole site, not just wp-login.php."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Enable Login Protection"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Counts failed password attempts per IP via wp_login_failed."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Ban IPs after repeated failed logins"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Failed Attempts"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Number of failed login attempts before the IP is banned."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Detection Window"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Seconds within which failed attempts are counted (600 = 10 minutes)."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Automatically ban IPs that repeatedly exceed rate limits."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Enable Auto-Ban"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "After the threshold is reached, the IP is banned for the configured duration."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Ban IPs after repeated violations"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Number of rate-limit violations before an IP is banned."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "User-Agent strings to block (one per line, case-insensitive substring match)."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Blocked User-Agents"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "User-Agent substrings (case-insensitive, one per line). Any request whose User-Agent contains one of these is blocked with 403."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Restore defaults"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Manually allow or block IP addresses. Supports individual IPs and CIDR ranges (e.g. 192.168.1.0/24)."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "IP Whitelist"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "IPs or CIDR ranges that bypass all firewall checks (one per line). Supports IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32)."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "IP Blacklist"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "IPs or CIDR ranges blocked with 403 Forbidden before any other check (one per line). Supports IPv4, IPv6, and CIDR notation."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Reverse Proxy"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Leave this empty unless the site sits behind a proxy or load balancer. A forwarded-for header is written by the client until the hop that set it is known, so trusting one without listing the proxies would let any visitor choose their own IP — and with it their own rate-limit bucket, ban status and country. Cloudflare is handled automatically and needs nothing here."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Trusted Proxies"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "IPs or CIDR ranges of your own proxies, one per line. On the common \"nginx in front of Apache on the same host\" layout this is 127.0.0.1 — without it every visitor arrives as 127.0.0.1 and shares a single bucket."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Read right to left, skipping hops that are themselves listed above. Only used when a trusted proxy is configured."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Block visitors from specific countries. Behind Cloudflare, the CF-IPCountry header is used (instant). Without Cloudflare, CIDR-based lookup is used (updated weekly)."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Enable"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Enable Geo Blocking"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Blocked Countries"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Visitors from the selected countries are blocked with 403."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "ISO 3166–1 alpha-2 country codes, one per line (e.g. IN, CN, RU)."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Against MIME sniffing"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "The browser does not guess a file’s type, so a text file can never run as JavaScript."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Against clickjacking"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Other domains cannot embed your site in an iframe, so visitors cannot be tricked into clicking hidden elements."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Against URL leaks"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Other sites only see your domain; the full URL, which may contain sensitive paths, stays on your site."
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Against device access"
 msgstr ""
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Turns off the camera, microphone and geolocation, so even a compromised third-party script cannot ask for them."
 msgstr ""
 
 #. translators: %d: number of security headers sent.
-#: build/index.js:21
+#: build/index.js:22
 #, js-format
 msgid "All %d sent"
 msgstr ""
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Not sent"
 msgstr ""
 
-#: build/index.js:21
+#: build/index.js:22
+#: build/index.js:24
 msgid "On"
 msgstr ""
 
 #. translators: %d: number of security headers.
-#: build/index.js:22
+#: build/index.js:23
 #, js-format
 msgid "%d HTTP response headers the firewall adds to every page."
 msgstr ""
 
 #. translators: %s: PHP constant name.
-#: build/index.js:23
+#: build/index.js:24
+#: build/index.js:25
 #, js-format
 msgid "Set in wp-config.php (%s)."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:24
+msgid "Two-factor login"
+msgstr ""
+
+#: build/index.js:24
+msgid "After the password, users confirm with an authenticator app, a recovery code or a passkey. Passkeys can also replace the password."
+msgstr ""
+
+#: build/index.js:25
+msgid "Locked out? Add define( 'LW_FIREWALL_TWOFA_ENABLED', false ); to wp-config.php to switch two-factor login off at once, or remove one user's factors with wp lw-firewall 2fa reset <user>."
+msgstr ""
+
+#: build/index.js:25
+msgid "Grace Period"
+msgstr ""
+
+#: build/index.js:25
+msgid "Days a required user can keep logging in with the password alone, with a reminder, before setup becomes mandatory."
+msgstr ""
+
+#: build/index.js:25
+msgid "Remember This Device"
+msgstr ""
+
+#: build/index.js:25
+msgid "Days a browser can skip the second step after a successful one. 0 = off, every login asks."
+msgstr ""
+
+#: build/index.js:25
+msgid "Passwordless Passkey Login"
+msgstr ""
+
+#: build/index.js:25
+msgid "Show a passkey button on the login page. A passkey replaces both the password and the second step."
+msgstr ""
+
+#: build/index.js:25
+msgid "Passkey button shown"
+msgstr ""
+
+#: build/index.js:25
+msgid "Block Application Passwords"
+msgstr ""
+
+#: build/index.js:25
+msgid "Application passwords skip the second step. Turn this on to disable them for users who have a second factor."
+msgstr ""
+
+#: build/index.js:25
+msgid "Disabled for these users"
+msgstr ""
+
+#: build/index.js:25
+msgid "Allowed"
+msgstr ""
+
+#: build/index.js:25
 msgid "Send an email whenever an account gains administrator privileges, or an existing administrator account is modified — no matter how it happened: the admin screens, a plugin, the REST API, WP-CLI, or a direct write into the database."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Enable Alerts"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Works independently of the main firewall switch."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Email me when a new administrator appears"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Notification Email"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Separate multiple addresses with commas. Leave empty to use the site admin email."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Account Takeover"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Watches the username, email address and password of every administrator. Rewriting an admin's email address is how an account is seized — it hands over the password reset flow while the user ID stays the same, so watching for new accounts alone would never see it."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Also alert when an existing administrator is modified"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Database Scan"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Compares the live administrator list against a stored snapshot. This is what catches accounts inserted straight into the database, created by code that bypasses the WordPress user API, or added while this plugin was inactive."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Hourly scan for administrators created outside WordPress"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "How detection works"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "WordPress hooks"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Immediate. Catches every account creation or role change that goes through the WordPress user API — the Users screen, user registration, the REST API, WP-CLI, and any plugin or theme calling wp_insert_user() or set_role(). The alert names the acting user and their IP address."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Database scan"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Within the hour. A snapshot of every administrator user ID is stored, and the scheduled scan diffs it against the live list. Anything that appears without a hook firing — a direct SQL INSERT, a modified wp_capabilities meta row, an account added while the plugin was off — shows up here and is flagged as created outside the normal WordPress flow."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "What the snapshot stores"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Per administrator: the user ID, the username, the email address, and a digest of the stored password hash. The digest only ever answers \"did this change?\" — the password itself is never stored, never compared and never printed in an alert."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "No duplicate alerts"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Both paths write to the same snapshot, so each event is reported exactly once. Existing administrators are recorded silently when the feature is turned on — you are only told about what happens afterwards. Removing an administrator is not reported; the account simply leaves the snapshot."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Firewall off"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "No problems found. The worker, storage and client IP detection all look healthy."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Enable Logging"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Stores the last 100 blocked requests in the database."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Log blocked requests"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Export Settings"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Download your current firewall settings as a JSON file. You can use this file to import settings on another site."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Import Settings"
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Upload a previously exported JSON file. Valid settings in the file replace the current ones, invalid values are skipped and reported, and settings missing from the file keep their current values."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "The file is larger than 256 KB, the most an import accepts."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "The file does not contain valid JSON."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Settings imported, but some values were rejected."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Settings imported successfully."
 msgstr ""
 
-#: build/index.js:23
+#: build/index.js:25
 msgid "Import"
 msgstr ""
 
 #. translators: %s: file name.
-#: build/index.js:24
+#: build/index.js:26
 #, js-format
 msgid "Import the settings from %s? Every valid setting in the file replaces the current value right away; invalid ones are skipped and listed afterwards."
 msgstr ""
 
-#: build/index.js:24
+#: build/index.js:26
 msgid "Your unsaved changes on the other tabs will be discarded."
+msgstr ""
+
+#: build/profile.js:1
+msgid "Current password"
+msgstr ""
+
+#: build/profile.js:1
+msgid "or authenticator code"
+msgstr ""
+
+#: build/profile.js:1
+#: build/profile.js:3
+msgid "Cancel"
+msgstr ""
+
+#: build/profile.js:1
+msgid "Loading two-factor settings…"
+msgstr ""
+
+#: build/profile.js:1
+#: build/profile.js:5
+msgid "Could not load the two-factor settings."
+msgstr ""
+
+#: build/profile.js:1
+msgid "Two-factor"
+msgstr ""
+
+#: build/profile.js:1
+msgid "Two-factor authentication was reset. The user signs in with the password until they set it up again."
+msgstr ""
+
+#: build/profile.js:1
+msgid "This user has not set up two-factor authentication."
+msgstr ""
+
+#: build/profile.js:1
+msgid "This user signs in with a second factor. Reset it when they lost their phone or passkey: every factor, recovery code and remembered device is removed."
+msgstr ""
+
+#: build/profile.js:1
+msgid "Reset two-factor"
+msgstr ""
+
+#: build/profile.js:1
+msgid "Confirm it with your own password."
+msgstr ""
+
+#. translators: 1: date added, 2: relative time of last use
+#: build/profile.js:2
+#, js-format
+msgid "Added %1$s · last used %2$s"
+msgstr ""
+
+#: build/profile.js:2
+msgid "Remove"
+msgstr ""
+
+#: build/profile.js:2
+msgid "No passkeys yet."
+msgstr ""
+
+#: build/profile.js:2
+msgid "This browser cannot create passkeys."
+msgstr ""
+
+#: build/profile.js:2
+msgid "Passkeys are not available on this site."
+msgstr ""
+
+#: build/profile.js:2
+msgid "Passkey name"
+msgstr ""
+
+#: build/profile.js:2
+msgid "e.g. Work laptop"
+msgstr ""
+
+#: build/profile.js:2
+msgid "Add passkey"
+msgstr ""
+
+#: build/profile.js:2
+msgid "The passkey prompt was closed or timed out. Try again."
+msgstr ""
+
+#: build/profile.js:2
+msgid "If you lose your phone or passkey, each of these codes signs you in once. Save them now: they are shown only this time."
+msgstr ""
+
+#: build/profile.js:2
+msgid "Copied"
+msgstr ""
+
+#: build/profile.js:2
+msgid "Copy"
+msgstr ""
+
+#. translators: %s: site host name
+#: build/profile.js:3
+#, js-format
+msgid "Recovery codes for %s"
+msgstr ""
+
+#: build/profile.js:3
+msgid "Each code signs you in once."
+msgstr ""
+
+#: build/profile.js:3
+msgid "Download"
+msgstr ""
+
+#: build/profile.js:3
+msgid "I saved them"
+msgstr ""
+
+#: build/profile.js:3
+msgid "Enter your current password to set up an authenticator app."
+msgstr ""
+
+#: build/profile.js:3
+msgid "Scan the QR code with your authenticator app, or add the key by hand. Then enter the 6-digit code the app shows."
+msgstr ""
+
+#: build/profile.js:3
+msgid "This key is valid for 10 minutes."
+msgstr ""
+
+#: build/profile.js:3
+msgid "Turn on"
+msgstr ""
+
+#: build/profile.js:3
+msgid "Set up authenticator app"
+msgstr ""
+
+#: build/profile.js:3
+msgid "authenticator app"
+msgstr ""
+
+#. translators: %d: number of passkeys
+#: build/profile.js:4
+#, js-format
+msgid "%d passkey"
+msgid_plural "%d passkeys"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: list of enabled factors
+#: build/profile.js:5
+#, js-format
+msgid "On: %s"
+msgstr ""
+
+#. translators: %s: date
+#: build/profile.js:6
+#, js-format
+msgid "Your account must use two-factor authentication. Set it up before %s, or the next sign-in asks you to."
+msgstr ""
+
+#: build/profile.js:6
+msgid "Authenticator app"
+msgstr ""
+
+#: build/profile.js:6
+msgid "Codes from your authenticator app are on."
+msgstr ""
+
+#: build/profile.js:6
+msgid "Remove authenticator app"
+msgstr ""
+
+#: build/profile.js:6
+msgid "Recovery codes"
+msgstr ""
+
+#. translators: %d: number of unused recovery codes
+#: build/profile.js:7
+#, js-format
+msgid "%d unused code left."
+msgid_plural "%d unused codes left."
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/profile.js:7
+msgid "Create new codes"
+msgstr ""
+
+#: build/profile.js:7
+msgid "The old codes stop working. Confirm it with your password or a code from your authenticator app."
+msgstr ""
+
+#: build/profile.js:7
+msgid "Remembered devices"
+msgstr ""
+
+#: build/profile.js:7
+msgid "Browsers where you ticked \"remember this device\" skip the second step for a while."
+msgstr ""
+
+#: build/profile.js:7
+msgid "Forget all remembered devices"
+msgstr ""
+
+#: build/profile.js:7
+msgid "Every remembered device asks for the second step again."
 msgstr ""

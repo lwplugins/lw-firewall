@@ -142,6 +142,38 @@ The stored snapshot fingerprints each administrator (user ID, username, email ad
 
 Both paths write to the same snapshot, so one event produces one alert. Existing administrators are recorded silently when the feature is enabled, so upgrading sites are never mailed about accounts they already had.
 
+### Two-Factor Login
+
+Optional (off by default). After the password, users confirm the sign-in with one of:
+
+- **Authenticator app** (TOTP, RFC 6238) with 10 one-time **recovery codes** created at setup
+- **Passkeys** (WebAuthn) as a second factor, up to 10 per account
+- **Passwordless passkey sign-in** — a "Sign in with a passkey" button on the login page that replaces both the password and the second step
+
+Around that:
+
+- **Required roles with a grace period** — users in the chosen roles get a reminder first, then are taken to the setup page at login instead of being locked out. The forced setup is confirmed with a code e-mailed to the account.
+- **Remember this device** for a chosen number of days (off by default)
+- **Notifications** — the account owner gets an e-mail when a factor, the recovery codes or the remembered devices change
+- **Self-service** on the profile page (authenticator app, passkeys, new recovery codes); sensitive steps ask for the password
+- **Two-Factor tab** with usage per role, and an optional switch that disables application passwords for users with a second factor
+
+**Locked out?**
+
+| Way | How |
+|-----|-----|
+| Recovery code | Use it on the second step; each works once |
+| Another administrator | Reset button on the user's profile |
+| WP-CLI | `wp lw-firewall 2fa reset <user>` |
+| Emergency off switch | `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in `wp-config.php` |
+
+**Known interactions**
+
+- A captcha-type plugin that checks fields posted to the login form on `wp_authenticate_user` refuses the passkey sign-in (the request carries no password). Use the passkey only as a second factor there.
+- Sign-in on a host name other than the site's home/site URL host (for example a `www` alias) needs the `lw_firewall_passkey_allowed_origins` filter.
+- Passkeys are bound to the site's domain: moving the site to a new domain invalidates them (the authenticator app and recovery codes keep working).
+- Needs the PHP `sodium` and `openssl` extensions; without them two-factor login stays off and an admin notice says why.
+
 ### Security Headers
 
 One-click addition of security HTTP headers:
@@ -215,6 +247,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 | **Spam** | Registration, comment and product review spam protection, and password-reset flood protection |
 | **Geo Blocking** | Country-based blocking with Cloudflare or CIDR fallback |
 | **Security** | HTTP security headers toggle |
+| **Two-Factor** | Two-factor login: required roles, grace period, remember device, passwordless passkey login, usage per role |
 | **Alerts** | New-administrator and account-takeover email alerts, recipients, scan schedule |
 | **Status** | MU-plugin worker status, worker version, active storage backend, reinstall worker |
 | **Logs** | Enable logging, view blocked requests, clear log |
@@ -222,7 +255,7 @@ Navigate to **LW Plugins > Firewall** in the admin panel.
 
 ## WP-CLI Commands
 
-All 31 commands are listed below. `--format` accepts `table` (default), `json`, `csv` or `yaml`.
+All 33 commands are listed below. `--format` accepts `table` (default), `json`, `csv` or `yaml`.
 
 ### Status
 
@@ -325,6 +358,13 @@ wp lw-firewall ban clear [--yes]              # lift every tracked ban
 
 The same table, with an Unblock button per row, is on the **IP Rules** settings tab.
 
+### Two-factor login
+
+```bash
+wp lw-firewall 2fa status [<user>] [--format=<format>]   # usage per role, or one user's factors
+wp lw-firewall 2fa reset <user> [--yes]                  # remove every factor, recovery code and remembered device
+```
+
 ### Logs
 
 ```bash
@@ -358,6 +398,7 @@ define( 'LW_FIREWALL_RATE_LIMIT', 30 );
 define( 'LW_FIREWALL_RATE_WINDOW', 60 );                 // seconds
 define( 'LW_FIREWALL_ACTION', '429' );                   // 429 or redirect
 define( 'LW_FIREWALL_LOG_ENABLED', false );
+define( 'LW_FIREWALL_TWOFA_ENABLED', false );            // emergency off switch for two-factor login
 
 // Endpoint protection
 define( 'LW_FIREWALL_PROTECT_CRON', true );

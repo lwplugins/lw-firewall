@@ -4,11 +4,11 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.8.5
+Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Lightweight WordPress firewall — rate-limits endpoints, blocks bots, bans repeat offenders, and adds security headers.
+Lightweight WordPress firewall — rate-limits endpoints, blocks bots, bans repeat offenders, adds security headers and optional two-factor login with passkeys.
 
 == Description ==
 
@@ -51,7 +51,8 @@ WooCommerce filter protection sets a visitor cookie. With LW Cookie 1.9.7+ the v
 * Password reset flood protection — per-IP, per-account and site-wide limits covering wp-login.php and WooCommerce
 * Comment and WooCommerce product review spam protection — honeypot field and optional signed form token, safe with full-page caching
 * New administrator alert — email notification when any account gains admin rights or an existing admin is modified, including changes written straight into the database
-* Tabbed admin settings page under LW Plugins menu (11 tabs)
+* Two-factor login — authenticator app, recovery codes and passkeys (also as a passwordless sign-in), required per role with a grace period, optional
+* Tabbed admin settings page under LW Plugins menu (12 tabs)
 * Optional request logging with viewer
 * Full WP-CLI support
 * wp-config.php constant overrides
@@ -91,9 +92,22 @@ Yes. It automatically detects the real visitor IP via the CF-Connecting-IP heade
 = Can someone lock my account on purpose? =
 The per-username lockout locks an account after repeated failed logins from any IP, so anyone who knows a username can keep that account locked by retrying every lock period (15 minutes by default). Whitelisted IPs are never counted or refused: whitelist your own address under IP Rules. Lift an active lock from the Bans list or with `wp lw-firewall user-lock clear`. You can shorten the lock (Username Lock Duration) or turn the feature off.
 
+= I lost my phone and cannot sign in. What now? =
+Use one of your recovery codes on the second step ("Use a recovery code"); each works once. If you have no code left, another administrator can reset your two-factor login from your user profile, or run `wp lw-firewall 2fa reset <user>`. If every administrator is locked out, add `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` to wp-config.php: two-factor login switches off at once and accounts sign in with their password again.
+
+= Passkey sign-in does not work on my site. =
+Three known cases. A captcha-type plugin that checks fields posted to the login form refuses the passkey sign-in, because that request has no password; exempt it for passkey sign-in or use the passkey only as a second factor. If you sign in on a host name that differs from the site address (for example a www alias), allow it with the `lw_firewall_passkey_allowed_origins` filter. Passkeys belong to the site's domain, so moving the site to a new domain makes the existing passkeys unusable; register them again (recovery codes and the authenticator app keep working).
+
 == Changelog ==
 
-= 1.8.5 =
+= 1.9.0 =
+* New: Two-factor login (opt-in): after the password, an authenticator app code or a one-time recovery code. 10 recovery codes are created at setup.
+* New: Passkeys as a second factor and, optionally, as a passwordless sign-in button on the login page (up to 10 per account).
+* New: Per-role requirement with a grace period. Required users get a reminder first, then are taken to the setup page at login instead of being locked out; the forced setup is confirmed with a code sent by e-mail.
+* New: "Remember this device" for a chosen number of days, and an e-mail to the account owner whenever a second factor, recovery codes or remembered devices change.
+* New: Self-service on the profile page, a Two-Factor settings tab with usage per role, an admin reset on each profile, and `wp lw-firewall 2fa status` / `2fa reset` WP-CLI commands.
+* New: Emergency off switch: `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in wp-config.php.
+* New: Filter `lw_firewall_passkey_allowed_origins` for passkey sign-in on an extra host name of the site.
 * Change: On multisite, managing bans and user lockouts, reinstalling the worker and updating the geo data are now network administrator tasks. Site administrators keep managing their own site's settings and imports.
 * Change: On multisite, the .htaccess geo block follows the main site's settings.
 
