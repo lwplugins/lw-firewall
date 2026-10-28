@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.9.0] - 2026-10-27
+## [1.9.0] - 2026-10-28
 
 ### Added
 - Two-factor login (opt-in, off by default). After the password, users confirm with a code from an authenticator app (TOTP) or a one-time recovery code; 10 recovery codes are created when the app is set up.
