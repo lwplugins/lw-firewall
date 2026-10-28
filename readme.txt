@@ -102,7 +102,7 @@ Three known cases. A captcha-type plugin that checks fields posted to the login 
 For an account with a second factor, and for an account in a required role once its grace period ends, password logins outside the login page are refused: XML-RPC apps, REST API login plugins and AJAX login forms of themes or page builders cannot show the second step. Create an application password on the user's profile for the integration instead, and keep Block Application Passwords off for that account.
 
 = Does two-factor login work on multisite? =
-Yes. The settings are network-wide, because a sign-in is valid on every site of the network: a network administrator sets them in the main site's Two-Factor tab, and the other sites show them read-only. Network-activate the plugin so that every site asks for the second factor.
+Yes. The settings are network-wide, because a sign-in is valid on every site of the network: a network administrator sets them in the main site's Two-Factor tab, and the other sites show them read-only. Network-activate the plugin so that every site asks for the second factor. The warning appears on the main site only: if the plugin is active just on other sites, the two-factor settings cannot be reached, so network-activate it.
 
 == Changelog ==
 
@@ -115,7 +115,7 @@ Yes. The settings are network-wide, because a sign-in is valid on every site of 
 * New: Emergency off switch: `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in wp-config.php.
 * New: Filter `lw_firewall_passkey_allowed_origins` for passkey sign-in on an extra host name of the site.
 * New: On multisite the two-factor settings are network-wide, set on the main site by a network administrator.
-* New: A warning (network admin, main site and the Two-Factor tab) when two-factor login is on but the plugin is not network-activated on a multisite.
+* New: A warning (main site and the Two-Factor tab) when two-factor login is on but the plugin is not network-activated on a multisite.
 * New: Password logins over XML-RPC, the REST API or AJAX are refused for accounts with a second factor (and for required accounts after the grace period); integrations use application passwords.
 
 = 1.8.5 =

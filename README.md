@@ -174,7 +174,7 @@ Around that:
 - Passkeys are bound to the site's domain: moving the site to a new domain invalidates them (the authenticator app and recovery codes keep working).
 - Needs the PHP `sodium` and `openssl` extensions; without them two-factor login stays off and an admin notice says why.
 - Password logins outside the login page (XML-RPC apps, REST API login plugins, AJAX login forms of themes or page builders) are refused for accounts that use a second factor, and for accounts in a required role once their grace period ends: those requests cannot show the second step. Give integrations an application password instead (keep Block Application Passwords off for them).
-- On multisite the two-factor settings are network-wide, because a sign-in is valid on every site of the network. A network administrator sets them in the main site's Two-Factor tab; the other sites show them read-only. Network-activate the plugin so that every site asks for the second factor.
+- On multisite the two-factor settings are network-wide, because a sign-in is valid on every site of the network. A network administrator sets them in the main site's Two-Factor tab; the other sites show them read-only. Network-activate the plugin so that every site asks for the second factor. The warning appears on the main site only: if the plugin is active just on other sites, the two-factor settings cannot be reached, so network-activate it.
 
 ### Security Headers
 

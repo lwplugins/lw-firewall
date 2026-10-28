@@ -85,26 +85,6 @@ final class NetworkActivationNoticeTest extends MonkeyTestCase {
 	}
 
 	/**
-	 * Network admin: only manage_network_plugins, with the link.
-	 */
-	public function test_network_notice_caps(): void {
-		$this->arrange( true, true, false );
-		Functions\when( 'current_user_can' )->justReturn( false );
-		ob_start();
-		( new NetworkActivationNotice() )->render_network();
-		$this->assertSame( '', ob_get_clean() );
-
-		Functions\when( 'current_user_can' )->alias( static fn ( $c ) => 'manage_network_plugins' === $c );
-		ob_start();
-		( new NetworkActivationNotice() )->render_network();
-		$out = (string) ob_get_clean();
-		$this->assertStringContainsString( 'not network-activated', $out );
-		$this->assertStringContainsString( 'dashicons-warning', $out );
-		$this->assertStringContainsString( 'network/plugins.php', $out );
-		$this->assertStringNotContainsString( 'is-dismissible', $out );
-	}
-
-	/**
 	 * Main site: manage_options only, no link without network caps, not on subsites.
 	 */
 	public function test_site_notice_caps_and_main_site(): void {
@@ -116,6 +96,11 @@ final class NetworkActivationNoticeTest extends MonkeyTestCase {
 		$out = (string) ob_get_clean();
 		$this->assertStringContainsString( 'not network-activated', $out );
 		$this->assertStringNotContainsString( 'plugins.php', $out );
+
+		Functions\when( 'current_user_can' )->justReturn( true );
+		ob_start();
+		( new NetworkActivationNotice() )->render_site();
+		$this->assertStringContainsString( 'network/plugins.php', (string) ob_get_clean() );
 
 		Functions\when( 'current_user_can' )->justReturn( false );
 		ob_start();
@@ -138,7 +123,6 @@ final class NetworkActivationNoticeTest extends MonkeyTestCase {
 		Functions\when( 'current_user_can' )->justReturn( true );
 		ob_start();
 		( new NetworkActivationNotice() )->render_site();
-		( new NetworkActivationNotice() )->render_network();
 		$this->assertSame( '', ob_get_clean() );
 	}
 }

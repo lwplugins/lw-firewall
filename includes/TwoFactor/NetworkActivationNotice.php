@@ -19,9 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * On multisite the auth cookie is valid network-wide, but a site where the
  * plugin is not active never runs the login interceptor, so a password-only
  * sign-in there yields a session the protected sites accept. Enforcement is
- * impossible from here; the warning is the remedy. Shown in the network admin
- * (network plugin managers) and on the main site (site administrators); the
- * Two-Factor tab gets the same flag through the settings meta.
+ * impossible from here; the warning is the remedy. Shown on the main site to
+ * site administrators; the Two-Factor tab gets the same flag through the
+ * settings meta. Design limit: it appears only where the plugin is active on
+ * the main site. If it is active only on subsites, the two-factor settings
+ * (read from the main site) cannot be reached anyway: network-activate it.
+ * The network admin only loads network-active plugins, so no notice there.
  */
 final class NetworkActivationNotice {
 
@@ -29,12 +32,9 @@ final class NetworkActivationNotice {
 	 * Register the hooks.
 	 */
 	public function register(): void {
-		if ( ! is_multisite() ) {
-			return;
+		if ( is_multisite() ) {
+			add_action( 'admin_notices', array( $this, 'render_site' ) );
 		}
-
-		add_action( 'network_admin_notices', array( $this, 'render_network' ) );
-		add_action( 'admin_notices', array( $this, 'render_site' ) );
 	}
 
 	/**
@@ -58,15 +58,6 @@ final class NetworkActivationNotice {
 	 */
 	public static function message(): string {
 		return __( 'Two-factor login is on, but LW Firewall is not network-activated. On sites where the plugin is not active, people can still sign in with only a password, and that session is valid across the network. Network-activate LW Firewall to protect every site.', 'lw-firewall' );
-	}
-
-	/**
-	 * Network admin: for users who can manage network plugins.
-	 */
-	public function render_network(): void {
-		if ( current_user_can( 'manage_network_plugins' ) && self::required() ) {
-			$this->print_notice();
-		}
 	}
 
 	/**

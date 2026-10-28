@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Icon, info } from '@wordpress/icons';
+import { Icon, caution, info } from '@wordpress/icons';
 
 /**
  * Quiet inline explanation box (grey, info icon) — for context that is not a
@@ -14,7 +14,7 @@ import { Icon, info } from '@wordpress/icons';
 export default function Callout( { children, tone = 'neutral' } ) {
 	return (
 		<div className={ `lw-admin-callout is-${ tone }` }>
-			<Icon icon={ info } size={ 18 } />
+			<Icon icon={ 'warning' === tone ? caution : info } size={ 18 } />
 			<div>{ children }</div>
 		</div>
 	);
