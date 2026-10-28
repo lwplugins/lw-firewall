@@ -78,6 +78,14 @@ export default function TwoFactorTab( { store } ) {
 								) }
 					</p>
 				) }
+				{ store.data.meta.networkActivationRequired && (
+					<Callout tone="warning">
+						{ __(
+							'Two-factor login is on, but LW Firewall is not network-activated. On sites where the plugin is not active, people can still sign in with only a password, and that session is valid across the network. Network-activate LW Firewall to protect every site.',
+							'lw-firewall'
+						) }
+					</Callout>
+				) }
 				<Callout>
 					{ __(
 						"Locked out? Add define( 'LW_FIREWALL_TWOFA_ENABLED', false ); to wp-config.php to switch two-factor login off at once, or remove one user's factors with wp lw-firewall 2fa reset <user>.",

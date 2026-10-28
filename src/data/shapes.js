@@ -84,6 +84,7 @@ export function toSettings( data ) {
 			docsUrl: meta.docs_url || '',
 			networkLocked: list( meta.network_locked ),
 			networkScope: meta.network_scope || '',
+			networkActivationRequired: !! meta.network_activation_required,
 		},
 	};
 }

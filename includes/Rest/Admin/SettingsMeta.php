@@ -20,6 +20,7 @@ use LightweightPlugins\Firewall\Settings\SettingsStore;
 use LightweightPlugins\Firewall\Storage\ApcuStorage;
 use LightweightPlugins\Firewall\Storage\RedisStorage;
 use LightweightPlugins\Firewall\Storage\StorageDetector;
+use LightweightPlugins\Firewall\TwoFactor\NetworkActivationNotice;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -52,22 +53,23 @@ final class SettingsMeta {
 		$locked   = Options::overridden();
 
 		return [
-			'locked'           => $locked,
-			'locked_constants' => (object) array_combine(
+			'locked'                      => $locked,
+			'locked_constants'            => (object) array_combine(
 				$locked,
 				array_map( static fn ( string $key ): string => Options::CONST_PREFIX . strtoupper( $key ), $locked )
 			),
-			'defaults'         => SettingsStore::typed( $defaults, $defaults ),
-			'ranges'           => (object) self::ranges(),
-			'enums'            => (object) OptionSchema::enums(),
-			'storage_backends' => self::storage_backends(),
-			'countries'        => (object) Countries::all(),
-			'bots_defaults'    => $defaults['blocked_bots'],
-			'roles'            => self::roles(),
-			'server'           => self::server(),
-			'docs_url'         => self::docs_url(),
-			'network_locked'   => NetworkKeys::locked(),
-			'network_scope'    => self::network_scope(),
+			'defaults'                    => SettingsStore::typed( $defaults, $defaults ),
+			'ranges'                      => (object) self::ranges(),
+			'enums'                       => (object) OptionSchema::enums(),
+			'storage_backends'            => self::storage_backends(),
+			'countries'                   => (object) Countries::all(),
+			'bots_defaults'               => $defaults['blocked_bots'],
+			'roles'                       => self::roles(),
+			'server'                      => self::server(),
+			'docs_url'                    => self::docs_url(),
+			'network_locked'              => NetworkKeys::locked(),
+			'network_scope'               => self::network_scope(),
+			'network_activation_required' => NetworkActivationNotice::required(),
 		];
 	}
 

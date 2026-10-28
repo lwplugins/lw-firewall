@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-10-27T11:22:18+00:00\n"
+"POT-Creation-Date: 2026-10-28T09:16:07+00:00\n"
 "PO-Revision-Date: 2026-10-27 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
@@ -1129,11 +1129,11 @@ msgstr "A kérés túl nagy (legfeljebb 256 KB lehet)."
 msgid "Some settings are not valid. Nothing was saved."
 msgstr "Néhány beállítás érvénytelen. Semmi sem lett elmentve."
 
-#: includes/Rest/Admin/SettingsMeta.php:134
+#: includes/Rest/Admin/SettingsMeta.php:136
 msgid "Auto-detect"
 msgstr "Automatikus felismerés"
 
-#: includes/Rest/Admin/SettingsMeta.php:149
+#: includes/Rest/Admin/SettingsMeta.php:151
 msgid "File"
 msgstr "Fájl"
 
@@ -1689,6 +1689,23 @@ msgstr ""
 "működik, ezek a beállítások csak jelszóval mennek tovább. Ellenőrizd az "
 "oldal e-mail-küldését."
 
+#: includes/TwoFactor/NetworkActivationNotice.php:60 build/index.js:25
+msgid ""
+"Two-factor login is on, but LW Firewall is not network-activated. On sites "
+"where the plugin is not active, people can still sign in with only a "
+"password, and that session is valid across the network. Network-activate LW "
+"Firewall to protect every site."
+msgstr ""
+"A kétlépcsős bejelentkezés be van kapcsolva, de az LW Firewall nincs "
+"hálózati szinten aktiválva. Azokon az oldalakon, ahol a bővítmény nem aktív, "
+"a felhasználók továbbra is csak jelszóval be tudnak lépni, és ez a munkamenet "
+"a teljes hálózaton érvényes. Aktiváld hálózati szinten az LW Firewallt, hogy "
+"minden oldal védett legyen."
+
+#: includes/TwoFactor/NetworkActivationNotice.php:91
+msgid "Network plugins"
+msgstr "Hálózati bővítmények"
+
 #: includes/TwoFactor/Passkey/PasskeyError.php:53
 msgid "This passkey is not registered for this account."
 msgstr "Ez a hozzáférési kulcs nincs regisztrálva ehhez a fiókhoz."
@@ -1852,11 +1869,11 @@ msgstr "Túl sok hibás kísérlet. Várj 15 percet, és próbáld újra."
 msgid "The confirmation was not accepted. Try again."
 msgstr "A megerősítés nem sikerült. Próbáld újra."
 
-#: includes/TwoFactor/TwoFactorModule.php:97
+#: includes/TwoFactor/TwoFactorModule.php:98
 msgid "LW Firewall: two-factor login is not active"
 msgstr "LW Firewall: a kétlépcsős belépés nem aktív"
 
-#: includes/TwoFactor/TwoFactorModule.php:99
+#: includes/TwoFactor/TwoFactorModule.php:100
 msgid ""
 "Two-factor login is switched on, but this server is missing the PHP sodium "
 "or openssl extension. Until your host enables them, accounts sign in with "

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T11:22:51+00:00\n"
+"POT-Creation-Date: 2026-10-28T09:16:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lw-firewall\n"
@@ -870,11 +870,11 @@ msgstr ""
 msgid "Some settings are not valid. Nothing was saved."
 msgstr ""
 
-#: includes/Rest/Admin/SettingsMeta.php:134
+#: includes/Rest/Admin/SettingsMeta.php:136
 msgid "Auto-detect"
 msgstr ""
 
-#: includes/Rest/Admin/SettingsMeta.php:149
+#: includes/Rest/Admin/SettingsMeta.php:151
 msgid "File"
 msgstr ""
 
@@ -1359,6 +1359,15 @@ msgstr ""
 msgid "This site could not send the e-mail code that confirms a forced two-factor setup at sign-in. Until e-mail works, those setups go ahead with the password alone. Check the site's e-mail sending."
 msgstr ""
 
+#: includes/TwoFactor/NetworkActivationNotice.php:60
+#: build/index.js:25
+msgid "Two-factor login is on, but LW Firewall is not network-activated. On sites where the plugin is not active, people can still sign in with only a password, and that session is valid across the network. Network-activate LW Firewall to protect every site."
+msgstr ""
+
+#: includes/TwoFactor/NetworkActivationNotice.php:91
+msgid "Network plugins"
+msgstr ""
+
 #: includes/TwoFactor/Passkey/PasskeyError.php:53
 msgid "This passkey is not registered for this account."
 msgstr ""
@@ -1495,11 +1504,11 @@ msgstr ""
 msgid "The confirmation was not accepted. Try again."
 msgstr ""
 
-#: includes/TwoFactor/TwoFactorModule.php:97
+#: includes/TwoFactor/TwoFactorModule.php:98
 msgid "LW Firewall: two-factor login is not active"
 msgstr ""
 
-#: includes/TwoFactor/TwoFactorModule.php:99
+#: includes/TwoFactor/TwoFactorModule.php:100
 msgid "Two-factor login is switched on, but this server is missing the PHP sodium or openssl extension. Until your host enables them, accounts sign in with their password only."
 msgstr ""
 

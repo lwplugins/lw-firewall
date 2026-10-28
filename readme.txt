@@ -115,6 +115,7 @@ Yes. The settings are network-wide, because a sign-in is valid on every site of 
 * New: Emergency off switch: `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in wp-config.php.
 * New: Filter `lw_firewall_passkey_allowed_origins` for passkey sign-in on an extra host name of the site.
 * New: On multisite the two-factor settings are network-wide, set on the main site by a network administrator.
+* New: A warning (network admin, main site and the Two-Factor tab) when two-factor login is on but the plugin is not network-activated on a multisite.
 * New: Password logins over XML-RPC, the REST API or AJAX are refused for accounts with a second factor (and for required accounts after the grace period); integrations use application passwords.
 
 = 1.8.5 =

@@ -14,6 +14,7 @@
 - Emergency off switch: `define( 'LW_FIREWALL_TWOFA_ENABLED', false );` in wp-config.php switches two-factor login off at once.
 - Filter `lw_firewall_passkey_allowed_origins` to allow passkey sign-in on an extra host name of the site (for example a www alias).
 - On multisite, the two-factor settings are network-wide: a network administrator sets them on the main site, and the other sites show them read-only.
+- On multisite, a warning (network admin, main site and the Two-Factor tab) appears when two-factor login is on but the plugin is not network-activated.
 - Password logins outside the login page (XML-RPC apps, REST API login plugins, AJAX login forms of themes or page builders) are refused for accounts that use a second factor, and for accounts in a required role once their grace period ends: those requests cannot show the second step. Use application passwords for integrations.
 
 ## [1.8.5] - 2026-10-24
