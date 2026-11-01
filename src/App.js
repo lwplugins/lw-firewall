@@ -20,6 +20,7 @@ import { TABS } from './shell/tabs';
 import useSaveShortcut from './shell/useSaveShortcut';
 import useTab from './shell/useTab';
 import useUnsavedWarning from './shell/useUnsavedWarning';
+import QuickSearch from './quick-search';
 import AlertsTab from './tabs/alerts/AlertsTab';
 import BotsTab from './tabs/BotsTab';
 import GeneralTab from './tabs/GeneralTab';
@@ -48,6 +49,22 @@ const VIEWS = {
 	'import-export': ImportExportTab,
 };
 
+// Tabs the quick search renders off screen: they build only from the loaded
+// options. IP Rules (bans list), Two-Factor (summary), Status, Logs and
+// Import / Export fetch or only report, so they are found by name only.
+const SEARCH_TABS = [
+	'general',
+	'protection',
+	'spam',
+	'bots',
+	'geo',
+	'security',
+	'alerts',
+];
+
+// Stands in for the status report while indexing (no request, no data).
+const NO_STATUS = { data: null, error: null, reload: () => {} };
+
 // Classic links (?page=lw-firewall&tab=status, WorkerNotice) open that tab.
 const INITIAL_TAB =
 	new URLSearchParams( window.location.search ).get( 'tab' ) || 'general';
@@ -70,6 +87,26 @@ export default function App() {
 	useUnsavedWarning( store.hasEdits );
 	useSaveShortcut( store.save, store.hasEdits && ! store.isSaving );
 
+	// The quick search indexes the settings tabs (read-only renders of the
+	// loaded options).
+	const searchPages = useCallback(
+		() =>
+			store.data
+				? TABS.filter( ( t ) => SEARCH_TABS.includes( t.id ) ).map(
+						( t ) => {
+							const Tab = VIEWS[ t.id ];
+							return {
+								tab: t,
+								element: (
+									<Tab store={ store } status={ NO_STATUS } />
+								),
+							};
+						}
+					)
+				: null,
+		[ store ]
+	);
+
 	let content;
 	if ( store.error ) {
 		content = (
@@ -89,6 +126,13 @@ export default function App() {
 					current={ current.id }
 					meta={ navMeta( store.errors, status.data ) }
 					docsUrl={ store.data?.meta.docsUrl }
+					search={
+						<QuickSearch
+							tabs={ TABS }
+							pages={ searchPages }
+							storageKey="lw-firewall-quick-search"
+						/>
+					}
 				/>
 				<div className="lw-admin-main">
 					<TopBar

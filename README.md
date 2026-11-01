@@ -29,6 +29,10 @@ That list is the worker's pre-WordPress path. Registration spam protection, pass
 
 ## Features
 
+### Quick Search
+
+A search field at the top of the admin sidebar (also Cmd/Ctrl+K) finds sections, cards and settings by name or help text and jumps straight to them.
+
 ### Endpoint Protection
 
 | Endpoint | Protection | Response |

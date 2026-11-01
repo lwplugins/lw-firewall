@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LW Firewall 1.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lw-firewall\n"
-"POT-Creation-Date: 2026-10-28T09:19:05+00:00\n"
+"POT-Creation-Date: 2026-11-01T09:23:59+00:00\n"
 "PO-Revision-Date: 2026-10-27 12:00+0000\n"
 "Last-Translator: LW Plugins <hello@lwplugins.com>\n"
 "Language-Team: Hungarian <hu@lwplugins.com>\n"
@@ -64,7 +64,7 @@ msgstr ""
 "mailt nem sikerült elküldeni. Sorba került, a következő ellenőrzéskor "
 "újrapróbálja."
 
-#: includes/Admin/Alerts/AlertOutcome.php:41 build/index.js:2
+#: includes/Admin/Alerts/AlertOutcome.php:41 build/index.js:3
 msgid ""
 "Scan finished: new or modified administrators were found and an alert email "
 "was sent."
@@ -80,7 +80,7 @@ msgstr ""
 "Nincs érvényes címzett: adj meg értesítési e-mail címet, vagy érvényes admin "
 "e-mail címet a Beállítások → Általános alatt."
 
-#: includes/Admin/Alerts/AlertOutcome.php:57 build/index.js:2
+#: includes/Admin/Alerts/AlertOutcome.php:57 build/index.js:3
 msgid ""
 "The test alert could not be sent — wp_mail() refused it. Check your SMTP "
 "plugin or hosting mail limits."
@@ -88,7 +88,7 @@ msgstr ""
 "A teszt riasztást nem sikerült elküldeni — a wp_mail() visszautasította. "
 "Érdemes ellenőrizni az SMTP bővítményt vagy a tárhely levélkorlátait."
 
-#: includes/Admin/Alerts/AlertOutcome.php:67 build/index.js:2
+#: includes/Admin/Alerts/AlertOutcome.php:67 build/index.js:3
 msgid ""
 "Test alert sent. If it does not arrive, the problem is your site mail "
 "configuration, not the firewall."
@@ -120,7 +120,7 @@ msgstr ""
 "Ellenőrzés kész: nincs új vagy módosított adminisztrátor. A korábban sorba "
 "került riasztások elküldve."
 
-#: includes/Admin/Alerts/AlertOutcome.php:91 build/index.js:2
+#: includes/Admin/Alerts/AlertOutcome.php:91 build/index.js:3
 msgid "Scan finished: no new or modified administrators found."
 msgstr "Ellenőrzés kész: nem található új vagy módosított adminisztrátor."
 
@@ -180,7 +180,7 @@ msgstr "Adminisztrátor tiltotta ki"
 msgid "manual ban"
 msgstr "kézi kitiltás"
 
-#: includes/Admin/Bans/BanReasons.php:73 build/index.js:12
+#: includes/Admin/Bans/BanReasons.php:73 build/index.js:13
 msgid "Unknown"
 msgstr "Ismeretlen"
 
@@ -564,7 +564,7 @@ msgstr ""
 
 #. translators: %d: number of alerts
 #. translators: %d: number of queued alerts.
-#: includes/Admin/Status/StatusWarnings.php:174 build/index.js:3
+#: includes/Admin/Status/StatusWarnings.php:174 build/index.js:4
 #, php-format
 msgid "%d alert could not be sent yet and will be retried on the next scan."
 msgid_plural ""
@@ -576,7 +576,7 @@ msgstr[1] ""
 "%d riasztást még nem sikerült elküldeni, a következő ellenőrzéskor "
 "újrapróbálja."
 
-#: includes/Admin/Status/StatusWarnings.php:178 build/index.js:3
+#: includes/Admin/Status/StatusWarnings.php:178 build/index.js:4
 msgid ""
 "The last alert email could not be sent. Check your site mail configuration "
 "(SMTP plugin, hosting mail limits) — an alert that never arrives is no alert "
@@ -635,7 +635,7 @@ msgid "Copying the worker file failed (disk full or permission denied)."
 msgstr ""
 "A worker fájl másolása sikertelen (a lemez megtelt vagy nincs jogosultság)."
 
-#: includes/Admin/WorkerInstallReasons.php:44 build/index.js:18
+#: includes/Admin/WorkerInstallReasons.php:44 build/index.js:19
 msgid "Unknown install error."
 msgstr "Ismeretlen telepítési hiba."
 
@@ -693,7 +693,7 @@ msgid "User ID"
 msgstr "Felhasználói azonosító"
 
 #: includes/Alerts/AdminDetector.php:136 assets/hub/index.js:4 build/index.js:1
-#: build/index.js:3 build/index.js:13 build/index.js:17
+#: build/index.js:4 build/index.js:14 build/index.js:18
 msgid "Status"
 msgstr "Állapot"
 
@@ -701,7 +701,7 @@ msgstr "Állapot"
 msgid "account no longer exists"
 msgstr "a fiók már nem létezik"
 
-#: includes/Alerts/AdminDetector.php:143 build/index.js:13
+#: includes/Alerts/AdminDetector.php:143 build/index.js:14
 msgid "Username"
 msgstr "Felhasználónév"
 
@@ -1638,7 +1638,7 @@ msgid "From: %s"
 msgstr "Innen: %s"
 
 #. translators: %s: IP address or network
-#: includes/TwoFactor/FactorNotifier.php:64 build/index.js:2 build/profile.js:2
+#: includes/TwoFactor/FactorNotifier.php:64 build/index.js:3 build/profile.js:2
 msgid "unknown"
 msgstr "ismeretlen"
 
@@ -1689,7 +1689,7 @@ msgstr ""
 "működik, ezek a beállítások csak jelszóval mennek tovább. Ellenőrizd az "
 "oldal e-mail-küldését."
 
-#: includes/TwoFactor/NetworkActivationNotice.php:60 build/index.js:25
+#: includes/TwoFactor/NetworkActivationNotice.php:60 build/index.js:26
 msgid ""
 "Two-factor login is on, but LW Firewall is not network-activated. On sites "
 "where the plugin is not active, people can still sign in with only a "
@@ -1772,7 +1772,7 @@ msgstr ""
 "belépési oldalon a beállításhoz."
 
 #: includes/TwoFactor/ProfileSection.php:76 assets/hub/index.js:5
-#: build/index.js:1 build/index.js:10 build/profile.js:1
+#: build/index.js:1 build/index.js:11 build/profile.js:1
 msgid "Loading…"
 msgstr "Betöltés…"
 
@@ -1895,7 +1895,7 @@ msgstr "(új lapon nyílik meg)"
 msgid "LW Plugins (opens in a new tab)"
 msgstr "LW Plugins (új lapon nyílik meg)"
 
-#: assets/hub/index.js:1 build/index.js:1 build/index.js:17
+#: assets/hub/index.js:1 build/index.js:1 build/index.js:18
 msgid "Try again"
 msgstr "Újrapróbálás"
 
@@ -1904,7 +1904,7 @@ msgstr "Újrapróbálás"
 msgid "%s settings"
 msgstr "%s beállításai"
 
-#: assets/hub/index.js:2
+#: assets/hub/index.js:2 build/index.js:2
 msgid "Settings"
 msgstr "Beállítások"
 
@@ -1930,23 +1930,23 @@ msgstr "GitHub"
 msgid "%s on GitHub (opens in a new tab)"
 msgstr "%s a GitHubon (új lapon nyílik meg)"
 
-#: assets/hub/index.js:4 build/index.js:10
+#: assets/hub/index.js:4 build/index.js:11
 msgid "All"
 msgstr "Összes"
 
-#: assets/hub/index.js:4 build/index.js:17
+#: assets/hub/index.js:4 build/index.js:18
 msgid "Active"
 msgstr "Aktív"
 
-#: assets/hub/index.js:4 build/index.js:17
+#: assets/hub/index.js:4 build/index.js:18
 msgid "Inactive"
 msgstr "Inaktív"
 
-#: assets/hub/index.js:4 build/index.js:18
+#: assets/hub/index.js:4 build/index.js:19
 msgid "Not installed"
 msgstr "Nincs telepítve"
 
-#: assets/hub/index.js:4 build/index.js:17
+#: assets/hub/index.js:4 build/index.js:18
 msgid "Plugin"
 msgstr "Bővítmény"
 
@@ -2037,7 +2037,7 @@ msgstr "Semmi sem lett elmentve. Javítsd a kiemelt mezőket, és mentsd újra."
 msgid "General"
 msgstr "Általános"
 
-#: build/index.js:1 build/index.js:20
+#: build/index.js:1 build/index.js:21
 msgid "General Settings"
 msgstr "Általános beállítások"
 
@@ -2049,15 +2049,15 @@ msgstr "Védelem"
 msgid "Spam"
 msgstr "Spam"
 
-#: build/index.js:1 build/index.js:21
+#: build/index.js:1 build/index.js:22
 msgid "Blocked Bots"
 msgstr "Blokkolt botok"
 
-#: build/index.js:1 build/index.js:21
+#: build/index.js:1 build/index.js:22
 msgid "IP Rules"
 msgstr "IP szabályok"
 
-#: build/index.js:1 build/index.js:17 build/index.js:21
+#: build/index.js:1 build/index.js:18 build/index.js:22
 msgid "Geo Blocking"
 msgstr "Geo blokkolás"
 
@@ -2065,7 +2065,7 @@ msgstr "Geo blokkolás"
 msgid "Security"
 msgstr "Biztonság"
 
-#: build/index.js:1 build/index.js:22
+#: build/index.js:1 build/index.js:23
 msgid "Security Headers"
 msgstr "Biztonsági headerek"
 
@@ -2073,7 +2073,7 @@ msgstr "Biztonsági headerek"
 msgid "Two-Factor"
 msgstr "Kétlépcsős"
 
-#: build/index.js:1 build/index.js:24
+#: build/index.js:1 build/index.js:25
 msgid "Two-Factor Login"
 msgstr "Kétlépcsős belépés"
 
@@ -2081,11 +2081,11 @@ msgstr "Kétlépcsős belépés"
 msgid "Alerts"
 msgstr "Riasztások"
 
-#: build/index.js:1 build/index.js:25
+#: build/index.js:1 build/index.js:26
 msgid "New Administrator Alert"
 msgstr "Új adminisztrátor riasztás"
 
-#: build/index.js:1 build/index.js:25
+#: build/index.js:1 build/index.js:26
 msgid "Firewall Status"
 msgstr "Tűzfal állapota"
 
@@ -2093,7 +2093,7 @@ msgstr "Tűzfal állapota"
 msgid "Logs"
 msgstr "Naplók"
 
-#: build/index.js:1 build/index.js:25
+#: build/index.js:1 build/index.js:26
 msgid "Request Logging"
 msgstr "Kérések naplózása"
 
@@ -2137,21 +2137,62 @@ msgid "Save changes"
 msgstr "Változások mentése"
 
 #: build/index.js:2
+msgid "Recent"
+msgstr "Legutóbbiak"
+
+#: build/index.js:2
+msgid "Sections"
+msgstr "Menüpontok"
+
+#: build/index.js:2
+msgid "Go to"
+msgstr "Ugrás"
+
+#: build/index.js:2
+msgid "Quick search"
+msgstr "Gyorskeresés"
+
+#: build/index.js:2
+msgid "Search sections and settings"
+msgstr "Keresés a menüpontok és beállítások között"
+
+#: build/index.js:2
+msgid "Results"
+msgstr "Találatok"
+
+#. translators: %s: the search text.
+#: build/index.js:3
+msgid "No results for “%s”."
+msgstr "Nincs találat erre: „%s”."
+
+#: build/index.js:3
+msgid "to navigate"
+msgstr "navigálás"
+
+#: build/index.js:3
+msgid "to open"
+msgstr "megnyitás"
+
+#: build/index.js:3
+msgid "Quick search…"
+msgstr "Gyorskeresés…"
+
+#: build/index.js:3
 msgid "Set in wp-config.php"
 msgstr "A wp-config.php-ban beállítva"
 
-#: build/index.js:2
+#: build/index.js:3
 msgid "seconds"
 msgstr "másodperc"
 
-#: build/index.js:2
+#: build/index.js:3
 msgid ""
 "Alerts are turned off, so nothing was scanned. Enable alerts and save first."
 msgstr ""
 "A riasztások ki vannak kapcsolva, ezért nem történt ellenőrzés. Előbb "
 "kapcsold be a riasztásokat, és ments."
 
-#: build/index.js:2
+#: build/index.js:3
 msgid ""
 "Scan finished: new or modified administrators were found, but the alert "
 "email could not be sent yet. It is queued and retried on the next scan."
@@ -2160,11 +2201,11 @@ msgstr ""
 "mailt még nem sikerült elküldeni. Sorba került, a következő ellenőrzéskor "
 "újrapróbálja."
 
-#: build/index.js:2
+#: build/index.js:3
 msgid "Check it now"
 msgstr "Ellenőrzés most"
 
-#: build/index.js:2
+#: build/index.js:3
 msgid ""
 "Run the database scan immediately, or send a test message to the saved "
 "recipients."
@@ -2172,15 +2213,15 @@ msgstr ""
 "Az adatbázis-ellenőrzés azonnali futtatása, vagy teszt üzenet küldése a "
 "mentett címzetteknek."
 
-#: build/index.js:2
+#: build/index.js:3
 msgid "Run scan now"
 msgstr "Ellenőrzés futtatása most"
 
-#: build/index.js:2
+#: build/index.js:3
 msgid "Send test email"
 msgstr "Teszt e-mail küldése"
 
-#: build/index.js:2
+#: build/index.js:3
 msgid ""
 "You have unsaved alert changes. The scan and the test email use the saved "
 "settings, so save first."
@@ -2188,104 +2229,104 @@ msgstr ""
 "Nem mentett riasztási változásaid vannak. Az ellenőrzés és a teszt e-mail a "
 "mentett beállításokat használja, ezért előbb ments."
 
-#: build/index.js:2
+#: build/index.js:3
 msgid "expired"
 msgstr "lejárt"
 
-#: build/index.js:3
+#: build/index.js:4
 msgid "Administrators tracked"
 msgstr "Követett adminisztrátorok"
 
-#: build/index.js:3
+#: build/index.js:4
 msgid "Alerts go to"
 msgstr "Riasztás címzettje"
 
-#: build/index.js:3
+#: build/index.js:4
 msgid "Snapshot taken"
 msgstr "Pillanatkép készült"
 
-#: build/index.js:3
+#: build/index.js:4
 msgid "never — taken on the first scan"
 msgstr "soha — az első ellenőrzéskor készül el"
 
-#: build/index.js:3
+#: build/index.js:4
 msgid "Next scan"
 msgstr "Következő ellenőrzés"
 
-#: build/index.js:3 build/index.js:17
+#: build/index.js:4 build/index.js:18
 msgid "not scheduled"
 msgstr "nincs ütemezve"
 
 #. translators: %d: number of list entries.
 #. translators: %d: number of rows.
-#: build/index.js:4 build/index.js:10
+#: build/index.js:5 build/index.js:11
 msgid "%d entry"
 msgid_plural "%d entries"
 msgstr[0] "%d tétel"
 msgstr[1] "%d tétel"
 
-#: build/index.js:4 build/index.js:17
+#: build/index.js:5 build/index.js:18
 msgid "No country selected."
 msgstr "Nincs kiválasztott ország."
 
-#: build/index.js:4
+#: build/index.js:5
 msgid "Not an ISO 3166–1 alpha-2 country code."
 msgstr "Nem ISO 3166–1 alpha-2 országkód."
 
 #. translators: %s: country name or code.
-#: build/index.js:5
+#: build/index.js:6
 msgid "Remove %s"
 msgstr "%s eltávolítása"
 
-#: build/index.js:5
+#: build/index.js:6
 msgid "Search countries"
 msgstr "Országok keresése"
 
-#: build/index.js:5
+#: build/index.js:6
 msgid "Search a country or code…"
 msgstr "Ország vagy kód keresése…"
 
-#: build/index.js:5
+#: build/index.js:6
 msgid "No country matches that search."
 msgstr "Egyetlen ország sem egyezik a keresésre."
 
 #. translators: %d: number of blocked countries.
-#: build/index.js:6
+#: build/index.js:7
 msgid "%d country blocked"
 msgid_plural "%d countries blocked"
 msgstr[0] "%d ország tiltva"
 msgstr[1] "%d ország tiltva"
 
-#: build/index.js:6
+#: build/index.js:7
 msgid "List freshness"
 msgstr "Lista frissessége"
 
-#: build/index.js:6 build/index.js:17
+#: build/index.js:7 build/index.js:18
 msgid "Stale"
 msgstr "Elavult"
 
-#: build/index.js:6 build/index.js:17
+#: build/index.js:7 build/index.js:18
 msgid "Current"
 msgstr "Friss"
 
-#: build/index.js:6
+#: build/index.js:7
 msgid "Updated"
 msgstr "Frissítve"
 
-#: build/index.js:6 build/index.js:17 build/index.js:19
+#: build/index.js:7 build/index.js:18 build/index.js:20
 msgid "Failed"
 msgstr "Sikertelen"
 
-#: build/index.js:6
+#: build/index.js:7
 msgid "Country IP lists"
 msgstr "Országonkénti IP listák"
 
 #. translators: %s: relative time of the next automatic update.
-#: build/index.js:7
+#: build/index.js:8
 msgid "Next automatic update: %s"
 msgstr "Következő automatikus frissítés: %s"
 
-#: build/index.js:7
+#: build/index.js:8
 msgid ""
 "Without Cloudflare, visitors are matched against downloaded IPv4 and IPv6 "
 "lists per country."
@@ -2293,7 +2334,7 @@ msgstr ""
 "Cloudflare nélkül a látogatókat országonként letöltött IPv4 és IPv6 "
 "listákkal veti össze."
 
-#: build/index.js:7
+#: build/index.js:8
 msgid ""
 "Cloudflare detected: the CF-IPCountry header decides, so these lists are "
 "only a fallback."
@@ -2301,65 +2342,65 @@ msgstr ""
 "Cloudflare észlelve: a CF-IPCountry fejléc dönt, így ezek a listák csak "
 "tartalékként szolgálnak."
 
-#: build/index.js:7
+#: build/index.js:8
 msgid "Update CIDR Lists Now"
 msgstr "CIDR listák frissítése most"
 
 #. translators: 1: current country number, 2: number of countries.
-#: build/index.js:8
+#: build/index.js:9
 msgid "Updating %1$d of %2$d…"
 msgstr "Frissítés: %1$d / %2$d…"
 
-#: build/index.js:8
+#: build/index.js:9
 msgid ""
 "Save your changes first: the update downloads the lists of the saved "
 "countries."
 msgstr ""
 "Előbb mentsd a változásokat: a frissítés a mentett országok listáit tölti le."
 
-#: build/index.js:8
+#: build/index.js:9
 msgid ""
 "Some lists could not be downloaded. The previous list is kept for those."
 msgstr ""
 "Néhány listát nem sikerült letölteni. Ezeknél az előző lista marad meg."
 
-#: build/index.js:8
+#: build/index.js:9
 msgid "All country lists are up to date."
 msgstr "Minden országlista naprakész."
 
-#: build/index.js:8
+#: build/index.js:9
 msgid "Country"
 msgstr "Ország"
 
-#: build/index.js:8
+#: build/index.js:9
 msgid "Details"
 msgstr "Részletek"
 
 #. translators: %d: number of imported settings.
-#: build/index.js:9
+#: build/index.js:10
 msgid "%d setting imported."
 msgid_plural "%d settings imported."
 msgstr[0] "%d beállítás importálva."
 msgstr[1] "%d beállítás importálva."
 
-#: build/index.js:9
+#: build/index.js:10
 msgid "Settings missing from the file kept their current values."
 msgstr "A fájlból hiányzó beállítások megtartották a jelenlegi értéküket."
 
-#: build/index.js:9
+#: build/index.js:10
 msgid "Imported keys"
 msgstr "Importált kulcsok"
 
-#: build/index.js:9
+#: build/index.js:10
 msgid "Skipped, pinned in wp-config.php:"
 msgstr "Kihagyva, a wp-config.php-ban rögzítve:"
 
-#: build/index.js:9
+#: build/index.js:10
 msgid "Unknown keys ignored:"
 msgstr "Figyelmen kívül hagyott ismeretlen kulcsok:"
 
 #. translators: %d: number of rejected settings.
-#: build/index.js:10
+#: build/index.js:11
 msgid ""
 "%d value was invalid and not imported; that setting kept its current value:"
 msgid_plural ""
@@ -2372,147 +2413,147 @@ msgstr[1] ""
 "%d érték érvénytelen volt, és nem lett importálva; ezek a beállítások "
 "megtartották a jelenlegi értéküket:"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Search"
 msgstr "Keresés"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Filter"
 msgstr "Szűrő"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Clear"
 msgstr "Törlés"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Clear all filters"
 msgstr "Összes szűrő törlése"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "No entries match these filters."
 msgstr "Egyetlen tétel sem felel meg ezeknek a szűrőknek."
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Nothing here yet."
 msgstr "Itt még nincs semmi."
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Previous page"
 msgstr "Előző oldal"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Next page"
 msgstr "Következő oldal"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Rows per page"
 msgstr "Sorok oldalanként"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Select all rows on this page"
 msgstr "Az oldal összes sorának kijelölése"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Clear selection"
 msgstr "Kijelölés törlése"
 
-#: build/index.js:10
+#: build/index.js:11
 msgid "Bulk actions"
 msgstr "Csoportos műveletek"
 
 #. translators: %d: number of results.
-#: build/index.js:10
+#: build/index.js:11
 msgid "%d result"
 msgid_plural "%d results"
 msgstr[0] "%d találat"
 msgstr[1] "%d találat"
 
 #. translators: 1: current page, 2: total pages.
-#: build/index.js:10
+#: build/index.js:11
 msgid "Page %1$d of %2$d"
 msgstr "%1$d. oldal / %2$d"
 
 #. translators: %s: row name.
-#: build/index.js:10
+#: build/index.js:11
 msgid "Select: %s"
 msgstr "Kijelölés: %s"
 
 #. translators: %d: number of selected rows.
-#: build/index.js:11
+#: build/index.js:12
 msgid "%d selected"
 msgid_plural "%d selected"
 msgstr[0] "%d kijelölve"
 msgstr[1] "%d kijelölve"
 
 #. translators: 1: selected rows, 2: of those, on this page.
-#: build/index.js:12
+#: build/index.js:13
 msgid "%1$d selected, %2$d on this page"
 msgstr "%1$d kijelölve, ebből %2$d ezen az oldalon"
 
 #. translators: 1: rows the action applies to, 2: selected rows on this page.
-#: build/index.js:12
+#: build/index.js:13
 msgid "applies to %1$d of %2$d"
 msgstr "%2$d tételből %1$d érintett"
 
-#: build/index.js:12
+#: build/index.js:13
 msgid "IPv6 /64"
 msgstr "IPv6 /64"
 
-#: build/index.js:12
+#: build/index.js:13
 msgid "Legacy entry"
 msgstr "Régi bejegyzés"
 
 #. translators: %s: IP address.
-#: build/index.js:13
+#: build/index.js:14
 msgid "%s banned."
 msgstr "%s kitiltva."
 
-#: build/index.js:13 build/index.js:17
+#: build/index.js:14 build/index.js:18
 msgid "IP address"
 msgstr "IP-cím"
 
-#: build/index.js:13
+#: build/index.js:14
 msgid "Duration (seconds)"
 msgstr "Időtartam (másodperc)"
 
-#: build/index.js:13
+#: build/index.js:14
 msgid "Ban address"
 msgstr "Cím kitiltása"
 
-#: build/index.js:13
+#: build/index.js:14
 msgid "Locked usernames"
 msgstr "Zárolt felhasználónevek"
 
-#: build/index.js:13
+#: build/index.js:14
 msgid "Unlock all usernames"
 msgstr "Összes felhasználónév feloldása"
 
-#: build/index.js:13
+#: build/index.js:14
 msgid "Locked"
 msgstr "Zárolva"
 
-#: build/index.js:13 build/index.js:17
+#: build/index.js:14 build/index.js:18
 msgid "Expires"
 msgstr "Lejár"
 
-#: build/index.js:13 build/index.js:17
+#: build/index.js:14 build/index.js:18
 msgid "Actions"
 msgstr "Műveletek"
 
-#: build/index.js:13 build/index.js:17
+#: build/index.js:14 build/index.js:18
 msgid "Enforced"
 msgstr "Érvényben"
 
-#: build/index.js:13 build/index.js:17
+#: build/index.js:14 build/index.js:18
 msgid "Tracked only"
 msgstr "Csak nyilvántartva"
 
-#: build/index.js:13
+#: build/index.js:14
 msgid "Unlock"
 msgstr "Feloldás"
 
 #. translators: %d: number of lifted bans or username locks.
-#: build/index.js:14
+#: build/index.js:15
 msgid ""
 "%d ban lifted. Its counters were cleared too, so the next request starts "
 "from zero."
@@ -2526,18 +2567,18 @@ msgstr[1] ""
 "%d kitiltás feloldva. A számlálóik is törölve, így a következő kérés "
 "nulláról indul."
 
-#: build/index.js:14
+#: build/index.js:15
 msgid "All tracked bans lifted and their counters cleared."
 msgstr "Minden nyilvántartott kitiltás feloldva, a számlálóikkal együtt."
 
 #. translators: %d: number of bans that could not be lifted.
-#: build/index.js:15
+#: build/index.js:16
 msgid "%d ban could not be lifted:"
 msgid_plural "%d bans could not be lifted:"
 msgstr[0] "%d kitiltást nem sikerült feloldani:"
 msgstr[1] "%d kitiltást nem sikerült feloldani:"
 
-#: build/index.js:15
+#: build/index.js:16
 msgid ""
 "Lift every ban and username lock, and clear the counters behind them? "
 "Addresses that keep attacking will be banned again by the rules."
@@ -2547,40 +2588,40 @@ msgstr ""
 "fogják tiltani."
 
 #. translators: %d: number of locked usernames.
-#: build/index.js:16
+#: build/index.js:17
 msgid "Unlock %d username?"
 msgid_plural "Unlock %d usernames?"
 msgstr[0] "Feloldasz %d felhasználónevet?"
 msgstr[1] "Feloldasz %d felhasználónevet?"
 
 #. translators: %d: number of selected bans.
-#: build/index.js:17
+#: build/index.js:18
 msgid "Unblock %d selected address and clear its counters?"
 msgid_plural "Unblock %d selected addresses and clear their counters?"
 msgstr[0] "Feloldasz %d kijelölt címet, és törlöd a számlálóit?"
 msgstr[1] "Feloldasz %d kijelölt címet, és törlöd a számlálóikat?"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Reason"
 msgstr "Ok"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Banned"
 msgstr "Kitiltva"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Tracked but no longer enforced — the storage backend was cleared."
 msgstr "Nyilvántartva, de már nincs érvényben — a tárolóréteget kiürítették."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Unblock"
 msgstr "Feloldás"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Automatic Bans"
 msgstr "Automatikus kitiltások"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Addresses the firewall banned on its own — brute-force lockouts, "
 "registration spam, password-reset floods and rate-limit escalation. "
@@ -2592,63 +2633,63 @@ msgstr ""
 "A feloldás a kitiltás mögötti számlálókat is törli, így a cím nulláról indul "
 "ahelyett, hogy a következő kérésénél újra kitiltásra kerülne."
 
-#: build/index.js:17 build/index.js:25
+#: build/index.js:18 build/index.js:26
 msgid "Refresh"
 msgstr "Frissítés"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Enforced now"
 msgstr "Most érvényben"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Expire within the hour"
 msgstr "Egy órán belül lejár"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Ban store"
 msgstr "Kitiltás-tároló"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Not enforced"
 msgstr "Nincs érvényben"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Search banned IP addresses"
 msgstr "Kitiltott IP-címek keresése"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "No banned address matches that search."
 msgstr "Egyetlen kitiltott cím sem egyezik a keresésre."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "No addresses are banned right now."
 msgstr "Jelenleg egyetlen cím sincs kitiltva."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Bans appear here as soon as the firewall issues one."
 msgstr "A kitiltások itt jelennek meg, amint a tűzfal kiad egyet."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Select all bans on this page"
 msgstr "Az oldal összes kitiltásának kijelölése"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Unblock selected"
 msgstr "Kijelöltek feloldása"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Unblock every banned address"
 msgstr "Az összes kitiltott cím feloldása"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Blocked requests"
 msgstr "Blokkolt kérések"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Clear log"
 msgstr "Napló törlése"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Logging is off, so no new blocked requests are recorded. Turn on \"Log "
 "blocked requests\" above and save."
@@ -2656,47 +2697,47 @@ msgstr ""
 "A naplózás ki van kapcsolva, ezért új blokkolt kérések nem rögzülnek. "
 "Kapcsold be fent a „Blokkolt kérések naplózása” opciót, és ments."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Time"
 msgstr "Idő"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "IP"
 msgstr "IP"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "User-Agent"
 msgstr "User-Agent"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "URL"
 msgstr "URL"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Search IP, URL or User-Agent"
 msgstr "Keresés IP, URL vagy User-Agent alapján"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "No log entries yet."
 msgstr "Még nincsenek naplóbejegyzések."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Log cleared."
 msgstr "Napló törölve."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Delete every log entry? This cannot be undone."
 msgstr "Törlöd az összes naplóbejegyzést? Ez nem vonható vissza."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "How long the ban lasts in seconds (3600 = 1 hour)."
 msgstr "Mennyi ideig tart a tiltás másodpercekben (3600 = 1 óra)."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Username Lockout"
 msgstr "Felhasználónév-zárolás"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Also counts failed logins per username, from every IP together, so an "
 "attacker rotating addresses is still stopped. A locked username cannot log "
@@ -2709,20 +2750,20 @@ msgstr ""
 "jár; a whitelistes IP-kre nem vonatkozik. A zárolás az IP szabályok fül "
 "Automatikus kitiltások listájából vagy WP-CLI-vel oldható fel."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Lock usernames after repeated failed logins"
 msgstr "Felhasználónevek zárolása ismételt sikertelen bejelentkezések után"
 
-#: build/index.js:17 build/index.js:20 build/index.js:21 build/index.js:22
-#: build/index.js:24 build/index.js:25 build/profile.js:5
+#: build/index.js:18 build/index.js:21 build/index.js:22 build/index.js:23
+#: build/index.js:25 build/index.js:26 build/profile.js:5
 msgid "Off"
 msgstr "Ki"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Failed Attempts per Username"
 msgstr "Sikertelen próbálkozások felhasználónevenként"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Number of failed logins for one username, from any IP, within the detection "
 "window above before that username is locked."
@@ -2730,20 +2771,20 @@ msgstr ""
 "Egy felhasználónévhez tartozó sikertelen bejelentkezések száma (bármely IP-"
 "ről) a fenti észlelési ablakon belül, ami után a felhasználónév zárolódik."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Username Lock Duration"
 msgstr "Felhasználónév-zárolás időtartama"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "How long the username stays locked, in seconds (900 = 15 minutes)."
 msgstr ""
 "Mennyi ideig marad zárolva a felhasználónév, másodpercben (900 = 15 perc)."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Spam Auto-Ban"
 msgstr "Spam automatikus tiltása"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Ban IPs that repeatedly send spam registrations, comments or reviews. A "
 "banned IP is blocked from the whole site, not just the form."
@@ -2752,11 +2793,11 @@ msgstr ""
 "hozzászólást vagy értékelést küldenek. A tiltott IP az egész oldalról ki van "
 "zárva, nem csak az űrlapról."
 
-#: build/index.js:17 build/index.js:21
+#: build/index.js:18 build/index.js:22
 msgid "Ban Threshold"
 msgstr "Tiltási küszöb"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Number of rejected registrations, comments and reviews (counted together) "
 "from one IP before it is banned. A comment refused only because its form was "
@@ -2766,15 +2807,15 @@ msgstr ""
 "után tiltódik egy IP. Az a hozzászólás, amelyet csak azért utasítottunk el, "
 "mert az űrlapja túl régi volt, nem számít bele."
 
-#: build/index.js:17 build/index.js:21
+#: build/index.js:18 build/index.js:22
 msgid "Ban Duration"
 msgstr "Tiltás időtartama"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Comment & Review Protection"
 msgstr "Hozzászólás- és értékelésvédelem"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Stops bot comments and WooCommerce product reviews before they are stored, "
 "without a captcha. Works with every form built by comment_form(): classic "
@@ -2787,11 +2828,11 @@ msgstr ""
 "WooCommerce értékelési űrlappal. Az adminisztrátorokat, a bejegyzés "
 "szerkesztőit és az engedélyezett IP-ket sosem ellenőrzi."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Enable Comment Protection"
 msgstr "Hozzászólás-védelem engedélyezése"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Checks every comment and review sent through the comment form (wp-comments-"
 "post.php). Comments added through the REST API, XML-RPC or the admin are not "
@@ -2801,15 +2842,15 @@ msgstr ""
 "hozzászólást és értékelést ellenőriz. A REST API-n, XML-RPC-n vagy az "
 "adminon keresztül hozzáadott hozzászólásokat nem érinti."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Block bot comments and product reviews"
 msgstr "Blokkolja a botok hozzászólásait és termékértékeléseit"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Honeypot"
 msgstr "Honeypot"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "A hidden field that visitors and screen readers never see. Bots that fill "
 "every field are rejected. A form without the field (for example a hand-built "
@@ -2819,15 +2860,15 @@ msgstr ""
 "minden mezőt kitöltő botokat elutasítja. A mező nélküli űrlapot (például egy "
 "kézzel épített téma-űrlapot) emiatt sosem utasítja el."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Add a hidden honeypot field"
 msgstr "Rejtett honeypot mező hozzáadása"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Signed Form Token"
 msgstr "Aláírt űrlap-token"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Rejects comments posted straight to wp-comments-post.php without loading the "
 "page. If your theme builds its comment form without comment_form(), every "
@@ -2838,15 +2879,15 @@ msgstr ""
 "hozzászólás-űrlapot, minden hozzászólás elutasításra kerül: bekapcsolás után "
 "küldj egy teszt-hozzászólást."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Require a token from the rendered form"
 msgstr "Tokent vár el a megjelenített űrlapból"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Minimum Fill Time"
 msgstr "Minimális kitöltési idő"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Reject comments sent faster than this many seconds after the page was "
 "generated."
@@ -2854,11 +2895,11 @@ msgstr ""
 "Elutasítja azokat a hozzászólásokat, amelyek az oldal generálása után ennyi "
 "másodpercnél gyorsabban érkeznek."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Token Lifetime"
 msgstr "Token élettartama"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "How long a rendered comment form stays valid, in seconds (86400 = 1 day). "
 "Cached pages are safe: when a visitor starts typing into a form older than "
@@ -2871,11 +2912,11 @@ msgstr ""
 "token érkezik. A token itt sosem egyszer használatos, mert az oldal-"
 "gyorsítótár mindenkinek ugyanazt az űrlapot mutatja."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Registration Protection"
 msgstr "Regisztráció-védelem"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Block bot sign-ups on wp-login.php?action=register without a captcha. Active "
 "only when \"Anyone can register\" is enabled in Settings → General."
@@ -2884,7 +2925,7 @@ msgstr ""
 "nélkül. Csak akkor aktív, ha a Beállítások → Általános alatt az „Anyone can "
 "register” engedélyezve van."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "\"Anyone can register\" is off on this site, so registration protection is "
 "idle until it is turned on."
@@ -2892,11 +2933,11 @@ msgstr ""
 "Az „Anyone can register” ki van kapcsolva ezen az oldalon, ezért a "
 "regisztráció-védelem tétlen, amíg be nem kapcsolják."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Enable Registration Protection"
 msgstr "Regisztráció-védelem engedélyezése"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Adds a signed proof-of-render token and honeypot to the registration form. "
 "Only active when \"Anyone can register\" is enabled."
@@ -2904,21 +2945,21 @@ msgstr ""
 "Aláírt proof-of-render tokent és honeypotot ad a regisztrációs űrlaphoz. "
 "Csak akkor aktív, ha az „Anyone can register” engedélyezve van."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Block bot registrations on wp-login.php?action=register"
 msgstr "Bot-regisztrációk blokkolása a wp-login.php?action=register oldalon"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Catches generic bots that fill every field. Invisible to real users."
 msgstr ""
 "Elkapja a minden mezőt kitöltő általános botokat. Valódi felhasználók "
 "számára láthatatlan."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Single-Use Token"
 msgstr "Egyszer használatos token"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Stores used tokens in the firewall storage backend so each rendered form can "
 "register only once."
@@ -2926,11 +2967,11 @@ msgstr ""
 "A felhasznált tokeneket a tűzfal tárolórétegében tárolja, így minden "
 "megjelenített űrlap csak egyszer használható regisztrációra."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Reject reused tokens"
 msgstr "Újrahasznált tokenek elutasítása"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Reject submissions faster than this many seconds after the form loaded "
 "(catches instant bot POSTs)."
@@ -2938,16 +2979,16 @@ msgstr ""
 "Elutasítja a beküldéseket, amelyek ennyi másodpercnél gyorsabban érkeznek az "
 "űrlap betöltése után (elkapja az azonnali bot-POST-okat)."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "How long a rendered form stays valid, in seconds (3600 = 1 hour)."
 msgstr ""
 "Meddig érvényes egy megjelenített űrlap, másodpercekben (3600 = 1 óra)."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Password Reset Flood Protection"
 msgstr "Jelszó-visszaállítási árasztás elleni védelem"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "A reset flood has three shapes, and each needs its own limit: one IP "
 "hammering the form, many IPs targeting one person's inbox, and sheer volume "
@@ -2957,11 +2998,11 @@ msgstr ""
 "kell: egy IP veri az űrlapot, sok IP ugyanazt a postafiókot célozza, illetve "
 "a puszta mennyiség éli fel a tárhely levélkvótáját."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Enable Reset Protection"
 msgstr "Visszaállítás-védelem bekapcsolása"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Covers wp-login.php?action=lostpassword and the WooCommerce \"Lost your "
 "password?\" form — both go through the same WordPress hook. Requests started "
@@ -2972,15 +3013,15 @@ msgstr ""
 "megy át. Az adminisztrátor vagy a WP-CLI által indított kéréseket soha nem "
 "korlátozza."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Rate limit password reset requests"
 msgstr "Rate limitet alkalmaz a jelszó-visszaállítási kérésekre"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Requests per IP"
 msgstr "Kérések IP-nként"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "How many reset requests one IP address may make per window. 0 disables this "
 "limit."
@@ -2988,19 +3029,19 @@ msgstr ""
 "Hány visszaállítási kérést küldhet egy IP-cím időablakonként. A 0 "
 "kikapcsolja ezt a korlátot."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Per-IP Window"
 msgstr "IP-nkénti időablak"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Length of the per-IP window in seconds (900 = 15 minutes)."
 msgstr "Az IP-nkénti időablak hossza másodpercben (900 = 15 perc)."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Requests per Account"
 msgstr "Kérések fiókonként"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "How many reset emails one account may receive per window, no matter how many "
 "different IPs ask. This is the only limit that stops a distributed flood of "
@@ -3010,19 +3051,19 @@ msgstr ""
 "hány különböző IP kéri. Egyedül ez a korlát állítja meg egy postafiók "
 "elosztott elárasztását. A 0 kikapcsolja."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Per-Account Window"
 msgstr "Fiókonkénti időablak"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Length of the per-account window in seconds (3600 = 1 hour)."
 msgstr "A fiókonkénti időablak hossza másodpercben (3600 = 1 óra)."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Site-Wide Hourly Cap"
 msgstr "Oldalszintű óránkénti korlát"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Total reset emails the site will send in an hour. Protects your hosting mail "
 "quota and stops your domain being flagged as a spam source. 0 disables it."
@@ -3031,11 +3072,11 @@ msgstr ""
 "tárhely levélkvótáját, és megakadályozza, hogy a domaint spamforrásként "
 "jelöljék meg. A 0 kikapcsolja."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Password Reset Hardening"
 msgstr "Jelszó-visszaállítás megerősítése"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Filter out direct bot POSTs, escalate repeat offenders to a site-wide ban, "
 "and optionally take administrator accounts out of the reset flow entirely."
@@ -3044,11 +3085,11 @@ msgstr ""
 "tiltásra lépteti elő, és igény szerint teljesen kiveszi az adminisztrátori "
 "fiókokat a visszaállítási folyamatból."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Proof of Render"
 msgstr "Proof-of-render"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Rejects direct POSTs that never loaded the form. Only enforced on wp-"
 "login.php, since other lost-password forms (WooCommerce, custom login pages) "
@@ -3061,11 +3102,11 @@ msgstr ""
 "jeleníti meg a tokent. Érdemes kikapcsolni, ha egy bejelentkezés-bővítmény "
 "lecseréli a wp-login űrlapot."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Require a signed token and honeypot on the wp-login form"
 msgstr "Aláírt tokent és honeypotot követel meg a wp-login űrlapon"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Reject submissions faster than this many seconds after the form loaded. "
 "Separate from the registration setting, so the two forms can be tuned "
@@ -3075,7 +3116,7 @@ msgstr ""
 "űrlap betöltése után. Külön a regisztrációs beállítástól, így a két űrlap "
 "egymástól függetlenül hangolható."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "How long a rendered lost-password form stays valid, in seconds (3600 = 1 "
 "hour)."
@@ -3083,7 +3124,7 @@ msgstr ""
 "Meddig marad érvényes egy megjelenített jelszóemlékeztető űrlap, "
 "másodpercben (3600 = 1 óra)."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Each rendered form may submit one reset request. Without this, a bot can "
 "load the form once and replay that token for the whole token lifetime."
@@ -3092,11 +3133,11 @@ msgstr ""
 "a bot egyszer betölti az űrlapot, és a token teljes élettartama alatt "
 "visszajátszhatja azt."
 
-#: build/index.js:17 build/index.js:21
+#: build/index.js:18 build/index.js:22
 msgid "Auto-Ban"
 msgstr "Automatikus tiltás"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "A banned IP is blocked from the whole site by the MU-plugin worker. Account "
 "and site-wide limits never ban: they say nothing about who happened to ask "
@@ -3106,17 +3147,17 @@ msgstr ""
 "fiókonkénti és az oldalszintű korlát soha nem tilt ki: azok semmit nem "
 "mondanak arról, ki kérte éppen utoljára."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Ban IPs that trip the per-IP limit or fail the token check"
 msgstr ""
 "Kitiltja azokat az IP-ket, amelyek átlépik az IP-nkénti korlátot vagy "
 "elbuknak a token-ellenőrzésen"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Email Alert"
 msgstr "E-mail riasztás"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Sends at most one message per limit per hour, to the recipients configured "
 "on the Alerts tab."
@@ -3124,15 +3165,15 @@ msgstr ""
 "Korlátonként legfeljebb óránként egy üzenetet küld, a Riasztások fülön "
 "beállított címzetteknek."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Email me when a reset limit is reached"
 msgstr "E-mailt küld, ha egy visszaállítási korlát betelik"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Block Admin Resets"
 msgstr "Admin-visszaállítás tiltása"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Closes the \"flood the admin inbox, then phish the reset link\" path "
 "entirely. A locked-out administrator can then only be recovered by WP-CLI or "
@@ -3143,23 +3184,23 @@ msgstr ""
 "WP-CLI-vel vagy egy másik adminisztrátorral lehet visszaállítani, ezért csak "
 "akkor érdemes bekapcsolni, ha van ilyen hozzáférés."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Never allow password reset for administrator accounts"
 msgstr "Soha nem engedi a jelszó visszaállítását adminisztrátori fiókoknál"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Yes"
 msgstr "Igen"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "No"
 msgstr "Nem"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Country lists"
 msgstr "Országlisták"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "Stale: no list younger than 7 days, so CIDR matching lets those visitors "
 "through."
@@ -3167,33 +3208,33 @@ msgstr ""
 "Elavult: nincs 7 napnál frissebb lista, ezért a CIDR-egyeztetés átengedi "
 "ezeket a látogatókat."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Next automatic update"
 msgstr "Következő automatikus frissítés"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Cache directory writable"
 msgstr "Gyorsítótár mappa írható"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ".htaccess country block"
 msgstr ".htaccess országtiltás"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Blocks by the Cloudflare CF-IPCountry header before WordPress loads."
 msgstr ""
 "A Cloudflare CF-IPCountry fejléce alapján blokkol, még a WordPress betöltése "
 "előtt."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "No .htaccess file"
 msgstr "Nincs .htaccess fájl"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Client IP detection"
 msgstr "Kliens IP felismerése"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "How the firewall sees your own request right now. Every visitor is "
 "identified the same way, so a wrong address here means shared rate-limit "
@@ -3203,7 +3244,7 @@ msgstr ""
 "azonosít, ezért egy hibás cím itt közös rate limit bucketeket és "
 "kitiltásokat jelent."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid ""
 "This address is not counted or banned: it is private, shared or one of your "
 "trusted proxies. Blacklist, whitelist, geo and bot checks still apply to it."
@@ -3212,129 +3253,129 @@ msgstr ""
 "megbízható proxyd. A blacklist, whitelist, geo és bot ellenőrzések továbbra "
 "is vonatkoznak rá."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Detected IP"
 msgstr "Észlelt IP"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Taken from"
 msgstr "Forrás"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Cloudflare header (CF-Connecting-IP)"
 msgstr "Cloudflare fejléc (CF-Connecting-IP)"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Forwarded header from a trusted proxy"
 msgstr "Továbbító fejléc megbízható proxytól"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "The connection itself (REMOTE_ADDR)"
 msgstr "Maga a kapcsolat (REMOTE_ADDR)"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Forwarded headers"
 msgstr "Továbbító fejlécek"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "none"
 msgstr "nincs"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Trusted proxies configured"
 msgstr "Beállított megbízható proxyk"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Trusted proxy match"
 msgstr "Megbízható proxy egyezés"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Whether REMOTE_ADDR is one of the Trusted Proxies on the IP Rules tab."
 msgstr ""
 "A REMOTE_ADDR szerepel-e az IP szabályok fül Megbízható proxyk listájában."
 
-#: build/index.js:17 build/index.js:21
+#: build/index.js:18 build/index.js:22
 msgid "Forwarded Header"
 msgstr "Továbbító fejléc"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Cloudflare detected"
 msgstr "Cloudflare észlelve"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Routable"
 msgstr "Routolható"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "A private or reserved address means all visitors share one bucket."
 msgstr ""
 "Privát vagy fenntartott cím esetén minden látogató egyetlen bucketen "
 "osztozik."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Counted and bannable"
 msgstr "Számolt és kitiltható"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Active Storage"
 msgstr "Aktív tároló"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Storage backend used for rate-limit counters."
 msgstr "A rate limit számlálókhoz használt tároló backend."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Backend"
 msgstr "Backend"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Resolved backend"
 msgstr "Használt backend"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Configured"
 msgstr "Beállított"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Round-trip test"
 msgstr "Oda-vissza teszt"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Writes, reads and deletes a test value."
 msgstr "Egy tesztértéket ír, olvas és töröl."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Working"
 msgstr "Működik"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Used by the File backend."
 msgstr "A File backend használja."
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Versions"
 msgstr "Verziók"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Worker"
 msgstr "Worker"
 
-#: build/index.js:17
+#: build/index.js:18
 msgid "Matches the plugin"
 msgstr "Egyezik a bővítménnyel"
 
 #. translators: %s: expected worker version.
-#: build/index.js:18
+#: build/index.js:19
 msgid "Mismatch — expected %s (will auto-update on next page load)"
 msgstr ""
 "Eltérés — a várt érték %s (a következő oldalbetöltéskor automatikusan "
 "frissül)"
 
-#: build/index.js:18
+#: build/index.js:19
 msgid "MU-Plugin Worker"
 msgstr "MU-bővítmény worker"
 
-#: build/index.js:18
+#: build/index.js:19
 msgid ""
 "The MU-plugin worker intercepts requests early, before themes and plugins "
 "load."
@@ -3342,91 +3383,91 @@ msgstr ""
 "Az MU-bővítmény worker korán elfogja a kéréseket, még a sablonok és "
 "bővítmények betöltése előtt."
 
-#: build/index.js:18
+#: build/index.js:19
 msgid "The worker was reinstalled."
 msgstr "A worker újratelepítve."
 
-#: build/index.js:18
+#: build/index.js:19
 msgid "Reinstall worker"
 msgstr "Worker újratelepítése"
 
-#: build/index.js:18
+#: build/index.js:19
 msgid "Worker file"
 msgstr "Worker fájl"
 
-#: build/index.js:18
+#: build/index.js:19
 msgid "Installed"
 msgstr "Telepítve"
 
-#: build/index.js:18
+#: build/index.js:19
 msgid "Worker Version"
 msgstr "Worker verzió"
 
-#: build/index.js:18
+#: build/index.js:19
 msgid "mu-plugins writable"
 msgstr "mu-plugins írható"
 
 #. translators: %s: mu-plugins directory.
-#: build/index.js:19
+#: build/index.js:20
 msgid "No — make %s writable by the web server."
 msgstr "Nem — tedd írhatóvá a(z) %s mappát a webszerver számára."
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Last heartbeat"
 msgstr "Utolsó életjel"
 
-#: build/index.js:19 build/profile.js:2
+#: build/index.js:20 build/profile.js:2
 msgid "never"
 msgstr "soha"
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Kill switch"
 msgstr "Vészkapcsoló"
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Last install attempt"
 msgstr "Utolsó telepítési kísérlet"
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Succeeded"
 msgstr "Sikeres"
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Who Uses It"
 msgstr "Kik használják"
 
-#: build/index.js:19
+#: build/index.js:20
 msgid "Users with an authenticator app or a passkey, per role."
 msgstr ""
 "Hitelesítő alkalmazással vagy hozzáférési kulccsal rendelkező felhasználók "
 "szerepkörönként."
 
-#: build/index.js:19 build/index.js:20
+#: build/index.js:20 build/index.js:21
 msgid "With two-factor"
 msgstr "Kétlépcsőssel"
 
 #. translators: %d: total number of users.
-#: build/index.js:20
+#: build/index.js:21
 msgid "of %d users"
 msgstr "%d felhasználóból"
 
-#: build/index.js:20 build/profile.js:6
+#: build/index.js:21 build/profile.js:6
 msgid "Passkeys"
 msgstr "Hozzáférési kulcsok"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Available"
 msgstr "Elérhető"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Not available"
 msgstr "Nem elérhető"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "This server or site address cannot use passkeys."
 msgstr "Ez a szerver vagy oldalcím nem használhat hozzáférési kulcsokat."
 
-#: build/index.js:20
+#: build/index.js:21
 msgid ""
 "The PHP sodium and openssl extensions are required for two-factor login, and "
 "this server is missing at least one of them. Two-factor login stays off "
@@ -3436,19 +3477,19 @@ msgstr ""
 "szerverről legalább az egyik hiányzik. A kétlépcsős belépés kikapcsolva "
 "marad, amíg engedélyezik őket."
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Role"
 msgstr "Szerepkör"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Users"
 msgstr "Felhasználók"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Required"
 msgstr "Kötelező"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid ""
 "Large site: only the first accounts with a second factor were counted, so "
 "the numbers are a lower bound."
@@ -3456,11 +3497,11 @@ msgstr ""
 "Nagy oldal: csak az első, második lépcsővel rendelkező fiókokat számoltuk, "
 "ezért a számok alsó becslések."
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Required Roles"
 msgstr "Kötelező szerepkörök"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid ""
 "Users in these roles must set up a second factor. Until the grace period "
 "ends they only get a reminder; after that they are taken to the setup page "
@@ -3472,7 +3513,7 @@ msgstr ""
 "belépéskor a beállítási oldalra kerülnek, nem zárjuk ki őket. Mindenki más a "
 "profilján maga kapcsolhatja be."
 
-#: build/index.js:20
+#: build/index.js:21
 msgid ""
 "Core firewall settings — enable/disable, storage backend, rate limits and "
 "WooCommerce filter protection."
@@ -3480,11 +3521,11 @@ msgstr ""
 "Alapvető tűzfalbeállítások — be- és kikapcsolás, tárolási háttér, "
 "kéréskorlátok és WooCommerce-szűrővédelem."
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Enable Firewall"
 msgstr "Firewall engedélyezése"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid ""
 "Master switch — when off, the MU-plugin worker performs no checks (rate-"
 "limit, bot blocking, IP/geo blocking, auto-ban all skipped)."
@@ -3493,15 +3534,15 @@ msgstr ""
 "(rate limiting, bot-blokkolás, IP/geo blokkolás, automatikus tiltás mind "
 "kimarad)."
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Enable firewall protection"
 msgstr "Firewall védelem engedélyezése"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid "Storage Backend"
 msgstr "Tároló backend"
 
-#: build/index.js:20
+#: build/index.js:21
 msgid ""
 "Storage backend for rate-limit counters. Auto-detect tries APCu, then Redis, "
 "then file."
@@ -3510,15 +3551,15 @@ msgstr ""
 "az APCu-t, majd a Redist, majd a fájlt próbálja."
 
 #. translators: %s: storage backend name.
-#: build/index.js:21
+#: build/index.js:22
 msgid "%s (not available on this server)"
 msgstr "%s (ezen a szerveren nem elérhető)"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate Limit"
 msgstr "Rate limit"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Maximum number of rate-limited requests per IP within the time window. "
 "Applies to WooCommerce filters, login, REST, XML-RPC and any other protected "
@@ -3528,19 +3569,19 @@ msgstr ""
 "Vonatkozik a WooCommerce-szűrőkre, a bejelentkezésre, a REST-re, az XML-RPC-"
 "re és minden más védett végpontra."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Time Window"
 msgstr "Időablak"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Time window in seconds for rate limiting."
 msgstr "Időablak másodpercben a rate limitinghez."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate Limit Action"
 msgstr "Rate limit művelet"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Response when the rate limit is exceeded. 302 strips query parameters and "
 "redirects to the same path; 429 returns a Retry-After header."
@@ -3548,19 +3589,19 @@ msgstr ""
 "Válasz a rate limit túllépésekor. A 302 eltávolítja a query paramétereket és "
 "ugyanarra az útvonalra irányít át; a 429 Retry-After fejlécet ad vissza."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "302 Redirect (strip filters)"
 msgstr "302 átirányítás (filterek eltávolítása)"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "429 Too Many Requests"
 msgstr "429 Túl sok kérés"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "WooCommerce Filters"
 msgstr "WooCommerce-szűrők"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "WooCommerce product-filter URLs (filter_*, query_type_*, min_price, "
 "max_price, rating_filter and the Product Filters block arguments) are served "
@@ -3580,15 +3621,15 @@ msgstr ""
 "mennek át. A fenti IP-nkénti kéréskorlát a szűrőkérésekre továbbra is "
 "érvényes."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Require the visitor cookie for filter requests"
 msgstr "Látogatói süti megkövetelése a szűrőkéréseknél"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Allow Googlebot"
 msgstr "Googlebot engedélyezése"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Let a genuine Googlebot (verified by reverse and forward DNS, cached for a "
 "day) request filter URLs without the cookie. Usually best left off: indexing "
@@ -3599,15 +3640,15 @@ msgstr ""
 "kikapcsolva hagyni: a szűrőkombinációk indexelése feleslegesen fogyasztja a "
 "feltérképezési keretet."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Skip the check for verified Googlebot"
 msgstr "Az ellenőrzött Googlebot kihagyása az ellenőrzésből"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Add-to-Cart Links"
 msgstr "Kosárba tevő linkek"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Apply the same visitor-cookie check to GET links with ?add-to-cart= (each "
 "one creates a cart and a WooCommerce session). Real visitors get the product "
@@ -3620,65 +3661,65 @@ msgstr ""
 "űrlapokat és az AJAX-kéréseket (POST) ez soha nem érinti. Bekapcsolva az IP-"
 "nkénti kéréskorlát is vonatkozik ezekre a kérésekre."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Require the visitor cookie for add-to-cart links"
 msgstr "Látogatói süti megkövetelése a kosárba tevő linkeknél"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Endpoint Protection"
 msgstr "Endpoint-védelem"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Enable rate limiting on specific WordPress endpoints."
 msgstr "Engedélyezd a rate limitinget bizonyos WordPress endpointokon."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate-limit wp-cron.php requests"
 msgstr "wp-cron.php kérések rate limitingje"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Protects against DDoS attacks targeting wp-cron.php."
 msgstr "Véd a wp-cron.php-t célzó DDoS támadások ellen."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate-limit xmlrpc.php requests"
 msgstr "xmlrpc.php kérések rate limitingje"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Protects against brute-force and DDoS via xmlrpc.php."
 msgstr "Véd a brute-force és DDoS támadások ellen xmlrpc.php-n keresztül."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate-limit wp-login.php requests"
 msgstr "wp-login.php kérések rate limitingje"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate-limits wp-login.php requests per IP."
 msgstr "IP-nként rate limitingeli a wp-login.php kéréseket."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate-limit REST API requests"
 msgstr "REST API kérések rate limitingje"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Rate-limits /wp-json/ requests per IP."
 msgstr "IP-nként rate limitingeli a /wp-json/ kéréseket."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Block 404 flood"
 msgstr "404 flood blokkolása"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Blocks IPs that generate excessive 404 errors (vulnerability scanning)."
 msgstr ""
 "Blokkolja azokat az IP-ket, amelyek túl sok 404 hibát generálnak "
 "(sebezhetőség-szkennelés)."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Brute-Force Login Protection"
 msgstr "Brute-force bejelentkezés-védelem"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Ban IPs that submit too many failed login attempts (fail2ban style). A "
 "banned IP is blocked from the whole site, not just wp-login.php."
@@ -3687,72 +3728,72 @@ msgstr ""
 "(fail2ban-stílus). A tiltott IP az egész oldalról ki van zárva, nem csak a "
 "wp-login.php-ról."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Enable Login Protection"
 msgstr "Bejelentkezés-védelem engedélyezése"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Counts failed password attempts per IP via wp_login_failed."
 msgstr ""
 "IP-nként számolja a sikertelen jelszó-próbálkozásokat a wp_login_failed "
 "alapján."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Ban IPs after repeated failed logins"
 msgstr "IP-k tiltása ismételt sikertelen bejelentkezések után"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Failed Attempts"
 msgstr "Sikertelen próbálkozások"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Number of failed login attempts before the IP is banned."
 msgstr "Hány sikertelen bejelentkezés után tiltódik az IP."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Detection Window"
 msgstr "Észlelési ablak"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Seconds within which failed attempts are counted (600 = 10 minutes)."
 msgstr ""
 "Hány másodpercen belül számítanak a sikertelen próbálkozások (600 = 10 perc)."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Automatically ban IPs that repeatedly exceed rate limits."
 msgstr ""
 "Automatikusan kitiltja azokat az IP-ket, amelyek ismételten túllépik a rate "
 "limitet."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Enable Auto-Ban"
 msgstr "Automatikus tiltás engedélyezése"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "After the threshold is reached, the IP is banned for the configured duration."
 msgstr "A küszöb elérése után az IP a beállított időtartamra tiltásra kerül."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Ban IPs after repeated violations"
 msgstr "IP-k tiltása ismételt szabálysértések után"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Number of rate-limit violations before an IP is banned."
 msgstr "A rate limit megsértéseinek száma, ami után egy IP tiltásra kerül."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "User-Agent strings to block (one per line, case-insensitive substring match)."
 msgstr ""
 "Blokkolandó User-Agent stringek (soronként egy, kis- és nagybetűtől "
 "független részsztring egyezés)."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Blocked User-Agents"
 msgstr "Blokkolt User-Agentek"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "User-Agent substrings (case-insensitive, one per line). Any request whose "
 "User-Agent contains one of these is blocked with 403."
@@ -3760,11 +3801,11 @@ msgstr ""
 "User-Agent részsztringek (kis-/nagybetű érzéketlen, soronként egy). Minden "
 "kérés, amelynek User-Agentje tartalmazza valamelyiket, 403-mal blokkolódik."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Restore defaults"
 msgstr "Alapértékek visszaállítása"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Manually allow or block IP addresses. Supports individual IPs and CIDR "
 "ranges (e.g. 192.168.1.0/24)."
@@ -3772,11 +3813,11 @@ msgstr ""
 "IP-címek kézi engedélyezése vagy blokkolása. Támogatja az egyedi IP-ket és a "
 "CIDR tartományokat (pl. 192.168.1.0/24)."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "IP Whitelist"
 msgstr "IP whitelist"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "IPs or CIDR ranges that bypass all firewall checks (one per line). Supports "
 "IPv4, IPv6, and CIDR notation (e.g. 10.0.0.0/8, 2001:db8::/32)."
@@ -3785,11 +3826,11 @@ msgstr ""
 "(soronként egy). Támogatja az IPv4, IPv6 és CIDR jelölést (pl. 10.0.0.0/8, "
 "2001:db8::/32)."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "IP Blacklist"
 msgstr "IP blacklist"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "IPs or CIDR ranges blocked with 403 Forbidden before any other check (one "
 "per line). Supports IPv4, IPv6, and CIDR notation."
@@ -3798,11 +3839,11 @@ msgstr ""
 "Forbidden-nel blokkolódnak (soronként egy). Támogatja az IPv4, IPv6 és CIDR "
 "jelölést."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Reverse Proxy"
 msgstr "Fordított proxy"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Leave this empty unless the site sits behind a proxy or load balancer. A "
 "forwarded-for header is written by the client until the hop that set it is "
@@ -3817,11 +3858,11 @@ msgstr ""
 "saját rate limit bucketjét, kitiltási állapotát és országát. A Cloudflare-t "
 "automatikusan kezeli, ide semmit nem kell írni."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Trusted Proxies"
 msgstr "Megbízható proxyk"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "IPs or CIDR ranges of your own proxies, one per line. On the common \"nginx "
 "in front of Apache on the same host\" layout this is 127.0.0.1 — without it "
@@ -3832,7 +3873,7 @@ msgstr ""
 "enélkül minden látogató 127.0.0.1-ként érkezik, és egyetlen közös bucketen "
 "osztozik."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Read right to left, skipping hops that are themselves listed above. Only "
 "used when a trusted proxy is configured."
@@ -3840,7 +3881,7 @@ msgstr ""
 "Jobbról balra olvassa, kihagyva azokat a hopokat, amelyek maguk is "
 "szerepelnek fent. Csak akkor használja, ha van beállított megbízható proxy."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Block visitors from specific countries. Behind Cloudflare, the CF-IPCountry "
 "header is used (instant). Without Cloudflare, CIDR-based lookup is used "
@@ -3850,31 +3891,31 @@ msgstr ""
 "IPCountry fejléc használatos (azonnali). Cloudflare nélkül CIDR-alapú "
 "keresés (hetente frissül)."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Enable"
 msgstr "Engedélyezés"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Enable Geo Blocking"
 msgstr "Geo blokkolás engedélyezése"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Blocked Countries"
 msgstr "Tiltott országok"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Visitors from the selected countries are blocked with 403."
 msgstr "A kiválasztott országokból érkező látogatókat 403-mal blokkolja."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "ISO 3166–1 alpha-2 country codes, one per line (e.g. IN, CN, RU)."
 msgstr "ISO 3166–1 alpha-2 országkódok, soronként egy (pl. IN, CN, RU)."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Against MIME sniffing"
 msgstr "MIME-sniffing ellen"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "The browser does not guess a file’s type, so a text file can never run as "
 "JavaScript."
@@ -3882,11 +3923,11 @@ msgstr ""
 "A böngésző nem találgatja a fájl típusát, így egy szövegfájl soha nem futhat "
 "le JavaScriptként."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Against clickjacking"
 msgstr "Clickjacking ellen"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Other domains cannot embed your site in an iframe, so visitors cannot be "
 "tricked into clicking hidden elements."
@@ -3894,11 +3935,11 @@ msgstr ""
 "Más domain nem ágyazhatja be az oldaladat iframe-be, így a látogatókat nem "
 "lehet rejtett elemekre kattintásra csalni."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Against URL leaks"
 msgstr "URL-szivárgás ellen"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Other sites only see your domain; the full URL, which may contain sensitive "
 "paths, stays on your site."
@@ -3906,11 +3947,11 @@ msgstr ""
 "Más oldalak csak a domaint látják; a teljes URL, amely érzékeny útvonalakat "
 "is tartalmazhat, az oldaladon marad."
 
-#: build/index.js:21
+#: build/index.js:22
 msgid "Against device access"
 msgstr "Eszköz-hozzáférés ellen"
 
-#: build/index.js:21
+#: build/index.js:22
 msgid ""
 "Turns off the camera, microphone and geolocation, so even a compromised "
 "third-party script cannot ask for them."
@@ -3919,33 +3960,33 @@ msgstr ""
 "külső script sem kérheti el őket."
 
 #. translators: %d: number of security headers sent.
-#: build/index.js:22
+#: build/index.js:23
 msgid "All %d sent"
 msgstr "Mind a(z) %d küldve"
 
-#: build/index.js:22
+#: build/index.js:23
 msgid "Not sent"
 msgstr "Nincs küldve"
 
-#: build/index.js:22 build/index.js:24
+#: build/index.js:23 build/index.js:25
 msgid "On"
 msgstr "Be"
 
 #. translators: %d: number of security headers.
-#: build/index.js:23
+#: build/index.js:24
 msgid "%d HTTP response headers the firewall adds to every page."
 msgstr "%d HTTP válaszheader, amelyet a tűzfal minden oldalhoz hozzáad."
 
 #. translators: %s: PHP constant name.
-#: build/index.js:24 build/index.js:25
+#: build/index.js:25 build/index.js:26
 msgid "Set in wp-config.php (%s)."
 msgstr "A wp-config.php-ban beállítva (%s)."
 
-#: build/index.js:24
+#: build/index.js:25
 msgid "Two-factor login"
 msgstr "Kétlépcsős belépés"
 
-#: build/index.js:24
+#: build/index.js:25
 msgid ""
 "After the password, users confirm with an authenticator app, a recovery code "
 "or a passkey. Passkeys can also replace the password."
@@ -3954,11 +3995,11 @@ msgstr ""
 "vagy hozzáférési kulccsal erősítik meg a belépést. A hozzáférési kulcs a "
 "jelszót is helyettesítheti."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Set network-wide on the main site."
 msgstr "Az egész hálózatra a fő oldalon állítható be."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "These settings apply to the whole network: only a network administrator can "
 "change them."
@@ -3966,7 +4007,7 @@ msgstr ""
 "Ezek a beállítások az egész hálózatra vonatkoznak: csak hálózati "
 "adminisztrátor módosíthatja őket."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Locked out? Add define( 'LW_FIREWALL_TWOFA_ENABLED', false ); to wp-"
 "config.php to switch two-factor login off at once, or remove one user's "
@@ -3977,11 +4018,11 @@ msgstr ""
 "azonnal kikapcsol, vagy egy felhasználó második lépcsőit töröld a wp lw-"
 "firewall 2fa reset <user> paranccsal."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Grace Period"
 msgstr "Türelmi idő"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Days a required user can keep logging in with the password alone, with a "
 "reminder, before setup becomes mandatory."
@@ -3989,11 +4030,11 @@ msgstr ""
 "Ennyi napig léphet be a kötelezett felhasználó csak jelszóval, "
 "emlékeztetővel, mielőtt a beállítás kötelezővé válik."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Remember This Device"
 msgstr "Eszköz megjegyzése"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Days a browser can skip the second step after a successful one. 0 = off, "
 "every login asks."
@@ -4001,11 +4042,11 @@ msgstr ""
 "Ennyi napig hagyhatja ki a böngésző a második lépést egy sikeres után. 0 = "
 "ki, minden belépés kéri."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Passwordless Passkey Login"
 msgstr "Jelszó nélküli belépés hozzáférési kulccsal"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Show a passkey button on the login page. A passkey replaces both the "
 "password and the second step."
@@ -4013,15 +4054,15 @@ msgstr ""
 "Hozzáférésikulcs-gomb megjelenítése a belépési oldalon. A hozzáférési kulcs "
 "a jelszót és a második lépést is helyettesíti."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Passkey button shown"
 msgstr "Hozzáférésikulcs-gomb megjelenítve"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Block Application Passwords"
 msgstr "Alkalmazásjelszavak tiltása"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Application passwords skip the second step. Turn this on to disable them for "
 "users who have a second factor."
@@ -4029,15 +4070,15 @@ msgstr ""
 "Az alkalmazásjelszavak kihagyják a második lépést. Kapcsold be, hogy a "
 "második lépcsővel rendelkező felhasználóknál le legyenek tiltva."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Disabled for these users"
 msgstr "Ezeknél a felhasználóknál tiltva"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Allowed"
 msgstr "Engedélyezve"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Send an email whenever an account gains administrator privileges, or an "
 "existing administrator account is modified — no matter how it happened: the "
@@ -4049,23 +4090,23 @@ msgstr ""
 "történt: admin felület, bővítmény, REST API, WP-CLI vagy közvetlen adatbázis-"
 "írás."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Enable Alerts"
 msgstr "Riasztások bekapcsolása"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Works independently of the main firewall switch."
 msgstr "A fő tűzfal-kapcsolótól függetlenül működik."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Email me when a new administrator appears"
 msgstr "E-mailt küld, ha új adminisztrátor jelenik meg"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Notification Email"
 msgstr "Értesítési e-mail cím"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Separate multiple addresses with commas. Leave empty to use the site admin "
 "email."
@@ -4073,11 +4114,11 @@ msgstr ""
 "Több címet vesszővel kell elválasztani. Üresen hagyva az oldal admin e-mail "
 "címét használja."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Account Takeover"
 msgstr "Fiókátvétel"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Watches the username, email address and password of every administrator. "
 "Rewriting an admin's email address is how an account is seized — it hands "
@@ -4090,15 +4131,15 @@ msgstr ""
 "azonosító változatlan marad, így a csak új fiókokat figyelő megoldás ezt "
 "sosem venné észre."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Also alert when an existing administrator is modified"
 msgstr "Riaszt akkor is, ha egy meglévő adminisztrátort módosítanak"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Database Scan"
 msgstr "Adatbázis-ellenőrzés"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Compares the live administrator list against a stored snapshot. This is what "
 "catches accounts inserted straight into the database, created by code that "
@@ -4109,20 +4150,20 @@ msgstr ""
 "WordPress felhasználói API-ját megkerülő kód hozott létre, vagy a bővítmény "
 "inaktív állapotában jöttek létre."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Hourly scan for administrators created outside WordPress"
 msgstr ""
 "Óránkénti ellenőrzés a WordPressen kívül létrehozott adminisztrátorokra"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "How detection works"
 msgstr "Hogyan működik az észlelés"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "WordPress hooks"
 msgstr "WordPress hookok"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Immediate. Catches every account creation or role change that goes through "
 "the WordPress user API — the Users screen, user registration, the REST API, "
@@ -4135,11 +4176,11 @@ msgstr ""
 "amely a wp_insert_user() vagy a set_role() függvényt hívja. A riasztás "
 "megnevezi a műveletet végző felhasználót és az IP-címét."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Database scan"
 msgstr "Adatbázis-ellenőrzés"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Within the hour. A snapshot of every administrator user ID is stored, and "
 "the scheduled scan diffs it against the live list. Anything that appears "
@@ -4154,11 +4195,11 @@ msgstr ""
 "állapotában hozzáadott fiók —, itt bukkan elő, és a normál WordPress "
 "folyamaton kívül létrehozottként jelöljük meg."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "What the snapshot stores"
 msgstr "Mit tárol a pillanatkép"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Per administrator: the user ID, the username, the email address, and a "
 "digest of the stored password hash. The digest only ever answers \"did this "
@@ -4170,11 +4211,11 @@ msgstr ""
 "választ, hogy „változott-e” — magát a jelszót soha nem tárolja, nem "
 "hasonlítja össze és nem írja ki riasztásban."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "No duplicate alerts"
 msgstr "Nincs kettős riasztás"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Both paths write to the same snapshot, so each event is reported exactly "
 "once. Existing administrators are recorded silently when the feature is "
@@ -4187,34 +4228,34 @@ msgstr ""
 "Adminisztrátor eltávolításáról nem jelent; a fiók egyszerűen kikerül a "
 "pillanatképből."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Firewall off"
 msgstr "Tűzfal kikapcsolva"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "No problems found. The worker, storage and client IP detection all look "
 "healthy."
 msgstr ""
 "Nincs probléma. A worker, a tároló és a kliens IP felismerése is rendben van."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Enable Logging"
 msgstr "Naplózás engedélyezése"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Stores the last 100 blocked requests in the database."
 msgstr "Az utolsó 100 blokkolt kérést eltárolja az adatbázisban."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Log blocked requests"
 msgstr "Blokkolt kérések naplózása"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Export Settings"
 msgstr "Beállítások exportálása"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Download your current firewall settings as a JSON file. You can use this "
 "file to import settings on another site."
@@ -4222,11 +4263,11 @@ msgstr ""
 "Töltsd le a jelenlegi tűzfal beállításaidat JSON-fájlként. Ezzel a fájllal "
 "egy másik oldalon importálhatod a beállításokat."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Import Settings"
 msgstr "Beállítások importálása"
 
-#: build/index.js:25
+#: build/index.js:26
 msgid ""
 "Upload a previously exported JSON file. Valid settings in the file replace "
 "the current ones, invalid values are skipped and reported, and settings "
@@ -4236,28 +4277,28 @@ msgstr ""
 "beállítások felülírják a jelenlegieket, az érvénytelen értékeket kihagyja és "
 "jelzi, a fájlból hiányzó beállítások pedig megtartják a jelenlegi értéküket."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "The file is larger than 256 KB, the most an import accepts."
 msgstr "A fájl nagyobb 256 KB-nál, ami az importálás felső határa."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "The file does not contain valid JSON."
 msgstr "A fájl nem tartalmaz érvényes JSON-t."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Settings imported, but some values were rejected."
 msgstr "Beállítások importálva, de néhány értéket elutasított."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Settings imported successfully."
 msgstr "A beállítások sikeresen importálva."
 
-#: build/index.js:25
+#: build/index.js:26
 msgid "Import"
 msgstr "Importálás"
 
 #. translators: %s: file name.
-#: build/index.js:26
+#: build/index.js:27
 msgid ""
 "Import the settings from %s? Every valid setting in the file replaces the "
 "current value right away; invalid ones are skipped and listed afterwards."
@@ -4266,7 +4307,7 @@ msgstr ""
 "azonnal felülírja a jelenlegi értéket; az érvénytelenek kimaradnak, és utána "
 "listázza őket."
 
-#: build/index.js:26
+#: build/index.js:27
 msgid "Your unsaved changes on the other tabs will be discarded."
 msgstr "A többi fülön lévő nem mentett változásaid elvesznek."
 

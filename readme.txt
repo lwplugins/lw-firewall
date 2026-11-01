@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,7 @@ WooCommerce filter protection sets a visitor cookie. With LW Cookie 1.9.7+ the v
 
 **Features:**
 
+* Quick search — a search field in the admin sidebar (also Cmd/Ctrl+K) that finds sections and settings and jumps straight to them
 * Geo Blocking — block visitors by country (Cloudflare or CIDR fallback), enabled by default for CN, RU, IN, VN, ID, BD
 * Apache-level geo blocking via .htaccess — blocks before PHP loads
 * Bot blocking by User-Agent (20+ bad bots blocked by default)
@@ -105,6 +106,9 @@ For an account with a second factor, and for an account in a required role once 
 Yes. The settings are network-wide, because a sign-in is valid on every site of the network: a network administrator sets them in the main site's Two-Factor tab, and the other sites show them read-only. Network-activate the plugin so that every site asks for the second factor. The warning appears on the main site only: if the plugin is active just on other sites, the two-factor settings cannot be reached, so network-activate it.
 
 == Changelog ==
+
+= 1.9.1 =
+* New: Admin quick search: a search field at the top of the sidebar (also Cmd/Ctrl+K) finds sections, cards and settings by name or help text, accent-insensitive, and opens the match: it switches to the tab, scrolls to the setting and highlights it. Recently opened results are listed first.
 
 = 1.9.0 =
 * New: Two-factor login (opt-in): after the password, an authenticator app code or a one-time recovery code. 10 recovery codes are created at setup.
