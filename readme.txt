@@ -4,7 +4,7 @@ Tags: firewall, rate-limit, bot-blocker, security, woocommerce
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,9 @@ For an account with a second factor, and for an account in a required role once 
 Yes. The settings are network-wide, because a sign-in is valid on every site of the network: a network administrator sets them in the main site's Two-Factor tab, and the other sites show them read-only. Network-activate the plugin so that every site asks for the second factor. The warning appears on the main site only: if the plugin is active just on other sites, the two-factor settings cannot be reached, so network-activate it.
 
 == Changelog ==
+
+= 1.9.2 =
+* Fix: Admin quick search: moving the mouse over a result no longer breaks the dialog (a console error, and Enter or the arrow keys stopped working); the result under the pointer becomes the selected one.
 
 = 1.9.1 =
 * New: Admin quick search: a search field at the top of the sidebar (also Cmd/Ctrl+K) finds sections, cards and settings by name or help text, accent-insensitive, and opens the match: it switches to the tab, scrolls to the setting and highlights it. Recently opened results are listed first.
